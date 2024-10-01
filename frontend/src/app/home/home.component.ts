@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { RouterModule } from '@angular/router';
 
 declare const $: any;
 declare const AOS: any;
@@ -6,11 +8,18 @@ declare const AOS: any;
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [],
   templateUrl: './home.component.html',
-  styleUrl: './home.component.css',
+  styleUrls: ['./home.component.css'],
+  imports: [RouterModule], 
 })
 export class HomeComponent {
+  constructor(private router: Router) {}
+
+  navigateToPage(event: MouseEvent) {
+    event.preventDefault();
+    this.router.navigate(['/account-type']);
+  }
+
   ngAfterViewInit() {
     AOS.init();
 
