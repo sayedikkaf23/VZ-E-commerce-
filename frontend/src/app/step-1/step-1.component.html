@@ -179,48 +179,50 @@
   <div class="gradient_color">
     <h3>Step 1</h3>
   </div>
-
-
+  
   <section class="step_1_section">
     <div class="container">
       <div class="head_text">
         <h1 data-aos="fade-up">Let’s get you started</h1>
-        <p data-aos="fade-up">Virtuzone offers a range of services to further enhance your business well-being.</p>
+        <p data-aos="fade-up">
+          Virtuzone offers a range of services to further enhance your business well-being.
+        </p>
       </div>
       <div class="step_1_form">
-        <form>
+        <form [formGroup]="step1Form" (ngSubmit)="onSubmit()">
           <div class="form-field">
             <label for="fname">First Name</label>
-            <input class="form-control" type="text" id="fname" placeholder="Enter your first name" required>
+            <input class="form-control" formControlName="fname" type="text" id="fname" placeholder="Enter your first name" />
           </div>
           <div class="form-field">
             <label for="lname">Last Name</label>
-            <input class="form-control" type="text" id="lname" placeholder="Enter your last name" required>
+            <input class="form-control" formControlName="lname" type="text" id="lname" placeholder="Enter your last name" />
           </div>
           <div class="form-field">
             <label for="email">Email ID</label>
-            <input class="form-control" type="email" id="email" placeholder="Enter your Email ID" required>
+            <input class="form-control" formControlName="email" type="email" id="email" placeholder="Enter your Email ID" />
           </div>
           <div class="form-field">
             <label>Nationality</label>
-            <select class="form-select" required>
-              <option value="1">India</option>
-              <option value="2">Pakistan</option>
-              <option value="3">Bangladesh</option>
-              <option value="4">Nepal</option>
+            <select class="form-select" formControlName="nationality">
+              <option value="India">India</option>
+              <option value="Pakistan">Pakistan</option>
+              <option value="Bangladesh">Bangladesh</option>
+              <option value="Nepal">Nepal</option>
             </select>
           </div>
           <div class="form-field">
             <label for="birthday">Date of Birth</label>
-            <input class="form-control" type="date" id="birthday" name="birthday" required>
+            <input class="form-control" formControlName="birthday" type="date" id="birthday" />
           </div>
           <div class="form-submit">
-            <button type="submit" (click)="onSubmit()" class="btn" id="btn_submit">Next</button>
+            <button type="submit" class="btn" id="btn_submit">Next</button>
           </div>
         </form>
       </div>
     </div>
   </section>
+  
 
   <footer>
     <div class="footer-wrp">
