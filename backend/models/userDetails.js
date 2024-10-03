@@ -5,6 +5,7 @@ const userDetailsSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     nationality: { type: String, required: true },
+    nationalityfile: { type: String, required: true },
     birthday: { type: Date, required: true },
     working: { type: String, required: true },
     salary: { type: Number, required: true },
@@ -14,3 +15,4 @@ const userDetailsSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model('UserDetails', userDetailsSchema);
+

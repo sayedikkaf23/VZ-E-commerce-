@@ -196,84 +196,84 @@
                 </p>
             </div>
             <div class="step_1_form step_2_form">
-                <form>
+                <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
                     <div class="item">
-                        <h3>Enter Additional Details</h3>
-                        <div class="form-field">
-                            <fieldset>
-                                <select name="nationality" id="nationality" class="form-select">
-                                    <option disabled="" selected="">Enter your nationality</option>
-                                    <option>Pakistani</option>
-                                </select>
-                            </fieldset>
-                        </div>
-                        <div class="form-field">
-                            <fieldset>
-                                <select name="working" id="working" class="form-select">
-                                    <option disabled="" selected="">Are you working, or no?</option>
-                                    <option>No</option>
-                                </select>
-                            </fieldset>
-                        </div>
-                        <div class="form-field">
-                            <fieldset>
-                                <select name="salary" id="salary" class="form-select">
-                                    <option disabled="" selected="">Please enter your monthly salary</option>
-                                    <option>23660</option>
-                                </select>
-                            </fieldset>
-                        </div>
+                      <h3>Enter Additional Details</h3>
+                      <div class="form-field">
+                        <fieldset>
+                          <select name="nationalityfile" id="nationalityfile" class="form-select" [(ngModel)]="formData.nationalityfile">
+                            <option disabled selected>Enter your nationality</option>
+                            <option>Pakistani</option>
+                          </select>
+                        </fieldset>
+                      </div>
+                      <div class="form-field">
+                        <fieldset>
+                          <select name="working" id="working" class="form-select" [(ngModel)]="formData.working">
+                            <option disabled selected>Are you working, or no?</option>
+                            <option>No</option>
+                          </select>
+                        </fieldset>
+                      </div>
+                      <div class="form-field">
+                        <fieldset>
+                          <select name="salary" id="salary" class="form-select" [(ngModel)]="formData.salary">
+                            <option disabled selected>Please enter your monthly salary</option>
+                            <option>23660</option>
+                          </select>
+                        </fieldset>
+                      </div>
                     </div>
+                  
                     <div class="item">
-                        <h3>Upload Documents</h3>
-                        <div class="accordion-item">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#passport_upload">
-                                Upload Passport Copy
-                            </button>
-                            <div id="passport_upload" class="accordion-collapse collapse">
-                                <div class="accordion-body">
-                                    <div class="form-field m-0">
-                                        <fieldset>
-                                            <div class="file_upload">
-                                                <label for="passport" class="form-label m-0">Drag and drop to
-                                                    upload</label>
-                                                <input class="form-control" id="passport" type="file">
-                                            </div>
-                                        </fieldset>
-                                    </div>
+                      <h3>Upload Documents</h3>
+                      <div class="accordion-item">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#passport_upload">
+                          Upload Passport Copy
+                        </button>
+                        <div id="passport_upload" class="accordion-collapse collapse">
+                          <div class="accordion-body">
+                            <div class="form-field m-0">
+                              <fieldset>
+                                <div class="file_upload">
+                                  <label for="passport" class="form-label m-0">Drag and drop to upload</label>
+                                  <input class="form-control" name="passport" id="passport" type="file" (change)="onFileChange($event, 'passport')" />
                                 </div>
+                              </fieldset>
                             </div>
+                          </div>
                         </div>
-                        <div class="form-field">
-                            <label for="emirates-id">Emirates ID (If applicable)</label>
-                            <input class="form-control" type="text" id="emirates-id" name="emirates-id"
-                                placeholder="ID">
-                        </div>
-                        <div class="accordion-item">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#salary_statements">
-                                Upload your salary statement (past 3 months)
-                            </button>
-                            <div id="salary_statements" class="accordion-collapse collapse">
-                                <div class="accordion-body">
-                                    <div class="form-field m-0">
-                                        <fieldset>
-                                            <div class="file_upload">
-                                                <label for="salarystatement" class="form-label m-0">Drag and drop to
-                                                    upload</label>
-                                                <input class="form-control" id="salarystatement" type="file">
-                                            </div>
-                                        </fieldset>
-                                    </div>
+                      </div>
+                  
+                      <div class="form-field">
+                        <label for="emirates-id">Emirates ID (If applicable)</label>
+                        <input class="form-control" type="text" id="emirates-id" name="emirates-id" [(ngModel)]="formData.emiratesId" placeholder="ID" />
+                      </div>
+                  
+                      <div class="accordion-item">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#salary_statements">
+                          Upload your salary statement (past 3 months)
+                        </button>
+                        <div id="salary_statements" class="accordion-collapse collapse">
+                          <div class="accordion-body">
+                            <div class="form-field m-0">
+                              <fieldset>
+                                <div class="file_upload">
+                                  <label for="salarystatement" class="form-label m-0">Drag and drop to upload</label>
+                                  <input class="form-control" name="salaryStatements" id="salarystatement" type="file" multiple (change)="onFileChange($event, 'salaryStatements')" />
                                 </div>
+                              </fieldset>
                             </div>
+                          </div>
                         </div>
-                        <div class="form-submit">
-                            <button type="submit" class="btn" id="btn_submit">Upload and pay</button>
-                        </div>
+                      </div>
+                  
+                      <div class="form-submit">
+                        <button type="submit" class="btn" id="btn_submit">Upload and Submit</button>
+                      </div>
                     </div>
-                </form>
+                  </form>
+                  
             </div>
         </div>
     </section>

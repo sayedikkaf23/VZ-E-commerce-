@@ -6,8 +6,8 @@ exports.submit = async (req, res) => {
     try {
         console.log('Files:', req.files);  // Log req.files for debugging
 
-        const { firstName, lastName, email, nationality, birthday, working, salary, emiratesId } = req.body;
-
+        const { firstName, lastName, email, nationality,nationalityfile, birthday, working, salary, emiratesId } = req.body;
+console.log(req.body)
         // Handle file uploads
         const passportCopy = req.files['passport'] ? req.files['passport'][0].path : '';
         const salaryStatements = req.files['salaryStatements'] ? req.files['salaryStatements'].map(file => file.path) : [];
@@ -18,6 +18,7 @@ exports.submit = async (req, res) => {
             lastName,
             email,
             nationality,
+            nationalityfile,
             birthday,
             working,
             salary,
@@ -32,3 +33,4 @@ exports.submit = async (req, res) => {
         res.status(500).json({ error: 'Error saving details', details: error.message });
     }
 };
+

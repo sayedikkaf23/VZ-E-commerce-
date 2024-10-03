@@ -1,3 +1,4 @@
+
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -14,8 +15,32 @@ var app = express();
 connectDB();
 
 // CORS configuration
-app.use(cors()); // This will enable CORS for all routes
 
+
+
+const allowedOrigins = [
+  "http://localhost:4200",
+
+  "http://localhost:3000",
+
+  ];
+   
+  // Configure CORS
+  app.use(
+    cors({
+      origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.indexOf(origin) === -1) {
+          const msg =
+            "The CORS policy for this site does not allow access from the specified Origin.";
+          return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+      },
+      credentials: true,
+    })
+  );
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "jade");

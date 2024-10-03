@@ -1,23 +1,41 @@
 import { Component, AfterViewInit } from '@angular/core';
-import { Router } from '@angular/router'; // Import Router
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { FormBuilder, FormGroup, Validators, FormControl  } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms'; // Correct ReactiveFormsModule import
+
+import { FormDataService } from '../service/form-data.service'; // Import the shared service
 
 declare const AOS: any;
 declare const $: any;
+
 @Component({
   selector: 'app-step-1',
   standalone: true,
-  imports: [],
+  imports: [ReactiveFormsModule], // Ensure ReactiveFormsModule is imported here
+
   templateUrl: './step-1.component.html',
-  styleUrl: './step-1.component.css',
+  styleUrls: ['./step-1.component.css'],
 })
-export class Step1Component {
-  constructor(private router: Router) {}
+export class Step1Component implements AfterViewInit {
+  personalDetailsForm: FormGroup;
+
+  constructor(
+    private router: Router,
+    private fb: FormBuilder,
+    private formDataService: FormDataService // Inject the service
+  ) {
+    this.personalDetailsForm = this.fb.group({
+      firstName: ['', [Validators.required, Validators.minLength(2)]],
+      lastName: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      nationality: ['', Validators.required], 
+      birthday: { type: Date, required: true },
+    });
+  }
 
   ngAfterViewInit() {
     AOS.init(); // Initialize AOS animations
 
-    // jQuery script to handle scrolling and toggles
     $(window).scroll(() => {
       const height = $(window).scrollTop();
       if (height > 50) {
@@ -41,14 +59,20 @@ export class Step1Component {
       $('.header-menu-overlay').click(() => {
         $('html').removeClass('menu-show');
       });
-
-      // $('.sub-menu-toggle').click(function () {
-      //   $(this).parent().toggleClass('submenu_active');
-      // });
     });
   }
+
   onSubmit() {
-    // Navigate to the next page directly when the form is submitted
-    this.router.navigate(['/step-2']); // Adjust the route to your target page
+    if (this.personalDetailsForm.valid) {
+      // Save the form data in the shared service
+      this.formDataService.setStep1Data(this.personalDetailsForm.value);
+console.log(this.personalDetailsForm.value)
+      // Navigate to the next page
+      this.router.navigate(['/step-2']);
+    } else {
+      console.log('Form is invalid');
+    }
   }
 }
+
+

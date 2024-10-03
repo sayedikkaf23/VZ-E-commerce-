@@ -189,21 +189,40 @@
         </p>
       </div>
       <div class="step_1_form">
-        <form [formGroup]="step1Form" (ngSubmit)="onSubmit()">
+        <form (ngSubmit)="onSubmit()" [formGroup]="personalDetailsForm">
+
           <div class="form-field">
             <label for="fname">First Name</label>
-            <input class="form-control" formControlName="fname" type="text" id="fname" placeholder="Enter your first name" />
+            <input
+              class="form-control"
+              formControlName="firstName"
+              type="text"
+              id="fname"
+              placeholder="Enter your first name"
+            />
           </div>
           <div class="form-field">
             <label for="lname">Last Name</label>
-            <input class="form-control" formControlName="lname" type="text" id="lname" placeholder="Enter your last name" />
+            <input
+              class="form-control"
+              formControlName="lastName"
+              type="text"
+              id="lname"
+              placeholder="Enter your last name"
+            />
           </div>
           <div class="form-field">
             <label for="email">Email ID</label>
-            <input class="form-control" formControlName="email" type="email" id="email" placeholder="Enter your Email ID" />
+            <input
+              class="form-control"
+              formControlName="email"
+              type="email"
+              id="email"
+              placeholder="Enter your Email ID"
+            />
           </div>
           <div class="form-field">
-            <label>Nationality</label>
+            <label for="nationality">Nationality</label>
             <select class="form-select" formControlName="nationality">
               <option value="India">India</option>
               <option value="Pakistan">Pakistan</option>
@@ -219,6 +238,7 @@
             <button type="submit" class="btn" id="btn_submit">Next</button>
           </div>
         </form>
+        
       </div>
     </div>
   </section>
