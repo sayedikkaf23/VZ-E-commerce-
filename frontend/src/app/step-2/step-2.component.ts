@@ -3,12 +3,17 @@ import { HttpClient, HttpClientModule } from '@angular/common/http'; // Import H
 import { FormsModule } from '@angular/forms';
 import { FormDataService } from '../service/form-data.service'; // Adjust the path as necessary
 import { ToastrService } from 'ngx-toastr';  // Import ToastrService
+import { UserService } from '../service/user.service';
+
+
 
 declare const AOS: any;
 declare const $: any;
 @Component({
   selector: 'app-step-2',
   standalone: true,
+  
+  providers: [UserService], // Provide UserService here if not provided globally
   imports: [FormsModule, HttpClientModule], // Add HttpClientModule to the imports array
   templateUrl: './step-2.component.html',
   styleUrls: ['./step-2.component.css'],
@@ -24,7 +29,7 @@ export class Step2Component {
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
 
-  constructor(private formDataService: FormDataService, private http: HttpClient) {
+  constructor(private formDataService: FormDataService, private http: HttpClient,  private userService: UserService,) {
     // Retrieve the Step 1 data from the service when Step 2 initializes
     this.step1Data = this.formDataService.getStep1Data();
     console.log('Step 1 data:', this.step1Data);
@@ -97,19 +102,21 @@ console.log(this.formData.nationality)
       });
     }
 
-    this.http.post('http://localhost:5000/user/submit', formDataToSend).subscribe(
-      (response) => {
-        console.log('Success:', response);
-        alert('Form submitted successfully')
 
+    this.userService.uploadUserData(formDataToSend).subscribe(
+      response => {
+        if ('message' in response) {
+          console.log(response)
+        
+        }
       },
-      (error) => {
-        console.error('Error:', error);
-        // alert(error)
-        alert('Form submission failed. Please try again')
-
+      error => {
+        console.error(error); // Handle the error
       }
     );
+ 
+
+   
   }
 }
 
