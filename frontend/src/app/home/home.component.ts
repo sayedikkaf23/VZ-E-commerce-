@@ -17,7 +17,7 @@ export class HomeComponent {
 
   navigateToPage(event: MouseEvent) {
     event.preventDefault();
-    this.router.navigate(['/account-type']);
+    this.router.navigate(['/step-1']);
   }
 
   ngAfterViewInit() {
