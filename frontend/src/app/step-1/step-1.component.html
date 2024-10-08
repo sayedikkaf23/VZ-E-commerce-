@@ -221,15 +221,19 @@
               placeholder="Enter your Email ID"
             />
           </div>
-          <div class="form-field">
+          <div class="form-field" *ngIf="nationalities.length > 0">
             <label for="nationality">Nationality</label>
             <select class="form-select" formControlName="nationality">
-              <option value="India">India</option>
-              <option value="Pakistan">Pakistan</option>
-              <option value="Bangladesh">Bangladesh</option>
-              <option value="Nepal">Nepal</option>
+              <option value="" disabled selected>Select Nationality</option>
+              <option *ngFor="let nationality of nationalities" [value]="nationality">
+                {{ nationality }}
+              </option>
             </select>
           </div>
+          
+          
+          
+          
           <div class="form-field">
             <label for="birthday">Date of Birth</label>
             <input class="form-control" formControlName="birthday" type="date" id="birthday" />
