@@ -68,7 +68,6 @@ export class Step2Component {
       });
     });
   }
-  // Later in your code when constructing FormData to send to the server
  
 
   onSubmit() {
@@ -98,19 +97,15 @@ console.log(this.formData.nationality)
       });
     }
 
-    // Send data to backend
-    this.http.post('http://localhost:3000/user/submit', formDataToSend).subscribe(
+    this.http.post('http://localhost:5000/user/submit', formDataToSend).subscribe(
       (response) => {
         console.log('Success:', response);
-        // alert('Form submitted successfully!'); // Show success toast
         alert('Form submitted successfully')
 
-        // Optionally navigate to another page after success
       },
       (error) => {
         console.error('Error:', error);
-        alert(error)
-        // alert('Form submission failed. Please try again.'); // Show error toast
+        // alert(error)
         alert('Form submission failed. Please try again')
 
       }

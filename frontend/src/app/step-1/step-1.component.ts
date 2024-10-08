@@ -1,7 +1,12 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormControl  } from '@angular/forms';
-import { ReactiveFormsModule } from '@angular/forms'; // Correct ReactiveFormsModule import
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl,
+} from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms'; 
 
 import { FormDataService } from '../service/form-data.service'; // Import the shared service
 
@@ -28,7 +33,7 @@ export class Step1Component implements AfterViewInit {
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
-      nationality: ['', Validators.required], 
+      nationality: ['', Validators.required],
       birthday: { type: Date, required: true },
     });
   }
@@ -66,13 +71,10 @@ export class Step1Component implements AfterViewInit {
     if (this.personalDetailsForm.valid) {
       // Save the form data in the shared service
       this.formDataService.setStep1Data(this.personalDetailsForm.value);
-console.log(this.personalDetailsForm.value)
-      // Navigate to the next page
+      console.log(this.personalDetailsForm.value);
       this.router.navigate(['/step-2']);
     } else {
       console.log('Form is invalid');
     }
   }
 }
-
-
