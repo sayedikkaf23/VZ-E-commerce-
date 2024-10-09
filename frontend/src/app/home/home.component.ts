@@ -44,9 +44,9 @@ export class HomeComponent implements OnInit {
 
 
   ngAfterViewInit() {
-    AOS.init();
-  
-    $(window).scroll(function () {
+    AOS.init(); // Initialize AOS animations
+
+    $(window).scroll(() => {
       const height = $(window).scrollTop();
       if (height > 50) {
         $('html').addClass('sticky');
@@ -54,36 +54,26 @@ export class HomeComponent implements OnInit {
         $('html').removeClass('sticky');
       }
     });
-  
+
     $(document).ready(() => {
       $('.scrollToTop').click((event: any) => {
         event.preventDefault();
         $('html, body').animate({ scrollTop: 0 }, 'slow');
         return false;
       });
-  
+
       $('.navbar-toggle').click(() => {
         $('html').toggleClass('menu-show');
       });
-  
+
       $('.header-menu-overlay').click(() => {
         $('html').removeClass('menu-show');
-      });
-  
-      // Fix: Use arrow function to bind 'this' correctly to the component instance
-      $('.btn').click((event: any) => {
-        event.preventDefault();
-        console.log("Button clicked with jQuery logic");
-  
-        // Navigate using Angular router, with correct 'this' context
-        this.router.navigate(['/step-1']);
       });
     });
   }
   
   
-  navigateToPage(event: MouseEvent): void {
-    event.preventDefault();
+  navigateToPage() {
     console.log('Navigation triggered');
     this.router.navigate(['/step-1']);
   }

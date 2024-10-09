@@ -1,0 +1,98 @@
+/* General layout */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+  }
+  
+  .login-page {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100vh;
+    background: url('https://media.istockphoto.com/id/479842074/photo/empty-road-at-building-exterior.jpg?s=2048x2048&w=is&k=20&c=ITL_F7hIJz-fXiLiJRcgrC_OguBbbTXfG-cIdUid8VU=') no-repeat center left/cover;
+    padding-right: 50px;
+  }
+  
+  .login-tag {
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    margin-left: 30px;
+    line-height: 1.2;
+  }
+  
+  .login-content {
+    max-width: 400px;
+    padding: 40px;
+    margin-left: auto;
+  }
+  
+  .logo img {
+    max-width: 150px;
+  }
+  
+  h2 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.5;
+  }
+  
+  .login-label {
+    font-size: 14px;
+    color: #666;
+    text-transform: uppercase;
+    font-weight: 500;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .form-field {
+    margin-bottom: 15px;
+  }
+  
+  input.form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .form-check-label {
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .btn {
+    background-color: #FE294D;
+    color: white;
+    border: none;
+    /* padding: 10px; */
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .btn:hover {
+    background-color: #d6223b;
+  }
+  
+  .row {
+    margin-bottom: 15px;
+  }
+  
+  .mt-3 {
+    margin-top: 1rem;
+  }
+  
