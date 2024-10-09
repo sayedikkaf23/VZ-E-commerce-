@@ -14,4 +14,8 @@ export class UserService {  // Changed the service name to UserService
   uploadUserData(formData: FormData): Observable<any> {
     return this.http.post(`${this.url}/user/submit`, formData); // Combining base URL with endpoint
   }
+
+  getServices(): Observable<any> {
+    return this.http.get(`${this.url}/user/services`); // GET request to fetch all services
+  }
 }

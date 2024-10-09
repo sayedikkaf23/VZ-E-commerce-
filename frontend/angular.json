@@ -26,7 +26,8 @@
               "src/styles.css",
               "https://unpkg.com/aos@next/dist/aos.css",
               "src/style.css",
-              "src/responsive.css"
+              "src/responsive.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": ["src/js/jquery-2.2.4.min.js"]
           },
@@ -78,7 +79,7 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.css"],
+            "styles": ["src/styles.css",  "node_modules/bootstrap/dist/css/bootstrap.min.css"],
             "scripts": []
           }
         }

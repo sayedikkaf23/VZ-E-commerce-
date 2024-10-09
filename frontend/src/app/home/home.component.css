@@ -1,0 +1,84 @@
+.box, .image, .text {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+  }
+  
+/* Fix footer positioning and padding for mobile */
+footer {
+    position: relative;
+    padding-top: 20px;
+    padding-bottom: 40px;
+    background-color: #f7f7f7; /* Or any desired background color */
+    z-index: 1;
+}
+
+/* Adjust spacing and layout for footer on mobile */
+@media (max-width: 767px) {
+  footer {
+    padding-bottom: 60px; /* Add more bottom padding if needed */
+    margin-top: 50px; /* Create space above the footer */
+  }
+
+  .footer-wrp {
+    padding: 20px; /* Adjust footer padding to suit mobile */
+  }
+
+  .footer-top, .footer-middle, .footer-bottom {
+    text-align: center; /* Center text and content on mobile */
+    padding: 10px 0;
+  }
+
+  .footer-top h5 {
+    font-size: 18px; /* Adjust heading size for mobile */
+    line-height: 1.5;
+  }
+
+  .footer-middle img {
+    width: 100%; /* Ensure footer images are responsive */
+    max-width: 375px;
+  }
+
+  .footer-bottom p {
+    font-size: 14px; /* Adjust font size for footer text */
+  }
+
+  .social_icon {
+    margin-top: 15px;
+  }
+
+  /* Prevent the overlapping issue */
+  .row, .col {
+    z-index: 1; /* Ensure footer elements are not overlapped */
+  }
+}
+
+.btn {
+    pointer-events: none !important;
+  }
+  
+
+
+  /* General styling for the row and boxes */
+/* Adjust padding/margin for the header and top section */
+/* Adjust padding/margin for mobile screens */
+@media (max-width: 767px) {
+    header, .apply_service_section {
+      padding-top: 0px !important;  /* Remove all top padding */
+      margin-top: 0px !important;    /* Remove any top margin */
+    }
+  
+    .head_text {
+      padding-top: 0px !important;   /* Reduce padding for the heading */
+      margin-top: 0px !important;    /* Remove any margin */
+    }
+  
+    .head_text h1 {
+      margin-bottom: 10px;  /* Optional: Adjust the margin below the heading */
+    }
+    
+    .head_text p {
+      margin-bottom: 5px;   /* Adjust margin below the subheading */
+    }
+  }
+  

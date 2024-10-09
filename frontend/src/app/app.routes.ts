@@ -12,8 +12,9 @@ import { MailManagementComponent } from './mail-management/mail-management.compo
 import { VirtualReceptionistComponent } from './virtual-receptionist/virtual-receptionist.component';
 import { CertificateIncorporationComponent } from './certificate-incorporation/certificate-incorporation.component';
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
 
+  { path: 'home', component: HomeComponent }, // Set path to '/home'
+  { path: '', redirectTo: '/home', pathMatch: 'full' }, // Redirect the empty path to '/home'
   { path: 'sm', component: SmComponent },
   { path: 'account-type', component: AccountSectionComponent },
   { path: 'step-1', component: Step1Component },

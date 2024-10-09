@@ -11,15 +11,14 @@ const storage = multer.diskStorage({
     }
 });
 
-// Initialize multer with the storage configuration and fields expected
-const upload = multer({ storage: storage }).fields([
-    { name: 'passport', maxCount: 1 },  // This expects a single file for passport
-    { name: 'salaryStatements', maxCount: 3 }  // This expects up to 3 files for salary statements
-]);
+// Initialize multer
+const upload = multer({ storage: storage });
 
-// Export the multer middleware for file uploads
-module.exports = upload;
-
-
-
-
+// Export the middleware
+module.exports = {
+    multipleUpload: upload.fields([
+        { name: 'passport', maxCount: 1 },
+        { name: 'salaryStatements', maxCount: 3 }
+    ]),
+    singleUpload: upload.single('icon')
+};
