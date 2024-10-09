@@ -54,9 +54,8 @@ footer {
 }
 
 .btn {
-    pointer-events: none !important;
-  }
-  
+  pointer-events: auto !important; /* Ensure clicks are enabled */
+}
 
 
   /* General styling for the row and boxes */

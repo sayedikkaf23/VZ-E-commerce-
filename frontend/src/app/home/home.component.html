@@ -184,8 +184,10 @@
           Virtuzone offers a range of services to further enhance your business
           well-being.
         </p>
+
+        
       </div>
-      <div class="row gy-lg-5 gx-3 gy-4">
+      <div class="row gy-lg-5 gx-3 gy-4" >
         <!-- First two larger boxes -->
         <div class="col-md-6 col-12" *ngFor="let service of services.slice(0, 2); let i = index">
           <div class="box" data-aos="fade-up">
@@ -206,7 +208,8 @@
                   <h4><a href="#">{{ service.serviceName }}</a></h4>
                 </div>
                 <div class="col-auto">
-                  <a class="btn" (click)="navigateToPage($event)">Start Now
+                  
+                  <button class="btn" >Start Now
                     <div class="icon">
                       <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" clip-rule="evenodd"
@@ -214,7 +217,7 @@
                           fill="currentColor" />
                       </svg>
                     </div>
-                  </a>
+                  </button>
                 </div>
               </div>
             </div>
@@ -237,7 +240,7 @@
             <div class="text text-center">
               <p>{{ service.description }}</p>
               <h4><a href="#">{{ service.serviceName }}</a></h4>
-              <button class="btn" (click)="navigateToPage($event)">
+              <a  class="btn">
                 Start Now
                 <div class="icon">
                   <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -246,7 +249,8 @@
                       fill="currentColor" />
                   </svg>
                 </div>
-              </button>
+              </a>
+              
               
             </div>
           </div>
