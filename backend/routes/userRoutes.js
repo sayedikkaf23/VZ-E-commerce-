@@ -5,5 +5,7 @@ const upload = require('../middleware/fileUpload'); // Import file upload middle
 
 // Route to handle form submission with file uploads
 router.post('/submit', upload, userController.submit);
+router.post('/login', userController.login);
+
 
 module.exports = router;

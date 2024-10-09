@@ -2,9 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import {
   ChangeDetectorRef,
   Component,
-  Inject,
   OnInit,
-  ViewEncapsulation,
 } from '@angular/core';
 import {
   FormGroup,
@@ -13,8 +11,7 @@ import {
   FormControl,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-
-import { DOCUMENT } from '@angular/common';
+import { UserService } from '../service/user.service'; // Import UserService
 
 @Component({
   selector: 'app-login',
@@ -37,21 +34,39 @@ export class LoginComponent implements OnInit {
 
   constructor(
     private router: Router,
-   
     private cdr: ChangeDetectorRef,
-
+    private userService: UserService // Inject UserService
   ) {}
 
   ngOnInit(): void {
     const bodyElement = document.body;
     bodyElement.classList.add('login-page');
     this.cdr.detectChanges();
-   
   }
 
   submit(): void {
-    console.log("loged")
+    if (this.loginForm.valid) {
+      const email = this.loginForm.get('email')?.value ?? ''; // Ensure email is not null/undefined
+      const password = this.loginForm.get('password')?.value ?? ''; // Ensure password is not null/undefined
+  
+      // Call the login method from the UserService
+      this.userService.login(email, password).subscribe(
+        (response) => {
+          console.log('Login successful:', response);
+          // Redirect user after successful login
+          this.router.navigate(['/dashboard']); // Change to your desired route
+        },
+        (error) => {
+          console.error('Login failed:', error);
+          // Handle login error, show notification or error message
+        }
+      );
+    } else {
+      console.log('Form is invalid');
+    }
   }
+  
+  
 
   ngOnDestroy() {
     const bodyElement = document.body;

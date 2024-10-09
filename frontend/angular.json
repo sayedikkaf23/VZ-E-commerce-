@@ -26,8 +26,8 @@
               "src/styles.css",
               "https://unpkg.com/aos@next/dist/aos.css",
               "src/style.css",
-              "src/responsive.css"
-            ],
+              "src/responsive.css",
+"src/assets/css/style-admin.css"                        ],
             "scripts": ["src/js/jquery-2.2.4.min.js"]
           },
           "configurations": {
