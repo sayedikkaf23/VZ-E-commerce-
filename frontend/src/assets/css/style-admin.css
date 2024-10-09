@@ -193,11 +193,11 @@ body.add-order-page .box_offer_label {
   padding: 0 0 15px;
   margin: 0;
 }
-.paymentmathed-tab-wrap {
+/* .paymentmathed-tab-wrap { */
   /* margin: 15px 0 0;
   overflow-x: auto;
   overflow-y: hidden; */
-}
+/* } */
 .checkout-btn .btn {
   padding: 0;
   min-width: 0;
@@ -312,26 +312,26 @@ html .add-order-page .category-tabs-wrap.add-order-tab {
   background-repeat: no-repeat;
 }
 .table_item label input:checked ~ span {
-  background-image: url("../images/dine-in/table/table-2/selected.svg");
+  /* background-image: url("../images/dine-in/table/table-2/selected.svg"); */
   color: #fff;
 }
 .table_item.item_booked label input ~ span {
-  background-image: url("../images/dine-in/table/table-2/booked.svg");
+  /* background-image: url("../images/dine-in/table/table-2/booked.svg"); */
   color: #fff;
 }
 
 .table_item.table_seat_4 label {
   padding-top: 85%;
 }
-.table_item.table_seat_4 label span {
-  background-image: url("../images/dine-in/table/table-4/available.svg");
-}
-.table_item.table_seat_4 label input:checked ~ span {
+/* .table_item.table_seat_4 label span { */
+  /* background-image: url("../images/dine-in/table/table-4/available.svg"); */
+/* } */
+/* .table_item.table_seat_4 label input:checked ~ span {
   background-image: url("../images/dine-in/table/table-4/selected.svg");
-}
-.table_item.table_seat_4.item_booked label input ~ span {
+} */
+/* .table_item.table_seat_4.item_booked label input ~ span {
   background-image: url("../images/dine-in/table/table-4/booked.svg");
-}
+} */
 
 .table_item.table_seat_6 {
   max-width: 260px;
@@ -339,7 +339,7 @@ html .add-order-page .category-tabs-wrap.add-order-tab {
 .table_item.table_seat_6 label {
   padding-top: 65%;
 }
-.table_item.table_seat_6 label span {
+/* .table_item.table_seat_6 label span {
   background-image: url("../images/dine-in/table/table-6/available.svg");
 }
 .table_item.table_seat_6 label input:checked ~ span {
@@ -347,7 +347,7 @@ html .add-order-page .category-tabs-wrap.add-order-tab {
 }
 .table_item.table_seat_6.item_booked label input ~ span {
   background-image: url("../images/dine-in/table/table-6/booked.svg");
-}
+} */
 
 .table_item.table_seat_8 {
   max-width: 400px;
@@ -355,7 +355,7 @@ html .add-order-page .category-tabs-wrap.add-order-tab {
 .table_item.table_seat_8 label {
   padding-top: 50%;
 }
-.table_item.table_seat_8 label span {
+/* .table_item.table_seat_8 label span {
   background-image: url("../images/dine-in/table/table-8/available.svg");
 }
 .table_item.table_seat_8 label input:checked ~ span {
@@ -363,7 +363,7 @@ html .add-order-page .category-tabs-wrap.add-order-tab {
 }
 .table_item.table_seat_8.item_booked label input ~ span {
   background-image: url("../images/dine-in/table/table-8/booked.svg");
-}
+} */
 
 .dine-in ul.btn_status {
   margin: 0;
