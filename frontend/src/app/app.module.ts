@@ -5,10 +5,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { ToastrModule } from 'ngx-toastr';
 import { RouterModule } from '@angular/router';
 
+
+
 // Standalone components should not be in NgModule
 import { Step1Component } from './step-1/step-1.component'; 
 import { Step2Component } from './step-2/step-2.component';
 import { AccountSectionComponent } from './account-section/account-section.component';
+import { HomeComponent } from './home/home.component';
 
 @NgModule({
   imports: [
@@ -19,6 +22,7 @@ import { AccountSectionComponent } from './account-section/account-section.compo
     ToastrModule.forRoot(),
     Step1Component,
     Step2Component,
+    HomeComponent,
     AccountSectionComponent
   ],
   providers: [],

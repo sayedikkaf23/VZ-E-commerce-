@@ -9,5 +9,7 @@ router.post('/submit', multipleUpload, userController.submit);
 // Route to handle service submission with a single file upload
 router.post('/submit-service', singleUpload, userController.submitService);
 router.get('/services', userController.getAllServices);
+router.get('/submissions', userController.getAllSubmissions);
+router.post('/login', userController.loginAdmin);
 
 module.exports = router;
