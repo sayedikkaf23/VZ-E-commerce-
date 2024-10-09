@@ -18,4 +18,8 @@ export class UserService {  // Changed the service name to UserService
   getServices(): Observable<any> {
     return this.http.get(`${this.url}/user/services`); // GET request to fetch all services
   }
+
+  login(email: string, password: string): Observable<any> {
+    return this.http.post(`${this.url}/user/login`, { email, password }); // Sending email and password for login
+  }
 }
