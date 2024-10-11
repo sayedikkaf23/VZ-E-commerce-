@@ -3,12 +3,18 @@ import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 // import { UserService } from '../services/user.service';
 // import { NgxPermissionsService } from 'ngx-permissions';
+import { HeaderComponent } from '../header/header.component';
+import { RouterModule } from '@angular/router'; // Import RouterModule
+
 
 @Component({
   selector: 'app-dashboard-layout',
   templateUrl: './dashboard-layout.component.html',
   styleUrls: ['./dashboard-layout.component.css'],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.Emulated,  // Default Angular encapsulation
+  standalone: true,  // If DashboardLayoutComponent is also standalone
+  imports: [HeaderComponent,RouterModule], // Import HeaderComponent
+
 })
 export class DashboardLayoutComponent implements OnInit {
   permissions: any = [];

@@ -788,7 +788,7 @@ html .select2-results__option img {
     margin-right: 10px;
 }
 .fileuploader {
-    background: url("../images/uploader-bg.jpg") no-repeat center center;
+    /* background: url("../images/uploader-bg.jpg") no-repeat center center; */
     background-size: contain;
     background-color: #FBFBFB;
     border-radius: 15px;
@@ -1715,7 +1715,7 @@ html .form-check.savecard-check label {
     top:0;
     left:0;
     height:250px;
-    background-image: url("../images/edtprofile-bg.jpg");
+    /* background-image: url("../images/edtprofile-bg.jpg"); */
     background-repeat: no-repeat;
     background-position: right 0;
     background-size: auto 100%; 

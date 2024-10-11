@@ -11,6 +11,9 @@ import { AccountingVatComponent } from './accounting-vat/accounting-vat.componen
 import { MailManagementComponent } from './mail-management/mail-management.component';
 import { VirtualReceptionistComponent } from './virtual-receptionist/virtual-receptionist.component';
 import { CertificateIncorporationComponent } from './certificate-incorporation/certificate-incorporation.component';
+import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+
 export const routes: Routes = [
 
   { path: 'home', component: HomeComponent }, // Set path to '/home'
@@ -28,7 +31,18 @@ export const routes: Routes = [
   { path: 'certificate-incorporation', component: CertificateIncorporationComponent },
 
 
-
+  {
+    path: 'panel',
+    component: DashboardLayoutComponent,
+    children: [
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+      
+      },
+    
+    ],
+  },
 
 
 

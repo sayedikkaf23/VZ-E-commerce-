@@ -6,6 +6,8 @@ import { Router } from '@angular/router';
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css'],
+  standalone: true, // This makes it a standalone component
+
 })
 export class HeaderComponent implements OnInit {
   constructor(private router: Router) { }

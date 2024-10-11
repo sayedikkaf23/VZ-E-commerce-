@@ -24,9 +24,10 @@
               "src/responsive.css",
               "src/aos.css",
               "src/styles.css",
+              
+ 
               "https://unpkg.com/aos@next/dist/aos.css",
-              "src/style.css",
-              "src/responsive.css",
+            
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
             "scripts": ["src/js/jquery-2.2.4.min.js"]
