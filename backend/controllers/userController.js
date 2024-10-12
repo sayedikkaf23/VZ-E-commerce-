@@ -8,36 +8,41 @@ const jwt = require('jsonwebtoken');
 
 // Handle form submission and file uploads
 exports.submit = async (req, res) => {
-    try {
-        console.log('Files:', req.files);  // Log req.files for debugging
+  try {
+      console.log(req.body);
 
-        const { firstName, lastName, email, nationality,nationalityfile, birthday, working, salary, emiratesId } = req.body;
-console.log(req.body)
-        // Handle file uploads
-        const passportCopy = req.files['passport'] ? req.files['passport'][0].path : '';
-        const salaryStatements = req.files['salaryStatements'] ? req.files['salaryStatements'].map(file => file.path) : [];
+      // Destructure the required fields from req.body
+      const { firstName, lastName, email, nationality, birthday, resident, working, salary, companyname, Bank } = req.body;
 
-        // Create and save user details
-        const userDetails = new UserDetails({
-            firstName,
-            lastName,
-            email,
-            nationality,
-            nationalityfile,
-            birthday,
-            working,
-            salary,
-            emiratesId,
-            passportCopy,
-            salaryStatements
-        });
+      // Check if email already exists
+      const existingUser = await UserDetails.findOne({ email });
+      if (existingUser) {
+          return res.status(400).json({ message: 'Email already exists' });
+      }
 
-        await userDetails.save();
-        res.status(201).json({ message: 'Details submitted successfully', userDetails });
-    } catch (error) {
-        res.status(500).json({ error: 'Error saving details', details: error.message });
-    }
+      // Create and save user details in the database
+      const userDetails = new UserDetails({
+          firstName,
+          lastName,
+          email,
+          nationality,
+          birthday,
+          resident,
+          working,
+          salary,
+          companyname,
+          Bank
+      });
+
+      // Save the user details to the database
+      await userDetails.save();
+      res.status(201).json({ message: 'Details submitted successfully', userDetails });
+  } catch (error) {
+      res.status(500).json({ error: 'Error saving details', details: error.message });
+  }
 };
+
+
 
 exports.getAllSubmissions = async (req, res) => {
     try {
