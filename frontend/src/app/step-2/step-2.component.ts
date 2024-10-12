@@ -1,8 +1,8 @@
 import { Component, Inject, PLATFORM_ID, AfterViewInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 import { HttpClient } from '@angular/common/http'; // Import HttpClient
-import { FormDataService } from '../../service/form-data.service'; // Adjust the path as necessary
-import { UserService } from '../../service/user.service'; // Import your UserService
+import { FormDataService } from '../service/form-data.service'; // Adjust the path as necessary
+import { UserService } from '../service/user.service'; // Import your UserService
 import AOS from 'aos'; // AOS for animations
 import { ToastrService } from 'ngx-toastr'; // Import ToastrService
 

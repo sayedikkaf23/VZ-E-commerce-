@@ -12,6 +12,10 @@ import { AccountSectionComponent } from './account-section/account-section.compo
 import { Step2Component } from './step-2/step-2.component';  // Import ReactiveFormsModule
 import { ToastrModule } from 'ngx-toastr';
 import { AdminLoginComponent } from './admin-login/admin-login.component';
+import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
+import { HeaderComponent } from './header/header.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+
 
 @NgModule({
   declarations: [
@@ -20,7 +24,11 @@ import { AdminLoginComponent } from './admin-login/admin-login.component';
     Step1Component,
     AccountSectionComponent,
     Step2Component,
-    AdminLoginComponent
+    AdminLoginComponent,
+    DashboardLayoutComponent,
+    HeaderComponent,
+    DashboardComponent,
+    
   ],
   imports: [
     BrowserAnimationsModule,

@@ -17,7 +17,7 @@
       <div class="login-label">
         <span>LOGIN WITH EMAIL</span>
       </div>
-      <form [formGroup]="loginForm">
+      <form [formGroup]="loginForm" (ngSubmit)="submit()">
         <div class="form-field">
           <input
             style="width: 400px;"
@@ -55,14 +55,15 @@
         </div>
       
         <button
-          type="button"
-          (click)="submit()"
+          type="submit" 
           style="color: #ffffff !important; background-color: red;"
           class="btn w-100 mt-3"
         >
           LOGIN
         </button>
       </form>
+      
+      
       <!-- <hr />
       <div
         class="row align-items-center justify-content-between login-other-link"

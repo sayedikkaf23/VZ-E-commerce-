@@ -1,8 +1,11 @@
+
+@import url("responsive-admin.css");
+
+
 @font-face {
   font-family: "DM Sans";
-  src: url("../fonts/DMSans-Regular.woff2") format("woff2"),
-    url("../fonts/DMSans-Regular.woff") format("woff");
-  
+  src: url("../../assets/fonts/DMSans-Regular.woff2") format("woff2"),
+    url("../../assets/fonts/DMSans-Regular.woff") format("woff");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -10,8 +13,8 @@
 
 @font-face {
   font-family: "DM Sans";
-  src: url("../fonts/DMSans-Medium.woff2") format("woff2"),
-    url("../fonts/DMSans-Medium.woff") format("woff");
+  src: url("../../assets/fonts/DMSans-Medium.woff2") format("woff2"),
+    url("../../assets/fonts/DMSans-Medium.woff") format("woff");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -2840,7 +2843,7 @@ body.header-navbar-disable {
   margin: 0;
 }
 .welcome-box {
-  background-image: url("../images/welcome-box-art.svg");
+  background-image: url("../../assets/images/welcome-box-art.svg");
   background-position: center bottom;
   background-size: 100% auto;
   background-repeat: no-repeat;
@@ -3086,4 +3089,3 @@ html .btn-red-shadow:hover {
   box-shadow: var(--cs-btn-hover-shadow) !important;
 }
 
-@import url("responsive-admin.css");

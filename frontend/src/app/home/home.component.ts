@@ -1,6 +1,6 @@
 import { Component, HostListener, ChangeDetectorRef, NgZone, Inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
-import { UserService } from '../../service/user.service';
+import { UserService } from '../service/user.service';
 import { isPlatformBrowser } from '@angular/common';
 import AOS from 'aos';
 

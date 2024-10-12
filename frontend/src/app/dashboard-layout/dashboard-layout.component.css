@@ -1,0 +1,6 @@
+@import "../../assets/css/responsive-admin.css";
+@import "../../assets/css/style-admin.css";
+@import "../../assets/css/admin-theme.css";
+/* You can add global styles to this file, and also import other style files */
+/* @import "../../../node_modules/@ng-select/ng-select/themes/default.theme.css"; */
+@import "../../../node_modules/@ng-select/ng-select/themes/default.theme.css";

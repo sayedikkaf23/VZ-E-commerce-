@@ -1,0 +1,469 @@
+<ng-container>
+    <div class="content">
+      <div class="page-heading">
+        <div class="row align-items-center justify-content-between">
+          <div class="col-auto mb-2">
+            <div class="row align-items-center">
+              <div class="col-auto">
+                <h2>{{ "Dashboard" }}</h2>
+              </div>
+            </div>
+          </div>
+          <div class="col-auto">
+            <div class="row align-items-center">
+              <div class="col-auto mb-2">
+                <div class="form-field mb-0">
+                  <!-- <div class="row align-items-center">
+                    <div class="col-auto">
+                      <label class="mb-0">{{ "Category" }}</label>
+                    </div>
+                    <div class="col-auto" style="min-width: 150px">
+                      <select
+                        class="form-select form-select-sm form-select-shadow"
+                      >
+                        <option>All</option>
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                      </select>
+                    </div>
+                  </div> -->
+                </div>
+              </div>
+              <div class="col-auto mb-2">
+                <div class="form-field mb-0">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <label class="mb-0 ms-2">{{ "Start Date" }}</label>
+                    </div>
+                    <div class="col-auto">
+                      <input
+                        type="date"
+                        class="form-control form-control-sm form-control-shadow"
+                        id=""
+                        placeholder="Start Date"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-auto mb-2">
+                <div class="form-field mb-0">
+                  <div class="row align-items-center">
+                    <div class="col-auto">
+                      <label class="mb-0 ms-2">{{ "End Date" }}</label>
+                    </div>
+                    <div class="col-auto">
+                      <input
+                        type="date"
+                        class="form-control form-control-sm form-control-shadow"
+                        id=""
+                        placeholder="End Date"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-auto mb-2">
+                <button class="btn btn-primary btn-sm">
+                  {{ "Apply" }}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col">
+          <div class="darshboard-counter">
+            <h6>{{ "Total Sales" }}</h6>
+            <h3>
+              <!-- {{ total_sales_report | number : "2.2-2" }} -->
+              2
+            </h3>
+            <div class="icon" style="color: #1e40af">
+              <svg
+                width="54"
+                height="68"
+                viewBox="0 0 54 68"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect y="44" width="6" height="24" rx="3" fill="currentColor" />
+                <rect x="16" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="16"
+                  y="34"
+                  width="6"
+                  height="34"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="32" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="32"
+                  y="19"
+                  width="6"
+                  height="49"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="48" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="48"
+                  y="30.2222"
+                  width="6"
+                  height="37.7778"
+                  rx="3"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+  
+        <div class="col">
+          <div class="darshboard-counter">
+            <h6>{{ "POS Cancelled" }}</h6>
+            <h3>
+              <!-- {{ total_sum_cancelled_orders | number : "2.2-2" }} -->
+              5
+            </h3>
+            <div class="icon" style="color: #1e40af">
+              <svg
+                width="54"
+                height="68"
+                viewBox="0 0 54 68"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect y="44" width="6" height="24" rx="3" fill="currentColor" />
+                <rect x="16" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="16"
+                  y="34"
+                  width="6"
+                  height="34"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="32" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="32"
+                  y="19"
+                  width="6"
+                  height="49"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="48" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="48"
+                  y="30.2222"
+                  width="6"
+                  height="37.7778"
+                  rx="3"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="darshboard-counter">
+            <h6>{{ "Total Customers" }}</h6>
+            <h3>
+              <!-- {{ total_customers }} -->
+              7
+            </h3>
+            <div class="icon" style="color: #bf1b80">
+              <svg
+                width="54"
+                height="68"
+                viewBox="0 0 54 68"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect y="44" width="6" height="24" rx="3" fill="currentColor" />
+                <rect x="16" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="16"
+                  y="34"
+                  width="6"
+                  height="34"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="32" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="32"
+                  y="19"
+                  width="6"
+                  height="49"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="48" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="48"
+                  y="30.2222"
+                  width="6"
+                  height="37.7778"
+                  rx="3"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="darshboard-counter">
+            <h6>{{ "Total Suppliers" }}</h6>
+            <h3>
+              <!-- {{ total_suppliers }} -->
+              9
+            </h3>
+            <div class="icon" style="color: #bf1b80">
+              <svg
+                width="54"
+                height="68"
+                viewBox="0 0 54 68"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect y="44" width="6" height="24" rx="3" fill="currentColor" />
+                <rect x="16" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="16"
+                  y="34"
+                  width="6"
+                  height="34"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="32" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="32"
+                  y="19"
+                  width="6"
+                  height="49"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="48" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="48"
+                  y="30.2222"
+                  width="6"
+                  height="37.7778"
+                  rx="3"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col-md-12">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="dashboard-fancy-card">
+                <div class="card_head" style="background-color: #1e40af">
+                  <h3>{{ "Order Details" }}</h3>
+                  <h5>{{ "Recent Order Details" }}</h5>
+                </div>
+                <div class="card_content">
+                  <div class="row gx-3">
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>
+                          {{ "Order (All Orders)" }}
+                        </h6>
+                        <h3>
+                          {{ total_no_of_orders }}
+                        </h3>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Cancelled" }}</h6>
+                        <h3>
+                          {{ total_cancelled_orders }}
+                        </h3>
+                      </div>
+                    </div>
+  
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Total Item Sold" }}</h6>
+                        <h3>
+                          {{ total_no_of_item_sold }}
+                        </h3>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Completed" }}</h6>
+                        <h3>
+                          {{ total_completed_orders }}
+                        </h3>
+                      </div>
+                    </div>
+  
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Damaged" }}</h6>
+                        <h3>
+                          {{ total_damaged_orders }}
+                        </h3>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Returned Orders" }}</h6>
+                        <h3>
+                          {{ total_returned_orders }}
+                        </h3>
+                      </div>
+                    </div>
+  
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Partially Returned Orders" }}</h6>
+                        <h3>
+                          {{ total_partially_return_orders }}
+                        </h3>
+                      </div>
+                    </div>
+  
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Partially Damaged Orders" }}</h6>
+                        <h3>
+                          {{ total_partially_damage_orders }}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+  
+            <div class="col-md-6">
+              <div class="dashboard-fancy-card">
+                <div class="card_head" style="background-color: lightseagreen">
+                  <h3>{{ "Invoice Details" }}</h3>
+                  <h5>{{ "Recent Invoice Details" }}</h5>
+                </div>
+                <div class="card_content">
+                  <div class="row gx-3">
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Invoice" }}</h6>
+                        <h3>
+                          {{ total_invoices }}
+  
+                          <!-- <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 14 14"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              opacity="0.5"
+                              d="M7.56055 1L7.56055 12C7.56055 12.5523 7.11283 13 6.56055 13C6.00826 13 5.56055 12.5523 5.56055 12L5.56055 1C5.56055 0.447715 6.00826 0 6.56055 0C7.11283 0 7.56055 0.447715 7.56055 1Z"
+                              fill="#F9A8BC"
+                            />
+                            <path
+                              d="M7.12636 10.4345L11.3107 6.25015C11.7249 5.83595 12.3965 5.83595 12.8107 6.25015C13.2249 6.66435 13.2249 7.33595 12.8107 7.75015L7.26776 13.293C6.87726 13.6836 6.24406 13.6836 5.85356 13.293L0.310658 7.75015C-0.103552 7.33595 -0.103552 6.66435 0.310658 6.25015C0.724867 5.83595 1.39645 5.83595 1.81066 6.25015L5.99496 10.4345C6.30736 10.7469 6.81396 10.7469 7.12636 10.4345Z"
+                              fill="#F24E76"
+                            />
+                          </svg> -->
+                        </h3>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Open" }}</h6>
+                        <h3>
+                          {{ total_open_invoices }}
+                        </h3>
+                      </div>
+                    </div>
+  
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Cancelled" }}</h6>
+                        <h3>
+                          {{ total_cancelled_invoices }}
+                        </h3>
+                      </div>
+                    </div>
+                    <!-- <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>Deliverise</h6>
+                        <h3>785</h3>
+                      </div>
+                    </div> -->
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Paid" }}</h6>
+                        <h3>
+                          {{ total_paid_invoices }}
+  
+                          <!-- <svg
+                            width="14"
+                            height="14"
+                            viewBox="0 0 14 14"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              opacity="0.5"
+                              d="M7.56055 1L7.56055 12C7.56055 12.5523 7.11283 13 6.56055 13C6.00826 13 5.56055 12.5523 5.56055 12L5.56055 1C5.56055 0.447715 6.00826 0 6.56055 0C7.11283 0 7.56055 0.447715 7.56055 1Z"
+                              fill="#F9A8BC"
+                            />
+                            <path
+                              d="M7.12636 10.4345L11.3107 6.25015C11.7249 5.83595 12.3965 5.83595 12.8107 6.25015C13.2249 6.66435 13.2249 7.33595 12.8107 7.75015L7.26776 13.293C6.87726 13.6836 6.24406 13.6836 5.85356 13.293L0.310658 7.75015C-0.103552 7.33595 -0.103552 6.66435 0.310658 6.25015C0.724867 5.83595 1.39645 5.83595 1.81066 6.25015L5.99496 10.4345C6.30736 10.7469 6.81396 10.7469 7.12636 10.4345Z"
+                              fill="#F24E76"
+                            />
+                          </svg> -->
+                        </h3>
+                      </div>
+                    </div>
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Partially Paid" }}</h6>
+                        <h3>
+                          {{ total_partially_paid_invoices }}
+                        </h3>
+                      </div>
+                    </div>
+  
+                    <div class="col-6">
+                      <div class="card-mini-caounter">
+                        <h6>{{ "Return" }}</h6>
+                        <h3>
+                          {{ total_return_invoices }}
+                        </h3>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
