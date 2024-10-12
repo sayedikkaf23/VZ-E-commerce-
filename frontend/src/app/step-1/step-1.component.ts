@@ -92,7 +92,7 @@ export class Step1Component implements AfterViewInit, OnInit {
       // Save the form data in the shared service
       this.formDataService.setStep1Data(this.personalDetailsForm.value);
       console.log(this.personalDetailsForm.value);
-      this.router.navigate(['/step-2']);
+      this.router.navigate(['/account-type']);
     } else {
       console.log('Form is invalid');
     }

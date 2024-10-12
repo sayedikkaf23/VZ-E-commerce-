@@ -49,6 +49,6 @@ export class AccountSectionComponent implements AfterViewInit {
     });
   }
   navigateToStep1() {
-    this.router.navigate(['/step-1']); // Adjust the route according to your setup
+    this.router.navigate(['/step-2']); // Adjust the route according to your setup
   }
 }

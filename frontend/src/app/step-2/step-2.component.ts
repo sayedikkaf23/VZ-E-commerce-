@@ -20,7 +20,7 @@ declare const $: any;
 })
 export class Step2Component {
   formData: any = {
-    nationalityfile: '',
+    resident: '',
     working: '',
     salary: '',
     emiratesId: '',
