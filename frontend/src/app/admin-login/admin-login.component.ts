@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { AdminAuthService } from '../service/admin-auth.service'; // Import the service
-import { Router } from '@angular/router'; // Import the Router
+import { AdminAuthService } from '../service/admin-auth.service';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr'; // Import ToastrService
 
 @Component({
   selector: 'app-admin-login',
@@ -12,46 +13,38 @@ export class AdminLoginComponent implements OnInit {
   loginForm: FormGroup;
 
   constructor(
-    private fb: FormBuilder, 
-    private authService: AdminAuthService,// Inject the service
-    private router: Router,  // Inject Router for navigation
-
+    private fb: FormBuilder,
+    private authService: AdminAuthService,
+    private router: Router,
+    private toastr: ToastrService // Inject ToastrService
   ) {
-    // Initialize form controls
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]], // Email field with validation
-      password: ['', [Validators.required]] // Password field with validation
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', [Validators.required]]
     });
   }
 
   ngOnInit(): void {}
 
-  // Submit function to handle form submission
   submit(): void {
-    console.log('Submit button clicked'); // Verify if submit button is clicked
-
     if (this.loginForm.valid) {
-
-
-      // Get form values
       const loginData = {
         email: this.loginForm.get('email')?.value,
         password: this.loginForm.get('password')?.value
       };
 
-      // Call the admin login method with JSON data
       this.authService.adminLogin(loginData).subscribe(
         (response) => {
-          console.log('Login successful', response); // Handle success
-          // Navigate or show success message
+          this.toastr.success('Login successful!', 'Success'); // Success notification
           this.router.navigate(['/panel/dashboard']);
         },
         (error) => {
-          console.log('Login failed', error); // Handle error
+          this.toastr.error('Login failed! Please check your credentials.', 'Error'); // Error notification
+          console.log('Login failed', error); 
         }
       );
     } else {
-      console.log('Form is invalid'); // Log if form is invalid
+      this.toastr.warning('Please fill in all required fields!', 'Warning'); // Validation warning
     }
   }
 }
