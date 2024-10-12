@@ -14,6 +14,11 @@ import { Step2Component } from './step-2/step-2.component';  // Import ReactiveF
 import { ToastrModule } from 'ngx-toastr';
 import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
 import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+import { AdminLoginComponent } from './admin-login/admin-login.component';
+import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
+import { HeaderComponent } from './header/header.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+
 
 @NgModule({
   declarations: [
@@ -21,7 +26,12 @@ import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
     _HomeComponent,
     Step1Component,
     AccountSectionComponent,
-    Step2Component
+    Step2Component,
+    AdminLoginComponent,
+    DashboardLayoutComponent,
+    HeaderComponent,
+    DashboardComponent,
+    
   ],
   imports: [
     BrowserAnimationsModule,

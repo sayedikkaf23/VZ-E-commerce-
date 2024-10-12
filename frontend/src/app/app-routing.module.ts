@@ -4,6 +4,10 @@ import { _HomeComponent } from './home/home.component';
 import { Step1Component } from './step-1/step-1.component';
 import { AccountSectionComponent } from './account-section/account-section.component';
 import { Step2Component } from './step-2/step-2.component';
+import { AdminLoginComponent } from './admin-login/admin-login.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
+
 
 
 const routes: Routes = [
@@ -28,6 +32,24 @@ const routes: Routes = [
     path: 'account-type',
     component: AccountSectionComponent,
    
+  },
+  {
+    path: 'admin/login',
+    component: AdminLoginComponent,
+   
+  },
+
+  {
+    path: 'panel',
+    component: DashboardLayoutComponent,
+    children: [
+      {
+        path: 'dashboard',
+        component: DashboardComponent,
+       
+      },
+      
+    ],
   },
 ];
 
