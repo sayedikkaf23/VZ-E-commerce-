@@ -3,9 +3,19 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "ecommerce": {
+    "frondend": {
       "projectType": "application",
-      "schematics": {},
+      "schematics": {
+        "@schematics/angular:component": {
+          "standalone": false
+        },
+        "@schematics/angular:directive": {
+          "standalone": false
+        },
+        "@schematics/angular:pipe": {
+          "standalone": false
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -13,37 +23,45 @@
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/ecommerce",
+            "outputPath": "dist/frondend",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["zone.js"],
+            "polyfills": [
+              "zone.js"
+            ],
             "tsConfig": "tsconfig.app.json",
-            "assets": ["src/favicon.ico", "src/assets"],
+             "assets": ["src/favicon.ico", "src/assets"],
             "styles": [
               "src/style.css",
               "src/responsive.css",
               "src/aos.css",
+              "node_modules/aos/dist/aos.css",
               "src/styles.css",
               
  
               "https://unpkg.com/aos@next/dist/aos.css",
-            
+            "node_modules/ngx-toastr/toastr.css" ,
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
-            "scripts": ["src/js/jquery-2.2.4.min.js"]
+            "scripts": ["src/js/jquery-2.2.4.min.js", "node_modules/aos/dist/aos.js"],
+            "server": "src/main.server.ts",
+            "prerender": true,
+            "ssr": {
+              "entry": "server.ts"
+            }
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2kb",
-                  "maximumError": "4kb"
+                  "maximumWarning": "2kB",
+                  "maximumError": "4kB"
                 }
               ],
               "outputHashing": "all"
@@ -60,27 +78,34 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "ecommerce:build:production"
+              "buildTarget": "frondend:build:production"
             },
             "development": {
-              "buildTarget": "ecommerce:build:development"
+              "buildTarget": "frondend:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "buildTarget": "ecommerce:build"
-          }
+          "builder": "@angular-devkit/build-angular:extract-i18n"
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": ["zone.js", "zone.js/testing"],
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
             "tsConfig": "tsconfig.spec.json",
-            "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["src/styles.css",  "node_modules/bootstrap/dist/css/bootstrap.min.css"],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css"
+            ],
             "scripts": []
           }
         }
@@ -88,6 +113,6 @@
     }
   },
   "cli": {
-    "analytics": "6eebfbb3-5922-45c7-8e70-0df1b47ef074"
+    "analytics": "14235e27-a36e-42f7-bcd2-dd70e016a0ff"
   }
 }

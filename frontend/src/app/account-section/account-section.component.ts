@@ -1,18 +1,15 @@
 import { Component, AfterViewInit,OnInit } from '@angular/core';
 import { Router } from '@angular/router'; // Import Router
 import { AppComponent } from '../app.component'; // Standalone component
-declare const AOS: any;
-declare const $: any;
+import AOS from 'aos';
 
+declare var $: any;
 @Component({
   selector: 'app-account-section',
   templateUrl: './account-section.component.html',
-  styleUrls: ['./account-section.component.css'], 
-  standalone: true, // Make this standalone if needed
-  imports: [AppComponent] // Import standalone component
-
+  styleUrl: './account-section.component.css'
 })
-export class AccountSectionComponent implements AfterViewInit {
+export class AccountSectionComponent {
   constructor(private router: Router) {} 
 
 

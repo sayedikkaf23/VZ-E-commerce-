@@ -215,12 +215,12 @@
                         <fieldset>
                           <select name="working" id="working" class="form-select" [(ngModel)]="formData.working">
                             <option value="" disabled selected>Are you Salaried or Self Employed?</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
+                            <option value="Salaried">Salaried</option>
+                            <option value="Self Employed">Self Employed</option>
                           </select>
                         </fieldset>
                       </div>
-                      <div class="form-field">
+                      <div class="form-field" *ngIf="formData.working === 'Salaried'">
                         <label for="emirates-id">Salary</label>
                         <input 
       type="number" 
@@ -234,10 +234,10 @@
 
 
 
-                      <div class="form-field">
-                        <label for="emirates-id">Company Name</label>
+                      <div class="form-field" *ngIf="formData.working === 'Self Employed'">
+                        <label for="companyname">Company Name</label>
                         <input 
-      type="number" 
+      type="text" 
       name="companyname" 
       id="companyname" 
       class="form-input" 
