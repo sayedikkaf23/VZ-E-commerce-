@@ -231,32 +231,38 @@
       placeholder="Please enter your monthly salary"
     />
                       </div>
+
+
+
+                      <div class="form-field">
+                        <label for="emirates-id">Company Name</label>
+                        <input 
+      type="number" 
+      name="companyname" 
+      id="companyname" 
+      class="form-input" 
+      [(ngModel)]="formData.companyname" 
+      placeholder="Please enter your company name"
+    />
+                      </div>
+
+
+                      <div class="form-field">
+                        <fieldset>
+                          <select name="working" id="working" class="form-select" [(ngModel)]="formData.Bank">
+                            <option value="" disabled selected>Do you wish to apply for?</option>
+                            <option value="DigitalBank">Digital Bank</option>
+                            <option value="TraditionalBank">Traditional Bank</option>
+                          </select>
+                        </fieldset>
+                      </div>
+                      <div class="form-submit">
+                        <button type="submit" class="btn" id="btn_submit">Next</button>
+                      </div>
                     </div>
                   
                     <div class="item">
-                        <div class="form-field">
-                            <label for="emirates-id">Company Name</label>
-                            <input 
-          type="number" 
-          name="companyname" 
-          id="companyname" 
-          class="form-input" 
-          [(ngModel)]="formData.companyname" 
-          placeholder="Please enter your company name"
-        />
-                          </div>
-
-
-                          <div class="form-field">
-                            <fieldset>
-                              <select name="working" id="working" class="form-select" [(ngModel)]="formData.working">
-                                <option value="" disabled selected>Do you wish to apply for?</option>
-                                <option value="DigitalBank">Digital Bank</option>
-                                <option value="TraditionalBank">Traditional Bank</option>
-                              </select>
-                            </fieldset>
-                          </div>
-                 
+                   
 <!--                   
                       <div class="form-field">
                         <label for="emirates-id">Emirates ID (If applicable)</label>
@@ -281,9 +287,7 @@
                         </div>
                       </div> -->
                   
-                      <div class="form-submit">
-                        <button type="submit" class="btn" id="btn_submit">Next</button>
-                      </div>
+                    
                     </div>
                   </form>
                   

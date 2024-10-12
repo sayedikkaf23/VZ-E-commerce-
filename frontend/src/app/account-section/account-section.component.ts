@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit,OnInit } from '@angular/core';
 import { Router } from '@angular/router'; // Import Router
 import { AppComponent } from '../app.component'; // Standalone component
 declare const AOS: any;
@@ -15,6 +15,19 @@ declare const $: any;
 export class AccountSectionComponent implements AfterViewInit {
   constructor(private router: Router) {} 
 
+
+
+  ngOnInit() {
+    setTimeout(() => {
+      const topElement = document.querySelector('.account_section');
+      if (topElement) {
+        topElement.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+      }
+    }, 100); // Added a small timeout to ensure the page is fully loaded
+  }
+
+
+  
   ngAfterViewInit() {
     AOS.init(); // Initialize AOS animations
 
@@ -43,10 +56,16 @@ export class AccountSectionComponent implements AfterViewInit {
         $('html').removeClass('menu-show');
       });
 
+
+   
+
       // $('.sub-menu-toggle').click(function () {
       //   $(this).parent().toggleClass('submenu_active');
       // });
     });
+
+
+    
   }
   navigateToStep1() {
     this.router.navigate(['/step-2']); // Adjust the route according to your setup

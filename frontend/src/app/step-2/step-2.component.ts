@@ -23,7 +23,8 @@ export class Step2Component {
     resident: '',
     working: '',
     salary: '',
-    emiratesId: '',
+    companyname: '',
+    Bank: '',
   };
 
   files: { passport?: File; salaryStatements?: File[] } = {};
