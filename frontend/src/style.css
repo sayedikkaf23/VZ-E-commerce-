@@ -123,6 +123,69 @@ html .btn {
   transition: all 0.4s;
   gap: 10px;
 }
+/* demo */
+/* Override ngx-intl-tel-input input styles to match the other form fields */
+.ngx-tel-input .iti {
+  width: 100% !important;
+}
+
+.ngx-tel-input input {
+  width: 100% !important;
+  padding-left: 60px !important; /* Adjust padding-left for alignment with other fields */
+  height: 74px; /* Matching the height of other form fields */
+  border-radius: 61px; /* Same border-radius as other inputs */
+  background-color: rgba(217, 217, 217, 0.23);
+  border: 1px solid #CDC9C9; /* Consistent border */
+}
+
+.ngx-tel-input .iti__flag-container {
+  width: 60px !important; /* Flag container width */
+  height: 74px !important; /* Match the height of the input */
+}
+
+.ngx-tel-input input::placeholder {
+  color: rgba(0, 0, 0, 0.507) !important; /* Placeholder color matching */
+}
+
+.ngx-tel-input input:focus {
+  border-color: var(--dark) !important; /* Focus border color for consistency */
+  box-shadow: none !important; /* Remove shadow on focus */
+}
+/* Adjust placeholder alignment for the phone number input */
+.ngx-tel-input input::placeholder {
+  padding-left: 30px; /* Add some padding to the left to move the placeholder */
+  color: rgba(0, 0, 0, 0.507); /* Maintain the existing placeholder color */
+}
+/* Remove rounded corners of the search input */
+.iti__country-list .iti__search input {
+  border-radius: 0 !important;
+  border: none !important; /* To remove any borders */
+  border-bottom: 1px solid #ccc; /* Optional: add a bottom border if needed */
+}
+
+
+/* Adjust input padding to match the other form fields */
+.ngx-tel-input input {
+  padding-left: 60px !important; /* Adjust left padding to make space for the flag and dial code */
+  width: 100% !important;
+  height: 74px;
+  border-radius: 61px;
+  background-color: rgba(217, 217, 217, 0.23);
+  border: 1px solid #CDC9C9;
+}
+.ngx-tel-input .iti__country .iti__name {
+  margin-left: 15px; /* Adjust the margin as needed for spacing */
+  font-size: 16px;   /* You can also adjust the font size if necessary */
+}
+
+/* Adjust the flag size if needed */
+.ngx-tel-input .iti__flag {
+  width: 25px !important;  /* Adjust the width */
+  height: 18px !important; /* Adjust the height */
+}
+
+
+
 html .btn .icon {
   height: 48px;
   width: 48px;
@@ -371,6 +434,7 @@ html .form-control:focus {
   box-shadow: none;
   border-color: var(--white);
 }
+
 .header-navbar ul li.dropdown.submenu_active .sub-menu-toggle {
   transform: rotate(180deg);
 }
