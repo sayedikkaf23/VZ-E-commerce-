@@ -2,6 +2,7 @@ import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { Inject, PLATFORM_ID } from '@angular/core';
+import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import enums
 
 import { HttpClient } from '@angular/common/http'; // Import HttpClientModule and HttpClient
 import { ChangeDetectorRef } from '@angular/core';
@@ -30,7 +31,8 @@ export class Step1Component {
   personalDetailsForm: FormGroup;
   nationalities: string[] = []; // Initialize as an empty array
   selectedNationality: string = '';
-
+  SearchCountryField = SearchCountryField;  // Assign to use in template
+  CountryISO = CountryISO;   
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -138,6 +140,9 @@ export class Step1Component {
         return 'Nationality';
       case 'birthday':
         return 'Birthday';
+        case 'phoneNumber':
+          return 'Phone Number';
+  
       default:
         return field;
     }

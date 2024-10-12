@@ -7,10 +7,13 @@ import { _HomeComponent } from './home/home.component';
 import { Step1Component } from './step-1/step-1.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';  // Import FormsModule and ReactiveFormsModule
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 import { AccountSectionComponent } from './account-section/account-section.component';
 import { Step2Component } from './step-2/step-2.component';  // Import ReactiveFormsModule
 import { ToastrModule } from 'ngx-toastr';
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
 
 @NgModule({
   declarations: [
@@ -27,9 +30,13 @@ import { ToastrModule } from 'ngx-toastr';
     ReactiveFormsModule,
     FormsModule,            // Add FormsModule to imports
     ToastrModule.forRoot(), // ToastrModule added
+    NgxIntlTelInputModule,
+    BsDropdownModule.forRoot(),
 
     // HttpClientModule is no longer needed here
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
+
   providers: [
     provideHttpClient(withInterceptorsFromDi()) // Use the new HttpClient setup
   ],

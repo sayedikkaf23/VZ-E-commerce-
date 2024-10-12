@@ -232,6 +232,23 @@
             </div>
             
             
+            <div class="form-field">
+              <label for="phone">Phone Number</label>
+              <ngx-intl-tel-input
+              class="form-control"
+                class="ngx-tel-input"
+                [cssClass]="'form-control'"
+                [preferredCountries]="['us', 'gb']"
+                [enableAutoCountrySelect]="true"
+                [enablePlaceholder]="true"
+                [searchCountryFlag]="true"
+                [searchCountryField]="[SearchCountryField.Name, SearchCountryField.DialCode]"
+                [selectedCountryISO]="CountryISO.UnitedStates"
+                [separateDialCode]="true"
+                formControlName="phoneNumber"
+              ></ngx-intl-tel-input>
+            </div>
+            
             
             
             <div class="form-field">

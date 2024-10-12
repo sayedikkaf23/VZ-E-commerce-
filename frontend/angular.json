@@ -38,12 +38,16 @@
               "node_modules/aos/dist/aos.css",
               "src/styles.css",
               
- 
+              "node_modules/intl-tel-input/build/css/intlTelInput.css",
+
+ "src/styles.css",
+  "node_modules/intl-tel-input/build/css/intlTelInput.css",
               "https://unpkg.com/aos@next/dist/aos.css",
             "node_modules/ngx-toastr/toastr.css" ,
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
-            "scripts": ["src/js/jquery-2.2.4.min.js", "node_modules/aos/dist/aos.js"],
+            "scripts": ["src/js/jquery-2.2.4.min.js", "node_modules/aos/dist/aos.js",  "node_modules/intl-tel-input/build/js/intlTelInput.js"
+          ],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {

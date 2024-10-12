@@ -1,0 +1,17 @@
+.ngx-tel-input .iti {
+    width: 100% !important;
+  }
+  
+  .ngx-tel-input input {
+    width: 100% !important;
+    padding-left: 50px !important; /* Adjust padding as needed */
+  }
+  
+  .ngx-tel-input .iti__flag-container {
+    width: 50px !important; /* Adjust flag container width */
+  }
+  
+  .ngx-tel-input input::placeholder {
+    color: #ddd !important; /* Keep the placeholder style consistent */
+  }
+  
