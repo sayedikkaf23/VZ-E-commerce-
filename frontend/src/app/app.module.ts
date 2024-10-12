@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AccountSectionComponent } from './account-section/account-section.component';
 import { Step2Component } from './step-2/step-2.component';  // Import ReactiveFormsModule
 import { ToastrModule } from 'ngx-toastr';
+import { AdminLoginComponent } from './admin-login/admin-login.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { ToastrModule } from 'ngx-toastr';
     _HomeComponent,
     Step1Component,
     AccountSectionComponent,
-    Step2Component
+    Step2Component,
+    AdminLoginComponent
   ],
   imports: [
     BrowserAnimationsModule,
