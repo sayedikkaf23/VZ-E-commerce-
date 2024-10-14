@@ -5,6 +5,7 @@ import { FormDataService } from '../service/form-data.service'; // Adjust the pa
 import { UserService } from '../service/user.service'; // Import your UserService
 import AOS from 'aos'; // AOS for animations
 import { ToastrService } from 'ngx-toastr'; // Import ToastrService
+import { Router } from '@angular/router';
 
 declare var $: any;
 
@@ -30,6 +31,7 @@ export class Step2Component implements AfterViewInit {
     private http: HttpClient,
     private userService: UserService,
     private toastr: ToastrService, // Inject ToastrService
+    private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to check if it's a browser
   ) {
     // Retrieve the Step 1 data from the service when Step 2 initializes
@@ -101,27 +103,27 @@ export class Step2Component implements AfterViewInit {
 
       // Append files
       // Add logic to append file data if necessary
-
+      this.router.navigate(['/ShowDetails']);
       // Send data to the server using your userService
-      this.userService.uploadUserData(formDataToSend).subscribe(
-        response => {
-          if ('message' in response) {
-            this.toastr.success('Data submitted successfully!', 'Success'); // Show success toast
+      // this.userService.uploadUserData(formDataToSend).subscribe(
+      //   response => {
+      //     if ('message' in response) {
+      //       this.toastr.success('Data submitted successfully!', 'Success'); // Show success toast
       
-            this.formData = {
-              resident: '',
-              working: '',
-              salary: '',
-              companyname: '',
-              Bank: ''
-            };
-          }
-        },
-        error => {
-          this.toastr.error(error.error.message); // Show error toast
-          console.error(error); // Handle the error
-        }
-      );
+      //       this.formData = {
+      //         resident: '',
+      //         working: '',
+      //         salary: '',
+      //         companyname: '',
+      //         Bank: ''
+      //       };
+      //     }
+      //   },
+      //   error => {
+      //     this.toastr.error(error.error.message); // Show error toast
+      //     console.error(error); // Handle the error
+      //   }
+      // );
     }
   }
 
