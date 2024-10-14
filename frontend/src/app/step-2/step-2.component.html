@@ -198,7 +198,7 @@
             <div class="step_1_form step_2_form">
                 <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
                     <div class="item">
-                      <h3>Personal Bank Service</h3>
+                      <h3>Personal Bank Service<span class="required">*</span></h3>
                       <div class="form-field">
                         <div class="form-field">
                             <fieldset>
@@ -221,7 +221,7 @@
                         </fieldset>
                       </div>
                       <div class="form-field" *ngIf="formData.working === 'Salaried'">
-                        <label for="emirates-id">Salary</label>
+                        <label for="emirates-id">Salary<span class="required">*</span></label>
                         <input 
       type="number" 
       name="salary" 
@@ -235,7 +235,7 @@
 
 
                       <div class="form-field" *ngIf="formData.working === 'Self Employed'">
-                        <label for="companyname">Company Name</label>
+                        <label for="companyname">Company Name<span class="required">*</span></label>
                         <input 
       type="text" 
       name="companyname" 
