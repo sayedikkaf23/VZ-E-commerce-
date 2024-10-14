@@ -9,7 +9,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
 import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 
-
+import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
 
@@ -59,6 +59,18 @@ const routes: Routes = [
       {
         path: 'banck-account-opening',
         component: BackAccountOpeningComponent,
+       
+      },
+      
+    ],
+  },
+  {
+    path: 'panel',
+    component: DashboardLayoutComponent,
+    children: [
+      {
+        path: 'admin-settings',
+        component: SettingsComponent,
        
       },
       
