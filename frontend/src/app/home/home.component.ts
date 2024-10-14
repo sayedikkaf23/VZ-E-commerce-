@@ -85,7 +85,7 @@ export class _HomeComponent {
           $('html').removeClass('menu-show');
         });
 
-        $('.sub-menu-toggle').click( () => {
+        $('.sub-menu-toggle').click(() => {
           $(this).parent().toggleClass('submenu_active');
         });
       });

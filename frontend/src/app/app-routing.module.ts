@@ -7,14 +7,18 @@ import { Step2Component } from './step-2/step-2.component';
 import { AdminLoginComponent } from './admin-login/admin-login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
-
+import { ShowDetailsComponent } from './show-details/show-details.component';
 
 
 const routes: Routes = [
 
-
   {
     path: '',
+    redirectTo: 'home',
+    pathMatch: 'full' // Ensures exact match with the root path
+  },
+  {
+    path: 'home',
     component: _HomeComponent,
    
   },
@@ -31,6 +35,11 @@ const routes: Routes = [
   {
     path: 'account-type',
     component: AccountSectionComponent,
+   
+  },
+  {
+    path: 'ShowDetails',
+    component: ShowDetailsComponent,
    
   },
   {

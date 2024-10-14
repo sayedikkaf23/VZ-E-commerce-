@@ -125,63 +125,93 @@ html .btn {
 }
 /* demo */
 /* Override ngx-intl-tel-input input styles to match the other form fields */
+/* General adjustments for the ngx-tel-input */
 .ngx-tel-input .iti {
   width: 100% !important;
 }
 
-.ngx-tel-input input {
-  width: 100% !important;
-  padding-left: 60px !important; /* Adjust padding-left for alignment with other fields */
-  height: 74px; /* Matching the height of other form fields */
-  border-radius: 61px; /* Same border-radius as other inputs */
-  background-color: rgba(217, 217, 217, 0.23);
-  border: 1px solid #CDC9C9; /* Consistent border */
-}
 
-.ngx-tel-input .iti__flag-container {
-  width: 60px !important; /* Flag container width */
-  height: 74px !important; /* Match the height of the input */
-}
 
-.ngx-tel-input input::placeholder {
-  color: rgba(0, 0, 0, 0.507) !important; /* Placeholder color matching */
-}
+/* Adjust the flag container size to match the input height */
 
+
+/* Adjust the placeholder styling */
+
+
+/* Focus state of the input */
 .ngx-tel-input input:focus {
-  border-color: var(--dark) !important; /* Focus border color for consistency */
-  box-shadow: none !important; /* Remove shadow on focus */
+  border-color: var(--dark) !important; /* Dark border color on focus */
+  box-shadow: none !important; /* Remove box shadow on focus */
 }
-/* Adjust placeholder alignment for the phone number input */
+
+/* Placeholder alignment */
 .ngx-tel-input input::placeholder {
-  padding-left: 30px; /* Add some padding to the left to move the placeholder */
-  color: rgba(0, 0, 0, 0.507); /* Maintain the existing placeholder color */
+  padding-left: 30px; /* Add padding to adjust placeholder position */
 }
-/* Remove rounded corners of the search input */
+
+/* Remove rounded corners from the search input in the dropdown */
 .iti__country-list .iti__search input {
   border-radius: 0 !important;
-  border: none !important; /* To remove any borders */
-  border-bottom: 1px solid #ccc; /* Optional: add a bottom border if needed */
+  border: none !important; /* Remove any borders */
+  border-bottom: 1px solid #eb1010; /* Optional: add a bottom border for the search input */
 }
 
+/* Adjust the flag size inside the dropdown */
 
-/* Adjust input padding to match the other form fields */
-.ngx-tel-input input {
-  padding-left: 60px !important; /* Adjust left padding to make space for the flag and dial code */
-  width: 100% !important;
-  height: 74px;
-  border-radius: 61px;
-  background-color: rgba(217, 217, 217, 0.23);
-  border: 1px solid #CDC9C9;
-}
-.ngx-tel-input .iti__country .iti__name {
-  margin-left: 15px; /* Adjust the margin as needed for spacing */
-  font-size: 16px;   /* You can also adjust the font size if necessary */
+
+/* Adjust the alignment of country name and dial code */
+
+
+/* Adjust the alignment of the dial code */
+.ngx-tel-input .iti__country .iti__dial-code {
+  font-size: 14px;   /* Adjust font size for the dial code */
+  margin-right: 10px; /* Adjust margin for better spacing */
 }
 
-/* Adjust the flag size if needed */
-.ngx-tel-input .iti__flag {
-  width: 25px !important;  /* Adjust the width */
-  height: 18px !important; /* Adjust the height */
+/* Gray hover background issue */
+.iti__country:hover, .iti__search input:hover {
+  background-color: rgb(236, 18, 18) !important; /* Match the input background on hover */
+}
+
+/* Dropdown menu styling */
+.iti__dropdown {
+  z-index: 1000; /* Ensure it appears above other elements */
+  max-height: 300px; /* Limit the height of the dropdown */
+  overflow-y: auto; /* Enable scrolling if needed */
+  border-radius: 10px; /* Smooth border radius */
+  border: 1px solid #ccc; /* Consistent border */
+}
+
+/* Remove any unwanted hover effects */
+.iti__country-list .iti__country:hover {
+  background-color: rgb(190, 180, 180) !important; /* Subtle hover background color */
+}
+
+.iti__country:hover, .iti__country:focus {
+  background-color: transparent !important; /* Make the background transparent on hover */
+}
+
+/* Remove hover background and focus from the country list items */
+.iti__country:hover, .iti__country:focus, .iti__country--highlight {
+  background-color: transparent !important; /* Make the background transparent on hover */
+  color: inherit !important; /* Ensure the text color remains unchanged */
+}
+
+/* Remove hover effect from the search box */
+.iti__search input:hover {
+  background-color: transparent !important; /* No background color on hover */
+  box-shadow: none !important; /* Remove shadow on hover */
+}
+
+/* Remove hover effect on the flag dropdown arrow */
+.iti__flag-container:hover {
+  background-color: transparent !important;
+}
+
+/* Ensure no borders or shadows appear on hover */
+.iti__country:hover, .iti__country:focus {
+  box-shadow: none !important; /* No shadow on hover */
+  border: none !important; /* No border change on hover */
 }
 
 

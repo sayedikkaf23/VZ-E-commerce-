@@ -107,7 +107,14 @@ export class Step2Component implements AfterViewInit {
         response => {
           if ('message' in response) {
             this.toastr.success('Data submitted successfully!', 'Success'); // Show success toast
-            console.log("22", response);
+      
+            this.formData = {
+              resident: '',
+              working: '',
+              salary: '',
+              companyname: '',
+              Bank: ''
+            };
           }
         },
         error => {

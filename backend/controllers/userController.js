@@ -12,8 +12,20 @@ exports.submit = async (req, res) => {
       console.log(req.body);
 
       // Destructure the required fields from req.body
-      const { firstName, lastName, email, nationality, birthday, resident, working, salary, companyname, Bank } = req.body;
+      const { firstName, lastName, email, nationality, birthday, resident, working, salary, companyname, Bank,mobileNumber } = req.body;
+      let parsedMobileNumber;
 
+      // If mobileNumber is a string, try to parse it, otherwise, use it directly
+      if (typeof mobileNumber === 'string') {
+        try {
+          parsedMobileNumber = JSON.parse(mobileNumber); // Try to parse JSON string
+        } catch (e) {
+          console.error('Error parsing mobileNumber JSON:', e);
+          parsedMobileNumber = mobileNumber; // If parsing fails, use as-is
+        }
+      } else {
+        parsedMobileNumber = mobileNumber; // If it's already an object, use it
+      }
       // Check if email already exists
       const existingUser = await UserDetails.findOne({ email });
       if (existingUser) {
@@ -31,13 +43,15 @@ exports.submit = async (req, res) => {
           working,
           salary,
           companyname,
-          Bank
+          Bank,
+          mobileNumber:parsedMobileNumber
       });
 
       // Save the user details to the database
       await userDetails.save();
       res.status(201).json({ message: 'Details submitted successfully', userDetails });
   } catch (error) {
+    console.log(error)
       res.status(500).json({ error: 'Error saving details', details: error.message });
   }
 };
