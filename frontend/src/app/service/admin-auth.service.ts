@@ -15,5 +15,7 @@ export class AdminAuthService {
   adminLogin(data: { email: string, password: string }): Observable<any> {
     return this.http.post(`${this.url}/user/login`, data); // Sending email and password as JSON
   }
-
+  getUserDetails(): Observable<any> {
+    return this.http.get(`${this.url}/user/submissions`); // GET request to fetch submissions
+  }
 }

@@ -7,6 +7,7 @@ import { Step2Component } from './step-2/step-2.component';
 import { AdminLoginComponent } from './admin-login/admin-login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
+import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 
 
 
@@ -46,6 +47,18 @@ const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+       
+      },
+      
+    ],
+  },
+  {
+    path: 'panel',
+    component: DashboardLayoutComponent,
+    children: [
+      {
+        path: 'banck-account-opening',
+        component: BackAccountOpeningComponent,
        
       },
       

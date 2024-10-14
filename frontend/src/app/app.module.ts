@@ -18,6 +18,7 @@ import { AdminLoginComponent } from './admin-login/admin-login.component';
 import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
 import { HeaderComponent } from './header/header.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     DashboardLayoutComponent,
     HeaderComponent,
     DashboardComponent,
+    BackAccountOpeningComponent,
     
   ],
   imports: [
