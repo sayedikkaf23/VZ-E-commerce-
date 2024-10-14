@@ -60,25 +60,11 @@ const routes: Routes = [
         component: DashboardComponent,
        
       },
-      
-    ],
-  },
-  {
-    path: 'panel',
-    component: DashboardLayoutComponent,
-    children: [
       {
         path: 'banck-account-opening',
         component: BackAccountOpeningComponent,
        
       },
-      
-    ],
-  },
-  {
-    path: 'panel',
-    component: DashboardLayoutComponent,
-    children: [
       {
         path: 'admin-settings',
         component: SettingsComponent,
@@ -87,6 +73,7 @@ const routes: Routes = [
       
     ],
   },
+  
 ];
 
 @NgModule({
