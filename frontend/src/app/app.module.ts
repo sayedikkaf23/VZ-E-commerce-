@@ -19,6 +19,8 @@ import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.co
 import { HeaderComponent } from './header/header.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ShowDetailsComponent } from './show-details/show-details.component';
+import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
+import { SettingsComponent } from './settings/settings.component';
 
 
 @NgModule({
@@ -33,6 +35,8 @@ import { ShowDetailsComponent } from './show-details/show-details.component';
     HeaderComponent,
     DashboardComponent,
     ShowDetailsComponent,
+    BackAccountOpeningComponent,
+    SettingsComponent,
     
   ],
   imports: [

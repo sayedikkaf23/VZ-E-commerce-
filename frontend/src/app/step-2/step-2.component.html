@@ -221,7 +221,7 @@
                         </fieldset>
                       </div>
                       <div class="form-field" *ngIf="formData.working === 'Salaried'">
-                        <label for="emirates-id">Salary</label>
+                        <label for="emirates-id">Salary<span class="required">*</span></label>
                         <input 
       type="number" 
       name="salary" 
@@ -235,7 +235,7 @@
 
 
                       <div class="form-field" *ngIf="formData.working === 'Self Employed'">
-                        <label for="companyname">Company Name</label>
+                        <label for="companyname">Company Name<span class="required">*</span></label>
                         <input 
       type="text" 
       name="companyname" 
