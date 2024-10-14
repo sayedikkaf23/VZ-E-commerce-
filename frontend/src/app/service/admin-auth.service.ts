@@ -18,4 +18,7 @@ export class AdminAuthService {
   getUserDetails(): Observable<any> {
     return this.http.get(`${this.url}/user/submissions`); // GET request to fetch submissions
   }
+  getServices(): Observable<any> {
+    return this.http.get(`${this.url}/user/services`); // GET request to fetch user services
+  }
 }
