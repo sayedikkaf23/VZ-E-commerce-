@@ -26,3 +26,6 @@ $(document).ready(function() {
 	});
 	
 });
+$( function() {
+	$( ".form-select" ).selectmenu();
+});

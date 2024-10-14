@@ -497,6 +497,20 @@
         padding: 0 20px 0 39px;
         height: 66px;
     }
+    .order-review .box-light table td, .order-review .box-light th {
+        padding: 10px 0;
+        font-size: 15px;
+    }
+    .box-light {
+        padding: 28px;
+    }
+    .order-review .box-light th {
+        font-weight: 500;
+        width: 38%;
+    }
+    .order-review .order-summery.box-light tr:last-child td, .order-review .order-summery.box-light tr:last-child th {
+        font-size: 18px;
+    }
 }
 
 @media (max-width:767px){
@@ -587,9 +601,9 @@
         margin-bottom: 25px;
     }
     .head_text p {
-        font-size: 12px;
+        font-size: 14px;
         line-height: 110%;
-        width: 250px;
+        width: 267px;
     }
     .apply_service_section .box .image {
         height: 135px;
@@ -859,5 +873,37 @@
     .ui-selectmenu-button-open.ui-corner-top::before, .ui-selectmenu-button-open.ui-corner-top::after {
         height: 23px;
         width: 23px;
+    }
+    .box-light.monthly_salary td img {
+        padding: 5px;
+    }
+    .order-review .box-light th {
+        width: 45%;
+    }
+    .box-light {
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+    }
+    .order-summery.box-light {
+        padding: 25px;
+    }
+    .box-light h4 {
+        font-size: 18px;
+    }
+    .order-review .box-light table td {
+        padding-left: 10px;
+    }
+    html .order-review .primary-btn {
+        font-size: 16px;
+        line-height: 44px;
+    }
+    a.btn-edit {
+        font-size: 12px;
+        padding: 0 15px;
+        line-height: 28px;
+    }
+    .order-summery-col {
+        position: static;
     }
 }
