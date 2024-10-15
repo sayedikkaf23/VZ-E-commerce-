@@ -1,31 +1,30 @@
 <div class="content">
-    <div class="page-heading">
-      <div class="row align-items-center justify-content-between">
-        <div class="col-auto">
-          <div class="row align-items-center">
-            <div class="col-auto mb-2">
-              <h2>Services</h2>
-            </div>
-            <div class="col-auto mb-2">
-              <a class="btn btn-sm btn-light-primary">
-                <i class="fa-solid fa-plus"></i> New Service
-              </a>
-            </div>
+  <div class="page-heading">
+    <div class="row align-items-center justify-content-between">
+      <div class="col-auto">
+        <div class="row align-items-center">
+          <div class="col-auto mb-2">
+            <h2>Services</h2>
+          </div>
+          <div class="col-auto mb-2">
+            <a class="btn btn-sm btn-light-primary">
+              <i class="fa-solid fa-plus"></i> New Service
+            </a>
           </div>
         </div>
-        <div class="col-auto">
-          <div class="row align-items-center">
-            <div class="col-auto mb-2 mt-2">
-              <div class="form-feild page-heading-search-field mb-0">
-                <div class="field-icon">
-                  <input
-                    type="text"
-                    class="form-control form-control-sm form-control-shadow"
-                    placeholder="Search..."
-                  />
-                  <div class="icon">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                  </div>
+      </div>
+      <div class="col-auto">
+        <div class="row align-items-center">
+          <div class="col-auto mb-2 mt-2">
+            <div class="form-feild page-heading-search-field mb-0">
+              <div class="field-icon">
+                <input
+                  type="text"
+                  class="form-control form-control-sm form-control-shadow"
+                  placeholder="Search..."
+                />
+                <div class="icon">
+                  <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
               </div>
             </div>
@@ -33,59 +32,59 @@
         </div>
       </div>
     </div>
-  
-    <div class="table-responsive overflow-behaviour">
-      <table class="table table-list-data table-hover">
-        <thead class="bg-light">
-          <tr>
-            <th scope="col"><b>Service Name</b> &#x2191;&#x2193;</th>
-            <th scope="col"><b>Description</b> &#x2191;&#x2193;</th>
-            <th scope="col"><b>Status</b> &#x2191;&#x2193;</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Loop through services and display them in the table -->
-          <tr *ngFor="let service of services">
-            <td>{{ service.serviceName }}</td>
-            <td>{{ service.description }}</td>
-            <td>
-              <div class="form-check form-switch form-switch-2">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="status_{{ service._id }}"
-                  [checked]="service.isActive"
-                />
-              </div>
-            </td>
-            <td class="text-end td-action-data">
-              <div class="dropdown">
-                <button
-                  class="btn btn-icon btn-sm btn-light dropdown-toggle arrow-none"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <i class="fa-solid fa-ellipsis-vertical"></i>
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <a class="dropdown-item cursor-pointer">Edit</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item cursor-pointer">View</a>
-                  </li>
-                  <li>
-                    <a class="dropdown-item cursor-pointer">Delete</a>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
-  
+
+  <div class="table-responsive overflow-behaviour">
+    <table class="table table-list-data table-hover">
+      <thead class="bg-light">
+        <tr>
+          <th scope="col"><b>Service Name</b> &#x2191;&#x2193;</th>
+          <th scope="col"><b>Description</b> &#x2191;&#x2193;</th>
+          <th scope="col"><b>Status</b> &#x2191;&#x2193;</th>
+          <th scope="col">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Loop through services and display them in the table -->
+        <tr *ngFor="let service of services">
+          <td>{{ service.serviceName }}</td>
+          <td>{{ service.description }}</td>
+          <td>
+            <div class="form-check form-switch form-switch-2">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="status_{{ service._id }}"
+                [checked]="service.isActive"
+              />
+            </div>
+          </td>
+          <td class="text-end td-action-data">
+            <div class="dropdown">
+              <button
+                class="btn btn-icon btn-sm btn-light dropdown-toggle arrow-none"
+                type="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="false"
+              >
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <a class="dropdown-item cursor-pointer">Edit</a>
+                </li>
+                <li>
+                  <a class="dropdown-item cursor-pointer">View</a>
+                </li>
+                <li>
+                  <a class="dropdown-item cursor-pointer">Delete</a>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
