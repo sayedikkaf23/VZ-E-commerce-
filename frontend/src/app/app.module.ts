@@ -18,6 +18,7 @@ import { AdminLoginComponent } from './admin-login/admin-login.component';
 import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
 import { HeaderComponent } from './header/header.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ShowDetailsComponent } from './show-details/show-details.component';
 import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 import { SettingsComponent } from './settings/settings.component';
 
@@ -33,6 +34,7 @@ import { SettingsComponent } from './settings/settings.component';
     DashboardLayoutComponent,
     HeaderComponent,
     DashboardComponent,
+    ShowDetailsComponent,
     BackAccountOpeningComponent,
     SettingsComponent,
     

@@ -10,7 +10,15 @@ const userDetailsSchema = new mongoose.Schema({
     working: { type: String, required: true },
     salary: { type: Number },
     companyname: { type: String }, // added 'companyname' field
-    Bank: { type: String, required: true } // added 'Bank' field
+    Bank: { type: String, required: true }, // added 'Bank' field
+    mobileNumber: {
+        number: String,
+        internationalNumber: String,
+        nationalNumber: String,
+        e164Number: String,
+        countryCode: String,
+        dialCode: String
+      },
 }, { timestamps: true });
 
 module.exports = mongoose.model('UserDetails', userDetailsSchema);

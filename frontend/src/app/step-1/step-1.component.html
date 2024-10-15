@@ -236,7 +236,7 @@
               <label for="phone">Phone Number<span class="required">*</span></label>
               <ngx-intl-tel-input
                 class="ngx-tel-input"
-                [cssClass]="'form-control'"
+             
                 [preferredCountries]="['us', 'gb']"
                 [enableAutoCountrySelect]="true"
                 [enablePlaceholder]="true"
@@ -244,7 +244,7 @@
                 [searchCountryField]="[SearchCountryField.Name, SearchCountryField.DialCode]"
                 [selectedCountryISO]="CountryISO.UnitedStates"
                 [separateDialCode]="true"
-                formControlName="phoneNumber"
+                formControlName="mobileNumber"
               ></ngx-intl-tel-input>
             </div>
             

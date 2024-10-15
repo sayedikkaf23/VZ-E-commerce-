@@ -7,15 +7,21 @@ import { Step2Component } from './step-2/step-2.component';
 import { AdminLoginComponent } from './admin-login/admin-login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
+import { ShowDetailsComponent } from './show-details/show-details.component';
+
 import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 
 import { SettingsComponent } from './settings/settings.component';
 
 const routes: Routes = [
 
-
   {
     path: '',
+    redirectTo: 'home',
+    pathMatch: 'full' // Ensures exact match with the root path
+  },
+  {
+    path: 'home',
     component: _HomeComponent,
    
   },
@@ -35,6 +41,11 @@ const routes: Routes = [
    
   },
   {
+    path: 'ShowDetails',
+    component: ShowDetailsComponent,
+   
+  },
+  {
     path: 'admin/login',
     component: AdminLoginComponent,
    
@@ -49,25 +60,11 @@ const routes: Routes = [
         component: DashboardComponent,
        
       },
-      
-    ],
-  },
-  {
-    path: 'panel',
-    component: DashboardLayoutComponent,
-    children: [
       {
         path: 'banck-account-opening',
         component: BackAccountOpeningComponent,
        
       },
-      
-    ],
-  },
-  {
-    path: 'panel',
-    component: DashboardLayoutComponent,
-    children: [
       {
         path: 'admin-settings',
         component: SettingsComponent,
@@ -76,6 +73,7 @@ const routes: Routes = [
       
     ],
   },
+  
 ];
 
 @NgModule({

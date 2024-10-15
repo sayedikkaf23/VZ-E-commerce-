@@ -47,7 +47,9 @@ export class Step1Component {
       lastName: ['', [Validators.required, Validators.minLength(2)]],
       email: ['', [Validators.required, Validators.email]],
       nationality: ['', Validators.required],
+      mobileNumber: ['', Validators.required],
       birthday: { type: Date, required: true },
+      
     });
   }
 
@@ -140,8 +142,8 @@ export class Step1Component {
         return 'Nationality';
       case 'birthday':
         return 'Birthday';
-        case 'phoneNumber':
-          return 'Phone Number';
+        case 'mobileNumber':
+          return 'mobileNumber';
   
       default:
         return field;
