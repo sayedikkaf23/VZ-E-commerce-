@@ -133,125 +133,104 @@
 
 <section class="step_1_section order-review">
     <div class="container">
-        <div class="head_text">
-            <h1 data-aos="fade-up">Review your details </h1>
-            <p data-aos="fade-up">Virtuzone offers a range of services to further enhance your business well-being.</p>
-        </div>
-        <div class="row align-items-start">
-            <div class="col-md-7 col-lg-8">
-                <div class="box-light">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h4>Personal Information</h4>
-                        <a href="step-1.html" class="btn-edit">Edit</a>
-                    </div>
-                    <table class="w-100">
-                        <tbody>
-                            <tr>
-                                <th>First Name :</th>
-                                <td>Jhon</td>
-                            </tr>
-                            <tr>
-                                <th>Last Name :</th>
-                                <td>Smith</td>
-                            </tr>
-                            <tr>
-                                <th>Email ID :</th>
-                                <!-- <td>jhonsmith@gmail.com</td> -->
-                            </tr>
-                            <tr>
-                                <th>Nationality :</th>
-                                <td>US</td>
-                            </tr>
-                            <tr>
-                                <th>Date of Birth :</th>
-                                <td>25/08/1993</td>
-                            </tr>
-                            <tr>
-                                <th>Phone Number :</th>
-                                <td>91 9747322254</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <div class="box-light">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h4>Personal Bank Service
-                        </h4>
-                        <a href="step-2.html" class="btn-edit">Edit</a>
-                    </div>
-                    <table class="w-100">
-                        <tbody>
-                            <tr>
-                                <th>Are you a resident of UAE? :</th>
-                                <td>YES</td>
-                            </tr>
-                            <tr>
-                                <th>Are you Salaried or Self Employed? :</th>
-                                <td>YES</td>
-                            </tr>
-                            <tr>
-                                <th>Salary :</th>
-                                <td>$1800</td>
-                            </tr>
-                            <tr>
-                                <th>Do you wish to apply for? :</th>
-                                <td>TraditionalBank</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <!-- <div class="box-light monthly_salary">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h4>Monthly salary</h4>
-                        <a href="step-2.html" class="btn-edit">Edit</a>
-                    </div>
-                    <table class="w-100">
-                        <tbody>
-                            <tr>
-                                <th>Emirates ID :</th>
-                                <!-- <td>jhonsmith@gmail.com</td> -->
-                            <!-- </tr>
-                            <tr>
-                                <th>Passport Copy :</th>
-                                <td><img src="./images/passport-copy.jpg" alt=""></td>
-                            </tr>
-                            <tr> -->
-                                <!-- <th>Salary Statement : <br><span>(past 3 months)</span></th>
-                                <td><img src="./images/salary-statement.jpg" alt=""></td>
-                            </tr>
-                        </tbody>
-                    </table> -->
-                <!-- </div>  -->
+      <div class="head_text">
+        <h1 data-aos="fade-up">Review your details</h1>
+        <p data-aos="fade-up">Virtuzone offers a range of services to further enhance your business well-being.</p>
+      </div>
+      <div class="row align-items-start">
+        <div class="col-md-7 col-lg-8">
+          <div class="box-light">
+            <div class="d-flex align-items-center justify-content-between">
+              <h4>Personal Information</h4>
+              <a [routerLink]="['/step-1']" class="btn-edit">Edit</a>
             </div>
-            <div class="col-md-5 col-lg-4 order-summery-col">
-                <div class="order-summery box-light">
-                    <h4>Order Summary</h4>
-                    <table class="w-100">
-                        <tbody>
-                            <tr>
-                                <th>Price</th>
-                                <td>$140</td>
-                            </tr>
-                            <tr>
-                                <th>Tax</th>
-                                <td>$5</td>
-                            </tr>
-                            <tr>
-                                <th>Discount Price</th>
-                                <td>-$10</td>
-                            </tr>
-                            <tr>
-                                <th>Total Amount</th>
-                                <td>$135</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button class="btn primary-btn w-100">Payment Now</button>
+            <table class="w-100">
+              <tbody>
+                <tr>
+                  <th>First Name :</th>
+                  <td>{{ personalInfo.firstName }}</td>
+                </tr>
+                <tr>
+                  <th>Last Name :</th>
+                  <td>{{ personalInfo.lastName }}</td>
+                </tr>
+                <tr>
+                  <th>Email ID :</th>
+                  <td>{{ personalInfo.email }}</td>
+                </tr>
+                <tr>
+                  <th>Nationality :</th>
+                  <td>{{ personalInfo.nationality }}</td>
+                </tr>
+                <tr>
+                  <th>Date of Birth :</th>
+                  <td>{{ personalInfo.birthday }}</td>
+                </tr>
+                <tr>
+                  <th>Phone Number :</th>
+                  <td>{{ personalInfo.mobileNumber.internationalNumber }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="box-light">
+            <div class="d-flex align-items-center justify-content-between">
+              <h4>Personal Bank Service</h4>
+              <a [routerLink]="['/step-2']" class="btn-edit">Edit</a>
+
             </div>
+            <table class="w-100">
+              <tbody>
+                <tr>
+                  <th>Are you a resident of UAE? :</th>
+                  <td>{{ bankInfo.resident }}</td>
+                </tr>
+                <tr>
+                  <th>Are you Salaried or Self Employed? :</th>
+                  <td>{{ bankInfo.working }}</td>
+                </tr>
+                <tr>
+                  <th>Salary :</th>
+                  <td>{{ bankInfo.salary }}</td>
+                </tr>
+                <tr>
+                  <th>Do you wish to apply for? :</th>
+                  <td>{{ bankInfo.Bank }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
+        <div class="col-md-5 col-lg-4 order-summery-col">
+          <div class="order-summery box-light">
+            <h4>Order Summary</h4>
+            <table class="w-100">
+              <tbody>
+                <tr>
+                  <th>Price</th>
+                  <td>$140</td>
+                </tr>
+                <tr>
+                  <th>Tax</th>
+                  <td>$5</td>
+                </tr>
+                <tr>
+                  <th>Discount Price</th>
+                  <td>-$10</td>
+                </tr>
+                <tr>
+                  <th>Total Amount</th>
+                  <td>$135</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button (click)="submitData()" class="btn primary-btn w-100">Payment Now</button>
+        </div>
+      </div>
     </div>
-</section>
+  </section>
+  
 
 
 <footer>

@@ -11,5 +11,6 @@ router.post('/submit-service', singleUpload, userController.submitService);
 router.get('/services', userController.getAllServices);
 router.get('/submissions', userController.getAllSubmissions);
 router.post('/login', userController.loginAdmin);
+router.put('/services/:serviceId', singleUpload, userController.updateService); // Change fileUpload to singleUpload
 
 module.exports = router;

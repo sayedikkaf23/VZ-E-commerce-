@@ -167,5 +167,36 @@ exports.loginAdmin = async (req, res) => {
     });
   } catch (error) {
     res.status(500).json({ error: "Server error", details: error.message });
+  };
+
+
+}
+// Update Method in your service controller
+exports.updateService = async (req, res) => {
+  const { serviceId } = req.params; // Get the service ID from the request parameters
+  const { serviceName, description, isActive } = req.body; // Destructure the new values from the request body
+
+  try {
+      // Find the service by ID
+      const service = await Service.findById(serviceId);
+      if (!service) {
+          return res.status(404).json({ message: 'Service not found' });
+      }
+
+      // Update the service details
+      service.serviceName = serviceName || service.serviceName; // Update only if new value is provided
+      service.description = description || service.description; // Update only if new value is provided
+      service.isActive = isActive !== undefined ? isActive : service.isActive; // Update only if new value is provided
+
+      // Handle file upload for service icon if a new file is uploaded
+      if (req.file) {
+          service.icon = req.file.path; // Update the icon if a new file is uploaded
+      }
+
+      // Save the updated service
+      const updatedService = await service.save();
+      res.status(200).json({ message: 'Service updated successfully', service: updatedService });
+  } catch (error) {
+      res.status(500).json({ error: 'Error updating service', details: error.message });
   }
 };

@@ -1,20 +1,21 @@
-import { Component, Inject, PLATFORM_ID, AfterViewInit } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
-import { HttpClient } from '@angular/common/http'; // Import HttpClient
-import { FormDataService } from '../service/form-data.service'; // Adjust the path as necessary
-import { UserService } from '../service/user.service'; // Import your UserService
-import AOS from 'aos'; // AOS for animations
-import { ToastrService } from 'ngx-toastr'; // Import ToastrService
+import { Component, Inject, PLATFORM_ID, AfterViewInit, OnInit } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { FormDataService } from '../service/form-data.service';
+import { UserService } from '../service/user.service';
+import AOS from 'aos';
+import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
+import { ChangeDetectorRef } from '@angular/core';
 
 declare var $: any;
 
 @Component({
   selector: 'app-step-2',
   templateUrl: './step-2.component.html',
-  styleUrls: ['./step-2.component.css'] // Ensure you have styleUrls instead of styleUrl
+  styleUrls: ['./step-2.component.css']
 })
-export class Step2Component implements AfterViewInit {
+export class Step2Component implements AfterViewInit, OnInit {
   formData: any = {
     resident: '',
     working: '',
@@ -30,14 +31,25 @@ export class Step2Component implements AfterViewInit {
     private formDataService: FormDataService,
     private http: HttpClient,
     private userService: UserService,
-    private toastr: ToastrService, // Inject ToastrService
+    private toastr: ToastrService,
     private router: Router,
-    @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to check if it's a browser
+    private cdRef: ChangeDetectorRef,
+
+    @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    // Retrieve the Step 1 data from the service when Step 2 initializes
+    // Retrieve Step 1 data from the service when Step 2 initializes
     this.step1Data = this.formDataService.getStep1Data();
     console.log('Step 1 data:', this.step1Data);
-    // this.toastr.success('Test Toast', 'Success');
+  }
+
+  ngOnInit(): void {
+    // Retrieve Step 2 data from localStorage
+    const storedStep2Data = localStorage.getItem('step2Data');
+    if (storedStep2Data) {
+      this.formData = JSON.parse(storedStep2Data);
+      this.cdRef.detectChanges();
+      console.log(  this.formData.working)
+    }
   }
 
   // Handle file input changes
@@ -45,7 +57,6 @@ export class Step2Component implements AfterViewInit {
     if (fieldName === 'passport') {
       this.files.passport = event.target.files[0];
     } else if (fieldName === 'salaryStatements') {
-      // Store all files as an array under the same field name without indices
       this.files.salaryStatements = Array.from(event.target.files);
     }
   }
@@ -101,29 +112,12 @@ export class Step2Component implements AfterViewInit {
       formDataToSend.append('companyname', this.formData.companyname);
       formDataToSend.append('Bank', this.formData.Bank);
 
+      // Save Step 2 data to localStorage
+      localStorage.setItem('step2Data', JSON.stringify(this.formData));
+
       // Append files
       // Add logic to append file data if necessary
       this.router.navigate(['/ShowDetails']);
-      // Send data to the server using your userService
-      // this.userService.uploadUserData(formDataToSend).subscribe(
-      //   response => {
-      //     if ('message' in response) {
-      //       this.toastr.success('Data submitted successfully!', 'Success'); // Show success toast
-      
-      //       this.formData = {
-      //         resident: '',
-      //         working: '',
-      //         salary: '',
-      //         companyname: '',
-      //         Bank: ''
-      //       };
-      //     }
-      //   },
-      //   error => {
-      //     this.toastr.error(error.error.message); // Show error toast
-      //     console.error(error); // Handle the error
-      //   }
-      // );
     }
   }
 
