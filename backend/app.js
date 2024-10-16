@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, '../frontend/dist/frontend')));
 app.use('/uploads', express.static('uploads'));
 
 // Routes setup
-app.use("/", indexRouter);
+// app.use("/", indexRouter);
 app.use('/user', userRouter);
 
 // catch 404 and forward to error handler
