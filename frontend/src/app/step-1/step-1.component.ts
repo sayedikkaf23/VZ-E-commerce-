@@ -1,46 +1,29 @@
-import { Component, AfterViewInit, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { isPlatformBrowser } from '@angular/common';
-import { Inject, PLATFORM_ID } from '@angular/core';
-import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import enums
-
-import { HttpClient } from '@angular/common/http'; // Import HttpClientModule and HttpClient
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
-import AOS from 'aos';
-import { ToastrService } from 'ngx-toastr'; // Import ToastrService for toast notifications
-
-declare var $: any;
-
-import {
-  FormBuilder,
-  FormGroup,
-  Validators,
-  FormControl,
-} from '@angular/forms';
-
-
-import { FormDataService } from '../service/form-data.service'; // Import the shared service
-
+import { ToastrService } from 'ngx-toastr';
+import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import enums
 
 @Component({
   selector: 'app-step-1',
   templateUrl: './step-1.component.html',
-  styleUrl: './step-1.component.css'
+  styleUrls: ['./step-1.component.css']
 })
-export class Step1Component {
+export class Step1Component implements OnInit {
   personalDetailsForm: FormGroup;
   nationalities: string[] = []; // Initialize as an empty array
   selectedNationality: string = '';
   SearchCountryField = SearchCountryField;  // Assign to use in template
-  CountryISO = CountryISO;   
+  CountryISO = CountryISO;
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
-    private formDataService: FormDataService, // Inject the service
-    private http: HttpClient ,// Inject HttpClient here
-    private cdRef: ChangeDetectorRef, // Inject ChangeDetectorRef to manually trigger change detection
-    private toastr: ToastrService, // Inject ToastrService for toast notifications
-    @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID
+    private http: HttpClient,
+    private cdRef: ChangeDetectorRef,
+    private toastr: ToastrService
   ) {
     this.personalDetailsForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
@@ -48,68 +31,39 @@ export class Step1Component {
       email: ['', [Validators.required, Validators.email]],
       nationality: ['', Validators.required],
       mobileNumber: ['', Validators.required],
-      birthday: { type: Date, required: true },
-      
+      birthday: ['', Validators.required],
     });
   }
 
   ngOnInit(): void {
     // Fetch nationalities using REST Countries API
     this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
-      // Map the API response to get country names
       this.nationalities = data.map((country) => country.name.common);
-      // console.log(this.nationalities); // Verify that the nationalities array is populated
       this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     });
-  }
 
-  ngAfterViewInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      // Ensure DOM-related code runs only in the browser
-      AOS.init(); // Initialize AOS animations
-  
-      $(window).scroll(() => {
-        const height = $(window).scrollTop();
-        if (height > 50) {
-          $('html').addClass('sticky');
-        } else {
-          $('html').removeClass('sticky');
-        }
-      });
-  
-      $(document).ready(() => {
-        $('.scrollToTop').click((event: any) => {
-          event.preventDefault();
-          $('html, body').animate({ scrollTop: 0 }, 'slow');
-          return false;
-        });
-  
-        $('.navbar-toggle').click(() => {
-          $('html').toggleClass('menu-show');
-        });
-  
-        $('.header-menu-overlay').click(() => {
-          $('html').removeClass('menu-show');
-        });
-      });
+    // Check if data exists in localStorage and set form values
+    const storedData = localStorage.getItem('step1Data');
+    if (storedData) {
+      const formData = JSON.parse(storedData);
+      this.personalDetailsForm.patchValue(formData);
     }
   }
-  
 
   onSubmit() {
     if (this.personalDetailsForm.valid) {
-      // Save the form data in the shared service
-      this.formDataService.setStep1Data(this.personalDetailsForm.value);
-      console.log(this.personalDetailsForm.value);
+      // Save form data to localStorage
+      localStorage.setItem('step1Data', JSON.stringify(this.personalDetailsForm.value));
+
+      // Navigate to the next page
       this.router.navigate(['/account-type']);
     } else {
-      // Show validation error messages using Toastr
+      // Show validation error messages
       this.validateFormFields(this.personalDetailsForm);
     }
   }
 
   validateFormFields(formGroup: FormGroup) {
-    // Loop through each control to check its validity
     Object.keys(formGroup.controls).forEach((field) => {
       const control = formGroup.get(field);
       if (control && control.invalid) {
@@ -130,7 +84,6 @@ export class Step1Component {
   }
 
   getFieldName(field: string): string {
-    // Return a user-friendly field name
     switch (field) {
       case 'firstName':
         return 'First Name';
@@ -140,11 +93,10 @@ export class Step1Component {
         return 'Email';
       case 'nationality':
         return 'Nationality';
+      case 'mobileNumber':
+        return 'Phone Number';
       case 'birthday':
-        return 'Birthday';
-        case 'mobileNumber':
-          return 'mobileNumber';
-  
+        return 'Date of Birth';
       default:
         return field;
     }
