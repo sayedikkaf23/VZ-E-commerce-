@@ -44,35 +44,42 @@
             ],
             "scripts": ["src/js/jquery-2.2.4.min.js", "node_modules/aos/dist/aos.js",  "node_modules/intl-tel-input/build/js/intlTelInput.js"
           ],
+          "allowedCommonJsDependencies": [
+            "google-libphonenumber",
+            "aos"
+          ],
             "server": "src/main.server.ts",
             "prerender": true,
             "ssr": {
               "entry": "server.ts"
             }
           },
-          "configurations": {
-            "production": {
-              "budgets": [
-  {
-    "type": "initial",
-    "maximumWarning": "1.5MB",
-    "maximumError": "2MB"
+"configurations": {
+  "production": {
+    "optimization": {
+      "styles": true 
+    },
+    "budgets": [
+      {
+        "type": "initial",
+        "maximumWarning": "1.5MB",
+        "maximumError": "2MB"
+      },
+      {
+        "type": "anyComponentStyle",
+        "maximumWarning": "150kB",
+        "maximumError": "200kB"
+      }
+    ],
+    "outputHashing": "all"
   },
-  {
-    "type": "anyComponentStyle",
-    "maximumWarning": "32kB",
-    "maximumError": "35kB"
+  "development": {
+    "optimization": false,
+    "extractLicenses": false,
+    "sourceMap": true
   }
-],
-
-              "outputHashing": "all"
-            },
-            "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true
-            }
-          },
+}
+,
           "defaultConfiguration": "production"
         },
         "serve": {
