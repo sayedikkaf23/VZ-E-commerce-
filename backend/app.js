@@ -42,7 +42,8 @@ app.use(
 // app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, '../frontend/dist/frontend')));
+
+app.use(express.static(path.join(__dirname, '../frontend/dist/frondend')));
 
 app.use('/uploads', express.static('uploads'));
 
@@ -56,7 +57,7 @@ app.use('/user', userRouter);
 // });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/dist/frontend', 'index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/dist/frondend', 'index.html'));
 });
 
 // error handler
