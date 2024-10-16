@@ -1173,6 +1173,7 @@ a.btn-edit:hover:before {
     top: 85px;
 }
 
+/* Increase space between the country code dropdown and the input */
 .ngx-tel-input .iti {
     width: 100% !important;
   }
@@ -1186,7 +1187,10 @@ a.btn-edit:hover:before {
     border: 1px solid #CDC9C9; /* Consistent border */
   }
    
-
+  .ngx-tel-input .iti__flag-container {
+    width: 60px !important; /* Flag container width */
+    height: 74px !important; /* Match the height of the input */
+  }
    
   .ngx-tel-input input::placeholder {
     color: rgba(0, 0, 0, 0.507) !important; /* Placeholder color matching */
@@ -1211,7 +1215,7 @@ a.btn-edit:hover:before {
    
   /* Adjust input padding to match the other form fields */
   .ngx-tel-input input {
-    padding-left: 60px !important; /* Adjust left padding to make space for the flag and dial code */
+    padding-left: 83px  !important; /* Adjust left padding to make space for the flag and dial code */
     width: 100% !important;
     height: 74px;
     border-radius: 61px;
@@ -1223,4 +1227,3 @@ a.btn-edit:hover:before {
     font-size: 16px;   /* You can also adjust the font size if necessary */
   }
    
-  /* Adjust the flag size if needed */
