@@ -12,7 +12,7 @@ import { ShowDetailsComponent } from './show-details/show-details.component';
 import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 
 import { SettingsComponent } from './settings/settings.component';
-
+import { PaymentModesManagementComponent } from './payment-modes-management/payment-modes-management.component';
 const routes: Routes = [
 
   {
@@ -68,6 +68,11 @@ const routes: Routes = [
       {
         path: 'admin-settings',
         component: SettingsComponent,
+       
+      },
+      {
+        path: 'payment-modes',
+        component: PaymentModesManagementComponent,
        
       },
       

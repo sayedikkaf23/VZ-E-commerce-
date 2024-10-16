@@ -21,6 +21,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ShowDetailsComponent } from './show-details/show-details.component';
 import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 import { SettingsComponent } from './settings/settings.component';
+import { PaymentModesManagementComponent } from './payment-modes-management/payment-modes-management.component';
 
 
 @NgModule({
@@ -37,6 +38,7 @@ import { SettingsComponent } from './settings/settings.component';
     ShowDetailsComponent,
     BackAccountOpeningComponent,
     SettingsComponent,
+    PaymentModesManagementComponent,
     
   ],
   imports: [
