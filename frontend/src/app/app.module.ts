@@ -22,6 +22,8 @@ import { ShowDetailsComponent } from './show-details/show-details.component';
 import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PaymentModesManagementComponent } from './payment-modes-management/payment-modes-management.component';
+import { FooterComponent } from './footer/footer.component';
+import { UserHeaderComponent } from './user-header/user-header.component';
 
 
 @NgModule({
@@ -39,6 +41,8 @@ import { PaymentModesManagementComponent } from './payment-modes-management/paym
     BackAccountOpeningComponent,
     SettingsComponent,
     PaymentModesManagementComponent,
+    FooterComponent,
+    UserHeaderComponent,
     
   ],
   imports: [
