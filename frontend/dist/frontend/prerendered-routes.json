@@ -1,0 +1,15 @@
+{
+  "routes": [
+    "/account-type",
+    "/admin/login",
+    "/home",
+    "/panel",
+    "/panel/admin-settings",
+    "/panel/banck-account-opening",
+    "/panel/dashboard",
+    "/panel/payment-modes",
+    "/ShowDetails",
+    "/step-1",
+    "/step-2"
+  ]
+}

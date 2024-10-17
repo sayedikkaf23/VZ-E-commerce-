@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import enums
+import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 
 @Component({
   selector: 'app-step-1',
@@ -17,14 +18,18 @@ export class Step1Component implements OnInit {
   selectedNationality: string = '';
   SearchCountryField = SearchCountryField;  // Assign to use in template
   CountryISO = CountryISO;
+  isBrowser: boolean;
 
   constructor(
     private router: Router,
     private fb: FormBuilder,
     private http: HttpClient,
     private cdRef: ChangeDetectorRef,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+    @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
   ) {
+    this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
+
     this.personalDetailsForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -42,18 +47,22 @@ export class Step1Component implements OnInit {
       this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     });
 
-    // Check if data exists in localStorage and set form values
-    const storedData = localStorage.getItem('step1Data');
-    if (storedData) {
-      const formData = JSON.parse(storedData);
-      this.personalDetailsForm.patchValue(formData);
+    // Check if we are in the browser before accessing localStorage
+    if (this.isBrowser) {
+      const storedData = localStorage.getItem('step1Data');
+      if (storedData) {
+        const formData = JSON.parse(storedData);
+        this.personalDetailsForm.patchValue(formData);
+      }
     }
   }
 
   onSubmit() {
     if (this.personalDetailsForm.valid) {
-      // Save form data to localStorage
-      localStorage.setItem('step1Data', JSON.stringify(this.personalDetailsForm.value));
+      // Save form data to localStorage only in the browser environment
+      if (this.isBrowser) {
+        localStorage.setItem('step1Data', JSON.stringify(this.personalDetailsForm.value));
+      }
 
       // Navigate to the next page
       this.router.navigate(['/account-type']);

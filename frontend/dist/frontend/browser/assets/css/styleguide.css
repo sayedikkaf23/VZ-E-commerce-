@@ -1,0 +1,19 @@
+:root { 
+  --black: #000000;
+  --black-2: #00000080;
+  --white: #ffffff;
+ 
+  --font-size-l: 50px;
+  --font-size-m: 15px;
+  --font-size-s: 12px;
+  --font-size-xl: 60px;
+ 
+  --font-family-inter: "Inter", Helvetica;
+}
+.inter-normal-black-12px {
+  color: var(--black);
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-s);
+  font-style: normal;
+  font-weight: 400;
+}

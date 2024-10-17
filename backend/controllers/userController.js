@@ -4,7 +4,12 @@ const Service = require("../models/service");
 const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const PaymentMode = require("../models/paymentMode");
+const crypto = require('crypto');
+
+
+const stripe = require("stripe")("pk_test_51JRurLE3UGZ0nP4jugPtN6GQbkAjrEc3KkzZIAIQ6AofKtnjBXBOqiIxZdlvAoWjw59yRE1hpVPipxJb3XMBoSXc00l3qLEhN");
+
+
 
 // Handle form submission and file uploads
 
@@ -202,29 +207,93 @@ exports.updateService = async (req, res) => {
   }
 };
 
-exports.getPaymentMethods = async (req, res) => {
-  try {
-    const adminObjectId = new mongoose.Types.ObjectId(
-      "653f5041f94b9319a2bb17bd"
-    );
-    // Find all payment methods documents based on admin ID
 
-    console.log(adminObjectId);
+ exports.payNowByStripe = async (req, res) => {
 
-    const paymentMethods = await PaymentMethod.find({ admin: adminObjectId });
+  
+  const { quoteId } = req.params;
 
-    console.log(paymentMethods);
+  // const data = await PiData.findOne({
+  //   $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
+  // });
 
-    if (!paymentMethods || paymentMethods.length === 0) {
-      return res.status(404).json({ message: "No payment methods found" });
-    }
+  const order_number = data.quotePaymentId;
+  const acountname = data.quoteName;
+  const acountemail = data.quoteEmail;
+  const order_amount = Number(data.partPayment).toFixed(2);
+  // const order_number = "order-1234";
+  // const order_amount = "0.19";
+  const order_currency = "AED";
+  const order_description = "gift";
+  const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
 
-    return res.status(200).json({
-      // message: "Payment methods retrieved successfully",
-      paymentMethods,
-    });
-  } catch (error) {
-    console.error("Error getting payment methods:", error);
-    return res.status(500).json({ message: "Error getting payment methods" });
+  // Create hash
+  const stringToHash =
+    order_number + order_amount + order_currency + order_description + password;
+  console.log("String to hash:", stringToHash); // log the string to be hashed
+  const md5hash = crypto
+    .createHash("md5")
+    .update(stringToHash.toUpperCase())
+    .digest("hex");
+  console.log(md5hash);
+
+  const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
+  console.log("SHA-1 Hash:", sha1Hash);
+
+  const accountDetailsResult = await AccountDetail.find();
+  if (!accountDetailsResult || accountDetailsResult.length === 0) {
+    return res.status(400).json({ message: "Account details not found" });
   }
-};
+
+
+  // console.log("Access Token:", accessToken);
+
+  // Create a new PaymentForm instance
+
+  await newOnlinePayForm.save();
+
+  try {
+    const stripeResponse = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "aed", // Replace with your currency code
+            product_data: {
+              name: "Test", // Replace with your product name
+            },
+            unit_amount: data?.totalIncludingVAT * 100, // Specify the amount in cents (e.g., $10.00 USD)
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `https://virtuzone.yeepeey.com/successful/${data.quotePaymentId}`,
+      cancel_url: `https://virtuzone.yeepeey.com/failure/${data.quotePaymentId}`,
+    });
+
+    const stripeResponseData = stripeResponse;
+
+    const combinedResponse = {
+      message: "Online Payment",
+      GL_code: "1352 - Payment Gateway",
+      bank_name: "Payment Gateway",
+      Bankstatus: newOnlinePayForm.status,
+      Name: newOnlinePayForm.customerDetails.name,
+      proformaInvoiceNumber:
+        newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
+      // receiptfile: newOnlinePayForm.fileUpload,
+      currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
+      stripeData: stripeResponseData, // Include data from the first response here
+    };
+
+    res.status(200).json(combinedResponse);
+  } catch (error) {
+    console.error(
+      "Error creating checkout session:",
+      error.response?.data?.error
+    );
+    res.status(500).send("Error creating checkout session");
+  }
+}
+
