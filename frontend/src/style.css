@@ -917,9 +917,9 @@ section.apply_service_section {
 }
 .step_2_form h3 {
     text-align: center;
-    margin-bottom: 35px;
+    margin-bottom: 8px;
     font-size: 20px;
-    line-height: 12%;
+    line-height: 211%;
     font-weight: bold;
 }
 .step_2_form .item:not(:last-child) {

@@ -203,7 +203,7 @@
                         <div class="form-field">
                             <fieldset>
                               <select name="resident" id="resident" class="form-select" [(ngModel)]="formData.resident">
-                                <option value="" disabled selected>Are you a resident of UAE?</option>
+                                <option value="" disabled selected>Are you a resident of UAE?<span class="required">*</span></option>
                                 <option value="yes">Yes</option>
                                 <option value="no">No</option>
                               </select>
@@ -214,7 +214,7 @@
                       <div class="form-field">
                         <fieldset>
                           <select name="working" id="working" class="form-select" [(ngModel)]="formData.working">
-                            <option value="" disabled>Are you Salaried or Self Employed?</option>
+                            <option value="" disabled>Are you Salaried or Self Employed?<span class="required">*</span></option>
                             <option value="Salaried">Salaried</option>
                             <option value="Self Employed">Self Employed</option>
                           </select>
@@ -253,7 +253,7 @@
                       <div class="form-field">
                         <fieldset>
                           <select name="Bank" id="Bank" class="form-select" [(ngModel)]="formData.Bank">
-                            <option value="" disabled selected>Do you wish to apply for?</option>
+                            <option value="" disabled selected>Do you wish to apply for?<span class="required">*</span></option>
                             <option value="DigitalBank">Digital Bank</option>
                             <option value="TraditionalBank">Traditional Bank</option>
                           </select>
