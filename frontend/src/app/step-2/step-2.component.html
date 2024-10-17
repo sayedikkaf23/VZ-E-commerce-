@@ -44,11 +44,13 @@
                       <div class="form-field" *ngIf="formData.working === 'Salaried'">
                         <label for="emirates-id">Salary<span class="required">*</span></label>
                         <input 
-      type="number" 
+      type="text" 
       name="salary" 
       id="salary" 
       class="form-input" 
       [(ngModel)]="formData.salary" 
+      (input)="onSalaryInput($event)" 
+
       placeholder="Please enter your monthly salary"
     />
                       </div>

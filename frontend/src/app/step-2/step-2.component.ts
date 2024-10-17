@@ -23,6 +23,7 @@ export class Step2Component implements AfterViewInit, OnInit {
     companyname: '',
     Bank: '',
   };
+  isValidSalary = true;
 
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
@@ -59,6 +60,22 @@ export class Step2Component implements AfterViewInit, OnInit {
     } else if (fieldName === 'salaryStatements') {
       this.files.salaryStatements = Array.from(event.target.files);
     }
+  }
+
+
+  onSalaryInput(event: any) {
+    // Get the input value and remove any non-digit characters
+    let inputValue = event.target.value.replace(/[^0-9]/g, '');
+
+    // Format the number with commas
+    if (inputValue) {
+      this.formData.salary = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    } else {
+      this.formData.salary = '';
+    }
+
+    // Update the input field value directly to avoid any delay
+    event.target.value = this.formData.salary;
   }
 
   ngAfterViewInit() {
