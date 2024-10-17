@@ -7,13 +7,16 @@ import AOS from 'aos';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
+import { DecimalPipe } from '@angular/common'; // Import DecimalPipe
 
 declare var $: any;
 
 @Component({
   selector: 'app-step-2',
   templateUrl: './step-2.component.html',
-  styleUrls: ['./step-2.component.css']
+  styleUrls: ['./step-2.component.css'],
+  providers: [DecimalPipe]
+
 })
 export class Step2Component implements AfterViewInit, OnInit {
   formData: any = {
@@ -34,6 +37,7 @@ export class Step2Component implements AfterViewInit, OnInit {
     private toastr: ToastrService,
     private router: Router,
     private cdRef: ChangeDetectorRef,
+    private decimalPipe: DecimalPipe,
 
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -158,6 +162,11 @@ validateForm(): boolean {
   }
 
   return isValid;
+}
+// Function to format salary as the user types
+formatSalary(value: any) {
+  const plainNumber = value.replace(/[^\d.-]/g, ''); // Strip out non-numeric characters
+  this.formData.salary = this.decimalPipe.transform(plainNumber, '1.2-2'); // Format the value to 2 decimal places
 }
 
 }
