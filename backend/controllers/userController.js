@@ -50,6 +50,13 @@ exports.submit = async (req, res) => {
       return res.status(400).json({ message: "Email already exists" });
     }
 
+    const cleanedSalary = salary ? Number(salary.replace(/,/g, '')) : 0;
+
+// Validate that the cleaned salary is a valid number
+if (isNaN(cleanedSalary)) {
+  throw new Error('Invalid salary input');
+}
+
     // Create and save user details in the database
     const userDetails = new UserDetails({
       firstName,
@@ -59,7 +66,7 @@ exports.submit = async (req, res) => {
       birthday,
       resident,
       working,
-      salary,
+      cleanedSalary,
       companyname,
       Bank,
       mobileNumber: parsedMobileNumber,
