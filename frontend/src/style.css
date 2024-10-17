@@ -102,6 +102,8 @@ html header .btn {
     font-size: 16px;
     font-weight: 500;
     transition: all 0.4s;
+    margin-top: 10px;
+    margin-right: 50px;
 }
 html header .btn {
     text-transform: uppercase;
@@ -114,7 +116,7 @@ html .btn {
     border:0;
     color: var(--primary);
     font-family: var(--font2);
-    font-size: 25px;
+    font-size: 20px;
     font-weight: 700;
     display: inline-flex;
     align-items: center;
@@ -152,7 +154,7 @@ html .btn:hover {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 79px;
-    padding-top: 3px;
+    /* padding-top: 3px; */
 
 }
 .sticky .header-main-bar {
@@ -203,12 +205,16 @@ header nav > ul > li.active a {
 }
 .header-logo img {
     display: block;
+    margin-bottom: 12px;
 }
 header nav > ul {
     display: flex;
     list-style: none;
-    padding: 0;
+    padding: 15x;
     margin: 0;
+    margin-right: 96px;
+    margin-top: 9px;
+
 }
 header nav > ul > li + li {
     margin-left: 32px;
@@ -239,6 +245,7 @@ header nav > ul > li.menu-parent > a:after {
     height: 5px;
     margin: 18px 0 0 8px;
     transition: all 0.4s;
+    
 }
 header nav > ul > li:hover > a:after {
     border-right: 2px solid var(--primary);
@@ -396,6 +403,7 @@ header .search_icon a {
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 10px;
     color: var(--text);
 }
 header .search_icon a:hover{
