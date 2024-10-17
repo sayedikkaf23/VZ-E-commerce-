@@ -1246,4 +1246,19 @@ a.btn-edit:hover:before {
     margin-left: 15px; /* Adjust the margin as needed for spacing */
     font-size: 16px;   /* You can also adjust the font size if necessary */
   }
+
+  .ngx-tel-input .iti__flag-container {
+    width: 90px!important;
+    height: 54px!important;
+    padding-left: 14px;
+}
+
+.step_1_form {
+    padding: 50px;
+}
+
+iti--allow-dropdown .itiflag-container:hover .itiselected-flag {
+    background-color: transparent !important;
+}
+
    
