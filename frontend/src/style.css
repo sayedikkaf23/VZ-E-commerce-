@@ -421,8 +421,8 @@ header .search_icon a:hover{
     text-align: center;
 }
 .head_text h1 {
-    font-size: 45px;
-    margin-bottom: 30px;
+    font-size: 28px;
+    margin-bottom: -22px;
 }
 .head_text h1 span{
     font-weight: 900;
@@ -785,13 +785,21 @@ section.apply_service_section {
 }
 .account_buttons .btn {
     padding: 0 22px;
-    line-height: 75px;
-    background-color: var(--primary);
-    color: var(--white);
-    font-size: 20px;
+    line-height: 62px;
+    background-color: #F3F2F2;
+    color: #010101;
+
+    box-shadow: none;
+   
+    font-size: 17px;
     font-weight: 500;
-    border: 1px solid var(--white);
-    box-shadow: 0px 4px 4px -1px rgba(12, 12, 13, 0.1), 0px 4px 4px -1px rgba(12, 12, 13, 0.05);
+   
+    border: 1px solid var(--primary);
+}
+
+.account_buttons .btn:hover {
+    background-color: var(--primary);
+    color: #fff; /* Optional: Change text color on hover */
 }
 .account_buttons {
     display: flex;
@@ -829,7 +837,7 @@ section.apply_service_section {
 }
 .step_1_section .head_text {
     margin-bottom: 20px;
-    padding: 28px 0;
+    padding: 0px 0;
     background-image: url(images/shape-1.png);
     background-repeat: no-repeat;
     background-position: center center;
@@ -873,7 +881,7 @@ section.apply_service_section {
     font-weight: 500;
     font-size: 20px;
     color: rgba(0, 0, 0, 0.507);
-    width: 100%;
+    width: 99%;
 }
 .step_1_form .form-field input::placeholder,
 .step_1_form .form-field input#birthday,
@@ -894,9 +902,9 @@ section.apply_service_section {
     background: #FA2E52;
     border: 1px solid #CDC9C9;
     border-radius: 61px;
-    width: 100%;
+    width: 99%;
     font-weight: 900;
-    font-size: 25px;
+    font-size: 20px;
     color: #FFFFFF;
     display: inline-block;
     line-height: 50px;
@@ -1175,7 +1183,7 @@ a.btn-edit:hover:before {
 
 /* Increase space between the country code dropdown and the input */
 .ngx-tel-input .iti {
-    width: 100% !important;
+    width: 99% !important;
   }
    
   .ngx-tel-input input {
