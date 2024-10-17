@@ -67,29 +67,26 @@ export class Step1Component implements OnInit {
       // Navigate to the next page
       this.router.navigate(['/account-type']);
     } else {
-      // Show validation error messages
-      this.validateFormFields(this.personalDetailsForm);
+      // Show validation error messages in a single toast
+      this.showSingleValidationError(this.personalDetailsForm);
     }
   }
 
-  validateFormFields(formGroup: FormGroup) {
+  // Show one toaster for all invalid fields
+  showSingleValidationError(formGroup: FormGroup) {
+    const missingFields: string[] = []; // Explicitly define the type as string[]
+
     Object.keys(formGroup.controls).forEach((field) => {
       const control = formGroup.get(field);
-      if (control && control.invalid) {
-        if (control.errors?.['required']) {
-          this.toastr.error(`${this.getFieldName(field)} is required`, 'Validation Error');
-        }
-        if (control.errors?.['minlength']) {
-          this.toastr.error(
-            `${this.getFieldName(field)} must be at least ${control.errors['minlength'].requiredLength} characters long`,
-            'Validation Error'
-          );
-        }
-        if (control.errors?.['email']) {
-          this.toastr.error('Please enter a valid email address', 'Validation Error');
-        }
+      if (control && control.invalid && control.errors?.['required']) {
+        missingFields.push(this.getFieldName(field));
       }
     });
+
+    if (missingFields.length > 0) {
+      const message = `All fields are required`;
+      this.toastr.error(message);
+    }
   }
 
   getFieldName(field: string): string {
