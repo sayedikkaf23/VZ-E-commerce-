@@ -121,35 +121,43 @@ export class Step2Component implements AfterViewInit, OnInit {
     }
   }
 
-  // Validate form and show toasts for missing fields
-  validateForm(): boolean {
-    let isValid = true;
+ // Validate form and show a single toast for missing fields
+validateForm(): boolean {
+  let isValid = true;
+  const missingFields: string[] = []; // Array to hold missing fields
 
-    if (!this.formData.resident) {
-      this.toastr.error('Resident status is required', 'Validation Error');
-      isValid = false;
-    }
-
-    if (!this.formData.working) {
-      this.toastr.error('Working status is required', 'Validation Error');
-      isValid = false;
-    }
-
-    if (this.formData.working === 'Salaried' && !this.formData.salary) {
-      this.toastr.error('Salary is required for Salaried individuals', 'Validation Error');
-      isValid = false;
-    }
-
-    if (this.formData.working === 'Self Employed' && !this.formData.companyname) {
-      this.toastr.error('Company name is required for Self Employed individuals', 'Validation Error');
-      isValid = false;
-    }
-
-    if (!this.formData.Bank) {
-      this.toastr.error('Bank information is required', 'Validation Error');
-      isValid = false;
-    }
-
-    return isValid;
+  if (!this.formData.resident) {
+    missingFields.push('Resident status');
+    isValid = false;
   }
+
+  if (!this.formData.working) {
+    missingFields.push('Working status');
+    isValid = false;
+  }
+
+  if (this.formData.working === 'Salaried' && !this.formData.salary) {
+    missingFields.push('Salary for Salaried individuals');
+    isValid = false;
+  }
+
+  if (this.formData.working === 'Self Employed' && !this.formData.companyname) {
+    missingFields.push('Company name for Self Employed individuals');
+    isValid = false;
+  }
+
+  if (!this.formData.Bank) {
+    missingFields.push('Bank information');
+    isValid = false;
+  }
+
+  // Show a single toast for all missing fields if any
+  if (missingFields.length > 0) {
+    const message = `All fields are required`;
+    this.toastr.error(message);
+  }
+
+  return isValid;
+}
+
 }
