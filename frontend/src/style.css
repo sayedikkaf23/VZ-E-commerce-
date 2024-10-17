@@ -151,6 +151,9 @@ html .btn:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-bottom: 79px;
+    padding-top: 3px;
+
 }
 .sticky .header-main-bar {
     align-items: center;
@@ -421,8 +424,9 @@ header .search_icon a:hover{
     text-align: center;
 }
 .head_text h1 {
-    font-size: 28px;
-    margin-bottom: -22px;
+    font-size: 26px;
+    margin-bottom: 25px;
+    
 }
 .head_text h1 span{
     font-weight: 900;
