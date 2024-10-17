@@ -829,7 +829,7 @@ section.apply_service_section {
 }
 .step_1_section .head_text {
     margin-bottom: 20px;
-    padding: 63px 0;
+    padding: 28px 0;
     background-image: url(images/shape-1.png);
     background-repeat: no-repeat;
     background-position: center center;
@@ -844,18 +844,18 @@ section.apply_service_section {
     margin: auto;
     background: #F9F9F9;
     border-radius: 30px;
-    padding: 40px;
+    padding: 0px;
 }
 .step_1_form .form-field label {
     font-weight: 500;
-    font-size: 22px;
+    font-size: 17px;
     line-height: 115%;
     color: var(--dark);
     margin-bottom: 15px;
     display: block;
 }
 .step_1_form .form-field{
-    margin-bottom: 37px;
+    margin-bottom: 20px;
 }
 .step_1_form .form-field input{
     background: rgba(217, 217, 217, 0.23);
@@ -868,7 +868,7 @@ section.apply_service_section {
     border: 1px solid #CDC9C9;
     border-radius: 61px;
     padding: 0 20px 0 51px;
-    height: 74px;
+    height: 54px;
     display: inline-block;
     font-weight: 500;
     font-size: 20px;
@@ -896,10 +896,10 @@ section.apply_service_section {
     border-radius: 61px;
     width: 100%;
     font-weight: 900;
-    font-size: 30px;
+    font-size: 25px;
     color: #FFFFFF;
     display: inline-block;
-    line-height: 72px;
+    line-height: 50px;
     padding: 0 30px;
     margin-bottom: 0;
 }
@@ -918,8 +918,8 @@ section.apply_service_section {
 .step_2_form h3 {
     text-align: center;
     margin-bottom: 35px;
-    font-size: 25px;
-    line-height: 100%;
+    font-size: 20px;
+    line-height: 12%;
     font-weight: bold;
 }
 .step_2_form .item:not(:last-child) {

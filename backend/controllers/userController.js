@@ -4,6 +4,7 @@ const Service = require("../models/service");
 const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const PaymentMode = require("../models/paymentMode");
 
 // Handle form submission and file uploads
 
@@ -198,5 +199,32 @@ exports.updateService = async (req, res) => {
       res.status(200).json({ message: 'Service updated successfully', service: updatedService });
   } catch (error) {
       res.status(500).json({ error: 'Error updating service', details: error.message });
+  }
+};
+
+exports.getPaymentMethods = async (req, res) => {
+  try {
+    const adminObjectId = new mongoose.Types.ObjectId(
+      "653f5041f94b9319a2bb17bd"
+    );
+    // Find all payment methods documents based on admin ID
+
+    console.log(adminObjectId);
+
+    const paymentMethods = await PaymentMethod.find({ admin: adminObjectId });
+
+    console.log(paymentMethods);
+
+    if (!paymentMethods || paymentMethods.length === 0) {
+      return res.status(404).json({ message: "No payment methods found" });
+    }
+
+    return res.status(200).json({
+      // message: "Payment methods retrieved successfully",
+      paymentMethods,
+    });
+  } catch (error) {
+    console.error("Error getting payment methods:", error);
+    return res.status(500).json({ message: "Error getting payment methods" });
   }
 };
