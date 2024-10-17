@@ -43,7 +43,8 @@
                 </tr>
                 <tr>
                   <th>Phone Number :</th>
-                  <td>{{ personalInfo.mobileNumber.internationalNumber }}</td>
+                  <td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td>
+
                 </tr>
               </tbody>
             </table>

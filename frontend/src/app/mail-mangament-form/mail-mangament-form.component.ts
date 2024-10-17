@@ -8,12 +8,13 @@ import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import e
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 import { UserService } from '../service/user.service';
 
+
 @Component({
-  selector: 'app-step-1',
-  templateUrl: './step-1.component.html',
-  styleUrls: ['./step-1.component.css']
+  selector: 'app-mail-mangament-form',
+  templateUrl: './mail-mangament-form.component.html',
+  styleUrl: './mail-mangament-form.component.css'
 })
-export class Step1Component implements OnInit {
+export class MailMangamentFormComponent {
   personalDetailsForm: FormGroup;
   nationalities: string[] = []; // Initialize as an empty array
   selectedNationality: string = '';
@@ -51,7 +52,7 @@ export class Step1Component implements OnInit {
 
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
-      const storedData = localStorage.getItem('step1Data');
+      const storedData = localStorage.getItem('mailform');
       if (storedData) {
         const formData = JSON.parse(storedData);
         this.personalDetailsForm.patchValue(formData);
@@ -78,17 +79,17 @@ export class Step1Component implements OnInit {
           } else {
             // Save form data to localStorage only in the browser environment
             if (this.isBrowser) {
-              localStorage.setItem('step1Data', JSON.stringify(formData));
+              localStorage.setItem('mailform', JSON.stringify(formData));
             }
   
             // Check if step2Data exists in localStorage
-            if (this.isBrowser && localStorage.getItem('step2Data')) {
-              // If step2Data exists, navigate to step-2
-              this.router.navigate(['/step-2']);
-            } else {
-              // Otherwise, navigate to account-type
-              this.router.navigate(['/account-type']);
-            }
+            // if (this.isBrowser && localStorage.getItem('mailform')) {
+            //   // If step2Data exists, navigate to step-2
+            //   this.router.navigate(['/step-2']);
+            // } else {
+            //   // Otherwise, navigate to account-type
+            //   this.router.navigate(['/account-type']);
+            // }
           }
         },
         error => {

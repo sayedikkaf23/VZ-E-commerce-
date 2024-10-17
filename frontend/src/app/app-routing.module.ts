@@ -8,7 +8,7 @@ import { AdminLoginComponent } from './admin-login/admin-login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.component';
 import { ShowDetailsComponent } from './show-details/show-details.component';
-
+import { MailMangamentFormComponent } from './mail-mangament-form/mail-mangament-form.component';
 import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 
 import { SettingsComponent } from './settings/settings.component';
@@ -28,6 +28,11 @@ const routes: Routes = [
   {
     path: 'step-1',
     component: Step1Component,
+   
+  },
+  {
+    path: 'mailform',
+    component: MailMangamentFormComponent,
    
   },
   {

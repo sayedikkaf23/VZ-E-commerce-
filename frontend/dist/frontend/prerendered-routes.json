@@ -3,6 +3,7 @@
     "/account-type",
     "/admin/login",
     "/home",
+    "/mailform",
     "/panel",
     "/panel/admin-settings",
     "/panel/banck-account-opening",

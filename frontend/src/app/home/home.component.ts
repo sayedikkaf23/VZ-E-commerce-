@@ -38,23 +38,37 @@ export class _HomeComponent {
     );
   }
 
-  @HostListener('document:click', ['$event'])
-  handleClick(event: Event): void {
-    if (this.isBrowser) {  // Check if the code is running on the browser
-      const target = event.target as HTMLElement;
+  // @HostListener('document:click', ['$event'])
+  // handleClick(event: Event): void {
+  //   if (this.isBrowser) {  // Check if the code is running on the browser
+  //     const target = event.target as HTMLElement;
 
-      if (target && target.classList.contains('btn')) {
-        const href = target.getAttribute('href');
+  //     if (target && target.classList.contains('btn')) {
+  //       const href = target.getAttribute('href');
 
-        if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
-          window.open(href, '_blank');
-        } else {
-          this.router.navigate(['/step-1']);
-        }
+  //       if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
+  //         window.open(href, '_blank');
+  //       } else {
+  //         this.router.navigate(['/step-1']);
+  //       }
 
-        event.preventDefault();
-      }
-    }
+  //       event.preventDefault();
+  //     }
+  //   }
+  // }
+  startNow(check:any): void {
+    console.log(check)
+// Check the serviceName and navigate accordingly
+if (check == 'Bank Accounts Opening') {
+  this.router.navigate(['/step-1']); // Replace with the actual route for Service A
+} else if (check == 'Accounting & VAT') {
+  this.router.navigate(['/service-b']); // Replace with the actual route for Service B
+} else if (check == 'Mail Management') {
+  this.router.navigate(['/mailform']); // Replace with the actual route for Service C
+} else {
+  // Default route if serviceName does not match any known services
+  this.router.navigate(['/default']); // Replace with your default route
+}
   }
 
   ngAfterViewInit(): void {

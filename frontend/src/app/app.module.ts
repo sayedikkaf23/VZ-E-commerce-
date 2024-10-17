@@ -24,6 +24,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { PaymentModesManagementComponent } from './payment-modes-management/payment-modes-management.component';
 import { FooterComponent } from './footer/footer.component';
 import { UserHeaderComponent } from './user-header/user-header.component';
+import { MailMangamentFormComponent } from './mail-mangament-form/mail-mangament-form.component';
 
 
 @NgModule({
@@ -43,6 +44,7 @@ import { UserHeaderComponent } from './user-header/user-header.component';
     PaymentModesManagementComponent,
     FooterComponent,
     UserHeaderComponent,
+    MailMangamentFormComponent,
     
   ],
   imports: [

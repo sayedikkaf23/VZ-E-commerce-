@@ -37,7 +37,7 @@
                   </div>
                   <div class="col-auto">
                     
-                    <button class="btn"  >Start Now
+                    <button class="btn" (click)="startNow(service.serviceName)" >Start Now
                       <div class="icon">
                         <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
                           <path fill-rule="evenodd" clip-rule="evenodd"
@@ -68,7 +68,7 @@
               <div class="text text-center">
                 <p>{{ service.description }}</p>
                 <h4><a href="" >{{ service.serviceName }}</a></h4>
-                <a  class="btn" >
+                <a  class="btn"  (click)="startNow(service.serviceName)">
                   Start Now
                   <div class="icon">
                     <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
