@@ -276,7 +276,7 @@ exports.updateService = async (req, res) => {
       ],
       mode: "payment",
       success_url: `https://ecommerce.yeepeey.com/home`,
-      cancel_url: `https://ecommerce.yeepeey.com/failure`,
+      cancel_url: `https://ecommerce.yeepeey.com/home`,
     });
 
     const stripeResponseData = stripeResponse;

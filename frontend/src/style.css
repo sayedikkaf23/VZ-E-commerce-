@@ -159,6 +159,7 @@ html .btn:hover {
 }
 .sticky .header-main-bar {
     align-items: center;
+    padding-bottom: 1px;
 }
 header {
     position: fixed;
