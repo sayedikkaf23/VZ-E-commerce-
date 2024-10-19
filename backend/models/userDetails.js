@@ -1,16 +1,18 @@
 const mongoose = require('mongoose');
 
 const userDetailsSchema = new mongoose.Schema({
-    firstName: { type: String, required: true },
-    lastName: { type: String, required: true },
+ 
+   type: { type: String },
+    firstName: { type: String },
+    lastName: { type: String },
     email: { type: String, required: true, unique: true },
-    nationality: { type: String, required: true },
-    birthday: { type: Date, required: true },
-    resident: { type: String, required: true }, // added 'resident' field
-    working: { type: String, required: true },
+    nationality: { type: String },
+    birthday: { type: Date },
+    resident: { type: String }, // added 'resident' field
+    working: { type: String},
     salary: { type: Number },
     companyname: { type: String }, // added 'companyname' field
-    Bank: { type: String, required: true }, // added 'Bank' field
+    Bank: { type: String }, // added 'Bank' field
     mobileNumber: {
         number: String,
         internationalNumber: String,
@@ -19,6 +21,10 @@ const userDetailsSchema = new mongoose.Schema({
         countryCode: String,
         dialCode: String
       },
+      companylocation: { type: String }, // Added companylocation field
+      jurisdiction: { type: String },    // Added jurisdiction field
+      shareholder: { type: String },     // Added shareholder field
+      Turnover: { type: String },        // Added Turnover field
 }, { timestamps: true });
 
 module.exports = mongoose.model('UserDetails', userDetailsSchema);

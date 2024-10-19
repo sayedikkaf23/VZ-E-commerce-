@@ -7,25 +7,21 @@ import AOS from 'aos';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
-import { DecimalPipe } from '@angular/common'; // Import DecimalPipe
 
 declare var $: any;
-
 @Component({
-  selector: 'app-step-2',
-  templateUrl: './step-2.component.html',
-  styleUrls: ['./step-2.component.css'],
-  providers: [DecimalPipe]
-
+  selector: 'app-mail-mangament-form-2',
+  templateUrl: './mail-mangament-form-2.component.html',
+  styleUrl: './mail-mangament-form-2.component.css'
 })
-export class Step2Component implements AfterViewInit, OnInit {
+export class MailMangamentForm2Component {
   formData: any = {
-    resident: '',
-    working: '',
-    salary: '',
-    companyname: '',
-    Bank: '',
-    type: 'Personal Bank',
+    companylocation: '',
+    jurisdiction: '',
+    shareholder: '',
+    Turnover: '',
+    type: 'Business Bank',
+  
   };
   isValidSalary = true;
 
@@ -39,7 +35,7 @@ export class Step2Component implements AfterViewInit, OnInit {
     private toastr: ToastrService,
     private router: Router,
     private cdRef: ChangeDetectorRef,
-    private decimalPipe: DecimalPipe,
+   
 
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -50,7 +46,7 @@ export class Step2Component implements AfterViewInit, OnInit {
 
   ngOnInit(): void {
     // Retrieve Step 2 data from localStorage
-    const storedStep2Data = localStorage.getItem('step2Data');
+    const storedStep2Data = localStorage.getItem('mailform2');
     if (storedStep2Data) {
       this.formData = JSON.parse(storedStep2Data);
       this.cdRef.detectChanges();
@@ -68,20 +64,7 @@ export class Step2Component implements AfterViewInit, OnInit {
   }
 
 
-  onSalaryInput(event: any) {
-    // Get the input value and remove any non-digit characters
-    let inputValue = event.target.value.replace(/[^0-9]/g, '');
 
-    // Format the number with commas
-    if (inputValue) {
-      this.formData.salary = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    } else {
-      this.formData.salary = '';
-    }
-
-    // Update the input field value directly to avoid any delay
-    event.target.value = this.formData.salary;
-  }
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -128,19 +111,18 @@ export class Step2Component implements AfterViewInit, OnInit {
       }
 
       // Append Step 2 data
-      formDataToSend.append('resident', this.formData.resident);
-      formDataToSend.append('working', this.formData.working);
-      formDataToSend.append('salary', this.formData.salary);
-      formDataToSend.append('companyname', this.formData.companyname);
-      formDataToSend.append('Bank', this.formData.Bank);
-      formDataToSend.append('type', this.formData.type);
+      formDataToSend.append('companylocation', this.formData.companylocation);
+      formDataToSend.append('jurisdiction', this.formData.jurisdiction);
+      formDataToSend.append('shareholder', this.formData.shareholder);
+  
+      formDataToSend.append('Turnover', this.formData.Turnover);
 
       // Save Step 2 data to localStorage
-      localStorage.setItem('step2Data', JSON.stringify(this.formData));
+      localStorage.setItem('mailform2', JSON.stringify(this.formData));
 
       // Append files
       // Add logic to append file data if necessary
-      this.router.navigate(['/ShowDetails']);
+      this.router.navigate(['/MailMangamentShowDetails']);
     }
   }
 
@@ -149,30 +131,24 @@ validateForm(): boolean {
   let isValid = true;
   const missingFields: string[] = []; // Array to hold missing fields
 
-  if (!this.formData.resident) {
+  if (!this.formData.companylocation) {
+    missingFields.push('Resident status');
+    isValid = false;
+  }
+  if (!this.formData.jurisdiction) {
+    missingFields.push('Resident status');
+    isValid = false;
+  }
+  if (!this.formData.shareholder) {
+    missingFields.push('Resident status');
+    isValid = false;
+  }
+  if (!this.formData.Turnover) {
     missingFields.push('Resident status');
     isValid = false;
   }
 
-  if (!this.formData.working) {
-    missingFields.push('Working status');
-    isValid = false;
-  }
 
-  if (this.formData.working === 'Salaried' && !this.formData.salary) {
-    missingFields.push('Salary for Salaried individuals');
-    isValid = false;
-  }
-
-  if (this.formData.working === 'Self Employed' && !this.formData.companyname) {
-    missingFields.push('Company name for Self Employed individuals');
-    isValid = false;
-  }
-
-  if (!this.formData.Bank) {
-    missingFields.push('Bank information');
-    isValid = false;
-  }
 
   // Show a single toast for all missing fields if any
   if (missingFields.length > 0) {
@@ -183,9 +159,5 @@ validateForm(): boolean {
   return isValid;
 }
 // Function to format salary as the user types
-formatSalary(value: any) {
-  const plainNumber = value.replace(/[^\d.-]/g, ''); // Strip out non-numeric characters
-  this.formData.salary = this.decimalPipe.transform(plainNumber, '1.2-2'); // Format the value to 2 decimal places
-}
 
 }

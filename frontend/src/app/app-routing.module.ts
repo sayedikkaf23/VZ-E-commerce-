@@ -11,8 +11,10 @@ import { ShowDetailsComponent } from './show-details/show-details.component';
 import { MailMangamentFormComponent } from './mail-mangament-form/mail-mangament-form.component';
 import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
 import { BusinessBankAccountComponent } from './business-bank-account/business-bank-account.component';
+import { MailMangamentForm2Component } from './mail-mangament-form-2/mail-mangament-form-2.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PaymentModesManagementComponent } from './payment-modes-management/payment-modes-management.component';
+import { MailMangamentShowDetailsComponent } from './mail-mangament-show-details/mail-mangament-show-details.component';
 const routes: Routes = [
 
   {
@@ -36,6 +38,11 @@ const routes: Routes = [
    
   },
   {
+    path: 'mailform-2',
+    component: MailMangamentForm2Component,
+   
+  },
+  {
     path: 'step-2',
     component: Step2Component,
    
@@ -48,6 +55,11 @@ const routes: Routes = [
   {
     path: 'ShowDetails',
     component: ShowDetailsComponent,
+   
+  },
+  {
+    path: 'MailMangamentShowDetails',
+    component: MailMangamentShowDetailsComponent,
    
   },
   {

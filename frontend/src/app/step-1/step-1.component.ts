@@ -82,13 +82,19 @@ export class Step1Component implements OnInit {
             }
   
             // Check if step2Data exists in localStorage
-            if (this.isBrowser && localStorage.getItem('step2Data')) {
-              // If step2Data exists, navigate to step-2
-              this.router.navigate(['/step-2']);
-            } else {
-              // Otherwise, navigate to account-type
-              this.router.navigate(['/account-type']);
+            if (this.isBrowser) {
+              if (localStorage.getItem('mailform2')) {
+                // If mailform2 data exists, navigate to MailMangamentShowDetails
+                this.router.navigate(['/MailMangamentShowDetails']);
+              } else if (localStorage.getItem('step2Data')) {
+                // If step2Data exists, navigate to step-2
+                this.router.navigate(['/step-2']);
+              } else {
+                // Otherwise, navigate to account-type
+                this.router.navigate(['/account-type']);
+              }
             }
+            
           }
         },
         error => {

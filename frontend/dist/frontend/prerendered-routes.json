@@ -4,6 +4,8 @@
     "/admin/login",
     "/home",
     "/mailform",
+    "/mailform-2",
+    "/MailMangamentShowDetails",
     "/panel",
     "/panel/admin-settings",
     "/panel/banck-account-opening",

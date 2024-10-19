@@ -19,6 +19,7 @@ exports.submit = async (req, res) => {
 
     // Destructure the required fields from req.body
     const {
+      type,
       firstName,
       lastName,
       email,
@@ -30,6 +31,10 @@ exports.submit = async (req, res) => {
       companyname,
       Bank,
       mobileNumber,
+      companylocation,
+      jurisdiction,
+      shareholder,
+      Turnover,
     } = req.body;
     let parsedMobileNumber;
 
@@ -59,6 +64,7 @@ if (isNaN(cleanedSalary)) {
 
     // Create and save user details in the database
     const userDetails = new UserDetails({
+      type,
       firstName,
       lastName,
       email,
@@ -70,6 +76,10 @@ if (isNaN(cleanedSalary)) {
       companyname,
       Bank,
       mobileNumber: parsedMobileNumber,
+      companylocation,
+      jurisdiction,
+      shareholder,
+      Turnover,
     });
 
     // Save the user details to the database
@@ -276,7 +286,7 @@ exports.updateService = async (req, res) => {
       ],
       mode: "payment",
       success_url: `https://ecommerce.yeepeey.com/home`,
-      cancel_url: `https://ecommerce.yeepeey.com/failure`,
+      cancel_url: `https://ecommerce.yeepeey.com/home`,
     });
 
     const stripeResponseData = stripeResponse;
