@@ -10,7 +10,7 @@ import { DashboardLayoutComponent } from './dashboard-layout/dashboard-layout.co
 import { ShowDetailsComponent } from './show-details/show-details.component';
 import { MailMangamentFormComponent } from './mail-mangament-form/mail-mangament-form.component';
 import { BackAccountOpeningComponent } from './back-account-opening/back-account-opening.component';
-
+import { BusinessBankAccountComponent } from './business-bank-account/business-bank-account.component';
 import { SettingsComponent } from './settings/settings.component';
 import { PaymentModesManagementComponent } from './payment-modes-management/payment-modes-management.component';
 const routes: Routes = [
@@ -80,6 +80,12 @@ const routes: Routes = [
         component: PaymentModesManagementComponent,
        
       },
+      {
+        path: 'business bank account',
+        component: BusinessBankAccountComponent,
+       
+      },
+      
       
     ],
   },

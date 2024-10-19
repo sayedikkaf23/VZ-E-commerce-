@@ -25,6 +25,7 @@ import { PaymentModesManagementComponent } from './payment-modes-management/paym
 import { FooterComponent } from './footer/footer.component';
 import { UserHeaderComponent } from './user-header/user-header.component';
 import { MailMangamentFormComponent } from './mail-mangament-form/mail-mangament-form.component';
+import { BusinessBankAccountComponent } from './business-bank-account/business-bank-account.component';
 
 
 @NgModule({
@@ -45,6 +46,7 @@ import { MailMangamentFormComponent } from './mail-mangament-form/mail-mangament
     FooterComponent,
     UserHeaderComponent,
     MailMangamentFormComponent,
+    BusinessBankAccountComponent,
     
   ],
   imports: [
