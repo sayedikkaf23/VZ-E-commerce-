@@ -70,17 +70,19 @@
               >
                 <i class="fa-solid fa-ellipsis-vertical"></i>
               </button>
-              <ul class="dropdown-menu">
+              <ul class="dropdown-menu custom-dropdown">
                 <li>
-                  <a class="dropdown-item cursor-pointer">Edit</a>
+                  <button class="dropdown-item custom-dropdown-item cursor-pointer" (click)="openEditModal(service)">Edit</button>
                 </li>
                 <li>
-                  <a class="dropdown-item cursor-pointer">View</a>
+                  <a class="dropdown-item custom-dropdown-item cursor-pointer">View</a>
                 </li>
                 <li>
-                  <a class="dropdown-item cursor-pointer">Delete</a>
+                  <a class="dropdown-item custom-dropdown-item cursor-pointer">Delete</a>
                 </li>
               </ul>
+              
+              
             </div>
           </td>
         </tr>
@@ -88,3 +90,37 @@
     </table>
   </div>
 </div>
+<!-- Modal Popup -->
+<div class="modal-container" *ngIf="isEditModalOpen">
+  <div class="modal-backdrop" (click)="closeEditModal()"></div>
+  <div class="modal-content">
+    <span class="close-btn" (click)="closeEditModal()">&times;</span>
+    <h5 class="modal-title">Edit Service</h5>
+    <form [formGroup]="editServiceForm">
+      <div class="form-group">
+        <label for="serviceName" class="form-label">Service Name</label>
+        <input type="text" id="serviceName" class="form-control" formControlName="serviceName">
+      </div>
+      <br>
+      <div class="form-group">
+        <label for="description" class="form-label">Description</label>
+        <input type="text" id="description" class="form-control" formControlName="description">
+      </div>
+  <br>
+ 
+ 
+      <div class="form-group form-switch">
+        <input type="checkbox" id="isActive" class="form-check-input" formControlName="isActive">
+        <label for="isActive" class="form-check-label">Is Active</label>
+      </div>
+      <br>
+      
+      <!-- <div class="form-group">
+        <label for="serviceIcon" class="form-label">Service Icon</label>
+        <input type="file" id="serviceIcon" class="form-control" (change)="onFileSelect($event)">
+      </div> -->
+      <button class="btn btn-primary" (click)="updateService()">Save changes</button>
+    </form>
+  </div>
+</div>
+
