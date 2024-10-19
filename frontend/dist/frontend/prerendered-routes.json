@@ -2,10 +2,10 @@
   "routes": [
     "/account-type",
     "/admin/login",
+    "/BusinessBankform",
+    "/BusinessBankShowDetails",
     "/home",
     "/mailform",
-    "/mailform-2",
-    "/MailMangamentShowDetails",
     "/panel",
     "/panel/admin-settings",
     "/panel/banck-account-opening",

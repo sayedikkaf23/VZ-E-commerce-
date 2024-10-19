@@ -122,7 +122,7 @@ export class MailMangamentForm2Component {
 
       // Append files
       // Add logic to append file data if necessary
-      this.router.navigate(['/MailMangamentShowDetails']);
+      this.router.navigate(['/BusinessBankShowDetails']);
     }
   }
 

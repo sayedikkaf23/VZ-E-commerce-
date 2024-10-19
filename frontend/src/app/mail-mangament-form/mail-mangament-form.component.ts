@@ -92,7 +92,7 @@ export class MailMangamentFormComponent {
             //   console.log("object")
             // } else {
             //   // Otherwise, navigate to account-type
-            //     this.router.navigate(['/mailform-2']);
+            //     this.router.navigate(['/BusinessBankform']);
             //   console.log("object2")
             // }
           }
