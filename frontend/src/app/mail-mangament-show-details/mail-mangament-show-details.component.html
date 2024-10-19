@@ -1,0 +1,140 @@
+
+<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+    <app-user-header></app-user-header>
+
+<!-- <div class="gradient_color p-2 p-md-5"></div> -->
+
+    
+<div class="gradient_color">
+    <h3>Review your details</h3>
+</div>
+
+<section class="step_1_section order-review">
+    <div class="container">
+  
+      <div class="row align-items-start">
+        <div class="col-md-7 col-lg-8">
+          <div class="box-light">
+            <div class="d-flex align-items-center justify-content-between">
+              <h4>Personal Information</h4>
+              <a [routerLink]="['/mailform']" class="btn-edit">Edit</a>
+            </div>
+            <table class="w-100">
+              <tbody>
+                <tr>
+                  <th>First Name :</th>
+                  <td>{{ personalInfo.firstName }}</td>
+                </tr>
+                <tr>
+                  <th>Last Name :</th>
+                  <td>{{ personalInfo.lastName }}</td>
+                </tr>
+                <tr>
+                  <th>Email ID :</th>
+                  <td>{{ personalInfo.email }}</td>
+                </tr>
+                <tr>
+                  <th>Nationality :</th>
+                  <td>{{ personalInfo.nationality }}</td>
+                </tr>
+                <tr>
+                  <th>Date of Birth :</th>
+                  <td>{{ personalInfo.birthday }}</td>
+                </tr>
+                <tr>
+                  <th>Phone Number :</th>
+                  <td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td>
+
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="box-light">
+            <div class="d-flex align-items-center justify-content-between">
+              <h4>Personal Bank Service</h4>
+              <a [routerLink]="['/mailform-2']" class="btn-edit">Edit</a>
+
+            </div>
+            <table class="w-100"> 
+              <tbody>
+                <tr>
+                  <th> is Your Company located in the UAE? :</th>
+                  <td>{{ companyInfo.companylocation }}</td>
+                </tr>
+                <tr>
+                  <th>Which Jurisdiction is your Company Located it? :</th>
+                  <td>{{ companyInfo.jurisdiction }}</td>
+                </tr>
+                <tr>
+                  <th>  How many shareholder does your company have? :</th>
+                  <td>{{ companyInfo.shareholder }}</td>
+                </tr>
+                <tr>
+                  <th>  Turnover of the company (Annually)? :</th>
+                  <td>{{ companyInfo.Turnover }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="col-md-5 col-lg-4 order-summery-col">
+          <div class="order-summery box-light">
+            <h4>Order Summary</h4>
+            <table class="w-100">
+              <tbody>
+                <tr>
+                  <th>Price</th>
+                  <td>$140</td>
+                </tr>
+                <tr>
+                  <th>Tax</th>
+                  <td>$5</td>
+                </tr>
+                <tr>
+                  <th>Discount Price</th>
+                  <td>-$10</td>
+                </tr>
+                <tr>
+                  <th>Total Amount</th>
+                  <td>$135</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <button (click)="submitData()" class="btn primary-btn w-100">Payment Now</button>
+        </div>
+      </div>
+    </div>
+  </section>
+  
+
+
+  <app-footer></app-footer>
+
+
+<div class="modal fade searchbox" id="searchmodal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-xl modal-dialog-centered">
+<div class="modal-content">
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-body">
+        <form action="" class="mb-0">
+            <input type="text" class="form-control" placeholder="Search here">
+            <span class="btn-icon">
+                <svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <g clip-path="url(#clip0_9_9)">
+                    <path d="M5.625 12.1875C5.625 14.877 6.49805 17.3613 7.96875 19.377L0.550781 26.8008C-0.181641 27.5332 -0.181641 28.7227 0.550781 29.4551C1.2832 30.1875 2.47266 30.1875 3.20508 29.4551L10.623 22.0313C12.6387 23.5078 15.123 24.375 17.8125 24.375C24.5449 24.375 30 18.9199 30 12.1875C30 5.45508 24.5449 0 17.8125 0C11.0801 0 5.625 5.45508 5.625 12.1875ZM17.8125 20.625C16.7045 20.625 15.6073 20.4068 14.5836 19.9827C13.5599 19.5587 12.6298 18.9372 11.8463 18.1537C11.0628 17.3702 10.4413 16.4401 10.0173 15.4164C9.59324 14.3927 9.375 13.2955 9.375 12.1875C9.375 11.0795 9.59324 9.98229 10.0173 8.95861C10.4413 7.93492 11.0628 7.00478 11.8463 6.22129C12.6298 5.43779 13.5599 4.81629 14.5836 4.39227C15.6073 3.96824 16.7045 3.75 17.8125 3.75C18.9205 3.75 20.0177 3.96824 21.0414 4.39227C22.0651 4.81629 22.9952 5.43779 23.7787 6.22129C24.5622 7.00478 25.1837 7.93492 25.6077 8.95861C26.0318 9.98229 26.25 11.0795 26.25 12.1875C26.25 13.2955 26.0318 14.3927 25.6077 15.4164C25.1837 16.4401 24.5622 17.3702 23.7787 18.1537C22.9952 18.9372 22.0651 19.5587 21.0414 19.9827C20.0177 20.4068 18.9205 20.625 17.8125 20.625Z" fill="currentColor"/>
+                    </g>
+                    <defs>
+                    <clipPath id="clip0_9_9">
+                    <rect width="30" height="30" fill="white" transform="matrix(-1 0 0 1 30 0)"/>
+                    </clipPath>
+                    </defs>
+                </svg>
+            </span>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+
+</div>

@@ -8,17 +8,16 @@ import AOS from 'aos';
 import { switchMap } from 'rxjs';
 
 declare var $: any;
-
 @Component({
-  selector: 'app-show-details',
-  templateUrl: './show-details.component.html',
-  styleUrls: ['./show-details.component.css'] // Correct styleUrls syntax
+  selector: 'app-mail-mangament-show-details',
+  templateUrl: './mail-mangament-show-details.component.html',
+  styleUrl: './mail-mangament-show-details.component.css'
 })
-export class ShowDetailsComponent implements AfterViewInit {
-  
+export class MailMangamentShowDetailsComponent {
+ 
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
-  bankInfo: any = {}; // To store bank service information (Step 2 data)
+ companyInfo: any = {}; // To store bank service information (Step 2 data)
 
   constructor(
     private http: HttpClient,
@@ -34,18 +33,18 @@ export class ShowDetailsComponent implements AfterViewInit {
     // Ensure this code runs only in the browser environment
     if (this.isBrowser) {
       // Retrieve data from localStorage
-      const step1Data = localStorage.getItem('step1Data');
-      const step2Data = localStorage.getItem('step2Data');
-    
+   
+      const mailform = localStorage.getItem('step1Data');
+      const mailform2 = localStorage.getItem('mailform2');
   
       // If there is no data in localStorage, navigate away from this page
-      if (!step1Data || !step2Data  ) {
+      if ( !mailform || !mailform2 ) {
         // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
         this.router.navigate(['/home']); // Replace with the correct route
       } else {
         // Parse and store data if it exists
-        this.personalInfo = JSON.parse(step1Data);
-        this.bankInfo = JSON.parse(step2Data);
+        this.personalInfo = JSON.parse(mailform);
+        this.companyInfo = JSON.parse(mailform2);
       }
     }
   }
@@ -110,7 +109,7 @@ export class ShowDetailsComponent implements AfterViewInit {
   submitData() {
     const finalData = {
       ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.bankInfo // Merge bank information (Step 2 data)
+      ...this.companyInfo // Merge bank information (Step 2 data)
     };
   
     // Send data to the backend using userService
@@ -118,8 +117,8 @@ export class ShowDetailsComponent implements AfterViewInit {
       switchMap(response => {
         if (response.message) {
           // Clear localStorage after successful submission
-          localStorage.removeItem('step1Data');
-          localStorage.removeItem('step2Data');
+          localStorage.removeItem('mailform');
+          localStorage.removeItem('mailform2');
 
           // Call payNowByStripe with the necessary payload
           const stripePayload = { amount: 135, currency: 'USD' }; // Example payload, replace with your actual data

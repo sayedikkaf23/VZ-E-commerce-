@@ -25,6 +25,8 @@ import { PaymentModesManagementComponent } from './payment-modes-management/paym
 import { FooterComponent } from './footer/footer.component';
 import { UserHeaderComponent } from './user-header/user-header.component';
 import { MailMangamentFormComponent } from './mail-mangament-form/mail-mangament-form.component';
+import { MailMangamentForm2Component } from './mail-mangament-form-2/mail-mangament-form-2.component';
+import { MailMangamentShowDetailsComponent } from './mail-mangament-show-details/mail-mangament-show-details.component';
 
 
 @NgModule({
@@ -45,6 +47,8 @@ import { MailMangamentFormComponent } from './mail-mangament-form/mail-mangament
     FooterComponent,
     UserHeaderComponent,
     MailMangamentFormComponent,
+    MailMangamentForm2Component,
+    MailMangamentShowDetailsComponent,
     
   ],
   imports: [

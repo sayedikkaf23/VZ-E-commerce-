@@ -8,9 +8,34 @@ export class FormDataService {
   private formData: any = {
     step1: {},
     step2: {},
+    mailform: {},
+    mailform2: {},
   };
 
   // Store data from Step 1
+  setmailformData(data: any) {
+    this.formData.mailform = data;
+  }
+
+  // Store data from Step 2
+  setmailform2Data(data: any) {
+    this.formData.mailform2 = data;
+  }
+
+  // Get data from Step 1
+  getmailformData() {
+    return this.formData.mailform;
+  }
+
+  // Get data from Step 2
+  getmailform2Data() {
+    return this.formData.mailform2;
+  }
+
+  // Get all form data
+  // getAllFormData() {
+  //   return this.formData;
+  // }
   setStep1Data(data: any) {
     this.formData.step1 = data;
   }

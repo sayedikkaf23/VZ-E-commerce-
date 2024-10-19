@@ -60,4 +60,8 @@ export class AccountSectionComponent implements OnInit, AfterViewInit {
   navigateToStep1() {
     this.router.navigate(['/step-2']); // Adjust the route according to your setup
   }
+
+  navigateTomailform() {
+    this.router.navigate(['/mailform-2']); // Adjust the route according to your setup
+  }
 }

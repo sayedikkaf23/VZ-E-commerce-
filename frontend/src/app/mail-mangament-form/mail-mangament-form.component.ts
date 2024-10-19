@@ -81,14 +81,19 @@ export class MailMangamentFormComponent {
             if (this.isBrowser) {
               localStorage.setItem('mailform', JSON.stringify(formData));
             }
-  
+
+
+
             // Check if step2Data exists in localStorage
             // if (this.isBrowser && localStorage.getItem('mailform')) {
             //   // If step2Data exists, navigate to step-2
-            //   this.router.navigate(['/step-2']);
+         
+            //   this.router.navigate(['/account-type']);
+            //   console.log("object")
             // } else {
             //   // Otherwise, navigate to account-type
-            //   this.router.navigate(['/account-type']);
+            //     this.router.navigate(['/mailform-2']);
+            //   console.log("object2")
             // }
           }
         },

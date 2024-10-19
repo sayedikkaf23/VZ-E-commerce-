@@ -1258,8 +1258,8 @@ a.btn-edit:hover:before {
     padding: 50px;
 }
 
-iti--allow-dropdown .itiflag-container:hover .itiselected-flag {
-    background-color: transparent !important;
+.ngx-tel-input .iti__country-list .iti__selected-dial-code:hover {
+    background-color: hsla(0, 100%, 50%, 0.5); 
 }
 
    
