@@ -38,7 +38,7 @@ const routes: Routes = [
    
   },
   {
-    path: 'mailform-2',
+    path: 'BusinessBankform',
     component: MailMangamentForm2Component,
    
   },
@@ -58,7 +58,7 @@ const routes: Routes = [
    
   },
   {
-    path: 'MailMangamentShowDetails',
+    path: 'BusinessBankShowDetails',
     component: MailMangamentShowDetailsComponent,
    
   },

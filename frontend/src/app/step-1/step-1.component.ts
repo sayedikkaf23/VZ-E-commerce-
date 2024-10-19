@@ -85,7 +85,7 @@ export class Step1Component implements OnInit {
             if (this.isBrowser) {
               if (localStorage.getItem('mailform2')) {
                 // If mailform2 data exists, navigate to MailMangamentShowDetails
-                this.router.navigate(['/MailMangamentShowDetails']);
+                this.router.navigate(['/BusinessBankShowDetails']);
               } else if (localStorage.getItem('step2Data')) {
                 // If step2Data exists, navigate to step-2
                 this.router.navigate(['/step-2']);

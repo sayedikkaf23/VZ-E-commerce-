@@ -62,6 +62,6 @@ export class AccountSectionComponent implements OnInit, AfterViewInit {
   }
 
   navigateTomailform() {
-    this.router.navigate(['/mailform-2']); // Adjust the route according to your setup
+    this.router.navigate(['/BusinessBankform']); // Adjust the route according to your setup
   }
 }
