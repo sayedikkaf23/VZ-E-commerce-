@@ -1,0 +1,50 @@
+.shareholder-row {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    margin-bottom: -62px; /* Space between shareholder rows */
+    background: #f8f9fa; /* Background color */
+    padding: 10px; /* Padding around the row */
+    border-radius: 4px; /* Rounded corners */
+  }
+  
+  .shareholder-details {
+    display: flex; /* Align fields in a row */
+    justify-content: space-between; /* Space items evenly */
+    margin-bottom: 5px; /* Reduced space between groups */
+  }
+  
+  .form-field {
+    flex: 1; /* Allow each field to grow equally */
+    margin-right: 10px; /* Space between fields */
+  }
+  
+  .form-field:last-child {
+    margin-right: 0; /* No margin on the last field */
+  }
+  .additem {
+    display: flex; /* Use flexbox to align items */
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontally */
+    cursor: pointer; /* Change cursor on hover */
+    margin-top: 5px; /* Small margin above the icon */
+    width: 100%; /* Make the button take full width for centering */
+    padding: 5px; /* Padding around the icon */
+    border-radius: 50%; /* Optional: keeps background circular */
+    text-align: center; /* Center text if used */
+  }
+  
+  .additem svg {
+    width: 40px; /* Size of the SVG */
+    height: 40px; /* Size of the SVG */
+    margin-right: 8px; /* Space between the icon and text */
+  }
+  
+  .additem:hover {
+    background-color: #f0f0f0; /* Change background on hover */
+  }
+  .required {
+    color: red;
+    font-weight: bold;
+    margin-left: 5px;
+  }
+  

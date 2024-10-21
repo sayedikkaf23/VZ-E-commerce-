@@ -23,6 +23,8 @@ export class MailMangamentForm2Component {
     type: 'Business Bank',
   
   };
+  shareholders: any[] = []; // Initialize the shareholders array
+
   isValidSalary = true;
 
   files: { passport?: File; salaryStatements?: File[] } = {};
