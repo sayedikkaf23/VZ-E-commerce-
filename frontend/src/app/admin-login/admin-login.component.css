@@ -1848,3 +1848,401 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
     word-wrap: break-word;
 }
 
+@media (max-width:767px){
+    :root {
+        --sidebar-width: 0;
+        --body-font-size:10px;
+    }
+    body{
+        background-color: var(--light-primary);
+    }
+    .detils-sidebar{
+        position: relative;
+        width: 100%;
+    }
+    .sidebar-row {
+        min-height: 0;
+        /* max-width: 70px; */
+        padding: 15px;
+        text-align: center;
+    }
+  
+    .logo a {
+        left: 10px;
+        max-width: 160px;
+    }
+    .detils-sidebar .logo {
+        margin-bottom: 25px;
+    }
+    .detils-sidebar h3 {
+        font-size: 10px;
+        margin: 0 0 5px;
+    }
+    .detils-sidebar h2 {
+        font-size: 20px;
+    }
+    .detils-sidebar p br{
+        display: none;
+    }
+    .details-content {
+        padding: 25px 0 0;
+        min-height: 0;
+        display: block;
+    }
+    .pm-select-wrap h3 {
+        font-size: 10px;
+        margin: 0 0 24px;
+    }
+    .btn-radio-field label {
+        height: 34px;
+        border-radius: 6px;
+        padding: 0 10px;
+    }
+    .btn-radio-field label .icon svg, 
+    .btn-radio-field label .icon img {
+        max-height: 16px;
+        max-width: 22px;
+        display: block;
+        height: auto;
+    }
+    .btn-radio-field {
+        margin-bottom: 25px;
+    }
+    .btn-radio-field .icon {
+        min-width: 22px;
+    }
+    .btn-radio-field .row {
+        --bs-gutter-x: 7px;
+    }
+    .details-content .details-footer {
+        position: relative;
+        padding:40px 15px 15px;
+    }
+    .details-footer ul {
+        font-size: 11px;
+        padding-top:20px;
+    }
+    .details-footer ul li {
+        line-height: 12px;
+        padding-right: 10px;
+        margin-right: 10px;
+    }
+    html .btn {
+        font-size: 12px;
+        padding: 0 15px;
+        border-radius: 6px;
+        height: 24px;
+    }
+    .detils-sidebar hr {
+        border-top: 1px solid var(--primary);
+    }
+    .details-footer h2 {
+        text-align: center;
+        font-size: 15px;
+        margin-bottom: 5px;
+    }
+    .details-footer hr {
+        border-top: 1px solid var(--primary);
+        margin:10px 0;
+    }
+    .details-footer h3 {
+        text-align: center;
+        font-weight: normal;
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
+    .details-footer p {
+        margin: 0;
+    }
+    .details-footer h6 {
+        font-weight: 400;
+        font-size: 10px;
+        margin: 0;
+    }
+    .details-footer h6 a{
+        color:inherit;
+    }
+    .details-footer h6 a:hover{
+        color:var(--dark)
+    }
+    .bg-title span {
+        padding: 0 30px;
+    }
+    .bg-title {
+        font-size: 18px;
+        margin: 0 0 20px;
+        line-height: 40px;
+    }
+    .paynow-wrap .tab-content-wrap .nav-tabs li.nav-item {
+        margin-right: 8px;
+        margin-bottom: 8px;
+    }
+    .paynow-wrap h3 {
+        margin: 18px 0 8px;
+        padding: 0 15px;
+        font-size: 16px;
+        line-height: 38px;
+    }
+    .paynow-wrap .tab-content-wrap .nav-tabs li.nav-item .nav-link {
+        padding: 2px 8px;
+        height: 28px;
+    }
+    .paynow-wrap .tab-content-wrap .nav-tabs li.nav-item .nav-link img {
+        max-height: 20px;
+    }
+    .paynow-wrap .tab-content-wrap {
+        padding: 15px;
+    }
+    .form-field label {
+        font-size:13px;
+        margin-bottom: 3px;
+    }
+    .form-field {
+        margin: 0 0 15px;
+    }
+    html .btn.paybtn {
+        background: var(--primary)!important;
+        color: #fff !important;
+    }
+
+    .accordion.accordion-style-1  .accordion-item .accordion-button {
+        font-size: 14px;
+    }
+    .dtc-item h4 {
+        font-size: 15px;
+    }
+    .accordion.accordion-style-1 .accordion-item {
+        margin: 0 0 15px;
+    }
+    .accordion.accordion-style-1 .accordion-body {
+        padding: 15px;
+        margin-top: 10px;
+    }
+    .fileuploaderlabel {
+        font-size: 15px;
+    }
+    .fileuploader {
+        border-radius: 10px;
+        margin:10px 0 20px;
+        border: 1px dashed #D4D4D4;
+        height: 130px;
+    }
+    .pm-submit-info .icon {
+        max-width: 120px;
+        margin: 0 auto 20px;
+    }
+    .pm-submit-info h3 {
+        font-size: 18px;
+    }
+    .pm-submit-info h5 {
+        font-size: 13px;
+    }
+    .pm-submit-info hr {
+        margin: 20px auto;
+    }
+    .pm-submit-info h2 {
+        font-size: 24px;
+    }
+    .pmnotes {
+        font-size: 10px;
+        width: 350px !important;
+        left: 10px !important;
+        padding: 5px;
+        margin-top: 20px;
+        background-color: #fff;
+    }
+    .uploaddocument-list h5 {
+        font-size: 13px;
+        margin: 0 0 20px;
+    }
+    .uploaddocument-item {
+        min-height: 0;
+        margin-top: 40px;
+    }
+    .uploaddocument-item h4 {
+        margin: 0 0 15px;
+    }
+    .uploaddocument-item .icon {
+        margin-bottom: 20px;
+    }
+    .office-center-wrap h3 {
+        font-size: 18px;
+        max-width: 520px;
+        margin: 0 auto 20px;
+        padding: 0 0 7px;
+    }
+    .aymdepositslip-wrap {
+        border-radius: 20px;
+        margin: 20px auto 0;
+        padding: 20px;
+        text-align: center;
+    }
+    .accordion.accordion-style-1 .accordion-item .accordion-button .label {
+        line-height: 26px;
+        padding: 0 12px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .login-tag {
+        left: 30px;
+        bottom: 30px;
+        font-size: 35px;
+        letter-spacing:2px;
+        display: none;
+    }
+    body.login-page {
+        padding:0 20px;
+        background:#fff;
+    }
+    .login-content{
+        text-align: center;
+        font-size: 13px;
+    }
+    .login-content h2 {
+        font-size: 22px;
+    }
+    .login-content .logo {
+        margin-bottom: 20px;
+    }
+    .login-content .form-control {
+        height: 42px;
+    }
+    .login-content  .btn {
+        height: 42px;
+    }
+    html .form-control, html .form-select {
+        font-size: 14px;
+    }
+    .admin-sidebar {
+        transform: translateX(-102%);
+        transition: all 0.5s;
+        z-index: 999;
+    }
+    .sidebar-collapsein .admin-sidebar{
+        transform: translateX(0);
+    }
+    .admin-body {
+        --sidebar-width: 290px;
+        padding: 0;
+        background-color: #fff;
+    }
+    .admin-sidebar .sidebar-row {
+        padding: 15px;
+    }
+    .sidebarnav > ul > li > a {
+        font-size: 13px;
+        line-height: 20px;
+        padding: 5px 8px;
+    }
+    .admin-sidebar h2 {
+        font-size: 34px;
+    }
+    .admin-body-content {
+        padding: 15px;
+    }
+    .admin-header h3 {
+        font-size: 18px;
+    }
+    .header-profile-name .btn .icon {
+        width: 40px;
+        height: 40px;
+        margin-right: 0;
+    }
+    .header-profile-name .btn h5{
+        display: none;
+    }
+    .admin-header {
+        padding: 0 15px 15px;
+        margin: 0 -15px 0;
+    }
+    .filterbar {
+        margin: 0 -15px 15px;
+        padding: 15px 15px;
+    }
+    .table>:not(caption)>*>* {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    .table.table-list-data thead th {
+        padding-top: 8px;
+        padding-bottom: 8px;
+        font-size: 12px;
+    }
+    .table.table-list-data tbody td {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border-bottom-width: 5px;
+    }
+    .admin-body .logo a {
+        max-width: 100px;
+    }
+    .filterbar h3 {
+        font-size: 15px;
+        text-align: center;
+        margin: 0 0 15px;
+    }
+    .filterbar .btn {
+        font-size: 14px;
+        height: 36px;
+        padding: 0  10px;
+        border-radius: 10px;
+    }
+    .simple-header {
+        padding: 15px;
+    }
+    .plans-section {
+        padding: 30px 0;
+    }
+    .plans-section h3 {
+        font-size: 16px;
+        margin: 0  0 12px;
+    }
+    .plan-tabs-wrap {
+        margin: 20px 0;
+    }
+    .plan-tabs-wrap .nav-tabs {
+        padding: 3px;
+    }
+    .plane-box {
+        margin-bottom: 20px;
+    }
+    .simple-footer {
+        padding: 20px 0;
+        text-align: center;
+    }
+    .pms-wrap {
+        padding: 10px;
+    }
+    .profile-wrapper {
+        padding: 35px 15px 0;
+    }
+    .profile-wrapper:before {
+        height: 130px;
+    }
+    .edit-profile-header h3 {
+        font-size: 15px;
+    }
+    .profile-info-box {
+        padding: 20px;
+        min-height: 0;
+        margin-top: 20px;
+    }
+    .fu-list{
+        margin-top:0;
+    }
+    .fw-wrap{
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+
+    .logo img {
+        display: none;
+      }
+      .login-page {
+        background: none; /* Disables the background image on mobile */
+      }
+
+      
+}
+
