@@ -24,14 +24,27 @@ export class HeaderComponent implements OnInit {
     bodyElement.classList.toggle('sidebar-collapsein');
   }
 
+  // logOut() {
+  //   localStorage.clear();
+  //   if (isPlatformBrowser(this.platformId)) {
+  //     location.href = '/admin/login';
+  //     location.reload();
+  //   }
+  // }
   logOut() {
+    // Clear local storage
     localStorage.clear();
+    
+    // Check if we are in the browser environment
     if (isPlatformBrowser(this.platformId)) {
-      location.href = '/admin/login';
-      location.reload();
+      // Use Angular Router to navigate to /admin/login
+      this.router.navigate(['/admin/login']).then(() => {
+        // Optionally, you can reload the page if needed
+        location.reload();
+      });
     }
   }
-
+  
   // Check if this is the browser environment and return location information accordingly
   get isDashboardNavShow() {
     if (isPlatformBrowser(this.platformId)) {
