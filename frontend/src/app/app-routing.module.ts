@@ -15,6 +15,7 @@ import { MailMangamentForm2Component } from './mail-mangament-form-2/mail-mangam
 import { SettingsComponent } from './settings/settings.component';
 import { PaymentModesManagementComponent } from './payment-modes-management/payment-modes-management.component';
 import { MailMangamentShowDetailsComponent } from './mail-mangament-show-details/mail-mangament-show-details.component';
+import { CustomerManagementComponent } from './customer-management/customer-management.component';
 const routes: Routes = [
 
   {
@@ -97,7 +98,12 @@ const routes: Routes = [
         component: BusinessBankAccountComponent,
        
       },
-      
+
+        {
+        path: 'customer-management',
+        component: CustomerManagementComponent,
+       
+      },
       
     ],
   },

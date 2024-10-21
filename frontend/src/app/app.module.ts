@@ -28,6 +28,7 @@ import { MailMangamentFormComponent } from './mail-mangament-form/mail-mangament
 import { BusinessBankAccountComponent } from './business-bank-account/business-bank-account.component';
 import { MailMangamentForm2Component } from './mail-mangament-form-2/mail-mangament-form-2.component';
 import { MailMangamentShowDetailsComponent } from './mail-mangament-show-details/mail-mangament-show-details.component';
+import { CustomerManagementComponent } from './customer-management/customer-management.component';
 
 
 @NgModule({
@@ -51,6 +52,7 @@ import { MailMangamentShowDetailsComponent } from './mail-mangament-show-details
     BusinessBankAccountComponent,
     MailMangamentForm2Component,
     MailMangamentShowDetailsComponent,
+    CustomerManagementComponent,
     
   ],
   imports: [
