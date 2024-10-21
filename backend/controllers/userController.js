@@ -340,4 +340,21 @@ console.log(req.body)
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
+
+  
 }
+exports.deleteService = async (req, res) => {
+  const { serviceId } = req.params; // Get the service ID from the request parameters
+
+  try {
+      // Find the service by ID and remove it
+      const deletedService = await Service.findByIdAndDelete(serviceId);
+      if (!deletedService) {
+          return res.status(404).json({ message: 'Service not found' });
+      }
+
+      res.status(200).json({ message: 'Service deleted successfully', service: deletedService });
+  } catch (error) {
+      res.status(500).json({ error: 'Error deleting service', details: error.message });
+  }
+};

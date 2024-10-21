@@ -33,6 +33,9 @@ export class AdminAuthService {
   
     return this.http.put(`${this.url}/user/services/${serviceId}`, formData); // PUT request to update the service
   }
+  deleteService(serviceId: string): Observable<any> {
+    return this.http.delete(`${this.url}/user/services/${serviceId}`); // DELETE request to remove the service
+  }
   
 }
 

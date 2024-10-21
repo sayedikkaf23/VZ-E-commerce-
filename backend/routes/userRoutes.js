@@ -13,6 +13,7 @@ router.get('/submissions', userController.getAllSubmissions);
 router.post('/login', userController.loginAdmin);
 router.post('/payNowByStripe', userController.payNowByStripe);
 router.post('/checkUser', userController.checkUser);
-router.put('/services/:serviceId', singleUpload, userController.updateService); // Change fileUpload to singleUpload
+router.put('/services/:serviceId', singleUpload, userController.updateService);
+router.delete('/services/:serviceId', userController.deleteService); 
 
 module.exports = router;
