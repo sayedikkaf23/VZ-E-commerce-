@@ -121,8 +121,8 @@
                     <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required placeholder="Full Name" />
                   </div>
                   <div class="form-field">
-                    <label>Phone Number <span class="required">*</span></label>
-                    <input type="text" [(ngModel)]="shareholder.phone" [ngModelOptions]="{ standalone: true }" required placeholder="Phone Number" />
+                    <label>Shareholder % <span class="required">*</span></label>
+                    <input type="number" [(ngModel)]="shareholder.shareholderPercentage" [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100" />
                   </div>
                   <div class="form-field">
                     <label>Date of Birth <span class="required">*</span></label>
@@ -130,7 +130,24 @@
                   </div>
                   <div class="form-field">
                     <label>Nationality <span class="required">*</span></label>
-                    <input type="text" [(ngModel)]="shareholder.nationality" [ngModelOptions]="{ standalone: true }" required placeholder="Nationality" />
+
+                    <fieldset>
+                      <select
+                        name="resident"
+                        id="resident"
+                        class="form-select"
+                        [(ngModel)]="formData.companylocation"
+                      >
+                        <option value="" disabled selected>
+                         Nationality
+                        </option>
+                        <option value="UAE">UAE</option>
+                        <option value="Indian">Indian</option>
+                        <option value="British">British</option>
+                        <option value="American">American</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </fieldset>
                   </div>
 
                 </div>
