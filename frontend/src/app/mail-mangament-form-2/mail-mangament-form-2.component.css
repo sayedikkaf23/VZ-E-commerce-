@@ -39,9 +39,7 @@
     margin-right: 8px; /* Space between the icon and text */
   }
   
-  .additem:hover {
-    background-color: #f0f0f0; /* Change background on hover */
-  }
+*/
   .required {
     color: red;
     font-weight: bold;
