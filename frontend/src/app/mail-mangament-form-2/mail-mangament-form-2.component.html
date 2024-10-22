@@ -55,8 +55,8 @@
                 </fieldset>
               </div> -->
               <div class="form-field" >
-                <label for="jurisdiction">Which Jurisdiction is your Company Located it?<span class="required">*</span></label
-                >
+                <!-- <label for="jurisdiction">Which Jurisdiction is your Company Located it?<span class="required">*</span></label -->
+                
                 <input
                   type="text"
                   name="jurisdiction"
@@ -64,7 +64,8 @@
                   class="form-input"
                   [(ngModel)]="formData.jurisdiction"
              
-                  placeholder="Freezone or Mainland"
+                  placeholder="Which Jurisdiction is your Company Located it?"
+                
                 />
               </div>
           
@@ -112,38 +113,39 @@
                   </select>
                 </fieldset>
               </div>
-           <div class="shareholder-row">
-  <h3 style="margin-bottom: 30px;">Shareholder List</h3>
+              <div class="shareholder-row">
+                <h3 style="margin-bottom: 30px;">Shareholder List</h3>
+              
+                <div class="form-group shareholder-details">
+                  <div class="form-field">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input type="text" required placeholder="Full Name" />
+                  </div>
+                  <div class="form-field">
+                    <label>Phone Number <span class="required">*</span></label>
+                    <input type="text" required placeholder="Phone Number" />
+                  </div>
+                  <div class="form-field">
+                    <label>Date of Birth <span class="required">*</span></label>
+                    <input type="date" required />
+                  </div>
+                  <div class="form-field">
+                    <label>Nationality <span class="required">*</span></label>
+                    <input type="text" required placeholder="Nationality" />
+                  </div>
+                 
 
-  <div class="form-group shareholder-details">
-    <div class="form-field">
-      <label>Full Name <span class="required">*</span></label>
-      <input type="text" required placeholder="Full Name" />
-    </div>
-    <div class="form-field">
-      <label>Phone Number <span class="required">*</span></label>
-      <input type="text" required placeholder="Phone Number" />
-    </div>
-    <div class="form-field">
-      <label>Date of Birth <span class="required">*</span></label>
-      <input type="date" required />
-    </div>
-    <div class="form-field">
-      <label>Nationality <span class="required">*</span></label>
-      <input type="text" required placeholder="Nationality" />
-    </div>
-  </div>
-
-  <div class="additem">
-    <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="29.5" cy="29.5" r="29.5" fill="#FA2E52" />
-      <line x1="29.5938" y1="17" x2="29.5938" y2="42" stroke="white" stroke-width="1.5" />
-      <line x1="42" y1="29.5938" x2="17" y2="29.5937" stroke="white" stroke-width="1.5" />
-    </svg>
-  </div>
-</div>
-
-    
+                </div>
+              
+                <div class="additem" >
+                  <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="29.5" cy="29.5" r="29.5" fill="#FA2E52" />
+                    <line x1="29.5938" y1="17" x2="29.5938" y2="42" stroke="white" stroke-width="1.5" />
+                    <line x1="42" y1="29.5938" x2="17" y2="29.5937" stroke="white" stroke-width="1.5" />
+                  </svg>
+                </div>
+              </div>
+              
               </div>
               
               
