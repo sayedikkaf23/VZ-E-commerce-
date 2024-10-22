@@ -27,11 +27,13 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     shareholdercount:'',
     type: 'Business Bank',
   };
-  shareholders: any[] = [{ name: '', phone: '', dob: '', nationality: '' }]; // Initialize with one shareholder
+  shareholders: any[] = [{ name: '', phone: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
 
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
+  nationalities: string[] = []; // Initialize as an empty array
+
 
   constructor(
     private formDataService: FormDataService,
@@ -49,6 +51,12 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     // Retrieve Step 2 data from localStorage
+
+    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
+      this.nationalities = data.map((country) => country.name.common);
+      this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    });
+
     const storedStep2Data = localStorage.getItem('mailform2');
     if (storedStep2Data) {
       this.formData = JSON.parse(storedStep2Data);
