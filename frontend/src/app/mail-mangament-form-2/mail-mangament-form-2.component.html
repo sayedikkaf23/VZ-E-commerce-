@@ -131,7 +131,7 @@
                     />
                   </div>
                   <div class="form-field">
-                    <label>Shareholder %<span class="required">*</span></label>
+                    <label>Shareholder%<span class="required">*</span></label>
                     <input
                       type="number"
                       [(ngModel)]="shareholder.shareholderPercentage"
@@ -152,7 +152,7 @@
                     />
                   </div>
                   <div class="form-field">
-                    <label>Nationality<span class="required">*</span></label>
+                    <label>Nationality <span class="required">*</span></label>
                     <select
                       class="form-select"
                       [(ngModel)]="shareholder.nationality"
@@ -165,6 +165,7 @@
                       </option>
                     </select>
                   </div>
+                  
                   <button type="button" (click)="deleteShareholder(i)" class="remove-btn">Remove</button> <!-- Remove button -->
                 </div>
               </div>

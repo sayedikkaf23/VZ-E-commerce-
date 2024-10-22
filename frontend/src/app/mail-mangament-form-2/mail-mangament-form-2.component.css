@@ -39,7 +39,6 @@
     margin-right: 8px; /* Space between the icon and text */
   }
   
-*/
   .required {
     color: red;
     font-weight: bold;
@@ -70,4 +69,16 @@
   .remove-btn:hover {
     background-color: #e6263a; /* Darker shade on hover */
   }
-  
+  .form-select {
+  width: 100%; /* Make sure the dropdown takes the full width available */
+  padding: 10px; /* Add padding for better spacing */
+  font-size: 14px; /* Ensure the font size is readable */
+  border-radius: 4px; /* Match the design with rounded corners */
+  border: 1px solid #ccc; /* Add border for better visibility */
+}
+
+.form-select:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: #FA2E52; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(250, 46, 82, 0.5); /* Add a slight shadow effect */
+}
