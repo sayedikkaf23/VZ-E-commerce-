@@ -24,6 +24,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     companylocation: '',
     jurisdiction: '',
     Turnover: '',
+    shareholdercount:'',
     type: 'Business Bank',
   };
   shareholders: any[] = [{ name: '', phone: '', dob: '', nationality: '' }]; // Initialize with one shareholder
