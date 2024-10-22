@@ -115,36 +115,37 @@
               </div>
               <div class="shareholder-row">
                 <h3 style="margin-bottom: 30px;">Shareholder List</h3>
-              
-                <div class="form-group shareholder-details">
+                <div class="form-group shareholder-details" *ngFor="let shareholder of shareholders; let i = index">
                   <div class="form-field">
                     <label>Full Name <span class="required">*</span></label>
-                    <input type="text" required placeholder="Full Name" />
+                    <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required placeholder="Full Name" />
                   </div>
                   <div class="form-field">
                     <label>Phone Number <span class="required">*</span></label>
-                    <input type="text" required placeholder="Phone Number" />
+                    <input type="text" [(ngModel)]="shareholder.phone" [ngModelOptions]="{ standalone: true }" required placeholder="Phone Number" />
                   </div>
                   <div class="form-field">
                     <label>Date of Birth <span class="required">*</span></label>
-                    <input type="date" required />
+                    <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required />
                   </div>
                   <div class="form-field">
                     <label>Nationality <span class="required">*</span></label>
-                    <input type="text" required placeholder="Nationality" />
+                    <input type="text" [(ngModel)]="shareholder.nationality" [ngModelOptions]="{ standalone: true }" required placeholder="Nationality" />
                   </div>
-                 
 
                 </div>
-              
-                <div class="additem" >
+
+                <div class="additem" (click)="addShareholder()">
                   <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="29.5" cy="29.5" r="29.5" fill="#FA2E52" />
-                    <line x1="29.5938" y1="17" x2="29.5938" y2="42" stroke="white" stroke-width="1.5" />
-                    <line x1="42" y1="29.5938" x2="17" y2="29.5937" stroke="white" stroke-width="1.5" />
+                      <circle cx="29.5" cy="29.5" r="29.5" fill="#FA2E52" />
+                      <line x1="29.5938" y1="17" x2="29.5938" y2="42" stroke="white" stroke-width="1.5" />
+                      <line x1="42" y1="29.5938" x2="17" y2="29.5937" stroke="white" stroke-width="1.5" />
                   </svg>
-                </div>
               </div>
+              
+              </div>
+              
+              
               
               </div>
               

@@ -1,4 +1,6 @@
-import { Component, Inject, PLATFORM_ID, AfterViewInit, OnInit } from '@angular/core';
+import {  Inject, PLATFORM_ID, AfterViewInit, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormDataService } from '../service/form-data.service';
@@ -9,24 +11,24 @@ import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 
 declare var $: any;
+
 @Component({
   selector: 'app-mail-mangament-form-2',
   templateUrl: './mail-mangament-form-2.component.html',
-  styleUrl: './mail-mangament-form-2.component.css'
+  styleUrls: ['./mail-mangament-form-2.component.css'], // Corrected from styleUrl to styleUrls
+  changeDetection: ChangeDetectionStrategy.OnPush, // Use OnPush strategy
+
 })
-export class MailMangamentForm2Component {
+export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   formData: any = {
     companylocation: '',
     jurisdiction: '',
-    shareholder: '',
     Turnover: '',
     type: 'Business Bank',
-  
   };
-  shareholders: any[] = []; // Initialize the shareholders array
+  shareholders: any[] = [{ name: '', phone: '', dob: '', nationality: '' }]; // Initialize with one shareholder
 
   isValidSalary = true;
-
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
 
@@ -37,8 +39,6 @@ export class MailMangamentForm2Component {
     private toastr: ToastrService,
     private router: Router,
     private cdRef: ChangeDetectorRef,
-   
-
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // Retrieve Step 1 data from the service when Step 2 initializes
@@ -52,21 +52,8 @@ export class MailMangamentForm2Component {
     if (storedStep2Data) {
       this.formData = JSON.parse(storedStep2Data);
       this.cdRef.detectChanges();
-      console.log(  this.formData.working)
     }
   }
-
-  // Handle file input changes
-  onFileChange(event: any, fieldName: string) {
-    if (fieldName === 'passport') {
-      this.files.passport = event.target.files[0];
-    } else if (fieldName === 'salaryStatements') {
-      this.files.salaryStatements = Array.from(event.target.files);
-    }
-  }
-
-
-
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
@@ -99,67 +86,85 @@ export class MailMangamentForm2Component {
       });
     }
   }
+  addShareholder() {
+    console.log('Add shareholder clicked');
+    this.shareholders.push({ name: '', phone: '', dob: '', nationality: '' });
+    this.cdRef.detectChanges(); // Only if necessary
+}
+
+deleteShareholder(index: number) {
+  this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
+}
+
+  // Handle file input changes
+  onFileChange(event: any, fieldName: string) {
+    if (fieldName === 'passport') {
+      this.files.passport = event.target.files[0];
+    } else if (fieldName === 'salaryStatements') {
+      this.files.salaryStatements = Array.from(event.target.files);
+    }
+  }
+
 
   // Validation and submission logic
   onSubmit() {
     if (this.validateForm()) {
-      const formDataToSend = new FormData();
+        const formDataToSend = new FormData();
 
-      // Append Step 1 data
-      for (const key in this.step1Data) {
-        if (this.step1Data.hasOwnProperty(key)) {
-          formDataToSend.append(key, this.step1Data[key]);
+        // Append Step 1 data
+        for (const key in this.step1Data) {
+            if (this.step1Data.hasOwnProperty(key)) {
+                formDataToSend.append(key, this.step1Data[key]);
+            }
         }
-      }
 
-      // Append Step 2 data
-      formDataToSend.append('companylocation', this.formData.companylocation);
-      formDataToSend.append('jurisdiction', this.formData.jurisdiction);
-      formDataToSend.append('shareholder', this.formData.shareholder);
-  
-      formDataToSend.append('Turnover', this.formData.Turnover);
+        // Append Step 2 data
+        formDataToSend.append('companylocation', this.formData.companylocation);
+        formDataToSend.append('jurisdiction', this.formData.jurisdiction);
+        formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
+        formDataToSend.append('Turnover', this.formData.Turnover);
 
-      // Save Step 2 data to localStorage
-      localStorage.setItem('mailform2', JSON.stringify(this.formData));
+        // Save Step 2 data to localStorage
+        localStorage.setItem('mailform2', JSON.stringify(this.formData));
 
-      // Append files
-      // Add logic to append file data if necessary
-      this.router.navigate(['/BusinessBankShowDetails']);
+        // Append files if necessary
+
+        this.router.navigate(['/BusinessBankShowDetails']);
     }
-  }
-
- // Validate form and show a single toast for missing fields
-validateForm(): boolean {
-  let isValid = true;
-  const missingFields: string[] = []; // Array to hold missing fields
-
-  if (!this.formData.companylocation) {
-    missingFields.push('Resident status');
-    isValid = false;
-  }
-  if (!this.formData.jurisdiction) {
-    missingFields.push('Resident status');
-    isValid = false;
-  }
-  if (!this.formData.shareholder) {
-    missingFields.push('Resident status');
-    isValid = false;
-  }
-  if (!this.formData.Turnover) {
-    missingFields.push('Resident status');
-    isValid = false;
-  }
-
-
-
-  // Show a single toast for all missing fields if any
-  if (missingFields.length > 0) {
-    const message = `All fields are required`;
-    this.toastr.error(message);
-  }
-
-  return isValid;
 }
-// Function to format salary as the user types
 
+trackByShareholder(index: number, shareholder: any): number {
+  return index; // Or return a unique identifier if you have one
+}
+
+  // Validate form and show a single toast for missing fields
+  validateForm(): boolean {
+    let isValid = true;
+    const missingFields: string[] = [];
+
+    if (!this.formData.companylocation) {
+      missingFields.push('Company Location');
+      isValid = false;
+    }
+    if (!this.formData.jurisdiction) {
+      missingFields.push('Jurisdiction');
+      isValid = false;
+    }
+    if (this.shareholders.length === 0 || this.shareholders.some(s => !s.name || !s.phone || !s.dob || !s.nationality)) {
+      missingFields.push('Shareholder details');
+      isValid = false;
+    }
+    if (!this.formData.Turnover) {
+      missingFields.push('Turnover');
+      isValid = false;
+    }
+
+    // Show a single toast for all missing fields if any
+    if (missingFields.length > 0) {
+      const message = `All fields are required`;
+      this.toastr.error(message);
+    }
+
+    return isValid;
+  }
 }

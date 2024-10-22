@@ -61,7 +61,21 @@
     height: 25px;
     margin-top: 51px
   }
-  
+  .btn-delete {
+    padding: 4px 8px; /* Reduce padding */
+    font-size: 12px; /* Smaller font size */
+    color: white; /* Text color */
+    background-color: #FA2E52; /* Background color */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.btn-delete:hover {
+    background-color: #e6263a; /* Darker shade on hover */
+}
+
   .remove-btn:hover {
     background-color: darkred; /* Darker red on hover */
     text-decoration: none; /* Remove underline on hover */
