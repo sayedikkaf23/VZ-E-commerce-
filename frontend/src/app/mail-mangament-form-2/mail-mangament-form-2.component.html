@@ -130,24 +130,12 @@
                   </div>
                   <div class="form-field">
                     <label>Nationality <span class="required">*</span></label>
-
-                    <fieldset>
-                      <select
-                        name="resident"
-                        id="resident"
-                        class="form-select"
-                        [(ngModel)]="formData.companylocation"
-                      >
-                        <option value="" disabled selected>
-                         Nationality
-                        </option>
-                        <option value="UAE">UAE</option>
-                        <option value="Indian">Indian</option>
-                        <option value="British">British</option>
-                        <option value="American">American</option>
-                        <option value="Other">Other</option>
-                      </select>
-                    </fieldset>
+                    <select class="form-select" formControlName="nationalityshareholder">
+                      <option value="" disabled selected>Select Nationality</option>
+                      <option *ngFor="let nationality of nationalities" [value]="nationality">
+                        {{ nationality }}
+                      </option>
+                    </select>
                   </div>
 
                 </div>
