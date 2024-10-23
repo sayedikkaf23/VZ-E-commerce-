@@ -27,7 +27,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     shareholdercount:'',
     type: 'Business Bank',
   };
-  shareholders: any[] = [{ name: '', phone: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
+  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
 
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
@@ -56,10 +56,25 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.nationalities = data.map((country) => country.name.common);
       this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     });
-
     const storedStep2Data = localStorage.getItem('mailform2');
     if (storedStep2Data) {
-      this.formData = JSON.parse(storedStep2Data);
+      const parsedData = JSON.parse(storedStep2Data);
+      
+      // Update formData and shareholders separately
+      this.formData = { 
+        companylocation: parsedData.companylocation, 
+        jurisdiction: parsedData.jurisdiction,
+        Turnover: parsedData.Turnover,
+        shareholdercount: parsedData.shareholdercount,
+        type: parsedData.type
+      };
+      
+      // Update shareholders if it exists in the parsed data
+      if (parsedData.shareholders) {
+        this.shareholders = parsedData.shareholders;
+      }
+    
+      // Trigger change detection if necessary
       this.cdRef.detectChanges();
     }
   }
@@ -135,8 +150,14 @@ deleteShareholder(index: number) {
         this.shareholders.forEach((shareholder, index) => {
           formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
         });
+
+        const combinedFormData = {
+          ...this.formData, // Spread formData properties
+          shareholders: this.shareholders // Add the shareholders array
+        };
+        
         // Save Step 2 data to localStorage
-        localStorage.setItem('mailform2', JSON.stringify(this.formData));
+        localStorage.setItem('mailform2', JSON.stringify(combinedFormData));
 
         // Append files if necessary
 
@@ -153,6 +174,8 @@ trackByShareholder(index: number, shareholder: any): number {
     let isValid = true;
     const missingFields: string[] = [];
 
+console.log(missingFields)
+
     if (!this.formData.companylocation) {
       missingFields.push('Company Location');
       isValid = false;
@@ -161,7 +184,7 @@ trackByShareholder(index: number, shareholder: any): number {
       missingFields.push('Jurisdiction');
       isValid = false;
     }
-    if (this.shareholders.length === 0 || this.shareholders.some(s => !s.name || !s.phone || !s.dob || !s.nationality)) {
+    if (this.shareholders.length === 0 || this.shareholders.some(s => !s.name || !s.shareholderPercentage || !s.dob || !s.nationalityshareholder)) {
       missingFields.push('Shareholder details');
       isValid = false;
     }
