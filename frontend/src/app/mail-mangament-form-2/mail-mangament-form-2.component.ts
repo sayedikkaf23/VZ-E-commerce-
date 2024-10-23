@@ -129,10 +129,41 @@ deleteShareholder(index: number) {
     }
   }
 
+  updateShareholders() {
+    const count = parseInt(this.formData.shareholdercount, 10); // Convert count to number
 
+    // If the selected count is greater than current length, add more shareholder objects
+    while (this.shareholders.length < count) {
+      this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+    }
+
+    // If the selected count is smaller, remove extra shareholder objects
+    while (this.shareholders.length > count) {
+      this.shareholders.pop();
+    }
+  }
+
+  isFormInvalid(): boolean {
+    const shareholderCount = Number(this.formData.shareholdercount);
+  
+    // Ensure that all fields of each shareholder up to the count are filled
+    for (let i = 0; i < shareholderCount; i++) {
+      const shareholder = this.shareholders[i];
+      if (!shareholder || !shareholder.name || !shareholder.shareholderPercentage || !shareholder.dob || !shareholder.nationalityshareholder) {
+        return true;  // Form is invalid if any required field is missing
+      }
+    }
+  
+    return false; // Form is valid if all required fields are filled
+  }
+  
   // Validation and submission logic
   onSubmit() {
-    if (this.validateForm()) {
+
+    if (this.isFormInvalid()) {
+      this.toastr.error('Please fill out all required fields.', 'Form Incomplete');
+    } else {
+      if (this.validateForm()) {
         const formDataToSend = new FormData();
 
         // Append Step 1 data
@@ -163,6 +194,10 @@ deleteShareholder(index: number) {
 
         this.router.navigate(['/BusinessBankShowDetails']);
     }
+    }
+
+
+   
 }
 
 trackByShareholder(index: number, shareholder: any): number {

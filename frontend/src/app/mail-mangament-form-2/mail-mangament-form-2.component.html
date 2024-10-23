@@ -26,6 +26,7 @@
                     id="resident"
                     class="form-select"
                     [(ngModel)]="formData.companylocation"
+                    
                   >
                     <option value="" disabled selected>
                       is Your Company located in the UAE?<span class="required"
@@ -76,6 +77,7 @@
                   id="shareholdercount"
                   class="form-select"
                   [(ngModel)]="formData.shareholdercount"
+                 
                 >
                   <option value="" disabled selected>
                     How many shareholder does your company have?<span
@@ -169,7 +171,7 @@
                   <button type="button" (click)="deleteShareholder(i)" class="remove-btn">Remove</button> <!-- Remove button -->
                 </div>
               </div>
-              <div class="additem" (click)="addShareholder()">
+              <div *ngIf="shareholders.length < formData.shareholdercount" class="additem" (click)="addShareholder()">
                 <svg
                   width="60"
                   height="60"
