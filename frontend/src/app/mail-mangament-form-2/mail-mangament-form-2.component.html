@@ -121,8 +121,8 @@
                     <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required placeholder="Full Name" />
                   </div>
                   <div class="form-field">
-                    <label><span class="required">*</span></label>
-                    <input type="text" [(ngModel)]="shareholder.phone" [ngModelOptions]="{ standalone: true }" required placeholder="Phone Number" />
+                    <label>Shareholder % <span class="required">*</span></label>
+                    <input type="number" [(ngModel)]="shareholder.shareholderPercentage" [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100" />
                   </div>
                   <div class="form-field">
                     <label>Date of Birth <span class="required">*</span></label>

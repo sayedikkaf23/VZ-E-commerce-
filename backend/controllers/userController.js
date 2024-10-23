@@ -33,7 +33,7 @@ exports.submit = async (req, res) => {
       mobileNumber,
       companylocation,
       jurisdiction,
-      shareholder,
+      shareholders, // Updated to use 'shareholders' as an array
       Turnover,
     } = req.body;
     let parsedMobileNumber;
@@ -49,18 +49,31 @@ exports.submit = async (req, res) => {
     } else {
       parsedMobileNumber = mobileNumber; // If it's already an object, use it
     }
+
     // Check if email already exists
     const existingUser = await UserDetails.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
 
+    // Clean and validate the salary
     const cleanedSalary = salary ? Number(salary.replace(/,/g, '')) : 0;
 
-// Validate that the cleaned salary is a valid number
-if (isNaN(cleanedSalary)) {
-  throw new Error('Invalid salary input');
-}
+    if (isNaN(cleanedSalary)) {
+      throw new Error('Invalid salary input');
+    }
+
+    // Parse shareholders if provided as a string
+    let parsedShareholders = [];
+    if (Array.isArray(shareholders)) {
+      parsedShareholders = shareholders;
+    } else if (typeof shareholders === "string") {
+      try {
+        parsedShareholders = JSON.parse(shareholders); // Try to parse JSON string
+      } catch (e) {
+        console.error("Error parsing shareholders JSON:", e);
+      }
+    }
 
     // Create and save user details in the database
     const userDetails = new UserDetails({
@@ -72,26 +85,22 @@ if (isNaN(cleanedSalary)) {
       birthday,
       resident,
       working,
-      cleanedSalary,
+      salary: cleanedSalary,
       companyname,
       Bank,
       mobileNumber: parsedMobileNumber,
       companylocation,
       jurisdiction,
-      shareholder,
+      shareholders: parsedShareholders, // Updated to use 'shareholders' array
       Turnover,
     });
 
     // Save the user details to the database
     await userDetails.save();
-    res
-      .status(201)
-      .json({ message: "Details submitted successfully", userDetails });
+    res.status(201).json({ message: "Details submitted successfully", userDetails });
   } catch (error) {
     console.log(error);
-    res
-      .status(500)
-      .json({ error: "Error saving details", details: error.message });
+    res.status(500).json({ error: "Error saving details", details: error.message });
   }
 };
 

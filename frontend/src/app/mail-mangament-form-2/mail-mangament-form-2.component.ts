@@ -132,7 +132,9 @@ deleteShareholder(index: number) {
         formDataToSend.append('jurisdiction', this.formData.jurisdiction);
         formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
         formDataToSend.append('Turnover', this.formData.Turnover);
-
+        this.shareholders.forEach((shareholder, index) => {
+          formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
+        });
         // Save Step 2 data to localStorage
         localStorage.setItem('mailform2', JSON.stringify(this.formData));
 
