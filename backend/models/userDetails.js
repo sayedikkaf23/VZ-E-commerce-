@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
-
-
-
+ 
+ 
+ 
 const shareholderSchema = new mongoose.Schema({
   name: { type: String },
   phone: { type: String },
   dob: { type: Date},
   nationalityshareholder: { type: String }
 });
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 
 const userDetailsSchema = new mongoose.Schema({
  
    type: { type: String },
@@ -40,5 +40,5 @@ const userDetailsSchema = new mongoose.Schema({
       Turnover: { type: String },        // Added Turnover field
       shareholders: [shareholderSchema], // Changed to an array of shareholder objects
 }, { timestamps: true });
-
+ 
 module.exports = mongoose.model('UserDetails', userDetailsSchema);

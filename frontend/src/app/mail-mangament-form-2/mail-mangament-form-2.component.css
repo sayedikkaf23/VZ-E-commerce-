@@ -39,43 +39,46 @@
     margin-right: 8px; /* Space between the icon and text */
   }
   
-
   .required {
     color: red;
     font-weight: bold;
     margin-left: 5px;
   }
-  .remove-btn {
-    background-color: #FA2E52; /* Background color */
-    color: white; /* Color of the text */
-    border: none; /* No border */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Change cursor on hover */
-    font-size: 14px; /* Size of the text */
-    padding: 4px 8px; /* Padding for better touch targets */
-    margin-left: 8px; /* Space between the input field and the button */
-    line-height: 1; /* Center vertically with the input field */
-    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-    height: 25px;
-    margin-top: 51px
-  }
-  .btn-delete {
-    padding: 4px 8px; /* Reduce padding */
-    font-size: 12px; /* Smaller font size */
-    color: white; /* Text color */
-    background-color: #FA2E52; /* Background color */
-    border: none; /* No border */
-    border-radius: 4px; /* Rounded corners */
-    cursor: pointer; /* Pointer cursor on hover */
-    transition: background-color 0.3s; /* Smooth background transition */
-}
-
-.btn-delete:hover {
-    background-color: #e6263a; /* Darker shade on hover */
-}
-
-  .remove-btn:hover {
-    background-color: darkred; /* Darker red on hover */
-    text-decoration: none; /* Remove underline on hover */
+  .shareholder-inputs {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center items vertically */
+    margin-bottom: 15px; /* Add space between shareholder entries */
   }
   
+  .form-field {
+    margin-right: 10px; /* Space between input fields */
+  }
+  
+  .remove-btn {
+    margin-left: 10px; /* Space between input fields and button */
+    padding: 4px 8px; /* Adjust padding */
+    font-size: 12px; /* Font size */
+    color: white; /* Text color */
+    background-color: #fa2e52; /* Background color */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Smooth transition */
+  }
+  
+  .remove-btn:hover {
+    background-color: #e6263a; /* Darker shade on hover */
+  }
+  .form-select {
+  width: 100%; /* Make sure the dropdown takes the full width available */
+  padding: 10px; /* Add padding for better spacing */
+  font-size: 14px; /* Ensure the font size is readable */
+  border-radius: 4px; /* Match the design with rounded corners */
+  border: 1px solid #ccc; /* Add border for better visibility */
+}
+
+.form-select:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: #FA2E52; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(250, 46, 82, 0.5); /* Add a slight shadow effect */
+}
