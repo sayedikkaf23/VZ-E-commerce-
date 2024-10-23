@@ -82,3 +82,18 @@
   border-color: #FA2E52; /* Change border color on focus */
   box-shadow: 0 0 5px rgba(250, 46, 82, 0.5); /* Add a slight shadow effect */
 }
+@media (max-width: 768px) {
+  .form-field {
+    flex: 1 1 calc(50% - 16px); /* Approximately half width, with some spacing */
+  }
+  .shareholder-inputs {
+    display: flex; /* Use flexbox for alignment */
+    flex-wrap: wrap; /* Ensure items wrap into the next row */
+    justify-content: space-between; /* Add spacing between items */
+    margin-bottom: 15px; /* Add space between shareholder entries */
+  }
+  /* Ensure the button takes the full width in mobile view */
+  .remove-btn {
+    flex: 1 1 100%;
+  }
+}

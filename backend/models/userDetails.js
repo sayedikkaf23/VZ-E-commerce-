@@ -9,10 +9,6 @@ const shareholderSchema = new mongoose.Schema({
   nationalityshareholder: { type: String }
 });
  
- 
- 
- 
- 
 const userDetailsSchema = new mongoose.Schema({
  
    type: { type: String },
