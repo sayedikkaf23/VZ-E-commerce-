@@ -104,12 +104,14 @@
               </tbody>
             </table>
             
+            
             <!-- Button to toggle view -->
-            <div *ngIf="shareholders.length > 5" class="text-center mt-3">
-              <button class="btn btn-link" (click)="toggleView()">
+            <div *ngIf="shareholders.length > 5" class="text-left mt-3">
+              <span class="view-all-link" (click)="toggleView()">
                 {{ showAll ? 'View Less' : 'View All' }}
-              </button>
+              </span>
             </div>
+            
           </div>
         </div>
         <div class="col-md-5 col-lg-4 order-summery-col">
