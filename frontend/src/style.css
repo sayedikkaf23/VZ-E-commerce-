@@ -944,7 +944,8 @@ section.apply_service_section {
     font-weight: bold;
 }
 .step_2_form .item:not(:last-child) {
-    padding-bottom: 36px;
+    /* padding-bottom: 36px; */
+    padding-bottom: 0px;
 }
 .step_1_form span.ui-selectmenu-button,.step_1_form.step_2_form .accordion-item button.accordion-button {
     width: 100%;
@@ -1099,7 +1100,7 @@ span.ui-selectmenu-button:focus {
     font-weight: 500;
     font-size: 20px;
     margin-bottom: 15px;
-    padding-left: 50px;
+    padding-left: 30px;
     cursor: pointer;
 }
 .box-light {

@@ -96,41 +96,40 @@
                 </select>
               </fieldset>
             </div>
-            <div class="shareholder-row">
-              <h3 style="margin-bottom: 30px;">Shareholder List</h3>
-              <div class="form-group shareholder-details" *ngFor="let shareholder of shareholders; let i = index">
-                <div class="shareholder-inputs"> <!-- Flex container for alignment -->
-                  <div class="form-field">
-                    <label>Full Name <span class="required">*</span></label>
-                    <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required
-                      placeholder="Full Name" />
-                  </div>
-                  <div class="form-field">
-                    <label>Shareholder%<span class="required">*</span></label>
-                    <input type="number" [(ngModel)]="shareholder.shareholderPercentage"
-                      [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100" />
-                  </div>
-                  <div class="form-field">
-                    <label>Date of Birth <span class="required">*</span></label>
-                    <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required />
-                  </div>
-                  <div class="form-field">
-                    <label>Nationality <span class="required">*</span></label>
-                    <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder"
-                      [ngModelOptions]="{ standalone: true }" required>
-                      <option value="" disabled selected>Select Nationality</option>
-                      <option *ngFor="let nationality of nationalities" [value]="nationality">
-                        {{ nationality }}
-                      </option>
-                    </select>
-                  </div>
-
-                  <!-- <button type="button" (click)="deleteShareholder(i)" class="remove-btn">Remove</button>  -->
+           <div class="shareholder-row shareholder-section"> <!-- Apply new class here -->
+  <h3 style="margin-bottom: 30px;">Shareholder List</h3>
+  <div class="form-group shareholder-details" *ngFor="let shareholder of shareholders; let i = index">
+    <div class="shareholder-inputs"> <!-- Flex container for alignment -->
+      <div class="form-field">
+        <label class="shareholder-label">Full Name <span class="required">*</span></label> <!-- Apply new class here -->
+        <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required placeholder="Full Name" style="padding: 25px;"/>
+      </div>
+      <div class="form-field">
+        <label class="shareholder-label">Shareholder%<span class="required">*</span></label> <!-- Apply new class here -->
+        <input type="number" [(ngModel)]="shareholder.shareholderPercentage" [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100" style="padding: 25px"/>
+      </div>
+      <div class="form-field">
+        <label class="shareholder-label">Date of Birth <span class="required">*</span></label> <!-- Apply new class here -->
+        <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required style="padding: 25px"/>
+      </div>
+      <div class="form-field">
+        <label class="shareholder-label">Nationality <span class="required">*</span></label> <!-- Apply new class here -->
+        <select class="form-select" [(ngModel)]="shareholders[0].nationalityshareholder" [ngModelOptions]="{ standalone: true }" style="padding: 25px; margin-left: 0;">
+          <option value="" disabled [ngValue]="null">Select Nationality</option>
+          <option *ngFor="let nationality of nationalities" [value]="nationality">{{ nationality }}</option>
+        </select>
+      </div>
+                  
+                  
+                  
+                  
                   <span (click)="deleteShareholder(i)" class="remove-icon">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M2 10H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                      <path d="M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                      <path d="M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
                   </span>
+                  
                   <!-- Remove button -->
                 </div>
               </div>
