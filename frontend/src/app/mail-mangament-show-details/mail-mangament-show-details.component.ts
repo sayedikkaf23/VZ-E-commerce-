@@ -14,11 +14,12 @@ declare var $: any;
   styleUrl: './mail-mangament-show-details.component.css'
 })
 export class MailMangamentShowDetailsComponent {
- 
+  showAll = false;
+  displayShareholders :any= [];
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
  companyInfo: any = {}; // To store bank service information (Step 2 data)
-
+ shareholders :any= [];
   constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
@@ -36,7 +37,7 @@ export class MailMangamentShowDetailsComponent {
    
       const mailform = localStorage.getItem('step1Data');
       const mailform2 = localStorage.getItem('mailform2');
-  
+  console.log(mailform2,"sssss")
       // If there is no data in localStorage, navigate away from this page
       if ( !mailform || !mailform2 ) {
         // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
@@ -45,6 +46,10 @@ export class MailMangamentShowDetailsComponent {
         // Parse and store data if it exists
         this.personalInfo = JSON.parse(mailform);
         this.companyInfo = JSON.parse(mailform2);
+        this.shareholders=this.companyInfo.shareholders
+        this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
+        console.log(  this.displayShareholders)
+
       }
     }
   }
@@ -145,5 +150,12 @@ export class MailMangamentShowDetailsComponent {
         console.error(error); // Log the error for debugging
       }
     );
+  }
+
+
+
+  toggleView() {
+    this.showAll = !this.showAll;
+    this.displayShareholders = this.showAll ? this.shareholders : this.shareholders.slice(0, 5);
   }
 }

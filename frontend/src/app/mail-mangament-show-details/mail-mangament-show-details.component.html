@@ -67,7 +67,7 @@
                 </tr>
                 <tr>
                   <th>  How many shareholder does your company have? :</th>
-                  <td>{{ companyInfo.shareholder }}</td>
+                  <td>{{ companyInfo.shareholdercount }}</td>
                 </tr>
                 <tr>
                   <th>  Turnover of the company (Annually)? :</th>
@@ -75,6 +75,41 @@
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <div class="box-light">
+            <div class="d-flex align-items-center justify-content-between">
+              <h4>Shareholders Details</h4>
+              <a [routerLink]="['/BusinessBankform']" class="btn-edit">Edit</a>
+            </div>
+            
+            <table class="w-100"> 
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Shareholder Percentage</th>
+                  <th>Date of Birth</th>
+                  <th>Nationality</th>
+                </tr>
+              </thead>
+              <tbody>
+                <ng-container *ngFor="let shareholder of displayShareholders">
+                  <tr>
+                    <td>{{ shareholder.name }}</td>
+                    <td>{{ shareholder.shareholderPercentage }}%</td>
+                    <td>{{ shareholder.dob }}</td>
+                    <td>{{ shareholder.nationalityshareholder }}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+            
+            <!-- Button to toggle view -->
+            <div *ngIf="shareholders.length > 5" class="text-center mt-3">
+              <button class="btn btn-link" (click)="toggleView()">
+                {{ showAll ? 'View Less' : 'View All' }}
+              </button>
+            </div>
           </div>
         </div>
         <div class="col-md-5 col-lg-4 order-summery-col">
