@@ -20,18 +20,12 @@
             <h3>Business Bank Service</h3>
             <div class="form-field">
               <div class="form-field">
+                <label for="resident">is Your Company located in the UAE? <span class="required">*</span></label>
+
                 <fieldset>
-                  <select
-                    name="resident"
-                    id="resident"
-                    class="form-select"
-                    [(ngModel)]="formData.companylocation"
-                    
-                  >
+                  <select name="resident" id="resident" class="form-select" [(ngModel)]="formData.companylocation">
                     <option value="" disabled selected>
-                      is Your Company located in the UAE?<span class="required"
-                        >*</span
-                      >
+                      is Your Company located in the UAE?
                     </option>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
@@ -58,32 +52,21 @@
                 </fieldset>
               </div> -->
             <div class="form-field">
-              <!-- <label for="jurisdiction">Which Jurisdiction is your Company Located it?<span class="required">*</span></label -->
+              <label for="jurisdiction">Which Jurisdiction is your Company Located it?<span class="required">*</span></label>
 
-              <input
-                type="text"
-                name="jurisdiction"
-                id="jurisdiction"
-                class="form-input"
-                [(ngModel)]="formData.jurisdiction"
-                placeholder="Which Jurisdiction is your Company Located it?*"
-              />
+              <input type="text" name="jurisdiction" id="jurisdiction" class="form-input"
+                [(ngModel)]="formData.jurisdiction" placeholder="Which Jurisdiction is your Company Located it?" />
             </div>
 
             <div class="form-field">
+              <label for="resident">How many shareholder does your company have?
+                <span class="required">*</span></label>
+
               <fieldset>
-                <select
-                  name="shareholdercount"
-                  id="shareholdercount"
-                  class="form-select"
-                  [(ngModel)]="formData.shareholdercount"
-                 
-                >
+                <select name="shareholdercount" id="shareholdercount" class="form-select"
+                  [(ngModel)]="formData.shareholdercount">
                   <option value="" disabled selected>
-                    How many shareholder does your company have?<span
-                      class="required"
-                      >*</span
-                    >
+                    How many shareholder does your company have?
                   </option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -99,17 +82,12 @@
               </fieldset>
             </div>
             <div class="form-field">
+              <label for="Turnover"> Turnover of the company (Annually)? <span class="required">*</span></label>
+
               <fieldset>
-                <select
-                  name="Turnover"
-                  id="Turnover"
-                  class="form-select"
-                  [(ngModel)]="formData.Turnover"
-                >
+                <select name="Turnover" id="Turnover" class="form-select" [(ngModel)]="formData.Turnover">
                   <option value="" disabled selected>
-                    Turnover of the company (Annually)?<span class="required"
-                      >*</span
-                    >
+                    Turnover of the company (Annually)?
                   </option>
                   <option value="0-50,000">0-50,000</option>
                   <option value="50,001-150,000">50,001-150,000</option>
@@ -124,70 +102,49 @@
                 <div class="shareholder-inputs"> <!-- Flex container for alignment -->
                   <div class="form-field">
                     <label>Full Name <span class="required">*</span></label>
-                    <input
-                      type="text"
-                      [(ngModel)]="shareholder.name"
-                      [ngModelOptions]="{ standalone: true }"
-                      required
-                      placeholder="Full Name"
-                    />
+                    <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required
+                      placeholder="Full Name" />
                   </div>
                   <div class="form-field">
                     <label>Shareholder%<span class="required">*</span></label>
-                    <input
-                      type="number"
-                      [(ngModel)]="shareholder.shareholderPercentage"
-                      [ngModelOptions]="{ standalone: true }"
-                      required
-                      placeholder="Shareholder %"
-                      min="0"
-                      max="100"
-                    />
+                    <input type="number" [(ngModel)]="shareholder.shareholderPercentage"
+                      [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100" />
                   </div>
                   <div class="form-field">
                     <label>Date of Birth <span class="required">*</span></label>
-                    <input
-                      type="date"
-                      [(ngModel)]="shareholder.dob"
-                      [ngModelOptions]="{ standalone: true }"
-                      required
-                    />
+                    <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required />
                   </div>
                   <div class="form-field">
                     <label>Nationality <span class="required">*</span></label>
-                    <select
-                      class="form-select"
-                      [(ngModel)]="shareholder.nationalityshareholder"
-                      [ngModelOptions]="{ standalone: true }"
-                      required
-                    >
+                    <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder"
+                      [ngModelOptions]="{ standalone: true }" required>
                       <option value="" disabled selected>Select Nationality</option>
                       <option *ngFor="let nationality of nationalities" [value]="nationality">
                         {{ nationality }}
                       </option>
                     </select>
                   </div>
-                  
-                  <button type="button" (click)="deleteShareholder(i)" class="remove-btn">Remove</button> <!-- Remove button -->
+
+                  <!-- <button type="button" (click)="deleteShareholder(i)" class="remove-btn">Remove</button>  -->
+                  <span (click)="deleteShareholder(i)" class="remove-icon">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2 10H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                  </span>
+                  <!-- Remove button -->
                 </div>
               </div>
               <div *ngIf="shareholders.length < formData.shareholdercount" class="additem" (click)="addShareholder()">
-                <svg
-                  width="60"
-                  height="60"
-                  viewBox="0 0 60 60"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
+                <svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <circle cx="29.5" cy="29.5" r="29.5" fill="#FA2E52" />
                   <line x1="29.5938" y1="17" x2="29.5938" y2="42" stroke="white" stroke-width="1.5" />
                   <line x1="42" y1="29.5938" x2="17" y2="29.5937" stroke="white" stroke-width="1.5" />
                 </svg>
               </div>
             </div>
-            
-            
-            
+
+
+
           </div>
 
           <div class="form-submit">
@@ -226,46 +183,24 @@
 
   <app-footer></app-footer>
 
-  <div
-    class="modal fade searchbox"
-    id="searchmodal"
-    tabindex="-1"
-    aria-labelledby="exampleModalLabel"
-    aria-hidden="true"
-  >
+  <div class="modal fade searchbox" id="searchmodal" tabindex="-1" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
       <div class="modal-content">
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         <div class="modal-body">
           <form action="" class="mb-0">
             <input type="text" class="form-control" placeholder="Search here" />
             <span class="btn-icon">
-              <svg
-                width="20"
-                height="20"
-                viewBox="0 0 30 30"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
+              <svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_9_9)">
                   <path
                     d="M5.625 12.1875C5.625 14.877 6.49805 17.3613 7.96875 19.377L0.550781 26.8008C-0.181641 27.5332 -0.181641 28.7227 0.550781 29.4551C1.2832 30.1875 2.47266 30.1875 3.20508 29.4551L10.623 22.0313C12.6387 23.5078 15.123 24.375 17.8125 24.375C24.5449 24.375 30 18.9199 30 12.1875C30 5.45508 24.5449 0 17.8125 0C11.0801 0 5.625 5.45508 5.625 12.1875ZM17.8125 20.625C16.7045 20.625 15.6073 20.4068 14.5836 19.9827C13.5599 19.5587 12.6298 18.9372 11.8463 18.1537C11.0628 17.3702 10.4413 16.4401 10.0173 15.4164C9.59324 14.3927 9.375 13.2955 9.375 12.1875C9.375 11.0795 9.59324 9.98229 10.0173 8.95861C10.4413 7.93492 11.0628 7.00478 11.8463 6.22129C12.6298 5.43779 13.5599 4.81629 14.5836 4.39227C15.6073 3.96824 16.7045 3.75 17.8125 3.75C18.9205 3.75 20.0177 3.96824 21.0414 4.39227C22.0651 4.81629 22.9952 5.43779 23.7787 6.22129C24.5622 7.00478 25.1837 7.93492 25.6077 8.95861C26.0318 9.98229 26.25 11.0795 26.25 12.1875C26.25 13.2955 26.0318 14.3927 25.6077 15.4164C25.1837 16.4401 24.5622 17.3702 23.7787 18.1537C22.9952 18.9372 22.0651 19.5587 21.0414 19.9827C20.0177 20.4068 18.9205 20.625 17.8125 20.625Z"
-                    fill="currentColor"
-                  />
+                    fill="currentColor" />
                 </g>
                 <defs>
                   <clipPath id="clip0_9_9">
-                    <rect
-                      width="30"
-                      height="30"
-                      fill="white"
-                      transform="matrix(-1 0 0 1 30 0)"
-                    />
+                    <rect width="30" height="30" fill="white" transform="matrix(-1 0 0 1 30 0)" />
                   </clipPath>
                 </defs>
               </svg>

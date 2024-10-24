@@ -20,6 +20,8 @@
             <h3>Personal Bank Service</h3>
             <div class="form-field">
               <div class="form-field">
+                <label for="resident">Are you a resident of UAE?<span class="required">*</span></label>
+
                 <fieldset>
                   <select
                     name="resident"
@@ -28,7 +30,7 @@
                     [(ngModel)]="formData.resident"
                   >
                     <option value="" disabled selected>
-                      Are you a resident of UAE?<span class="required">*</span>
+                      Are you a resident of UAE?
                     </option>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
@@ -37,6 +39,8 @@
               </div>
             </div>
             <div class="form-field">
+              <label for="working"> Are you Salaried or Self-Employed?<span class="required">*</span></label>
+
               <fieldset>
                 <select
                   name="working"
@@ -45,9 +49,8 @@
                   [(ngModel)]="formData.working"
                 >
                   <option value="" disabled>
-                    Are you Salaried or Self-Employed?<span class="required"
-                      >*</span
-                    >
+                    Are you Salaried or Self-Employed?
+                    
                   </option>
                   <option value="Salaried">Salaried</option>
                   <option value="Self Employed">Self-Employed</option>
@@ -56,6 +59,7 @@
             </div>
 
             <div class="form-field" *ngIf="formData.working === 'Salaried'">
+
               <label for="salary"
                 >Salary (AED)<span class="required">*</span></label
               >
@@ -66,7 +70,7 @@
                 class="form-input"
                 [(ngModel)]="formData.salary"
                 (input)="onSalaryInput($event)"
-                placeholder="Please enter your monthly salary"
+                placeholder="Please enter salary"
               />
             </div>
 
@@ -83,11 +87,13 @@
                 id="companyname"
                 class="form-input"
                 [(ngModel)]="formData.companyname"
-                placeholder="Please enter your company name"
+                placeholder="Please enter company name"
               />
             </div>
 
             <div class="form-field">
+              <label for="Bank">Do you wish to apply for?<span class="required">*</span></label>
+
               <fieldset>
                 <select
                   name="Bank"
@@ -96,7 +102,7 @@
                   [(ngModel)]="formData.Bank"
                 >
                   <option value="" disabled selected>
-                    Do you wish to apply for?<span class="required">*</span>
+                    Do you wish to apply for?
                   </option>
                   <option value="DigitalBank">Digital Bank</option>
                   <option value="TraditionalBank">Traditional Bank</option>
