@@ -80,6 +80,8 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    const Tooltip = (window as any).Tooltip;
+    Tooltip.initAll();
     if (isPlatformBrowser(this.platformId)) {
       // Ensure DOM-related code runs only in the browser
       AOS.init(); // Initialize AOS animations
@@ -109,6 +111,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
         });
       });
     }
+    
   }
   addShareholder() {
     console.log('Add shareholder clicked');

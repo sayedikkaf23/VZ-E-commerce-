@@ -149,6 +149,7 @@ html .btn:hover {
     border-color: var(--dark);
     color: var(--white);
 }
+
 .header-main-bar {
     display: flex;
     justify-content: space-between;

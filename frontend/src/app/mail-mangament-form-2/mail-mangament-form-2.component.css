@@ -1,91 +1,128 @@
-/* General Styles */
 .shareholder-row {
-  display: flex;
-  flex-direction: column; /* Stack elements vertically */
-  margin-bottom: -62px; /* Space between shareholder rows */
-  background: #f8f9fa; /* Background color */
-  padding: 10px; /* Padding around the row */
-}
-
-.shareholder-section {
-  margin-bottom: 30px; /* Space below the shareholder section */
-  padding: 15px; /* Padding for the shareholder section */
-  background-color: #f9f9f9; /* Background color for visual separation */
-  border-radius: 5px; /* Rounded corners */
-}
-
-.shareholder-inputs {
-  display: flex; /* Flex container for alignment */
-  align-items: center; /* Center items vertically */
-  justify-content: space-between; /* Space between inputs */
-  margin-bottom: 10px; /* Space between each shareholder input */
-}
-
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    margin-bottom: -62px; /* Space between shareholder rows */
+    background: #f8f9fa; /* Background color */
+    padding: 10px; /* Padding around the row */
+    border-radius: 4px; /* Rounded corners */
+  }
+  .shareholder-section {
+    margin-bottom: 30px; /* Space below the shareholder section */
+    padding: 15px; /* Padding for the shareholder section */
+    background-color: #f9f9f9; /* Background color for visual separation */
+    border-radius: 5px; /* Rounded corners */
+  }
+  
+  .shareholder-inputs {
+    display: flex; /* Flex container for alignment */
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space between inputs */
+    margin-bottom: 10px; /* Space between each shareholder input */
+  }
 .shareholder-label {
   font-weight: bold; /* Make the label bold */
   font-size: 18px; /* Adjust font size as needed */
   color: #333; /* Change color if desired */
   margin-bottom: 10px; /* Add space below the label */
 }
-
-.required {
-  color: red;
-  font-weight: bold;
-  margin-left: 5px;
-}
-
-.form-field {
-  flex: 1; /* Allow each field to grow equally */
-  margin-right: 10px; /* Space between fields */
-}
-
-.form-field:last-child {
-  margin-right: 0; /* No margin on the last field */
-}
-
-.additem {
-  display: flex; /* Use flexbox to align items */
-  align-items: center; /* Center items vertically */
-  justify-content: center; /* Center items horizontally */
-  cursor: pointer; /* Change cursor on hover */
-  margin-top: 5px; /* Small margin above the icon */
-  width: 100%; /* Make the button take full width for centering */
-  padding: 5px; /* Padding around the icon */
-  border-radius: 50%; /* Optional: keeps background circular */
-  text-align: center; /* Center text if used */
-}
-
-.additem svg {
-  width: 40px; /* Size of the SVG */
-  height: 40px; /* Size of the SVG */
-  margin-right: 8px; /* Space between the icon and text */
-}
-
-/* Input Styles */
-.form-input,
+  
+  .shareholder-details {
+    display: flex; /* Align fields in a row */
+    justify-content: space-between; /* Space items evenly */
+    margin-bottom: 5px; /* Reduced space between groups */
+  }
+  
+  .form-field {
+    flex: 1; /* Allow each field to grow equally */
+    margin-right: 10px; /* Space between fields */
+  }
+  
+  .form-field:last-child {
+    margin-right: 0; /* No margin on the last field */
+  }
+  .additem {
+    display: flex; /* Use flexbox to align items */
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontally */
+    cursor: pointer; /* Change cursor on hover */
+    margin-top: 5px; /* Small margin above the icon */
+    width: 100%; /* Make the button take full width for centering */
+    padding: 5px; /* Padding around the icon */
+    border-radius: 50%; /* Optional: keeps background circular */
+    text-align: center; /* Center text if used */
+  }
+  
+  .additem svg {
+    width: 40px; /* Size of the SVG */
+    height: 40px; /* Size of the SVG */
+    margin-right: 8px; /* Space between the icon and text */
+  }
+  
+  .required {
+    color: red;
+    font-weight: bold;
+    margin-left: 0px;
+  }
+  .shareholder-inputs {
+    display: flex; /* Use flexbox for alignment */
+    align-items: center; /* Center items vertically */
+    margin-bottom: 15px; /* Add space between shareholder entries */
+  }
+  
+  .form-field {
+    margin-right: 10px; /* Space between input fields */
+  }
+  
+  .remove-btn {
+    margin-left: 10px; /* Space between input fields and button */
+    padding: 4px 8px; /* Adjust padding */
+    font-size: 12px; /* Font size */
+    color: white; /* Text color */
+    background-color: #fa2e52; /* Background color */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s; /* Smooth transition */
+  }
+  .form-input,
 .form-select {
-  padding: 10px; /* Reduce padding for compactness */
-  margin: 0; /* Remove any margins that might push the input */
-  width: 100%; /* Ensure it takes full width */
-  box-sizing: border-box; /* Include padding in width */
+    padding: 5px; /* Reduce padding for compactness */
+    margin: 0; /* Remove any margins that might push the input */
+    width: 100%; /* Ensure it takes full width */
+    box-sizing: border-box; /* Include padding in width */
 }
 
 /* Optional: Placeholder styling */
 .form-input::placeholder,
 .form-select::placeholder {
-  color: #999; /* Lighter color for placeholders */
-  opacity: 1; /* Ensure visibility */
+    color: #999; /* Lighter color for placeholders */
+    opacity: 1; /* Ensure visibility */
 }
 
 /* Optional: Style for focus effect */
 .form-input:focus,
 .form-select:focus {
-  outline: none; /* Remove default outline */
-  border-color: #FA2E52; /* Change border color on focus */
-  box-shadow: 0 0 5px rgba(250, 46, 82, 0.5); /* Slight shadow effect */
+    outline: none; /* Remove default outline */
+    border-color: #FA2E52; /* Change border color on focus */
+    box-shadow: 0 0 5px rgba(250, 46, 82, 0.5); /* Slight shadow effect */
 }
 
-/* Remove Button Styles */
+  .remove-btn:hover {
+    background-color: #e6263a; /* Darker shade on hover */
+  }
+  .form-select {
+  width: 100%; /* Make sure the dropdown takes the full width available */
+  padding: 10px; /* Add padding for better spacing */
+  font-size: 14px; /* Ensure the font size is readable */
+  border-radius: 4px; /* Match the design with rounded corners */
+  border: 1px solid #ccc; /* Add border for better visibility */
+}
+
+.form-select:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: #FA2E52; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(250, 46, 82, 0.5); /* Add a slight shadow effect */
+}
 .remove-icon {
   cursor: pointer; /* Pointer cursor on hover */
   margin-left: 10px; /* Space between input fields and icon */
@@ -96,20 +133,21 @@
   opacity: 0.7; /* Slight opacity change on hover for effect */
 }
 
-/* Responsive Styles */
 @media (max-width: 768px) {
-  .shareholder-inputs {
-      flex-direction: column; /* Stack items vertically */
-      align-items: stretch; /* Stretch items to full width */
-  }
-
   .form-field {
-      margin-right: 0; /* Remove right margin */
-      margin-bottom: 10px; /* Space between stacked fields */
+    flex: 1 1 calc(50% - 16px); /* Approximately half width, with some spacing */
   }
-
-  .additem {
-      width: auto; /* Set width to auto for mobile */
-      padding: 10px; /* Adjust padding */
+  .shareholder-inputs {
+    display: flex; /* Use flexbox for alignment */
+    flex-wrap: wrap; /* Ensure items wrap into the next row */
+    justify-content: space-between; /* Add spacing between items */
+    margin-bottom: 15px; /* Add space between shareholder entries */
   }
+  /* Ensure the button takes the full width in mobile view */
+  .remove-btn {
+    flex: 1 1 100%;
+  }
+}
+.select-padding {
+  padding: 35px;
 }
