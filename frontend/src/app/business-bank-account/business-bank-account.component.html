@@ -23,11 +23,10 @@
           <th scope="col">Email</th>
           <th scope="col">Nationality</th>
           <th scope="col">Birthday</th>
-          <th scope="col">Resident</th>
-          <th scope="col">Working</th>
-          <th scope="col">Salary</th>
-          <th scope="col">Company Name</th>
-          <th scope="col">Bank</th>
+          <th scope="col">Mobile Number</th>
+          <th scope="col">Jurisdiction</th>
+          <th scope="col">Shareholder Count</th>
+          <th scope="col">Turn Over</th>
           <th scope="col">Actions</th>
         </tr>
       </thead>
@@ -37,11 +36,11 @@
           <td>{{ user.email }}</td>
           <td>{{ user.nationality }}</td>
           <td>{{ user.birthday | date : "yyyy-MM-dd" }}</td>
-          <td>{{ user.resident }}</td>
-          <td>{{ user.working }}</td>
-          <td>{{ user.salary }}</td>
-          <td>{{ user.companyname }}</td>
-          <td>{{ user.Bank }}</td>
+          <td>{{ user.mobileNumber.internationalNumber }}</td>
+          <td>{{ user.jurisdiction }}</td>
+          <td>{{ user.shareholder }}</td>
+          <td>{{ user.Turnover }}</td>
+      
           <td>
             <button (click)="openModal(user.shareholders)" class="btn btn-primary">View Details</button>
           </td>
