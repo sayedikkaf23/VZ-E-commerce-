@@ -30,7 +30,7 @@
     padding: 20px;
         width: 400px;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
     position: relative;
     z-index: 1001;
   }
@@ -57,7 +57,7 @@
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 5px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
     width: 150px;
 }
 
@@ -65,7 +65,7 @@
     padding: 10px 15px;
     color: #333;
     font-size: 14px;
-    transition: background-color 0.3s ease;
+    /* transition: background-color 0.3s ease; */
 }
 
 .custom-dropdown-item:hover {
