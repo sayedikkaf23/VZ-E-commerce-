@@ -9,6 +9,7 @@ import AOS from 'aos';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
+
 declare var $: any;
 
 @Component({
@@ -21,11 +22,13 @@ export class MailsManagement2Component {
   @ViewChild('dateInput') dateInput!: ElementRef;
 
   formData: any = {
-    companylocation: '',
-    jurisdiction: '',
-    Turnover: '',
+    CompanyName: '',
+    CompanyIncorporated: '',
+    Website: '',
+    tradelicense:'',
     shareholdercount:'',
-    type: 'Business Bank',
+    Companylicensed:'',
+
   };
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
 
@@ -53,7 +56,7 @@ export class MailsManagement2Component {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // Retrieve Step 1 data from the service when Step 2 initializes
-    this.step1Data = this.formDataService.getStep1Data();
+    this.step1Data = this.formDataService.getmailformData();
     console.log('Step 1 data:', this.step1Data);
   }
 
@@ -64,17 +67,19 @@ export class MailsManagement2Component {
       this.nationalities = data.map((country) => country.name.common);
       this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     });
-    const storedStep2Data = localStorage.getItem('mailform2');
+    const storedStep2Data = localStorage.getItem('mailform1');
     if (storedStep2Data) {
       const parsedData = JSON.parse(storedStep2Data);
       
       // Update formData and shareholders separately
       this.formData = { 
-        companylocation: parsedData.companylocation, 
-        jurisdiction: parsedData.jurisdiction,
-        Turnover: parsedData.Turnover,
+        CompanyName: parsedData.CompanyName, 
+        CompanyIncorporated: parsedData.CompanyIncorporated, 
+        Website: parsedData.Website, 
+      
+        tradelicense:parsedData.tradelicense,
         shareholdercount: parsedData.shareholdercount,
-        type: parsedData.type
+        Companylicensed:parsedData.Companylicensed
       };
       
       // Update shareholders if it exists in the parsed data
@@ -123,7 +128,7 @@ export class MailsManagement2Component {
   }
   addShareholder() {
     console.log('Add shareholder clicked');
-    this.shareholders.push({ name: '', phone: '', dob: '', nationality: '' });
+    this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
     this.cdRef.detectChanges(); // Only if necessary
 }
 
@@ -185,10 +190,12 @@ deleteShareholder(index: number) {
         }
 
         // Append Step 2 data
-        formDataToSend.append('companylocation', this.formData.companylocation);
-        formDataToSend.append('jurisdiction', this.formData.jurisdiction);
-        formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
-        formDataToSend.append('Turnover', this.formData.Turnover);
+        formDataToSend.append('CompanyName', this.formData.CompanyName);
+        formDataToSend.append('CompanyIncorporated', this.formData.CompanyIncorporated);
+        formDataToSend.append('shareholdercount', this.formData.shareholdercount);
+        formDataToSend.append('Website', this.formData.Website);
+        formDataToSend.append('tradelicense', this.formData.tradelicense);
+        formDataToSend.append('Companylicensed', this.formData.Companylicensed);
         this.shareholders.forEach((shareholder, index) => {
           formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
         });
@@ -199,11 +206,16 @@ deleteShareholder(index: number) {
         };
         
         // Save Step 2 data to localStorage
-        localStorage.setItem('mailform2', JSON.stringify(combinedFormData));
+        localStorage.setItem('mailform1', JSON.stringify(combinedFormData));
 
-        // Append files if necessary
+        if (this.formData.CompanyIncorporated == 'United Arab Emirates') {
+          // Navigate to the route for UAE-specific details
+          this.router.navigate(['/mails-management-3']);
+        } else {
+          // Navigate to the standard route
+          this.router.navigate(['/mails-management-details']);
+        }
 
-        this.router.navigate(['/BusinessBankShowDetails']);
     }
     }
 
@@ -222,22 +234,16 @@ trackByShareholder(index: number, shareholder: any): number {
 
 console.log(missingFields)
 
-    if (!this.formData.companylocation) {
-      missingFields.push('Company Location');
+    if (!this.formData.CompanyName) {
+      missingFields.push('CompanyName');
       isValid = false;
     }
-    if (!this.formData.jurisdiction) {
-      missingFields.push('Jurisdiction');
+    if (!this.formData.CompanyIncorporated) {
+      missingFields.push('CompanyIncorporated');
       isValid = false;
     }
-    if (this.shareholders.length === 0 || this.shareholders.some(s => !s.name || !s.shareholderPercentage || !s.dob || !s.nationalityshareholder)) {
-      missingFields.push('Shareholder details');
-      isValid = false;
-    }
-    if (!this.formData.Turnover) {
-      missingFields.push('Turnover');
-      isValid = false;
-    }
+   
+   
 
     // Show a single toast for all missing fields if any
     if (missingFields.length > 0) {

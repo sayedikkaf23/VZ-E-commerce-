@@ -1,5 +1,5 @@
 const fileUpload = require('../middleware/fileUpload'); // Import the multer middleware
-const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
+const MailDetails = require('../models/mailManagement'); // Import the model
 
 // Handle form submission and file uploads
 exports.submitMailDetails = async (req, res) => {
@@ -42,7 +42,7 @@ exports.submitMailDetails = async (req, res) => {
           }
         }
         // Create and save user details
-        const userDetails = new VirtualDetails({
+        const userDetails = new MailDetails({
             firstName,
             lastName,
             email,

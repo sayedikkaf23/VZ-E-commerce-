@@ -54,7 +54,7 @@ export class VirtualReceptionist1Component {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // Retrieve Step 1 data from the service when Step 2 initializes
-    this.step1Data = this.formDataService.getStep1Data();
+    this.step1Data = this.formDataService.getvirtualdata();
     console.log('Step 1 data:', this.step1Data);
   }
 
