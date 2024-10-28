@@ -20,6 +20,9 @@ import { VirtualReceptionistComponent } from './virtual-receptionist/virtual-rec
 import { VirtualReceptionist1Component } from './virtual-receptionist-1/virtual-receptionist-1.component';
 import { VirtualReceptionist2Component } from './virtual-receptionist-2/virtual-receptionist-2.component';
 import { VirtualReceptionistDetailsComponent } from './virtual-receptionist-details/virtual-receptionist-details.component';
+import { MailsManagement1Component } from './mails-management-1/mails-management-1.component';
+import { MailsManagement2Component } from './mails-management-2/mails-management-2.component';
+import { MailsManagementShowDetailsComponent } from './mails-management-show-details/mails-management-show-details.component';
 const routes: Routes = [
 
   {
@@ -32,6 +35,23 @@ const routes: Routes = [
     component: _HomeComponent,
    
   },
+  // new
+  {
+    path: 'mail-management-1',
+    component: MailsManagement1Component,
+   
+  },
+  {
+    path: 'mail-management-2',
+    component: MailsManagement2Component,
+   
+  },
+  {
+    path: 'mail-management-show-details',
+    component: MailsManagementShowDetailsComponent,
+   
+  },
+  // end
   {
     path: 'step-1',
     component: Step1Component,
