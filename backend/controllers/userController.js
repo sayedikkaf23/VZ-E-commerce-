@@ -26,40 +26,25 @@ exports.submit = async (req, res) => {
       birthday,
       resident,
       working,
-      salary,
+      salary, // Ensure salary is received in the body
       companyname,
       Bank,
       mobileNumber,
       companylocation,
       jurisdiction,
-      shareholders, // Updated to use 'shareholders' as an array
+      shareholders,
       Turnover,
     } = req.body;
-    let parsedMobileNumber;
 
-    // If mobileNumber is a string, try to parse it, otherwise, use it directly
-    if (typeof mobileNumber === "string") {
-      try {
-        parsedMobileNumber = JSON.parse(mobileNumber); // Try to parse JSON string
-      } catch (e) {
-        console.error("Error parsing mobileNumber JSON:", e);
-        parsedMobileNumber = mobileNumber; // If parsing fails, use as-is
-      }
-    } else {
-      parsedMobileNumber = mobileNumber; // If it's already an object, use it
-    }
+    console.log("Salary received:", salary); // Check if salary is received correctly
+
+    // Process mobile number as before
+    let parsedMobileNumber = typeof mobileNumber === "string" ? JSON.parse(mobileNumber) : mobileNumber;
 
     // Check if email already exists
     const existingUser = await UserDetails.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
-    }
-
-    // Clean and validate the salary
-    const cleanedSalary = salary ? Number(salary.replace(/,/g, '')) : 0;
-
-    if (isNaN(cleanedSalary)) {
-      throw new Error('Invalid salary input');
     }
 
     // Parse shareholders if provided as a string
@@ -68,7 +53,7 @@ exports.submit = async (req, res) => {
       parsedShareholders = shareholders;
     } else if (typeof shareholders === "string") {
       try {
-        parsedShareholders = JSON.parse(shareholders); // Try to parse JSON string
+        parsedShareholders = JSON.parse(shareholders);
       } catch (e) {
         console.error("Error parsing shareholders JSON:", e);
       }
@@ -84,24 +69,24 @@ exports.submit = async (req, res) => {
       birthday,
       resident,
       working,
-      salary: cleanedSalary,
+      salary, // Storing salary directly as received
       companyname,
       Bank,
       mobileNumber: parsedMobileNumber,
       companylocation,
       jurisdiction,
-      shareholders: parsedShareholders, // Updated to use 'shareholders' array
+      shareholders: parsedShareholders,
       Turnover,
     });
 
-    // Save the user details to the database
     await userDetails.save();
     res.status(201).json({ message: "Details submitted successfully", userDetails });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     res.status(500).json({ error: "Error saving details", details: error.message });
   }
 };
+
 
 
 exports.getAllSubmissions = async (req, res) => {

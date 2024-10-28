@@ -19,8 +19,8 @@ const userDetailsSchema = new mongoose.Schema({
     birthday: { type: Date },
     resident: { type: String }, // added 'resident' field
     working: { type: String},
-    salary: { type: Number },
-    companyname: { type: String }, // added 'companyname' field
+    salary: String,
+        companyname: { type: String }, // added 'companyname' field
     Bank: { type: String }, // added 'Bank' field
     mobileNumber: {
         number: String,
