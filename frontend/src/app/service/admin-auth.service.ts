@@ -18,6 +18,12 @@ export class AdminAuthService {
   getUserDetails(): Observable<any> {
     return this.http.get(`${this.url}/user/submissions`); // GET request to fetch submissions
   }
+  getBusinessBank(): Observable<any> {
+    return this.http.get(`${this.url}/user/getBusinessBank`); // GET request to fetch submissions
+  }
+  getPersonalBank(): Observable<any> {
+    return this.http.get(`${this.url}/user/getPersonalBank`); // GET request to fetch submissions
+  }
   getServices(): Observable<any> {
     return this.http.get(`${this.url}/user/services`); // GET request to fetch user services
   }
