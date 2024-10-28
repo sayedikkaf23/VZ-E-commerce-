@@ -59,4 +59,8 @@ export class FormDataService {
   getAllFormData() {
     return this.formData;
   }
+  getmailmanagementData() {
+    return this.formData.mailmanagement;
+  }
+
 }

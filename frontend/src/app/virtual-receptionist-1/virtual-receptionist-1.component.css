@@ -1,0 +1,116 @@
+
+  .shareholder-row {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    margin-bottom: -62px; /* Space between shareholder rows */
+    background: #f8f9fa; /* Background color */
+    padding: 10px; /* Padding around the row */
+    border-radius: 4px; /* Rounded corners */
+  }
+  .shareholder-section {
+    margin-bottom: 30px; /* Space below the shareholder section */
+    padding: 15px; /* Padding for the shareholder section */
+    background-color: #f9f9f9; /* Background color for visual separation */
+    border-radius: 5px; /* Rounded corners */
+  }
+ 
+  .shareholder-inputs {
+    display: flex; /* Flex container for alignment */
+    align-items: center; /* Center items vertically */
+    justify-content: space-between; /* Space between inputs */
+    margin-bottom: 10px; /* Space between each shareholder input */
+  }
+  .shareholder-label {
+  font-weight: bold; /* Make the label bold */
+  font-size: 18px; /* Adjust font size as needed */
+  color: #333; /* Change color if desired */
+  margin-bottom: 10px; /* Add space below the label */
+  }
+
+  .shareholder-details {
+    display: flex; /* Align fields in a row */
+    justify-content: space-between; /* Space items evenly */
+    margin-bottom: 5px; /* Reduced space between groups */
+  }
+
+  input[type="radio"] {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    background-color: #ed1355;
+    border-color: #ed1355;
+  }
+  
+
+  .form-field {
+    flex: 1; /* Allow each field to grow equally */
+    margin-right: 10px; /* Space between fields */
+  }
+  
+  .form-field:last-child {
+    margin-right: 0; /* No margin on the last field */
+  }
+  .additem {
+    position: absolute; /* Position the item relative to its parent */
+    bottom: -10px; /* Adjust this value to position it below the last form-field */
+    display: flex; /* Use flexbox to align items */
+    align-items: center; /* Center items vertically */
+    justify-content: center; /* Center items horizontally */
+    cursor: pointer; /* Change cursor on hover */
+    margin-top: 10px; /* Small margin above the icon */
+    width: 100%; /* Make the button take full width for centering */
+    padding: 5px; /* Padding around the icon */
+    border-radius: 50%; /* Optional: keeps background circular */
+    text-align: center; /* Center text if used */
+  }
+  
+  .additem svg {
+    width: 40px; /* Size of the SVG */
+    height: 40px; /* Size of the SVG */
+    margin-right: 8px; /* Space between the icon and text */
+  }
+  
+  .additem:hover {
+    background-color: #f0f0f0; /* Change background on hover */
+  }
+  .required {
+    color: red;
+    font-weight: bold;
+    margin-left: 5px;
+  }
+  .remove-btn {
+    background-color: #FA2E52; /* Background color */
+    color: white; /* Color of the text */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Change cursor on hover */
+    font-size: 14px; /* Size of the text */
+    padding: 4px 8px; /* Padding for better touch targets */
+    margin-left: 8px; /* Space between the input field and the button */
+    line-height: 1; /* Center vertically with the input field */
+    transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+    height: 25px;
+    margin-top: 51px
+  }
+  .btn-delete {
+    padding: 4px 8px; /* Reduce padding */
+    font-size: 12px; /* Smaller font size */
+    color: white; /* Text color */
+    background-color: #FA2E52; /* Background color */
+    border: none; /* No border */
+    border-radius: 4px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s; /* Smooth background transition */
+ } 
+
+.btn-delete:hover {
+    background-color: #e6263a; /* Darker shade on hover */
+}
+
+  .remove-btn:hover {
+    background-color: darkred; /* Darker red on hover */
+    text-decoration: none; /* Remove underline on hover */
+  }
+
+  
+  
