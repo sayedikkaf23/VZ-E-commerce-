@@ -8,7 +8,8 @@ import { AdminAuthService } from '../service/admin-auth.service'; // Import your
 })
 export class BackAccountOpeningComponent implements OnInit {
   userList: any[] = []; // To store the fetched user data
-
+  hasSalaryData: boolean = false;
+  hasCompanyNameData: boolean = false;
   constructor(private adminAuthService: AdminAuthService) {}
 
   ngOnInit(): void {
@@ -19,10 +20,18 @@ export class BackAccountOpeningComponent implements OnInit {
     this.adminAuthService.getPersonalBank().subscribe(
       (response) => {
         this.userList = response; // Assign the API response to the userList array
+        this.checkColumnData(); // Check columns only after data is loaded
+
       },
       (error) => {
         console.error('Error fetching user details:', error);
       }
     );
+  }
+
+
+  checkColumnData(): void {
+    this.hasSalaryData = this.userList.some(user => !!user.salary);
+    this.hasCompanyNameData = this.userList.some(user => !!user.companyname);
   }
 }
