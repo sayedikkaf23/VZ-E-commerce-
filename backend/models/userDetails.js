@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
  
 const shareholderSchema = new mongoose.Schema({
   name: { type: String },
-  phone: { type: String },
+  shareholderPercentage: { type: String },
   dob: { type: Date},
   nationalityshareholder: { type: String }
 });

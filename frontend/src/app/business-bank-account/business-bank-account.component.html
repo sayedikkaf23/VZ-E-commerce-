@@ -43,7 +43,7 @@
           <td>{{ user.companyname }}</td>
           <td>{{ user.Bank }}</td>
           <td>
-            <button (click)="openModal()" class="btn btn-primary">View Details</button>
+            <button (click)="openModal(user.shareholders)" class="btn btn-primary">View Details</button>
           </td>
         </tr>
       </tbody>
@@ -61,15 +61,17 @@
         <thead>
           <tr>
             <th scope="col">Shareholder Name</th>
-            <th scope="col">Shareholder ID</th>
-            <th scope="col">Percentage</th>
+            <th scope="col">Shareholder(%)</th>
+            <th scope="col">Date of Birth</th>
+            <th scope="col">Nationality</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let shareholder of selectedUserShareholders">
             <td>{{ shareholder.name }}</td>
-            <td>{{ shareholder.id }}</td>
-            <td>{{ shareholder.percentage }}%</td>
+            <td>{{ shareholder.shareholderPercentage }}%</td>
+            <td>{{ shareholder.dob }}</td>
+            <td>{{ shareholder.nationalityshareholder }}</td>
           </tr>
         </tbody>
       </table>

@@ -25,7 +25,7 @@ export class BusinessBankAccountComponent implements OnInit {
   }
 
   fetchUserDetails(): void {
-    this.adminAuthService.getUserDetails().subscribe(
+    this.adminAuthService.getBusinessBank().subscribe(
       (response) => {
         this.userList = response; // Assign the API response to the userList array
       },
@@ -35,8 +35,8 @@ export class BusinessBankAccountComponent implements OnInit {
     );
   }
 
-  openModal(): void {
-    this.selectedUserShareholders = this.dummyShareholders; // Assign dummy data directly
+  openModal(data:any): void {
+    this.selectedUserShareholders = data; // Assign dummy data directly
     this.showModal = true; // Open the modal
   }
 

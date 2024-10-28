@@ -16,7 +16,7 @@ export class BackAccountOpeningComponent implements OnInit {
   }
 
   fetchUserDetails(): void {
-    this.adminAuthService.getUserDetails().subscribe(
+    this.adminAuthService.getPersonalBank().subscribe(
       (response) => {
         this.userList = response; // Assign the API response to the userList array
       },

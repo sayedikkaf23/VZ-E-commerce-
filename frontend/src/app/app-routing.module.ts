@@ -79,7 +79,7 @@ const routes: Routes = [
        
       },
       {
-        path: 'banck-account-opening',
+        path: 'PersonalBank-account-opening',
         component: BackAccountOpeningComponent,
        
       },
