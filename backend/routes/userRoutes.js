@@ -10,6 +10,8 @@ router.post('/submit', multipleUpload, userController.submit);
 router.post('/submit-service', singleUpload, userController.submitService);
 router.get('/services', userController.getAllServices);
 router.get('/submissions', userController.getAllSubmissions);
+router.get('/getBusinessBank', userController.getBusinessBank);
+router.get('/getPersonalBank', userController.getPersonalBank);
 router.post('/login', userController.loginAdmin);
 router.post('/payNowByStripe', userController.payNowByStripe);
 router.post('/checkUser', userController.checkUser);
