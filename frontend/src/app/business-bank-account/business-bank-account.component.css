@@ -1,77 +1,63 @@
-
-
-/* Backdrop to darken the background */
+/* Override Bootstrap's modal backdrop */
 .modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    /* background: rgba(0, 0, 0, 0.5); */
-    z-index: 999;
-  }
-  
-  /* Modal container */
-  .modal-container {
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Darken background overlay */
+    opacity: 1 !important; /* Full opacity for backdrop */
+    z-index: 999; /* Ensure it’s behind the modal but above other elements */
+}
+
+/* Modal container */
+.modal-container {
     display: flex;
     justify-content: center;
     align-items: center;
     position: fixed;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
     z-index: 1000;
-  }
-  
-  /* Modal content */
-  .modal-content {
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: add a semi-transparent background to the container */
+}
+
+/* Modal content */
+.modal-content {
     background-color: #fff;
     padding: 20px;
-        width: 400px;
+    width: 593px; /* Adjust width for better layout */
+    max-width: 90vw; /* Responsive width on smaller screens */
     border-radius: 10px;
-    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     position: relative;
     z-index: 1001;
-  }
-  
-  /* Close button */
-  .close-btn {
+}
+
+/* Close button */
+.close-btn {
     position: absolute;
     top: 10px;
     right: 10px;
     font-size: 20px;
     cursor: pointer;
-  }
-  
-  /* Modal title */
-  .modal-title {
-    margin-bottom: 20px;
-  }
-  .td-action-data {
-    overflow: visible !important;
-}
-/* Custom Dropdown Styles */
-.custom-dropdown {
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 5px 0;
-    /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
-    width: 150px;
 }
 
-.custom-dropdown-item {
-    padding: 10px 15px;
+/* Modal title */
+.modal-title {
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Table styling inside modal */
+.modal-content .table {
+    margin-bottom: 0;
+}
+
+/* Table column header adjustments */
+.modal-content th {
+    font-weight: 600;
     color: #333;
     font-size: 14px;
-    /* transition: background-color 0.3s ease; */
-}
-
-.custom-dropdown-item:hover {
-    background-color: #299e60;
-    color: #fff;
-    border-radius: 3px;
+    text-align: left;
 }
 
 /* Optional for alignment */
