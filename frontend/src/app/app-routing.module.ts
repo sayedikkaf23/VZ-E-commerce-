@@ -16,6 +16,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { PaymentModesManagementComponent } from './payment-modes-management/payment-modes-management.component';
 import { MailMangamentShowDetailsComponent } from './mail-mangament-show-details/mail-mangament-show-details.component';
 import { CustomerManagementComponent } from './customer-management/customer-management.component';
+import { VirtualReceptionistComponent } from './virtual-receptionist/virtual-receptionist.component';
 const routes: Routes = [
 
   {
@@ -64,6 +65,11 @@ const routes: Routes = [
    
   },
   {
+    path: 'virtual-receptionist',
+    component: VirtualReceptionistComponent,
+   
+  },
+  {
     path: 'admin/login',
     component: AdminLoginComponent,
    
@@ -104,6 +110,7 @@ const routes: Routes = [
         component: CustomerManagementComponent,
        
       },
+     
       
     ],
   },
