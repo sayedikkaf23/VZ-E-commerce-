@@ -1,0 +1,30 @@
+/* Styling for the View All link */
+.view-all-link {
+    font-size: 0.875rem; /* Small text size */
+    color: #FA2E52; /* Link color */
+    text-decoration: underline; /* Optional underline */
+    cursor: pointer; /* Show pointer on hover */
+    padding: 0; /* Remove any padding */
+    background-color: transparent; /* No background */
+    border: none; /* No border */
+    display: inline-block; /* Ensure it behaves like inline text */
+    margin-left: 0; /* Align to the left */
+  }
+  
+  .view-all-link:hover {
+    color: #FA2E52; /* Keep color on hover */
+    text-decoration: underline; /* Keep underline on hover */
+  }
+  
+  /* Align the text to the left */
+  .text-left {
+    text-align: left;
+  }
+  
+  /* No-wrap for table headers */
+  table thead th {
+    white-space: nowrap; /* Prevent text wrapping */
+    text-align: left; /* Optional: Ensure text alignment is left */
+    padding-right: 1rem; /* Optional: Add spacing between headers */
+  }
+  

@@ -10,6 +10,8 @@ export class FormDataService {
     step2: {},
     mailform: {},
     mailform2: {},
+    virtualdata: {},
+    virtualdata1: {},
   };
 
   // Store data from Step 1
@@ -40,14 +42,25 @@ export class FormDataService {
     this.formData.step1 = data;
   }
 
+  setvirtualdata(data: any) {
+    this.formData.virtualdata = data;
+  }
+
+
   // Store data from Step 2
   setStep2Data(data: any) {
     this.formData.step2 = data;
+  }
+  setvirtualdata1(data: any) {
+    this.formData.virtualdata1 = data;
   }
 
   // Get data from Step 1
   getStep1Data() {
     return this.formData.step1;
+  }
+  getvirtualdata() {
+    return this.formData.virtualdata1;
   }
 
   // Get data from Step 2

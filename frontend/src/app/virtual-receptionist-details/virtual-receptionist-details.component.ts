@@ -8,6 +8,8 @@ import AOS from 'aos';
 import { switchMap } from 'rxjs';
 
 declare var $: any;
+
+
 @Component({
   selector: 'app-virtual-receptionist-details',
   templateUrl: './virtual-receptionist-details.component.html',
@@ -15,11 +17,12 @@ declare var $: any;
 })
 export class VirtualReceptionistDetailsComponent {
 
- 
+  showAll = false;
+  displayShareholders :any= [];
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
-  bankInfo: any = {}; // To store bank service information (Step 2 data)
-
+ companyInfo: any = {}; // To store bank service information (Step 2 data)
+ shareholders :any= [];
   constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
@@ -34,18 +37,23 @@ export class VirtualReceptionistDetailsComponent {
     // Ensure this code runs only in the browser environment
     if (this.isBrowser) {
       // Retrieve data from localStorage
-      const step1Data = localStorage.getItem('step1Data');
-      const step2Data = localStorage.getItem('step2Data');
-    
-  
+   
+      const mailform = localStorage.getItem('virtualdata');
+      const mailform2 = localStorage.getItem('virtualdata1');
+      const mailform3 = localStorage.getItem('virtualdata2');
+  console.log(mailform2,"sssss")
       // If there is no data in localStorage, navigate away from this page
-      if (!step1Data || !step2Data  ) {
+      if ( !mailform || !mailform2 ) {
         // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
         this.router.navigate(['/home']); // Replace with the correct route
       } else {
         // Parse and store data if it exists
-        this.personalInfo = JSON.parse(step1Data);
-        this.bankInfo = JSON.parse(step2Data);
+        this.personalInfo = JSON.parse(mailform);
+        this.companyInfo = JSON.parse(mailform2);
+        this.shareholders=this.companyInfo.shareholders
+        this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
+        console.log(  this.displayShareholders)
+
       }
     }
   }
@@ -110,16 +118,17 @@ export class VirtualReceptionistDetailsComponent {
   submitData() {
     const finalData = {
       ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.bankInfo // Merge bank information (Step 2 data)
+      ...this.companyInfo // Merge bank information (Step 2 data)
     };
   
     // Send data to the backend using userService
-    this.userService.uploadUserData(finalData).pipe(
+    this.userService.virtualform(finalData).pipe(
       switchMap(response => {
         if (response.message) {
           // Clear localStorage after successful submission
-          localStorage.removeItem('step1Data');
-          localStorage.removeItem('step2Data');
+          localStorage.removeItem('virtualdata');
+          localStorage.removeItem('virtualdata1');
+          localStorage.removeItem('virtualdata2');
 
           // Call payNowByStripe with the necessary payload
           const stripePayload = { amount: 135, currency: 'USD' }; // Example payload, replace with your actual data
@@ -146,6 +155,13 @@ export class VirtualReceptionistDetailsComponent {
         console.error(error); // Log the error for debugging
       }
     );
+  }
+
+
+
+  toggleView() {
+    this.showAll = !this.showAll;
+    this.displayShareholders = this.showAll ? this.shareholders : this.shareholders.slice(0, 5);
   }
 }
 

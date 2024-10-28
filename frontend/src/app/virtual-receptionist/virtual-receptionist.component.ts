@@ -50,7 +50,7 @@ export class VirtualReceptionistComponent {
 
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
-      const storedData = localStorage.getItem('step1Data');
+      const storedData = localStorage.getItem('virtualdata');
       if (storedData) {
         const formData = JSON.parse(storedData);
         this.personalDetailsForm.patchValue(formData);
@@ -63,45 +63,34 @@ export class VirtualReceptionistComponent {
       const formData = this.personalDetailsForm.value;
 
 
-      const payload = {
-        email: formData.email,
-        mobileNumber: formData.mobileNumber // Add this field if available in the form
-      };
+      // const payload = {
+      //   email: formData.email,
+      //   mobileNumber: formData.mobileNumber // Add this field if available in the form
+      // };
   
       // Check if the user already exists
-      this.userService.checkUser(payload).subscribe(
-        (response: any) => {
-          if (response.exists) {
-            // Show a toast notification if the user already exists
-            this.toastr.error('User with this email already exists', 'Error');
-          } else {
+   
             // Save form data to localStorage only in the browser environment
             if (this.isBrowser) {
-              localStorage.setItem('step1Data', JSON.stringify(formData));
+              localStorage.setItem('virtualdata', JSON.stringify(formData));
             }
   
             // Check if step2Data exists in localStorage
             if (this.isBrowser) {
-              if (localStorage.getItem('mailform2')) {
+              if (localStorage.getItem('virtualdata2')) {
                 // If mailform2 data exists, navigate to MailMangamentShowDetails
-                this.router.navigate(['/BusinessBankShowDetails']);
+                this.router.navigate(['/virtual-receptionist-details']);
               } else if (localStorage.getItem('step2Data')) {
                 // If step2Data exists, navigate to step-2
-                this.router.navigate(['/step-2']);
+                this.router.navigate(['/virtual-receptionist-1']);
               } else {
                 // Otherwise, navigate to account-type
-                this.router.navigate(['/account-type']);
+                this.router.navigate(['/virtual-receptionist-1']);
               }
             }
             
-          }
-        },
-        error => {
-          // Handle error in user check
-          this.toastr.error(error.error.message);
-          console.error('Error:', error);
-        }
-      );
+          
+      
     } else {
       // Show validation error messages in a single toast
       this.showSingleValidationError(this.personalDetailsForm);
