@@ -4,11 +4,19 @@ import { AdminAuthService } from '../service/admin-auth.service'; // Import your
 @Component({
   selector: 'app-business-bank-account',
   templateUrl: './business-bank-account.component.html',
-  styleUrl: './business-bank-account.component.css'
+  styleUrls: ['./business-bank-account.component.css']
 })
-export class BusinessBankAccountComponent {
-
+export class BusinessBankAccountComponent implements OnInit {
   userList: any[] = []; // To store the fetched user data
+  selectedUserShareholders: any[] = []; // To store selected user's shareholder details
+  showModal: boolean = false; // Flag to control modal visibility
+
+  // Dummy data for shareholders
+  dummyShareholders = [
+    { name: 'John Doe', id: 'SH001', percentage: 25 },
+    { name: 'Jane Smith', id: 'SH002', percentage: 35 },
+    { name: 'Robert Wilson', id: 'SH003', percentage: 40 }
+  ];
 
   constructor(private adminAuthService: AdminAuthService) {}
 
@@ -26,5 +34,13 @@ export class BusinessBankAccountComponent {
       }
     );
   }
-}
 
+  openModal(): void {
+    this.selectedUserShareholders = this.dummyShareholders; // Assign dummy data directly
+    this.showModal = true; // Open the modal
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+  }
+}

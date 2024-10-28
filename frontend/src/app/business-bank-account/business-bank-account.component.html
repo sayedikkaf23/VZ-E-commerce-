@@ -1,48 +1,77 @@
 <div class="content">
-    <div class="page-heading">
-      <div class="row align-items-center justify-content-between">
-        <div class="col-auto">
-          <div class="row align-items-center">
-            <div class="col-auto mb-2">
-              <h2>Bussiness Bank Account</h2>
-            </div>
+  <div class="page-heading">
+    <div class="row align-items-center justify-content-between">
+      <div class="col-auto">
+        <div class="row align-items-center">
+          <div class="col-auto mb-2">
+            <h2>Bussiness Bank Account</h2>
           </div>
         </div>
-        <div class="col-auto">
-          <!-- Optional search field here if needed in future -->
-        </div>
+      </div>
+      <div class="col-auto">
+        <!-- Optional search field here if needed in future -->
       </div>
     </div>
+  </div>
+
+ 
+  <div class="table-responsive overflow-behaviour">
+    <table class="table table-list-data table-hover">
+      <thead class="bg-light">
+        <tr>
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Nationality</th>
+          <th scope="col">Birthday</th>
+          <th scope="col">Resident</th>
+          <th scope="col">Working</th>
+          <th scope="col">Salary</th>
+          <th scope="col">Company Name</th>
+          <th scope="col">Bank</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of userList">
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.nationality }}</td>
+          <td>{{ user.birthday | date : "yyyy-MM-dd" }}</td>
+          <td>{{ user.resident }}</td>
+          <td>{{ user.working }}</td>
+          <td>{{ user.salary }}</td>
+          <td>{{ user.companyname }}</td>
+          <td>{{ user.Bank }}</td>
+          <td>
+            <button (click)="openModal()" class="btn btn-primary">View Details</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+ 
   
-    <div class="table-responsive overflow-behaviour">
-      <table class="table table-list-data table-hover">
-        <thead class="bg-light">
+  <div class="modal-container" *ngIf="showModal">
+    <div class="modal-backdrop" (click)="closeModal()"></div>
+    <div class="modal-content">
+      <span class="close-btn" (click)="closeModal()">&times;</span>
+      <h5 class="modal-title">Shareholder Details</h5>
+      <table class="table">
+        <thead>
           <tr>
-            <th scope="col">Name &#x2191;&#x2193;</th>
-            <th scope="col">Email &#x2191;&#x2193;</th>
-            <th scope="col">Nationality &#x2191;&#x2193;</th>
-            <th scope="col">Birthday &#x2191;&#x2193;</th>
-            <th scope="col">Resident &#x2191;&#x2193;</th>
-            <th scope="col">Working &#x2191;&#x2193;</th>
-            <th scope="col">Salary &#x2191;&#x2193;</th>
-            <th scope="col">Company Name &#x2191;&#x2193;</th>
-            <th scope="col">Bank &#x2191;&#x2193;</th>
+            <th scope="col">Shareholder Name</th>
+            <th scope="col">Shareholder ID</th>
+            <th scope="col">Percentage</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of userList">
-            <td>{{ user.firstName }} {{ user.lastName }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.nationality }}</td>
-            <td>{{ user.birthday | date: 'yyyy-MM-dd' }}</td>
-            <td>{{ user.resident }}</td>
-            <td>{{ user.working }}</td>
-            <td>{{ user.salary }}</td>
-            <td>{{ user.companyname }}</td>
-            <td>{{ user.Bank }}</td>
+          <tr *ngFor="let shareholder of selectedUserShareholders">
+            <td>{{ shareholder.name }}</td>
+            <td>{{ shareholder.id }}</td>
+            <td>{{ shareholder.percentage }}%</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-  

@@ -8,8 +8,7 @@ const crypto = require('crypto');
 
 
  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
-
-
+const MenuItem=require('../models/MenuItem')
 
 // Handle form submission and file uploads
 
@@ -365,5 +364,25 @@ exports.deleteService = async (req, res) => {
       res.status(200).json({ message: 'Service deleted successfully', service: deletedService });
   } catch (error) {
       res.status(500).json({ error: 'Error deleting service', details: error.message });
+  }
+
+};
+exports.getMenuItems = async (req, res) => {
+  try {
+    const menuItems = await MenuItem.find();
+    res.json(menuItems); // Send submenu items as JSON
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching menu items' });
+  }
+};
+exports.addMenuItems = async (req, res) => {
+  const menuItems = req.body; // Expecting an array of menu items
+
+  try {
+    // Bulk insert all menu items
+    const newMenuItems = await MenuItem.insertMany(menuItems);
+    res.status(201).json({ message: 'Menu items created successfully', menuItems: newMenuItems });
+  } catch (error) {
+    res.status(500).json({ error: 'Error creating menu items', details: error.message });
   }
 };

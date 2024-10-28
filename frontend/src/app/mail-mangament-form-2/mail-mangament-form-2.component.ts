@@ -1,5 +1,5 @@
-import {  Inject, PLATFORM_ID, AfterViewInit, OnInit } from '@angular/core';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component, ViewChild, ElementRef, OnInit, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
+import { ChangeDetectionStrategy } from '@angular/core';
 
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
@@ -20,6 +20,8 @@ declare var $: any;
 
 })
 export class MailMangamentForm2Component implements OnInit, AfterViewInit {
+  @ViewChild('dateInput') dateInput!: ElementRef;
+
   formData: any = {
     companylocation: '',
     jurisdiction: '',
@@ -29,6 +31,14 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   };
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
 
+  openDatePicker() {
+    if (this.dateInput && this.dateInput.nativeElement) {
+      this.dateInput.nativeElement.focus();  // Ensure the input is focused
+      this.dateInput.nativeElement.click();  // Programmatically click the input to open the date picker
+    }
+  }
+  
+  
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data

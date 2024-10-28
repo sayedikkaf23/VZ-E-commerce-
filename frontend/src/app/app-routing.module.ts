@@ -94,7 +94,7 @@ const routes: Routes = [
        
       },
       {
-        path: 'business bank account',
+        path: 'business-bank-account',
         component: BusinessBankAccountComponent,
        
       },
