@@ -1,26 +1,38 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const mailManagementSchema = new mongoose.Schema({
-    applicantDetails: {
-        firstName: { type: String, required: true },
-        lastName: { type: String, required: true },
-        email: { type: String, required: true },
-        phoneNumber: { type: String, required: true },
-        nationality: { type: String, required: true }
-    },
-    companyName: { type: String },
-    mailAddress: { type: String, required: true },
-    mailPreferences: { type: String }, // E.g., Forwarding, Receiving, etc.
-    documents: {
-        idProof: { type: String, required: true }
-    },
-    status: {
-        type: String,
-        default: 'Pending',
-        enum: ['Pending', 'Approved', 'Rejected']
-    },
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now }
+const shareholderSchema = new mongoose.Schema({
+  name: { type: String },
+  shareholderPercentage: { type: String },
+  dob: { type: Date },
+  nationalityshareholder: { type: String },
 });
 
-module.exports = mongoose.model('MailManagement', mailManagementSchema);
+const MailDetailsSchema = new mongoose.Schema(
+  {
+  
+    firstName: { type: String },
+    lastName: { type: String },
+    email: { type: String, required: true, unique: true },
+    nationality: { type: String },
+    birthday:{ type: String },
+    mobileNumber: {
+      number: String,
+      internationalNumber: String,
+      nationalNumber: String,
+      e164Number: String,
+      countryCode: String,
+      dialCode: String,
+    },
+    CompanyName: { type: String },
+    CompanyIncorporated: { type: String },
+    Website: { type: String },
+    companylicensed: { type: String },
+    tradelicense: { type: String },
+    shareholdercount: { type: String },
+    shareholders: [shareholderSchema], // Array of shareholder objects
+  },
+  { timestamps: true }
+);
+
+// Export the model using the correct schema name
+module.exports = mongoose.model("MailDetails", MailDetailsSchema);

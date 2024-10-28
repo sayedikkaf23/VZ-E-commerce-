@@ -64,6 +64,7 @@ if (check == 'Bank Accounts Opening') {
 } else if (check == 'Accounting & VAT') {
   this.router.navigate(['/service-b']); // Replace with the actual route for Service B
 } else if (check == 'Mail Management') {
+  this.router.navigate(['/mails-management']);
 } else if (check == 'Virtual Receptionist') {
   this.router.navigate(['/virtual-receptionist']); // Replace with the actual route for Service B
 } else if (check == 'Mail Management') {

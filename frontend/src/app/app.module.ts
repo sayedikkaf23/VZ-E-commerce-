@@ -36,6 +36,7 @@ import { VirtualReceptionistDetailsComponent } from './virtual-receptionist-deta
 import { MailsManagement1Component } from './mails-management-1/mails-management-1.component';
 import { MailsManagement2Component } from './mails-management-2/mails-management-2.component';
 import { MailsManagementShowDetailsComponent } from './mails-management-show-details/mails-management-show-details.component';
+import { MailsManagement3Component } from './mails-management-3/mails-management-3.component';
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { MailsManagementShowDetailsComponent } from './mails-management-show-det
     MailsManagement1Component,
     MailsManagement2Component,
     MailsManagementShowDetailsComponent,
+    MailsManagement3Component,
     
   ],
   imports: [

@@ -21,8 +21,9 @@ import { VirtualReceptionist1Component } from './virtual-receptionist-1/virtual-
 import { VirtualReceptionist2Component } from './virtual-receptionist-2/virtual-receptionist-2.component';
 import { VirtualReceptionistDetailsComponent } from './virtual-receptionist-details/virtual-receptionist-details.component';
 import { MailsManagement1Component } from './mails-management-1/mails-management-1.component';
-import { MailsManagement2Component } from './mails-management-2/mails-management-2.component';
 import { MailsManagementShowDetailsComponent } from './mails-management-show-details/mails-management-show-details.component';
+import { MailsManagement2Component } from './mails-management-2/mails-management-2.component';
+import { MailsManagement3Component } from './mails-management-3/mails-management-3.component';
 const routes: Routes = [
 
   {
@@ -85,6 +86,31 @@ const routes: Routes = [
   {
     path: 'BusinessBankShowDetails',
     component: MailMangamentShowDetailsComponent,
+   
+  },
+  {
+    path: 'virtual-receptionist',
+    component: VirtualReceptionistComponent,
+   
+  },
+  {
+    path: 'mails-management',
+    component: MailsManagement1Component,
+   
+  },
+  {
+    path: 'mails-management-2',
+    component: MailsManagement2Component,
+   
+  },
+  {
+    path: 'mails-management-3',
+    component: MailsManagement3Component,
+   
+  },
+  {
+    path: 'mails-management-details',
+    component: MailsManagementShowDetailsComponent,
    
   },
   {

@@ -64,44 +64,34 @@ export class MailsManagement1Component {
       const formData = this.personalDetailsForm.value;
 
 
-      const payload = {
-        email: formData.email,
-        mobileNumber: formData.mobileNumber // Add this field if available in the form
-      };
+      // const payload = {
+      //   email: formData.email,
+      //   mobileNumber: formData.mobileNumber // Add this field if available in the form
+      // };
   
       // Check if the user already exists
-      this.userService.checkUser(payload).subscribe(
-        (response: any) => {
-          if (response.exists) {
-            // Show a toast notification if the user already exists
-            this.toastr.error('User with this email already exists', 'Error');
-          } else {
+   
             // Save form data to localStorage only in the browser environment
             if (this.isBrowser) {
               localStorage.setItem('mailform', JSON.stringify(formData));
             }
-
-
-
+  
             // Check if step2Data exists in localStorage
-            // if (this.isBrowser && localStorage.getItem('mailform')) {
-            //   // If step2Data exists, navigate to step-2
-         
-            //   this.router.navigate(['/account-type']);
-            //   console.log("object")
-            // } else {
-            //   // Otherwise, navigate to account-type
-            //     this.router.navigate(['/BusinessBankform']);
-            //   console.log("object2")
-            // }
-          }
-        },
-        error => {
-          // Handle error in user check
-          this.toastr.error(error.error.message);
-          console.error('Error:', error);
-        }
-      );
+            if (this.isBrowser) {
+              if (localStorage.getItem('mailform2')) {
+                // If mailform2 data exists, navigate to MailMangamentShowDetails
+                this.router.navigate(['/mails-management-details']);
+              } else if (localStorage.getItem('mailform')) {
+                // If step2Data exists, navigate to step-2
+                this.router.navigate(['/mails-management-2']);
+              } else {
+                // Otherwise, navigate to account-type
+                this.router.navigate(['/mails-management-2']);
+              }
+            }
+            
+          
+      
     } else {
       // Show validation error messages in a single toast
       this.showSingleValidationError(this.personalDetailsForm);

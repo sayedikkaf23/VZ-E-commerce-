@@ -8,6 +8,8 @@ import AOS from 'aos';
 import { switchMap } from 'rxjs';
 
 declare var $: any;
+
+
 @Component({
   selector: 'app-mails-management-show-details',
   templateUrl: './mails-management-show-details.component.html',
@@ -15,6 +17,7 @@ declare var $: any;
 })
 export class MailsManagementShowDetailsComponent {
 
+  
   showAll = false;
   displayShareholders :any= [];
   isBrowser: boolean;
@@ -36,8 +39,9 @@ export class MailsManagementShowDetailsComponent {
     if (this.isBrowser) {
       // Retrieve data from localStorage
    
-      const mailform = localStorage.getItem('step1Data');
-      const mailform2 = localStorage.getItem('mailform2');
+      const mailform = localStorage.getItem('mailform');
+      const mailform2 = localStorage.getItem('mailform1');
+      const mailform3 = localStorage.getItem('mailform2');
   console.log(mailform2,"sssss")
       // If there is no data in localStorage, navigate away from this page
       if ( !mailform || !mailform2 ) {
@@ -119,11 +123,12 @@ export class MailsManagementShowDetailsComponent {
     };
   
     // Send data to the backend using userService
-    this.userService.uploadUserData(finalData).pipe(
+    this.userService.mailform(finalData).pipe(
       switchMap(response => {
         if (response.message) {
           // Clear localStorage after successful submission
           localStorage.removeItem('mailform');
+          localStorage.removeItem('mailform1');
           localStorage.removeItem('mailform2');
 
           // Call payNowByStripe with the necessary payload
