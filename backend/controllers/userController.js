@@ -114,6 +114,27 @@ exports.getAllSubmissions = async (req, res) => {
       .json({ error: "Error fetching submissions", details: error.message });
   }
 };
+exports.getPersonalBank = async (req, res) => {
+  try {
+    const personalBankSubmissions = await UserDetails.find({ type: "Personal Bank" }); // Fetch submissions with type "Personal Bank"
+    res.status(200).json(personalBankSubmissions); // Return personal bank submissions as JSON
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error fetching personal bank submissions", details: error.message });
+  }
+};
+
+exports.getBusinessBank = async (req, res) => {
+  try {
+    const businessBankSubmissions = await UserDetails.find({ type: "Business Bank" }); // Fetch submissions with type "Business Bank"
+    res.status(200).json(businessBankSubmissions); // Return business bank submissions as JSON
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Error fetching business bank submissions", details: error.message });
+  }
+};
 
 
 exports.submitService = async (req, res) => {
