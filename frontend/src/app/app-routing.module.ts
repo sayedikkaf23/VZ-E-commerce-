@@ -18,6 +18,7 @@ import { MailMangamentShowDetailsComponent } from './mail-mangament-show-details
 import { CustomerManagementComponent } from './customer-management/customer-management.component';
 import { VirtualReceptionistComponent } from './virtual-receptionist/virtual-receptionist.component';
 import { VirtualReceptionist1Component } from './virtual-receptionist-1/virtual-receptionist-1.component';
+import { VirtualReceptionist2Component } from './virtual-receptionist-2/virtual-receptionist-2.component';
 const routes: Routes = [
 
   {
@@ -73,6 +74,11 @@ const routes: Routes = [
   {
     path: 'virtual-receptionist-1',
     component: VirtualReceptionist1Component,
+   
+  },
+  {
+    path: 'virtual-receptionist-2',
+    component: VirtualReceptionist2Component,
    
   },
   {
