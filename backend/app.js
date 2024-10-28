@@ -10,6 +10,7 @@ require("dotenv").config();
 var indexRouter = require("./routes/index");
 var userRouter = require("./routes/userRoutes");
 var virtualDetails=require("./routes/virtual-route")
+var mailDetails=require('./routes/mailform')
 
 var app = express();
 connectDB();
@@ -52,6 +53,8 @@ app.use('/uploads', express.static('uploads'));
 // app.use("/", indexRouter);
 app.use('/user', userRouter);
 app.use('/virtual', virtualDetails);
+app.use('/mail', mailDetails);
+
 // catch 404 and forward to error handler
 // app.use(function (req, res, next) {
 //   next(createError(404));
