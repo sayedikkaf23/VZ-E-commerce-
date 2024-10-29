@@ -92,9 +92,14 @@ export class MailsManagement1Component {
             
           
       
-    } else {
-      // Show validation error messages in a single toast
-      this.showSingleValidationError(this.personalDetailsForm);
+    }  else {
+      // Check specifically if mobileNumber is invalid and show toaster for it
+      if (this.personalDetailsForm.get('mobileNumber')?.invalid) {
+        this.toastr.error('Please provide a valid mobile number.', 'Validation Error');
+      } else {
+        // Show a general validation error if other fields are missing
+        this.showSingleValidationError(this.personalDetailsForm);
+      }
     }
   }
   

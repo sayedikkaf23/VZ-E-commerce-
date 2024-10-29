@@ -61,39 +61,33 @@ export class VirtualReceptionistComponent {
   onSubmit() {
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;
-
-
-      // const payload = {
-      //   email: formData.email,
-      //   mobileNumber: formData.mobileNumber // Add this field if available in the form
-      // };
   
-      // Check if the user already exists
-   
-            // Save form data to localStorage only in the browser environment
-            if (this.isBrowser) {
-              localStorage.setItem('virtualdata', JSON.stringify(formData));
-            }
+      // Save form data to localStorage only in the browser environment
+      if (this.isBrowser) {
+        localStorage.setItem('virtualdata', JSON.stringify(formData));
+      }
   
-            // Check if step2Data exists in localStorage
-            if (this.isBrowser) {
-              if (localStorage.getItem('virtualdata2')) {
-                // If mailform2 data exists, navigate to MailMangamentShowDetails
-                this.router.navigate(['/virtual-receptionist-details']);
-              } else if (localStorage.getItem('step2Data')) {
-                // If step2Data exists, navigate to step-2
-                this.router.navigate(['/virtual-receptionist-1']);
-              } else {
-                // Otherwise, navigate to account-type
-                this.router.navigate(['/virtual-receptionist-1']);
-              }
-            }
-            
-          
-      
+      // Check if step2Data exists in localStorage
+      if (this.isBrowser) {
+        if (localStorage.getItem('virtualdata2')) {
+          // Navigate to MailMangamentShowDetails if mailform2 data exists
+          this.router.navigate(['/virtual-receptionist-details']);
+        } else if (localStorage.getItem('step2Data')) {
+          // Navigate to step-2 if step2Data exists
+          this.router.navigate(['/virtual-receptionist-1']);
+        } else {
+          // Otherwise, navigate to account-type
+          this.router.navigate(['/virtual-receptionist-1']);
+        }
+      }
     } else {
-      // Show validation error messages in a single toast
-      this.showSingleValidationError(this.personalDetailsForm);
+      // Check specifically if mobileNumber is invalid and show toaster for it
+      if (this.personalDetailsForm.get('mobileNumber')?.invalid) {
+        this.toastr.error('Please provide a valid mobile number.', 'Validation Error');
+      } else {
+        // Show a general validation error if other fields are missing
+        this.showSingleValidationError(this.personalDetailsForm);
+      }
     }
   }
   

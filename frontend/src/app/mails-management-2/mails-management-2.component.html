@@ -141,11 +141,11 @@
                   <div class="form-field">
                     <label class="shareholder-label">Nationality <span class="required">*</span></label>
                     <!-- Apply new class here -->
-                    <select class="form-select" [(ngModel)]="shareholders[0].nationalityshareholder"
-                      [ngModelOptions]="{ standalone: true }" >
+                    <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder" [ngModelOptions]="{ standalone: true }">
                       <option value="" disabled [ngValue]="null">Select Nationality</option>
                       <option *ngFor="let nationality of nationalities" [value]="nationality">{{ nationality }}</option>
                     </select>
+                    
                   </div>
 
 
