@@ -23,6 +23,11 @@ export class _HomeComponent {
 
   ngOnInit(): void {
     this.loadServices();
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
+
   }
 
   loadServices(): void {

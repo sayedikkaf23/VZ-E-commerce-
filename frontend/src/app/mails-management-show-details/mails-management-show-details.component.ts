@@ -35,6 +35,11 @@ export class MailsManagementShowDetailsComponent {
   }
 
   ngOnInit(): void {
+
+    
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
     // Ensure this code runs only in the browser environment
     if (this.isBrowser) {
       // Retrieve data from localStorage
