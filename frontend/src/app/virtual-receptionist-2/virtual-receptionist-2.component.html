@@ -24,7 +24,7 @@
                       />
                     </div>
               
-                    <div class="form-field">
+                    <!-- <div class="form-field">
                       <label for="shareholderid">Enter Shareholder ID's/Passport<span class="required">*</span></label>
                       <input
                         class="form-control"
@@ -33,43 +33,40 @@
                         placeholder="Enter Shareholder ID's/Passport"
                         formControlName="shareholderId"
                       />
-                    </div>
+                    </div> -->
                   </div>
-              
                   <div class="item">
-                    <h3>Upload Documents</h3>
-                    <div class="accordion-item">
-                      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#passport_upload">
-                        Upload Passport Copy
-                      </button>
-                      <div id="passport_upload" class="accordion-collapse collapse">
-                        <div class="accordion-body">
-                          <div class="form-field m-0">
-                            <fieldset>
-                              <div class="file_upload">
-                                <label for="passport" class="form-label m-0">Drag and drop to upload</label>
-                                <input
-                                  class="form-control"
-                                  id="passport"
-                                  type="file"
-                                  (change)="onFileChange($event)"
-                                  multiple
-                                  accept=".jpg, .jpeg, .png, .pdf" 
-                                >
-                              </div>
-                            </fieldset>
-                          </div>
-                          <div *ngIf="uploadedFiles.length > 0" class="uploaded-files">
-                            <h4>Uploaded Files:</h4>
-                            <ul>
-                              <li *ngFor="let file of uploadedFiles">{{ file.name }}</li>
-                            </ul>
-                          </div>
-                          
+                    <h3>Shareholder Details</h3>
+                    <div *ngFor="let shareholder of shareholders.controls; let i = index" class="shareholder-section">
+                      <div class="shareholder-row">
+                        <!-- ID's/Passport field -->
+                        <div class="form-field">
+                          <label for="idOrPassport">ID's/Passport for Shareholder {{ i + 1 }} <span class="required">*</span></label>
+                          <input
+                            type="text"
+                            class="form-control"
+                            [formControlName]="'idOrPassport'"
+                            placeholder="Enter ID's/Passport"
+                          />
+                        </div>
+                  
+                        <!-- File Upload field -->
+                        <div class="form-field">
+                          <label for="files">File Upload for Shareholder {{ i + 1 }} <span class="required">*</span></label>
+                          <input
+                            type="file"
+                            multiple
+                            (change)="onFileChange($event, i)"
+                          />
+                          <ul>
+                            <li *ngFor="let file of uploadedFiles[i]">{{ file.name }}</li>
+                          </ul>
                         </div>
                       </div>
                     </div>
                   </div>
+                  
+                  
                   <div class="form-submit">
                     <button type="submit" class="btn" id="btn_submit">Next</button>
                 </div>

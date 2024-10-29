@@ -18,8 +18,9 @@ export class MailMangamentShowDetailsComponent {
   displayShareholders :any= [];
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
- companyInfo: any = {}; // To store bank service information (Step 2 data)
- shareholders :any= [];
+  companyInfo: any = {}; // To store bank service information (Step 2 data)
+  shareholders :any= [];
+  
   constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications

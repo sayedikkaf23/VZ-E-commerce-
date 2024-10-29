@@ -30,6 +30,8 @@ const MailDetailsSchema = new mongoose.Schema(
     tradelicense: { type: String },
     shareholdercount: { type: String },
     shareholders: [shareholderSchema], // Array of shareholder objects
+    passportCopy: [{ type: String }], // Array of strings to store multiple file paths
+
   },
   { timestamps: true }
 );

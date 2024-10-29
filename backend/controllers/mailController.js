@@ -24,6 +24,8 @@ exports.submitMailDetails = async (req, res) => {
             shareholders // Assuming this comes as an array of shareholder objects from the client side
         } = req.body;
 
+    const passportCopy = req.files['passport'] ? req.files['passport'].map(file => file.path) : [];
+
     
         // Handle file uploads (if necessary)
         // const passportCopy = req.files['passport'] ? req.files['passport'][0].path : '';

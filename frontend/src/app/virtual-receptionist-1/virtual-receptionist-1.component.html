@@ -54,6 +54,20 @@
                 </select>
               </fieldset>
             </div>
+
+            <div class="form-field" *ngIf="formData.CompanyIncorporated == 'United Arab Emirates'">
+              <label for="tradelicense">What are the type of activities mentioned on your trade license?: <span class="required">*</span></label>
+              <fieldset>
+                <select name="tradelicense" id="tradelicense" class="form-select" [(ngModel)]="formData.tradelicense">
+                  <option value="" disabled selected>Select  Trade license</option>
+                  <!-- Options specific to each licensing type -->
+                  <option  value="Commercial License">Commercial License</option>
+                  <option  value="Professional License">Professional License</option>
+                  <option  value="Industrial License">Industrial License</option>
+                  <option  value="Tourism License">Tourism License</option>
+                </select>
+              </fieldset>
+            </div>
             <div class="form-field" *ngIf="formData.CompanyIncorporated">
               <label for="Website">Enter Company your Website(if applicable)?
                  </label>
@@ -61,14 +75,15 @@
               <input type="text" name="Website" id="Website" class="form-input"
                 [(ngModel)]="formData.Website" placeholder="Company Website" />
             </div>
-            <div class="form-field" *ngIf="formData.CompanyIncorporated">
-              <label for="tradelicense">What are the type of activities mentioned on your trade license?
-                <span
-                class="required">*</span></label>   
-
+            <div class="form-field" *ngIf="formData.CompanyIncorporated !== 'United Arab Emirates'">
+              <label for="tradelicense">What are the types of activities mentioned on your trade license?
+                <span class="required">*</span>
+              </label>
+            
               <input type="text" name="tradelicense" id="tradelicense" class="form-input"
-                [(ngModel)]="formData.tradelicense" placeholder="trade license" />
+                [(ngModel)]="formData.tradelicense" placeholder="Trade license" />
             </div>
+            
             <!-- <div class="form-field">
                 <fieldset>
                   <select

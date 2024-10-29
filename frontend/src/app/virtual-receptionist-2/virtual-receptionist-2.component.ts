@@ -1,113 +1,98 @@
-import { Component, Inject, PLATFORM_ID, AfterViewInit, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import AOS from 'aos';
-
-declare var $: any;
 
 @Component({
   selector: 'app-virtual-receptionist-2',
   templateUrl: './virtual-receptionist-2.component.html',
   styleUrls: ['./virtual-receptionist-2.component.css']
 })
-export class VirtualReceptionist2Component implements AfterViewInit, OnInit {
+export class VirtualReceptionist2Component implements OnInit {
   formData: FormGroup;
-  uploadedFiles: File[] = []; // To hold the uploaded files
+  shareholdersData: any[] = []; // Array to hold shareholders' initial data
+  uploadedFiles: File[][] = []; // Array of arrays to hold uploaded files for each shareholder
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    // Initialize form with validation
     this.formData = this.fb.group({
       companyTradeLicense: ['', Validators.required],
-      shareholderId: ['', Validators.required],
-      passportCopy: [null, Validators.required]
+      shareholders: this.fb.array([]) // Array for shareholders' dynamic form fields
     });
   }
 
-  ngOnInit() {
-    // Scroll to top when the page loads
+  ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
 
-    // Load saved data if it exists in localStorage
-    const savedData = localStorage.getItem('virtualdata2');
+    // Retrieve saved data from localStorage
+    const savedData = localStorage.getItem('virtualdata1');
     if (savedData) {
       const parsedData = JSON.parse(savedData);
-      this.formData.patchValue(parsedData);
-      if (parsedData.uploadedFiles) {
-        this.uploadedFiles = parsedData.uploadedFiles;
-      }
+      this.shareholdersData = parsedData.shareholders || [];
+      this.initializeShareholders();
     }
   }
 
-  ngAfterViewInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      AOS.init();
-
-      $(window).scroll(() => {
-        const height = $(window).scrollTop();
-        if (height > 50) {
-          $('html').addClass('sticky');
-        } else {
-          $('html').removeClass('sticky');
-        }
-      });
-
-      $(document).ready(() => {
-        $('.scrollToTop').click((event: any) => {
-          event.preventDefault();
-          $('html, body').animate({ scrollTop: 0 }, 'slow');
-          return false;
-        });
-
-        $('.navbar-toggle').click(() => {
-          $('html').toggleClass('menu-show');
-        });
-
-        $('.header-menu-overlay').click(() => {
-          $('html').removeClass('menu-show');
-        });
-      });
-    }
+  get shareholders(): FormArray {
+    return this.formData.get('shareholders') as FormArray;
   }
 
-  onFileChange(event: Event): void {
+  initializeShareholders(): void {
+    this.shareholdersData.forEach((shareholder, index) => {
+      // Create a new FormGroup for each shareholder
+      const shareholderGroup = this.fb.group({
+        name: [shareholder.name, Validators.required],
+        shareholderPercentage: [shareholder.shareholderPercentage, Validators.required],
+        dob: [shareholder.dob, Validators.required],
+        nationalityshareholder: [shareholder.nationalityshareholder, Validators.required],
+        passportNumber: ['', Validators.required], // New field for passport number
+        files: [[], Validators.required] // New field for file uploads
+      });
+      this.shareholders.push(shareholderGroup);
+      this.uploadedFiles.push([]); // Initialize file array for each shareholder
+    });
+  }
+
+  onFileChange(event: Event, index: number): void {
     const element = event.currentTarget as HTMLInputElement;
     const fileList: FileList | null = element.files;
+
     if (fileList && fileList.length > 0) {
-      // Append new files, up to 4 unique files in total
-      const newFiles = Array.from(fileList).slice(0, 4); // Limit selection to 4 files
-  
+      // Append new files, up to 4 unique files per shareholder
+      const newFiles = Array.from(fileList).slice(0, 4);
+
       // Avoid duplicates
       newFiles.forEach(newFile => {
-        if (!this.uploadedFiles.some(file => file.name === newFile.name)) {
-          this.uploadedFiles.push(newFile);
+        if (!this.uploadedFiles[index].some(file => file.name === newFile.name)) {
+          this.uploadedFiles[index].push(newFile);
         }
       });
-  
-      // If uploadedFiles exceeds 4 files after adding new ones, trim the array
-      if (this.uploadedFiles.length > 4) {
-        this.uploadedFiles = this.uploadedFiles.slice(0, 4);
+
+      // Limit files to 4 per shareholder
+      if (this.uploadedFiles[index].length > 4) {
+        this.uploadedFiles[index] = this.uploadedFiles[index].slice(0, 4);
       }
-  
-      // Update the form control with file names
-      this.formData.patchValue({ passportCopy: this.uploadedFiles.map(file => file.name) });
+
+      // Update the form control with file names for this specific shareholder
+      this.shareholders.at(index).patchValue({ files: this.uploadedFiles[index].map(file => file.name) });
     }
   }
-  
-  
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.formData.valid) {
       const formValues = this.formData.value;
 
       // Save form data and uploaded file names to local storage
-      const dataToSave = { ...formValues, uploadedFiles: this.uploadedFiles.map(file => ({ name: file.name })) };
+      const dataToSave = {
+        ...formValues,
+        uploadedFiles: this.uploadedFiles.map(files => files.map(file => ({ name: file.name })))
+      };
       localStorage.setItem('virtualdata2', JSON.stringify(dataToSave));
 
       console.log('Form Data:', formValues);  // Debugging: Display form data in console
