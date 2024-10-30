@@ -5,6 +5,8 @@ const shareholderSchema = new mongoose.Schema({
   shareholderPercentage: { type: String },
   dob: { type: Date },
   nationalityshareholder: { type: String },
+  passportNumber: { type: String }, // Passport number for identification
+  files: [{ name: String, path: String }], // Array of files associated with the shareholder, each with a name and path
 });
 
 const virtualDetailsSchema = new mongoose.Schema(
@@ -12,7 +14,7 @@ const virtualDetailsSchema = new mongoose.Schema(
   
     firstName: { type: String },
     lastName: { type: String },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true},
     nationality: { type: String },
     birthday:{ type: String },
     mobileNumber: {

@@ -23,7 +23,8 @@ export class VirtualReceptionistDetailsComponent {
   personalInfo: any = {}; // To store personal information (Step 1 data)
  companyInfo: any = {}; // To store bank service information (Step 2 data)
  shareholders :any= [];
-  constructor(
+ uploadedFiles: File[][] = []; // Initialize as an empty array
+ constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
     private router: Router,
@@ -34,29 +35,50 @@ export class VirtualReceptionistDetailsComponent {
   }
 
   ngOnInit(): void {
-    // Ensure this code runs only in the browser environment
-    if (this.isBrowser) {
+    // Check if code is running in a browser environment
+    if (isPlatformBrowser(this.platformId)) {
       // Retrieve data from localStorage
-   
       const mailform = localStorage.getItem('virtualdata');
       const mailform2 = localStorage.getItem('virtualdata1');
       const mailform3 = localStorage.getItem('virtualdata2');
-  console.log(mailform2,"sssss")
-      // If there is no data in localStorage, navigate away from this page
-      if ( !mailform || !mailform2 ) {
-        // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
-        this.router.navigate(['/home']); // Replace with the correct route
+  
+      // If required data is missing, navigate away from the page
+      if (!mailform || !mailform2 || !mailform3) {
+        this.router.navigate(['/home']); // Navigate to home if any data is missing
       } else {
-        // Parse and store data if it exists
+        // Parse each data item from localStorage
         this.personalInfo = JSON.parse(mailform);
         this.companyInfo = JSON.parse(mailform2);
-        this.shareholders=this.companyInfo.shareholders
-        this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
-        console.log(  this.displayShareholders)
-
+        const additionalShareholderInfo = JSON.parse(mailform3);
+  
+        // Merge shareholder information
+        const mergedShareholders = this.companyInfo.shareholders.map((shareholder: any, index: string | number) => {
+          const additionalInfo = additionalShareholderInfo.shareholders[index];
+          return {
+            ...shareholder,
+            passportNumber: additionalInfo.passportNumber,
+            files: additionalInfo.files
+          };
+        });
+  
+        // Create the merged data object
+        const mergedData = {
+          ...this.personalInfo,
+          ...this.companyInfo,
+          companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
+          shareholders: mergedShareholders
+        };
+  
+        // Optionally store the merged data in localStorage
+        localStorage.setItem('mergedData', JSON.stringify(mergedData));
+  
+        // Use the merged data directly if needed
+        this.displayShareholders = mergedData.shareholders.slice(0, 5); // Show only 5 shareholders initially
+        console.log('Merged Data:', mergedData);
       }
     }
   }
+  
   
 
   ngAfterViewInit(): void {
@@ -116,47 +138,57 @@ export class VirtualReceptionistDetailsComponent {
 
   // Submit data to backend and clear localStorage
   submitData() {
-    const finalData = {
-      ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.companyInfo // Merge bank information (Step 2 data)
-    };
+    // Retrieve merged data from localStorage
+    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
   
-    // Send data to the backend using userService
-    this.userService.virtualform(finalData).pipe(
-      switchMap(response => {
-        if (response.message) {
-          // Clear localStorage after successful submission
-          localStorage.removeItem('virtualdata');
-          localStorage.removeItem('virtualdata1');
-          localStorage.removeItem('virtualdata2');
-
-          // Call payNowByStripe with the necessary payload
-          const stripePayload = { amount: 135, currency: 'USD' }; // Example payload, replace with your actual data
-          return this.userService.payNowByStripe(stripePayload);
-        } else {
-          throw new Error('Data submission failed'); // Handle case where response does not contain expected message
+    // Create a FormData object to hold all form data and files
+    const formData = new FormData();
+  
+    // Append general data fields from `mergedData`, excluding `shareholders`
+    for (const key in mergedData) {
+      if (mergedData.hasOwnProperty(key) && key !== 'shareholders') {
+        const value = mergedData[key];
+        formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
+      }
+    }
+  
+    // Append shareholders' data and files to FormData
+    mergedData.shareholders.forEach((shareholder: any, index: number) => {
+      // Append each field in the shareholder data (excluding files)
+      for (const field in shareholder) {
+        if (field !== 'files') {
+          formData.append(`shareholders[${index}][${field}]`, shareholder[field]);
         }
-      })
-    ).subscribe(
-      payNowResponse => {
-        // Assuming the response contains a URL to redirect for payment
-        const paymentUrl = payNowResponse.stripeData.url; // Replace 'url' with the actual field name from the response
-
-        if (paymentUrl) {
-          // Navigate to the payment URL
-          window.location.href = paymentUrl; // Redirecting the browser to the payment page
-        } else {
-          this.toastr.error('Payment URL not found', 'Error');
-        }
+      }
+  
+      // Append each file for the current shareholder
+      if (Array.isArray(this.uploadedFiles[index])) {
+        this.uploadedFiles[index].forEach((file: File) => {
+          formData.append(`shareholderFiles[${index}]`, file); // Append each file with a unique key
+        });
+      }
+    });
+  
+    // Send data to the backend using UserService
+    this.userService.virtualform(formData).subscribe(
+      response => {
+        console.log('Data submitted successfully:', response);
+        // Clear localStorage after successful submission
+        localStorage.removeItem('virtualdata');
+        localStorage.removeItem('virtualdata1');
+        localStorage.removeItem('virtualdata2');
+        localStorage.removeItem('mergedData');
       },
       error => {
-        // Show error toast on failure
+        console.error('Error submitting data:', error);
         this.showError(error.error.message || 'An error occurred');
-        console.error(error); // Log the error for debugging
       }
     );
   }
-
+  
+  
+  
+  
 
 
   toggleView() {

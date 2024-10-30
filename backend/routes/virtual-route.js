@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../middleware/fileUpload'); // Make sure this imports the correct file
-const virtualDetails = require('../controllers/virtualController');
+const upload = require('../middleware/fileUpload'); // Ensure path is correct
+const virtualDetails = require('../controllers/virtualController'); // Ensure path is correct
 
-// Route to handle form submission with multiple file uploads
-router.post('/SubmitvirtualDetail', virtualDetails.submitVirtualDetails); // Use upload.multipleUpload
+// Route for file uploads
+router.post('/SubmitvirtualDetail', upload.multipleUpload, virtualDetails.submitVirtualDetails);
 
 module.exports = router;

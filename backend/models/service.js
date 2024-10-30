@@ -15,6 +15,11 @@ const serviceSchema = new mongoose.Schema({
     },
     icon: {
         type: String
+    },
+    order: {
+        type: Number,
+        required: true,
+        default: 0  // Default value if needed
     }
 });
 

@@ -12,7 +12,7 @@ import AOS from 'aos';
 export class VirtualReceptionist2Component implements OnInit {
   formData: FormGroup;
   shareholdersData: any[] = []; // Array to hold shareholders' initial data
-  uploadedFiles: File[][] = []; // Array of arrays to hold uploaded files for each shareholder
+  uploadedFiles: File[][] = []; // Array of arrays, where each sub-array holds files for a specific shareholder
 
   constructor(
     private fb: FormBuilder,
@@ -45,62 +45,72 @@ export class VirtualReceptionist2Component implements OnInit {
 
   initializeShareholders(): void {
     this.shareholdersData.forEach((shareholder, index) => {
-      // Create a new FormGroup for each shareholder
       const shareholderGroup = this.fb.group({
-        name: [shareholder.name, Validators.required],
-        shareholderPercentage: [shareholder.shareholderPercentage, Validators.required],
-        dob: [shareholder.dob, Validators.required],
-        nationalityshareholder: [shareholder.nationalityshareholder, Validators.required],
-        passportNumber: ['', Validators.required], // New field for passport number
-        files: [[], Validators.required] // New field for file uploads
+        name: [shareholder.name || '', Validators.required],
+        shareholderPercentage: [shareholder.shareholderPercentage || '', Validators.required],
+        dob: [shareholder.dob || '', Validators.required],
+        nationalityshareholder: [shareholder.nationalityshareholder || '', Validators.required],
+        passportNumber: [shareholder.passportNumber || '', Validators.required],
+        files: [[]] // Optional: only add Validators.required if files are required
       });
+  
       this.shareholders.push(shareholderGroup);
       this.uploadedFiles.push([]); // Initialize file array for each shareholder
     });
   }
+  
+  
+  
 
-  onFileChange(event: Event, index: number): void {
-    const element = event.currentTarget as HTMLInputElement;
-    const fileList: FileList | null = element.files;
+ onFileChange(event: Event, index: number): void {
+  const element = event.currentTarget as HTMLInputElement;
+  const fileList: FileList | null = element.files;
 
-    if (fileList && fileList.length > 0) {
-      // Append new files, up to 4 unique files per shareholder
-      const newFiles = Array.from(fileList).slice(0, 4);
+  if (fileList && fileList.length > 0) {
+    const newFiles = Array.from(fileList).slice(0, 4); // Limit to 4 files per shareholder
 
-      // Avoid duplicates
-      newFiles.forEach(newFile => {
-        if (!this.uploadedFiles[index].some(file => file.name === newFile.name)) {
-          this.uploadedFiles[index].push(newFile);
-        }
-      });
-
-      // Limit files to 4 per shareholder
-      if (this.uploadedFiles[index].length > 4) {
-        this.uploadedFiles[index] = this.uploadedFiles[index].slice(0, 4);
+    if (!this.uploadedFiles[index]) this.uploadedFiles[index] = [];
+    newFiles.forEach(newFile => {
+      if (!this.uploadedFiles[index].some(file => file.name === newFile.name)) {
+        this.uploadedFiles[index].push(newFile);
       }
-
-      // Update the form control with file names for this specific shareholder
-      this.shareholders.at(index).patchValue({ files: this.uploadedFiles[index].map(file => file.name) });
-    }
+    });
+    console.log(`Files for shareholder ${index}:`, this.uploadedFiles[index]); // Log for verification
   }
+}
 
+  
+  
+  
+  
   onSubmit(): void {
     if (this.formData.valid) {
       const formValues = this.formData.value;
-
-      // Save form data and uploaded file names to local storage
+  
       const dataToSave = {
         ...formValues,
-        uploadedFiles: this.uploadedFiles.map(files => files.map(file => ({ name: file.name })))
+        shareholders: formValues.shareholders.map((shareholder: any, index: number) => ({
+          ...shareholder,
+          passportNumber: this.shareholders.at(index).get('passportNumber')?.value || '',
+          files: this.uploadedFiles[index]?.map(file => ({ name: file.name })) || [] // Include files array or empty if none
+        }))
       };
+  
+      // Save data in localStorage
       localStorage.setItem('virtualdata2', JSON.stringify(dataToSave));
-
-      console.log('Form Data:', formValues);  // Debugging: Display form data in console
-
-      // Navigate to the next page
+  
+      // Navigate to the next step
       this.router.navigate(['/virtual-receptionist-details']);
     } else {
       console.log('Please fill all required fields');
+      this.shareholders.controls.forEach(control => control.markAllAsTouched());
     }
   }
+  
+  
+  
+  
+  
+  
+  
 }
