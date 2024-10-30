@@ -36,22 +36,27 @@
               <div class="shareholder-row">
                 <!-- ID's/Passport field -->
                 <div class="form-field">
-                  <label for="idOrPassport">ID's/Passport for Shareholder {{ i + 1 }} <span
+                  <label for="idOrPassport">ID's/Passport for Shareholder {{ i + 1 }}<span
                       class="required">*</span></label>
                   <input type="text" class="form-control" [formControlName]="'idOrPassport'"
                     placeholder="Enter ID's/Passport" />
                 </div>
                 
-                <i class="fa fa-upload upload-icon"></i>
-                <!-- File Upload field -->
                 <div class="form-field">
-                  <label for="fileTest" >File Upload for Shareholder {{ i + 1 }} <span class="required">*</span></label>
-                  <input type="file" id="fileTest" hidden multiple (change)="onFileChange($event, i)" />
-                  
+                  <label for="files">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
+                  <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                    <input
+                      type="file"
+                      multiple
+                      (change)="onFileChange($event, i)"
+                      style="text-align: center; display: block; margin: 0 auto; padding: 7px; ;"
+                    />
+                  </div>
                   <ul>
                     <li *ngFor="let file of uploadedFiles[i]">{{ file.name }}</li>
                   </ul>
                 </div>
+                
               </div>
             </div>
           </div>
