@@ -5,6 +5,7 @@ import { ToastrService } from 'ngx-toastr'; // For toast notifications
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
+import { FileStorageService } from '../service/files.service';
 import { switchMap } from 'rxjs';
 
 declare var $: any;
@@ -29,55 +30,47 @@ export class VirtualReceptionistDetailsComponent {
     private toastr: ToastrService, // For showing notifications
     private router: Router,
     private userService: UserService,
+    private fileStorageService: FileStorageService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
   }
 
   ngOnInit(): void {
-    // Check if code is running in a browser environment
-    if (isPlatformBrowser(this.platformId)) {
-      // Retrieve data from localStorage
-      const mailform = localStorage.getItem('virtualdata');
-      const mailform2 = localStorage.getItem('virtualdata1');
-      const mailform3 = localStorage.getItem('virtualdata2');
+    const mailform = localStorage.getItem('virtualdata');
+    const mailform2 = localStorage.getItem('virtualdata1');
+    const mailform3 = localStorage.getItem('virtualdata2');
   
-      // If required data is missing, navigate away from the page
-      if (!mailform || !mailform2 || !mailform3) {
-        this.router.navigate(['/home']); // Navigate to home if any data is missing
-      } else {
-        // Parse each data item from localStorage
-        this.personalInfo = JSON.parse(mailform);
-        this.companyInfo = JSON.parse(mailform2);
-        const additionalShareholderInfo = JSON.parse(mailform3);
+    // Redirect if either mailform or mailform2 is missing
+    if (!mailform || !mailform2) {
+      this.router.navigate(['/home']);
+    } else {
+      // Parse data from localStorage
+      this.personalInfo = JSON.parse(mailform);
+      this.companyInfo = JSON.parse(mailform2);
   
-        // Merge shareholder information
-        const mergedShareholders = this.companyInfo.shareholders.map((shareholder: any, index: string | number) => {
-          const additionalInfo = additionalShareholderInfo.shareholders[index];
-          return {
-            ...shareholder,
-            passportNumber: additionalInfo.passportNumber,
-            files: additionalInfo.files
-          };
-        });
+      // Parse mailform3 only if it exists
+      const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
   
-        // Create the merged data object
-        const mergedData = {
-          ...this.personalInfo,
-          ...this.companyInfo,
-          companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-          shareholders: mergedShareholders
-        };
+      // Merge all data into a single object
+      const mergedData = {
+        ...this.personalInfo,
+        ...this.companyInfo,
+        companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
+        shareholders: additionalShareholderInfo.shareholders || []
+      };
   
-        // Optionally store the merged data in localStorage
-        localStorage.setItem('mergedData', JSON.stringify(mergedData));
-  
-        // Use the merged data directly if needed
-        this.displayShareholders = mergedData.shareholders.slice(0, 5); // Show only 5 shareholders initially
-        console.log('Merged Data:', mergedData);
-      }
+      // Store merged data in localStorage for the final step
+      localStorage.setItem('mergedData', JSON.stringify(mergedData));
+  // this.displayShareholders=mergedData
+
+  this.displayShareholders = Array.isArray(mergedData.shareholders)
+  ? mergedData.shareholders
+  : Object.values(mergedData.shareholders || []);
+      console.log("Merged Data:", mergedData,this.displayShareholders);
     }
   }
+  
   
   
 
@@ -135,16 +128,11 @@ export class VirtualReceptionistDetailsComponent {
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left'; // Adjust based on scroll
   }
-
-  // Submit data to backend and clear localStorage
   submitData() {
-    // Retrieve merged data from localStorage
     const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
-  
-    // Create a FormData object to hold all form data and files
     const formData = new FormData();
   
-    // Append general data fields from `mergedData`, excluding `shareholders`
+    // Append general data fields, excluding shareholders
     for (const key in mergedData) {
       if (mergedData.hasOwnProperty(key) && key !== 'shareholders') {
         const value = mergedData[key];
@@ -152,32 +140,37 @@ export class VirtualReceptionistDetailsComponent {
       }
     }
   
-    // Append shareholders' data and files to FormData
+    // Append each shareholder's data and their actual File objects
     mergedData.shareholders.forEach((shareholder: any, index: number) => {
-      // Append each field in the shareholder data (excluding files)
+      // Append shareholder metadata fields, excluding files
       for (const field in shareholder) {
         if (field !== 'files') {
           formData.append(`shareholders[${index}][${field}]`, shareholder[field]);
         }
       }
   
-      // Append each file for the current shareholder
-      if (Array.isArray(this.uploadedFiles[index])) {
-        this.uploadedFiles[index].forEach((file: File) => {
-          formData.append(`shareholderFiles[${index}]`, file); // Append each file with a unique key
+      // Retrieve actual files from `fileStorageService`
+      const files = this.fileStorageService.getFiles(index);
+      if (files.length > 0) {
+        files.forEach((file: File, fileIndex: number) => {
+          formData.append(`shareholders[${index}][files][${fileIndex}]`, file);
         });
+      } else {
+        console.warn(`No files found for shareholder index ${index}`);
       }
     });
   
-    // Send data to the backend using UserService
+    // Log FormData to verify structure
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
+  
+    // Send the data to backend
     this.userService.virtualform(formData).subscribe(
       response => {
         console.log('Data submitted successfully:', response);
-        // Clear localStorage after successful submission
-        localStorage.removeItem('virtualdata');
-        localStorage.removeItem('virtualdata1');
-        localStorage.removeItem('virtualdata2');
-        localStorage.removeItem('mergedData');
+        localStorage.clear();
+        this.toastr.success('Data submitted successfully', 'Success');
       },
       error => {
         console.error('Error submitting data:', error);

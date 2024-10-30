@@ -34,9 +34,6 @@
             <h3>Shareholder Details</h3>
             <div *ngFor="let shareholder of shareholders.controls; let i = index" [formGroupName]="i" class="shareholder-section">
               <div class="shareholder-row">
-                <!-- Name Field -->
-               
-          
                 <!-- Passport Number Field -->
                 <div class="form-field">
                   <label for="passportNumber">ID's/Passport for Shareholder {{ i + 1 }}<span class="required">*</span></label>
@@ -47,6 +44,7 @@
                 <div class="form-field">
                   <label for="files">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
                   <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
+                    <!-- Updated file input field to handle file uploads by index -->
                     <input
                       type="file"
                       multiple
@@ -57,11 +55,11 @@
                   <ul>
                     <li *ngFor="let file of uploadedFiles[i]">{{ file.name }}</li>
                   </ul>
-                  </div>
                 </div>
               </div>
             </div>
-       
+          </div>
+          
           
 
 
