@@ -132,14 +132,6 @@ export class MailsManagement2Component {
     this.cdRef.detectChanges(); // Only if necessary
 }
 
-
-showMiddleToast() {
-  this.toastr.error('This is an error message.', 'Error', {
-    positionClass: 'toast-middle-center',
-  });
-}
-
-
 deleteShareholder(index: number) {
   this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
 }
@@ -223,6 +215,7 @@ deleteShareholder(index: number) {
           // Navigate to the standard route
           this.router.navigate(['/mails-management-details']);
         }
+
 
     }
     }

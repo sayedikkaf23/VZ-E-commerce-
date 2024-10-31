@@ -5,14 +5,15 @@ const shareholderSchema = new mongoose.Schema({
   shareholderPercentage: { type: String },
   dob: { type: Date },
   nationalityshareholder: { type: String },
+  passportNumber: { type: String }, // Passport number for identification
+  files: [{ name: String, path: String }], // Array of files associated with the shareholder, each with a name and path
 });
-
 const MailDetailsSchema = new mongoose.Schema(
   {
   
     firstName: { type: String },
     lastName: { type: String },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true },
     nationality: { type: String },
     birthday:{ type: String },
     mobileNumber: {
@@ -30,7 +31,6 @@ const MailDetailsSchema = new mongoose.Schema(
     tradelicense: { type: String },
     shareholdercount: { type: String },
     shareholders: [shareholderSchema], // Array of shareholder objects
-    passportCopy: [{ type: String }], // Array of strings to store multiple file paths
 
   },
   { timestamps: true }

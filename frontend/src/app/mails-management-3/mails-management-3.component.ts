@@ -1,8 +1,9 @@
 import { Component, Inject, PLATFORM_ID, AfterViewInit, OnInit } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import AOS from 'aos';
+import { FileStorageService } from '../service/files.service';
 
 declare var $: any;
 @Component({
@@ -12,109 +13,118 @@ declare var $: any;
 })
 export class MailsManagement3Component {
   formData: FormGroup;
-  uploadedFiles: File[] = []; // To hold the uploaded files
+  shareholdersData: any[] = [];
+  uploadedFiles: File[][] = []; // Array for each shareholder's files
+  uploadedFileNames: { [key: string]: string } = {};
+  totalFileSize = 0;
+  fileData: FormData = new FormData();
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
+    private fileStorageService: FileStorageService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    // Initialize form with validation
     this.formData = this.fb.group({
       companyTradeLicense: ['', Validators.required],
-      shareholderId: ['', Validators.required],
-      passportCopy: [null, Validators.required]
+      shareholders: this.fb.array([])
     });
   }
-
-  ngOnInit() {
-    // Scroll to top when the page loads
+  ngOnInit(): void {
+    console.log('ngOnInit executed');
+  
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-
-    // Load saved data if it exists in localStorage
-    const savedData = localStorage.getItem('mailform2');
+  
+    // Retrieve saved data from localStorage for both keys
+    const savedData1 = localStorage.getItem('mailform1');
+    const savedData2 = localStorage.getItem('mailform2');
+  
+    // Use savedData2 if available, otherwise fall back to savedData1
+    const savedData = savedData2 || savedData1;
     if (savedData) {
       const parsedData = JSON.parse(savedData);
-      this.formData.patchValue(parsedData);
-      if (parsedData.uploadedFiles) {
-        this.uploadedFiles = parsedData.uploadedFiles;
-      }
-    }
-  }
-
-  ngAfterViewInit() {
-    if (isPlatformBrowser(this.platformId)) {
-      AOS.init();
-
-      $(window).scroll(() => {
-        const height = $(window).scrollTop();
-        if (height > 50) {
-          $('html').addClass('sticky');
-        } else {
-          $('html').removeClass('sticky');
-        }
-      });
-
-      $(document).ready(() => {
-        $('.scrollToTop').click((event: any) => {
-          event.preventDefault();
-          $('html, body').animate({ scrollTop: 0 }, 'slow');
-          return false;
-        });
-
-        $('.navbar-toggle').click(() => {
-          $('html').toggleClass('menu-show');
-        });
-
-        $('.header-menu-overlay').click(() => {
-          $('html').removeClass('menu-show');
-        });
-      });
-    }
-  }
-
-  onFileChange(event: Event): void {
-    const element = event.currentTarget as HTMLInputElement;
-    const fileList: FileList | null = element.files;
-    if (fileList && fileList.length > 0) {
-      // Append new files, up to 4 unique files in total
-      const newFiles = Array.from(fileList).slice(0, 4); // Limit selection to 4 files
+      this.shareholdersData = parsedData.shareholders || [];
+      this.initializeShareholders();
   
-      // Avoid duplicates
-      newFiles.forEach(newFile => {
-        if (!this.uploadedFiles.some(file => file.name === newFile.name)) {
-          this.uploadedFiles.push(newFile);
-        }
+      // Repopulate form fields with saved data
+      this.formData.patchValue({
+        companyTradeLicense: parsedData.companyTradeLicense || '',
+        shareholders: this.shareholdersData
       });
   
-      // If uploadedFiles exceeds 4 files after adding new ones, trim the array
-      if (this.uploadedFiles.length > 4) {
-        this.uploadedFiles = this.uploadedFiles.slice(0, 4);
-      }
+      // Restore file names and populate uploadedFiles
+      this.shareholdersData.forEach((shareholder: any, index: number) => {
+        const savedFiles = shareholder.files || [];
+        // Convert saved file names back to a simple representation in uploadedFiles
+        this.uploadedFiles[index] = savedFiles.map((file: any) => ({
+          name: file.name
+        }));
+        console.log(`Restored file names for Shareholder ${index + 1}:`, this.uploadedFiles[index]);
+      });
   
-      // Update the form control with file names
-      this.formData.patchValue({ passportCopy: this.uploadedFiles.map(file => file.name) });
+      console.log("Saved Data from localStorage:", savedData);
+      console.log("Parsed Shareholders Data:", this.shareholdersData);
+      console.log("Form Data after Initialization:", this.formData.value);
+    } else {
+      console.log("No savedData found in localStorage.");
+      this.initializeShareholders(); // Initialize empty form if no saved data exists
     }
   }
   
   
 
-  onSubmit() {
+  get shareholders(): FormArray {
+    return this.formData.get('shareholders') as FormArray;
+  }
+  
+  initializeShareholders(): void {
+    this.shareholdersData.forEach((shareholder, index) => {
+      const shareholderGroup = this.fb.group({
+        name: [shareholder.name || '', Validators.required],
+        shareholderPercentage: [shareholder.shareholderPercentage || '', Validators.required],
+        dob: [shareholder.dob || '', Validators.required],
+        nationalityshareholder: [shareholder.nationalityshareholder || '', Validators.required],
+        passportNumber: [shareholder.passportNumber || '', Validators.required],
+        files: [[]]
+      });
+  
+      this.shareholders.push(shareholderGroup);
+      this.uploadedFiles.push([]); // Initialize file array for each shareholder
+    });
+  }
+  
+  onFileChange(event: any, index: number): void {
+    if (event.target.files && event.target.files.length > 0) {
+      const filesArray: File[] = Array.from(event.target.files as FileList);
+      this.fileStorageService.setFiles(index, filesArray);
+      this.uploadedFiles[index] = filesArray; // Keep track of files in the component as well
+      console.log(`Files stored in service for Shareholder ${index + 1}:`, filesArray);
+    }
+  }
+  
+  onSubmit(): void {
     if (this.formData.valid) {
       const formValues = this.formData.value;
-
-      // Save form data and uploaded file names to local storage
-      const dataToSave = { ...formValues, uploadedFiles: this.uploadedFiles.map(file => ({ name: file.name })) };
+  
+      const dataToSave = {
+        ...formValues,
+        shareholders: formValues.shareholders.map((shareholder: any, index: number) => ({
+          ...shareholder,
+          passportNumber: this.shareholders.at(index).get('passportNumber')?.value || '',
+          files: this.uploadedFiles[index]?.map(file => ({ name: file.name })) || []
+        }))
+      };
+  
+      // Convert dataToSave to JSON and save in localStorage for persistence
       localStorage.setItem('mailform2', JSON.stringify(dataToSave));
-
-      console.log('Form Data:', formValues);  // Debugging: Display form data in console
-
-      // Navigate to the next page
+  
+      // Navigate to the next step
       this.router.navigate(['/mails-management-details']);
     } else {
       console.log('Please fill all required fields');
+      this.shareholders.controls.forEach((control: { markAllAsTouched: () => any; }) => control.markAllAsTouched());
     }
   }
 }

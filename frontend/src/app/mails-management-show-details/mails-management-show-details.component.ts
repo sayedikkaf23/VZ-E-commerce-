@@ -5,9 +5,11 @@ import { ToastrService } from 'ngx-toastr'; // For toast notifications
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
+import { FileStorageService } from '../service/files.service';
 import { switchMap } from 'rxjs';
 
 declare var $: any;
+
 
 
 @Component({
@@ -24,47 +26,77 @@ export class MailsManagementShowDetailsComponent {
   personalInfo: any = {}; // To store personal information (Step 1 data)
  companyInfo: any = {}; // To store bank service information (Step 2 data)
  shareholders :any= [];
-  constructor(
+ uploadedFiles: File[][] = []; // Initialize as an empty array
+i: any;
+ constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
     private router: Router,
     private userService: UserService,
+    private fileStorageService: FileStorageService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
   }
 
   ngOnInit(): void {
-
-    
-    if (isPlatformBrowser(this.platformId)) {
-      window.scrollTo(0, 0);
-    }
-    // Ensure this code runs only in the browser environment
-    if (this.isBrowser) {
-      // Retrieve data from localStorage
-   
-      const mailform = localStorage.getItem('mailform');
-      const mailform2 = localStorage.getItem('mailform1');
-      const mailform3 = localStorage.getItem('mailform2');
-  console.log(mailform2,"sssss")
-      // If there is no data in localStorage, navigate away from this page
-      if ( !mailform || !mailform2 ) {
-        // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
-        this.router.navigate(['/home']); // Replace with the correct route
-      } else {
-        // Parse and store data if it exists
-        this.personalInfo = JSON.parse(mailform);
-        this.companyInfo = JSON.parse(mailform2);
-        this.shareholders=this.companyInfo.shareholders
-        this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
-        console.log(  this.displayShareholders)
-
-      }
-    }
-  }
+    const mailform = localStorage.getItem('mailform');
+    const mailform2 = localStorage.getItem('mailform1');
+    const mailform3 = localStorage.getItem('mailform2');
   
+    // Redirect if either mailform or mailform2 is missing
+    if (!mailform || !mailform2) {
+      this.router.navigate(['/home']);
+    } else {
+      // Parse data from localStorage
+      this.personalInfo = JSON.parse(mailform);
+      this.companyInfo = JSON.parse(mailform2);
+  
+      // Extract shareholders from mailform2 in case mailform3 is missing
+      let shareholdersFromMailform2 = this.companyInfo.shareholders || [];
+  
+      // Parse mailform3 only if it exists
+      const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
+  
+      // Use shareholders from mailform3 if available, otherwise fallback to mailform2
+      const mergedShareholders = additionalShareholderInfo.shareholders.length > 0 
+        ? additionalShareholderInfo.shareholders 
+        : shareholdersFromMailform2;
+  
+      // Merge all data into a single object
+      const mergedData = {
+        ...this.personalInfo,
+        ...this.companyInfo,
+        companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
+        shareholders: mergedShareholders
+      };
+  
+      // Store merged data in localStorage for the final step
+      localStorage.setItem('mergedData', JSON.stringify(mergedData));
+  
+      // Assign displayShareholders
+      this.displayShareholders = Array.isArray(mergedData.shareholders)
+        ? mergedData.shareholders
+        : Object.values(mergedData.shareholders || []);
+  
+      console.log("Merged Data:", mergedData, this.displayShareholders);
+    }
+  
+    console.log(this.displayShareholders, "sas");
+  }
+  getFileUrl(file: File): string {
+    return URL.createObjectURL(file);
+  }
 
+  // Method to show image preview
+  showImagePreview(file: File): void {
+    const imageUrl = this.getFileUrl(file);
+    // Open the image in a new tab for preview
+    window.open(imageUrl, '_blank');
+
+    // Clean up the object URL when it's no longer needed
+    setTimeout(() => URL.revokeObjectURL(imageUrl), 1000); // Revoke URL after 1 second
+  }
   ngAfterViewInit(): void {
     if (this.isBrowser) {  // Ensure AOS and jQuery code runs only in the browser
       AOS.init();
@@ -119,50 +151,62 @@ export class MailsManagementShowDetailsComponent {
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left'; // Adjust based on scroll
   }
-
-  // Submit data to backend and clear localStorage
   submitData() {
-    const finalData = {
-      ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.companyInfo // Merge bank information (Step 2 data)
-    };
+    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+    const formData = new FormData();
   
-    // Send data to the backend using userService
-    this.userService.mailform(finalData).pipe(
-      switchMap(response => {
-        if (response.message) {
-          // Clear localStorage after successful submission
-          localStorage.removeItem('mailform');
-          localStorage.removeItem('mailform1');
-          localStorage.removeItem('mailform2');
-
-          // Call payNowByStripe with the necessary payload
-          const stripePayload = { amount: 135, currency: 'USD' }; // Example payload, replace with your actual data
-          return this.userService.payNowByStripe(stripePayload);
-        } else {
-          throw new Error('Data submission failed'); // Handle case where response does not contain expected message
+    // Append general data fields, excluding shareholders
+    for (const key in mergedData) {
+      if (mergedData.hasOwnProperty(key) && key !== 'shareholders') {
+        const value = mergedData[key];
+        formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
+      }
+    }
+  
+    // Append each shareholder's data and their actual File objects
+    mergedData.shareholders.forEach((shareholder: any, index: number) => {
+      // Append shareholder metadata fields, excluding files
+      for (const field in shareholder) {
+        if (field !== 'files') {
+          formData.append(`shareholders[${index}][${field}]`, shareholder[field]);
         }
-      })
-    ).subscribe(
-      payNowResponse => {
-        // Assuming the response contains a URL to redirect for payment
-        const paymentUrl = payNowResponse.stripeData.url; // Replace 'url' with the actual field name from the response
-
-        if (paymentUrl) {
-          // Navigate to the payment URL
-          window.location.href = paymentUrl; // Redirecting the browser to the payment page
-        } else {
-          this.toastr.error('Payment URL not found', 'Error');
-        }
+      }
+  
+      // Retrieve actual files from `fileStorageService`
+      const files = this.fileStorageService.getFiles(index);
+      if (files.length > 0) {
+        files.forEach((file: File, fileIndex: number) => {
+          formData.append(`shareholders[${index}][files][${fileIndex}]`, file);
+        });
+      } else {
+        console.warn(`No files found for shareholder index ${index}`);
+      }
+    });
+  
+    // Log FormData to verify structure
+    formData.forEach((value, key) => {
+      console.log(`${key}:`, value);
+    });
+  
+    // Send the data to backend
+    this.userService.mailform(formData).subscribe(
+      response => {
+        console.log('Data submitted successfully:', response);
+        localStorage.removeItem('mailform');
+        localStorage.removeItem('mailform1');
+        localStorage.removeItem('mailform2');
+        this.toastr.success('Data submitted successfully', 'Success');
       },
       error => {
-        // Show error toast on failure
+        console.error('Error submitting data:', error);
         this.showError(error.error.message || 'An error occurred');
-        console.error(error); // Log the error for debugging
       }
     );
   }
-
+  
+  
+  
+  
 
 
   toggleView() {
