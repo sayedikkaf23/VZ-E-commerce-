@@ -66,3 +66,11 @@ exports.submitMailDetails = async (req, res) => {
         res.status(500).json({ error: 'Error saving details', details: error.message });
     }
 };
+exports.getMailDetails = async (req, res) => {
+  try {
+      const details = await MailDetails.find(); // Fetch all mail entries
+      res.status(200).json(details); // Return the details as JSON
+  } catch (error) {
+      res.status(500).json({ error: 'Error fetching details', details: error.message });
+  }
+};

@@ -8,9 +8,6 @@
             </div>
           </div>
         </div>
-        <div class="col-auto">
-          <!-- Optional search field here if needed in future -->
-        </div>
       </div>
     </div>
   
@@ -20,21 +17,23 @@
           <tr>
             <th scope="col">Sender Name</th>
             <th scope="col">Email</th>
-            <th scope="col">Subject</th>
-            <th scope="col">Date</th>
-            <th scope="col">Status</th>
+            <th scope="col">Company Name</th>
+            <th scope="col">Incorporation Country</th>
+            <th scope="col">Mobile Number</th>
+            <th scope="col">Shareholder Count</th>
             <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let mail of mailList">
-            <td>{{ mail.senderName }}</td>
-            <td>{{ mail.senderEmail }}</td>
-            <td>{{ mail.subject }}</td>
-            <td>{{ mail.date | date : "yyyy-MM-dd" }}</td>
-            <td>{{ mail.status }}</td>
+            <td>{{ mail.firstName }} {{ mail.lastName }}</td>
+            <td>{{ mail.email }}</td>
+            <td>{{ mail.CompanyName }}</td>
+            <td>{{ mail.CompanyIncorporated }}</td>
+            <td>{{ mail.mobileNumber.internationalNumber }}</td>
+            <td>{{ mail.shareholdercount }}</td>
             <td>
-              <button (click)="openMailDetails(mail.details)" class="btn btn-primary">View Details</button>
+              <button (click)="openMailDetails(mail.shareholders)" class="btn btn-primary">View Shareholders</button>
             </td>
           </tr>
         </tbody>
@@ -45,25 +44,26 @@
       <div class="modal-backdrop" (click)="closeModal()"></div>
       <div class="modal-content">
         <span class="close-btn" (click)="closeModal()">&times;</span>
-        <h5 class="modal-title">Mail Details</h5>
+        <h5 class="modal-title">Shareholder Details</h5>
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">Recipient Name</th>
-              <th scope="col">Recipient Email</th>
-              <th scope="col">Message</th>
-              <th scope="col">Date</th>
+              <th scope="col">Shareholder Name</th>
+              <th scope="col">Shareholder (%)</th>
+              <th scope="col">Date of Birth</th>
+              <th scope="col">Nationality</th>
             </tr>
           </thead>
           <tbody>
             <tr *ngFor="let detail of selectedMailDetails">
-              <td>{{ detail.recipientName }}</td>
-              <td>{{ detail.recipientEmail }}</td>
-              <td>{{ detail.message }}</td>
-              <td>{{ detail.date }}</td>
+              <td>{{ detail.name }}</td>
+              <td>{{ detail.shareholderPercentage }}%</td>
+              <td>{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ detail.nationalityshareholder }}</td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+  </div>
   

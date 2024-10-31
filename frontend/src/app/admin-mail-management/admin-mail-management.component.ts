@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AdminAuthService } from '../service/admin-auth.service';
+import { MailManagementService } from '../service/mail-management.service';
+
 
 @Component({
   selector: 'app-admin-mail-management',
@@ -7,19 +8,18 @@ import { AdminAuthService } from '../service/admin-auth.service';
   styleUrl: './admin-mail-management.component.css'
 })
 export class AdminMailManagementComponent {
-
   mailList: any[] = []; // To store fetched mail data
   selectedMailDetails: any[] = []; // To store selected mail details
   showModal: boolean = false; // Flag to control modal visibility
 
-  constructor(private adminAuthService: AdminAuthService) {}
+  constructor(private mailManagementService: MailManagementService) {}
 
   ngOnInit(): void {
     this.fetchMailDetails(); // Call the method when the component loads
   }
 
   fetchMailDetails(): void {
-    this.adminAuthService.getBusinessBank().subscribe(
+    this.mailManagementService.getVirtaulData().subscribe(
       (response) => {
         this.mailList = response; // Assign the API response to the mailList array
       },
@@ -35,6 +35,6 @@ export class AdminMailManagementComponent {
   }
 
   closeModal(): void {
-    this.showModal = false;
+    this.showModal = false; // Close the modal
   }
 }

@@ -69,6 +69,7 @@ exports.getVirtualDetails = async (req, res) => {
   try {
       const details = await VirtualDetails.find(); // Fetch all details
       res.status(200).json(details); // Return the details as JSON
+      console.log(details)
   } catch (error) {
       res.status(500).json({ error: 'Error fetching details', details: error.message });
   }

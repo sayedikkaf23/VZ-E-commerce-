@@ -6,5 +6,6 @@ const { multipleUpload, singleUpload } = require('../middleware/fileUpload'); //
 
 // Route to handle form submission with multiple file uploads
 router.post('/SubmitmailDetail',multipleUpload, mailsDetails.submitMailDetails); // Use upload.multipleUpload
+router.get('/getMailDetails', mailsDetails.getMailDetails);
 
 module.exports = router;
