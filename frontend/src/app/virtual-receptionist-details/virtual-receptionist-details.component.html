@@ -117,6 +117,48 @@
           </div>
           
         </div>
+        <div class="box-light">
+          <div class="d-flex align-items-center justify-content-between">
+            <h4>Shareholders Documents</h4>
+            <a [routerLink]="['/virtual-receptionist-2']" class="btn-edit">Edit</a>
+          </div>
+          
+          <table class="w-100"> 
+            <thead>
+              <tr>
+                <th>Passport Number</th>
+                <th>File</th>
+                <!-- <th>Date of Birth</th>
+                <th>Nationality</th> -->
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let shareholder of displayShareholders">
+                <tr>
+                  <td>{{ shareholder.passportNumber }}</td>
+                  <td>
+                    <ul>
+                      <!-- Loop over uploadedFiles to display file names -->
+                      <li *ngFor="let file of shareholder.files">{{ file.name }}</li>
+
+                    </ul>
+                  </td>
+
+                 
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+          
+          
+          <!-- Button to toggle view -->
+          <div *ngIf="shareholders.length > 5" class="text-left mt-3">
+            <span class="view-all-link" (click)="toggleView()">
+              {{ showAll ? 'View Less' : 'View All' }}
+            </span>
+          </div>
+          
+        </div>
       </div>
       <div class="col-md-5 col-lg-4 order-summery-col">
         <div class="order-summery box-light">

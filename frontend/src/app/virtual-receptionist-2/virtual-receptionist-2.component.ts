@@ -28,14 +28,19 @@ export class VirtualReceptionist2Component implements OnInit {
       shareholders: this.fb.array([])
     });
   }
-
   ngOnInit(): void {
+    console.log('ngOnInit executed');
+  
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
   
-    // Retrieve saved data from localStorage and repopulate form if it exists
-    const savedData = localStorage.getItem('virtualdata2');
+    // Retrieve saved data from localStorage for both keys
+    const savedData1 = localStorage.getItem('virtualdata1');
+    const savedData2 = localStorage.getItem('virtualdata2');
+  
+    // Use savedData2 if available, otherwise fall back to savedData1
+    const savedData = savedData2 || savedData1;
     if (savedData) {
       const parsedData = JSON.parse(savedData);
       this.shareholdersData = parsedData.shareholders || [];
@@ -47,18 +52,25 @@ export class VirtualReceptionist2Component implements OnInit {
         shareholders: this.shareholdersData
       });
   
-      // Retrieve saved files from the service and populate uploadedFiles
+      // Restore file names and populate uploadedFiles
       this.shareholdersData.forEach((shareholder: any, index: number) => {
-        const savedFiles = this.fileStorageService.getFiles(index);
-        if (savedFiles) {
-          this.uploadedFiles[index] = savedFiles;
-          console.log(`Loaded files for Shareholder ${index + 1}:`, savedFiles);
-        }
+        const savedFiles = shareholder.files || [];
+        // Convert saved file names back to a simple representation in uploadedFiles
+        this.uploadedFiles[index] = savedFiles.map((file: any) => ({
+          name: file.name
+        }));
+        console.log(`Restored file names for Shareholder ${index + 1}:`, this.uploadedFiles[index]);
       });
+  
+      console.log("Saved Data from localStorage:", savedData);
+      console.log("Parsed Shareholders Data:", this.shareholdersData);
+      console.log("Form Data after Initialization:", this.formData.value);
     } else {
+      console.log("No savedData found in localStorage.");
       this.initializeShareholders(); // Initialize empty form if no saved data exists
     }
   }
+  
   
 
   get shareholders(): FormArray {

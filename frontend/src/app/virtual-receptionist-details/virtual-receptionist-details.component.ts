@@ -25,6 +25,7 @@ export class VirtualReceptionistDetailsComponent {
  companyInfo: any = {}; // To store bank service information (Step 2 data)
  shareholders :any= [];
  uploadedFiles: File[][] = []; // Initialize as an empty array
+i: any;
  constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
@@ -49,31 +50,51 @@ export class VirtualReceptionistDetailsComponent {
       this.personalInfo = JSON.parse(mailform);
       this.companyInfo = JSON.parse(mailform2);
   
+      // Extract shareholders from mailform2 in case mailform3 is missing
+      let shareholdersFromMailform2 = this.companyInfo.shareholders || [];
+  
       // Parse mailform3 only if it exists
       const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
+  
+      // Use shareholders from mailform3 if available, otherwise fallback to mailform2
+      const mergedShareholders = additionalShareholderInfo.shareholders.length > 0 
+        ? additionalShareholderInfo.shareholders 
+        : shareholdersFromMailform2;
   
       // Merge all data into a single object
       const mergedData = {
         ...this.personalInfo,
         ...this.companyInfo,
         companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-        shareholders: additionalShareholderInfo.shareholders || []
+        shareholders: mergedShareholders
       };
   
       // Store merged data in localStorage for the final step
       localStorage.setItem('mergedData', JSON.stringify(mergedData));
-  // this.displayShareholders=mergedData
-
-  this.displayShareholders = Array.isArray(mergedData.shareholders)
-  ? mergedData.shareholders
-  : Object.values(mergedData.shareholders || []);
-      console.log("Merged Data:", mergedData,this.displayShareholders);
+  
+      // Assign displayShareholders
+      this.displayShareholders = Array.isArray(mergedData.shareholders)
+        ? mergedData.shareholders
+        : Object.values(mergedData.shareholders || []);
+  
+      console.log("Merged Data:", mergedData, this.displayShareholders);
     }
+  
+    console.log(this.displayShareholders, "sas");
   }
-  
-  
-  
+  getFileUrl(file: File): string {
+    return URL.createObjectURL(file);
+  }
 
+  // Method to show image preview
+  showImagePreview(file: File): void {
+    const imageUrl = this.getFileUrl(file);
+    // Open the image in a new tab for preview
+    window.open(imageUrl, '_blank');
+
+    // Clean up the object URL when it's no longer needed
+    setTimeout(() => URL.revokeObjectURL(imageUrl), 1000); // Revoke URL after 1 second
+  }
   ngAfterViewInit(): void {
     if (this.isBrowser) {  // Ensure AOS and jQuery code runs only in the browser
       AOS.init();
