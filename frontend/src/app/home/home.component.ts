@@ -33,9 +33,13 @@ export class _HomeComponent {
   loadServices(): void {
     this.userService.getServices().subscribe(
       (data) => {
-        this.services = data;
+        // Filter active services and sort by order
+        this.services = data
+          .filter((service: { isActive: any; }) => service.isActive)  // Only include active services
+          .sort((a: { order: number; }, b: { order: number; }) => a.order - b.order);   // Sort by the order field in ascending order
+  
         console.log('Services loaded:', this.services);
-        this.cdRef.detectChanges();
+        this.cdRef.detectChanges();  // Trigger change detection if needed
       },
       (error) => {
         console.error('Error loading services:', error);

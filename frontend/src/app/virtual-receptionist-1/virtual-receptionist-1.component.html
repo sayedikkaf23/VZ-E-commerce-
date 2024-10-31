@@ -75,7 +75,7 @@
               <input type="text" name="Website" id="Website" class="form-input"
                 [(ngModel)]="formData.Website" placeholder="Company Website" />
             </div>
-            <div class="form-field" *ngIf="formData.CompanyIncorporated !== 'United Arab Emirates'">
+            <div class="form-field" *ngIf="formData.CompanyIncorporated !== 'United Arab Emirates' && formData.CompanyIncorporated">
               <label for="tradelicense">What are the types of activities mentioned on your trade license?
                 <span class="required">*</span>
               </label>
