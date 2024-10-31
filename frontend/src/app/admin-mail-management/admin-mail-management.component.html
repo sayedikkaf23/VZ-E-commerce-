@@ -1,0 +1,69 @@
+<div class="content">
+    <div class="page-heading">
+      <div class="row align-items-center justify-content-between">
+        <div class="col-auto">
+          <div class="row align-items-center">
+            <div class="col-auto mb-2">
+              <h2>Mail Management</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-auto">
+          <!-- Optional search field here if needed in future -->
+        </div>
+      </div>
+    </div>
+  
+    <div class="table-responsive overflow-behaviour">
+      <table class="table table-list-data table-hover">
+        <thead class="bg-light">
+          <tr>
+            <th scope="col">Sender Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Subject</th>
+            <th scope="col">Date</th>
+            <th scope="col">Status</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let mail of mailList">
+            <td>{{ mail.senderName }}</td>
+            <td>{{ mail.senderEmail }}</td>
+            <td>{{ mail.subject }}</td>
+            <td>{{ mail.date | date : "yyyy-MM-dd" }}</td>
+            <td>{{ mail.status }}</td>
+            <td>
+              <button (click)="openMailDetails(mail.details)" class="btn btn-primary">View Details</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <div class="modal-container" *ngIf="showModal">
+      <div class="modal-backdrop" (click)="closeModal()"></div>
+      <div class="modal-content">
+        <span class="close-btn" (click)="closeModal()">&times;</span>
+        <h5 class="modal-title">Mail Details</h5>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Recipient Name</th>
+              <th scope="col">Recipient Email</th>
+              <th scope="col">Message</th>
+              <th scope="col">Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detail of selectedMailDetails">
+              <td>{{ detail.recipientName }}</td>
+              <td>{{ detail.recipientEmail }}</td>
+              <td>{{ detail.message }}</td>
+              <td>{{ detail.date }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  

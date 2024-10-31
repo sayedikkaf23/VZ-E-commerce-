@@ -24,6 +24,8 @@ import { MailsManagement1Component } from './mails-management-1/mails-management
 import { MailsManagementShowDetailsComponent } from './mails-management-show-details/mails-management-show-details.component';
 import { MailsManagement2Component } from './mails-management-2/mails-management-2.component';
 import { MailsManagement3Component } from './mails-management-3/mails-management-3.component';
+import { AdminMailManagementComponent } from './admin-mail-management/admin-mail-management.component';
+import { VirtualManagementComponent } from './virtual-management/virtual-management.component';
 const routes: Routes = [
 
   {
@@ -93,6 +95,7 @@ const routes: Routes = [
     component: VirtualReceptionistComponent,
    
   },
+ 
   {
     path: 'mails-management',
     component: MailsManagement1Component,
@@ -172,6 +175,16 @@ const routes: Routes = [
         {
         path: 'customer-management',
         component: CustomerManagementComponent,
+       
+      },
+      {
+        path: 'admin-mail-management',
+        component: AdminMailManagementComponent,
+       
+      },
+      {
+        path: 'admin-virtual-management',
+        component: VirtualManagementComponent,
        
       },
      

@@ -37,6 +37,8 @@ import { MailsManagement1Component } from './mails-management-1/mails-management
 import { MailsManagement2Component } from './mails-management-2/mails-management-2.component';
 import { MailsManagementShowDetailsComponent } from './mails-management-show-details/mails-management-show-details.component';
 import { MailsManagement3Component } from './mails-management-3/mails-management-3.component';
+import { AdminMailManagementComponent } from './admin-mail-management/admin-mail-management.component';
+import { VirtualManagementComponent } from './virtual-management/virtual-management.component';
 
 @NgModule({
   declarations: [
@@ -68,6 +70,8 @@ import { MailsManagement3Component } from './mails-management-3/mails-management
     MailsManagement2Component,
     MailsManagementShowDetailsComponent,
     MailsManagement3Component,
+    AdminMailManagementComponent,
+    VirtualManagementComponent,
     
   ],
   imports: [

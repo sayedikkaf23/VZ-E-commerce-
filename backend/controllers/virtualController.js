@@ -63,4 +63,13 @@ exports.submitVirtualDetails = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: 'Error saving details', details: error.message });
     }
+    
+};
+exports.getVirtualDetails = async (req, res) => {
+  try {
+      const details = await VirtualDetails.find(); // Fetch all details
+      res.status(200).json(details); // Return the details as JSON
+  } catch (error) {
+      res.status(500).json({ error: 'Error fetching details', details: error.message });
+  }
 };
