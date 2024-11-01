@@ -80,8 +80,10 @@ import { VirtualManagementComponent } from './virtual-management/virtual-managem
     AppRoutingModule,
     ReactiveFormsModule,
     FormsModule,            // Add FormsModule to imports
-    ToastrModule.forRoot(), // ToastrModule added
-    NgxIntlTelInputModule,
+    ToastrModule.forRoot({
+      positionClass: 'toast-top-center', // Center the toast notifications at the top
+      preventDuplicates: true,           // Prevent duplicate messages
+    }),    NgxIntlTelInputModule,
     BsDropdownModule.forRoot(),
 
     // HttpClientModule is no longer needed here

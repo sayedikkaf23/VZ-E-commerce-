@@ -1307,4 +1307,13 @@ ngx-intl-tel-input .iti {
   .iti--allow-dropdown .iti__flag-container:hover .iti__selected-flag {
     background-color: transparent;
   }
+  #toast-container {
+    position: fixed;
+    top: 10%; /* Vertically centered */
+    right: 0; /* Positioned at the right side */
+    transform: translateY(-50%); /* Adjust vertical centering */
+    z-index: 9999;
+    pointer-events: none; /* To avoid interference with user interactions */
+    padding-right: 20px; /* Adjust this value as needed to add some space from the right edge */
+  }
   

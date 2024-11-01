@@ -1,6 +1,7 @@
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
+const bodyParser = require('body-parser');
 
 const jsforce = require('jsforce');
 var cors = require("cors");
@@ -11,8 +12,10 @@ var indexRouter = require("./routes/index");
 var userRouter = require("./routes/userRoutes");
 var virtualDetails = require("./routes/virtual-route");
 var mailDetails = require("./routes/mailform");
+var nationalities=require('./routes/nationality')
 
 var app = express();
+
 connectDB();
 
 // CORS configuration
@@ -38,6 +41,8 @@ app.use(
 );
 
 app.use(express.json());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, '../frontend/dist/frontend/browser')));
 app.use('/uploads', express.static('uploads'));
@@ -45,6 +50,7 @@ app.use('/uploads', express.static('uploads'));
 app.use('/user', userRouter);
 app.use('/virtual', virtualDetails);
 app.use('/mail', mailDetails);
+app.use('/nationalities',nationalities)
 
 if (!process.env.SALESFORCE_USERNAME || !process.env.SALESFORCE_PASSWORD) {
   console.error("Salesforce credentials are missing. Please check .env file.");
