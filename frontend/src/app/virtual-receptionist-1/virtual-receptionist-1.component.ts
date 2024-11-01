@@ -9,7 +9,7 @@ import AOS from 'aos';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
-
+import { GetnationalityService } from '../service/getnationality.service';
 declare var $: any;
 @Component({
   selector: 'app-virtual-receptionist-1',
@@ -51,6 +51,7 @@ export class VirtualReceptionist1Component {
     private toastr: ToastrService,
     private router: Router,
     private cdRef: ChangeDetectorRef,
+    private getnationalityService: GetnationalityService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // Retrieve Step 1 data from the service when Step 2 initializes
@@ -61,9 +62,13 @@ export class VirtualReceptionist1Component {
   ngOnInit(): void {
     // Retrieve Step 2 data from localStorage
 
-    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
-      this.nationalities = data.map((country) => country.name.common);
-      this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    // this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
+    //   this.nationalities = data.map((country) => country.name.common);
+    //   this.cdRef.detectChanges(); 
+    // });
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
     const storedStep2Data = localStorage.getItem('virtualdata1');
     if (storedStep2Data) {
