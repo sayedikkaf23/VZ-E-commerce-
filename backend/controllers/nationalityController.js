@@ -191,7 +191,11 @@ exports.addNationalities = async (req, res) => {
 exports.getNationalities = async (req, res) => {
     try {
       const nationalities = await Nationality.find();
-      res.status(200).json(nationalities);
+
+      const transformedNationalities = nationalities.map(item => ({
+        name: { common: item.Label }
+      }));
+      res.status(200).json(transformedNationalities);
     } catch (error) {
       res.status(500).send('Error fetching nationalities: ' + error.message);
     }

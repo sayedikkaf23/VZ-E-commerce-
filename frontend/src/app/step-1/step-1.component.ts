@@ -7,6 +7,8 @@ import { ToastrService } from 'ngx-toastr';
 import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import enums
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 import { UserService } from '../service/user.service';
+import { GetnationalityService } from '../service/getnationality.service';
+
 
 @Component({
   selector: 'app-step-1',
@@ -28,6 +30,7 @@ export class Step1Component implements OnInit {
     private cdRef: ChangeDetectorRef,
     private toastr: ToastrService,
     private userService: UserService,
+    private getnationalityService: GetnationalityService,
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -44,9 +47,14 @@ export class Step1Component implements OnInit {
 
   ngOnInit(): void {
     // Fetch nationalities using REST Countries API
-    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
-      this.nationalities = data.map((country) => country.name.common);
-      this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    // this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
+    //   this.nationalities = data.map((country) => country.name.common);
+    //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    // });
+
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
 
     // Check if we are in the browser before accessing localStorage
