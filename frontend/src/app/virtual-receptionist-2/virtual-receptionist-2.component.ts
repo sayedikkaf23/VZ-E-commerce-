@@ -103,6 +103,10 @@ export class VirtualReceptionist2Component implements OnInit {
   }
   
   onSubmit(): void {
+    // Mark all form controls as touched to trigger validation messages
+    this.formData.markAllAsTouched();
+    this.shareholders.controls.forEach(control => control.markAllAsTouched());
+  
     if (this.formData.valid) {
       const formValues = this.formData.value;
   
@@ -121,8 +125,9 @@ export class VirtualReceptionist2Component implements OnInit {
       // Navigate to the next step
       this.router.navigate(['/virtual-receptionist-details']);
     } else {
+      // Log a message if the form is invalid
       console.log('Please fill all required fields');
-      this.shareholders.controls.forEach(control => control.markAllAsTouched());
     }
   }
+  
 }

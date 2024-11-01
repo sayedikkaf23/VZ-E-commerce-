@@ -3,4 +3,11 @@
     font-weight: bold;
     margin-left: 5px;
   }
+  #toast-container {
+    position: fixed;
+    top: 100px; /* Adjust as needed to place below the header */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+  }
   
