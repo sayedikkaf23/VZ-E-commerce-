@@ -5,6 +5,8 @@ const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto');
+const axios = require("axios");
+require('dotenv').config(); // Load environment variables
 
 
  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
@@ -87,7 +89,59 @@ exports.submit = async (req, res) => {
   }
 };
 
+exports.callSalesforceEndpoint = async (req, res) => {
+  // Destructure the necessary fields from the request body
+  const { firstName, lastName, email, nationality, phone, dob } = req.body;
 
+  const formattedPhone = phone.internationalNumber || phone.number || ""; // Use the preferred phone format
+
+  // Construct the JSON body to send
+  const requestBody = {
+    firstName,
+    lastName,
+    email,
+    nationality,
+    phone,
+    phone: formattedPhone, // Use the formatted phone number
+    dob,
+  };
+
+
+console.log(requestBody)
+
+
+  try {
+
+
+    const TokenResponse = await axios.post(
+      `https://test.salesforce.com/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`,
+     
+    );
+    const accessToken = TokenResponse.data.access_token;
+    const saleforcUrl = TokenResponse.data.instance_url;
+
+console.log(accessToken,saleforcUrl,"gggg")
+
+
+    // Make the HTTP POST request to the Salesforce endpoint
+    const response = await axios.post(
+      `${saleforcUrl}/services/apexrest/opportunityService/`,
+      requestBody,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json", // Specify the content type as JSON
+        },
+      }
+    );
+console.log(response.data)
+    // Send the response from Salesforce back to the client
+    res.status(200).json(response.data);
+  } catch (error) {
+    console.error("Error calling Salesforce endpoint:", error);
+    res.status(500).json({ message: "Error calling Salesforce endpoint", details: error.message });
+  }
+};
 
 exports.getAllSubmissions = async (req, res) => {
   try {

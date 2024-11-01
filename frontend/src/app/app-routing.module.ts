@@ -26,6 +26,9 @@ import { MailsManagement2Component } from './mails-management-2/mails-management
 import { MailsManagement3Component } from './mails-management-3/mails-management-3.component';
 import { AdminMailManagementComponent } from './admin-mail-management/admin-mail-management.component';
 import { VirtualManagementComponent } from './virtual-management/virtual-management.component';
+
+
+
 const routes: Routes = [
 
   {

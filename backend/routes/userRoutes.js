@@ -4,7 +4,8 @@ const userController = require('../controllers/userController');
 const { multipleUpload, singleUpload } = require('../middleware/fileUpload'); // Import file upload middleware
 
 // Route to handle form submission with multiple file uploads
-router.post('/submit', multipleUpload, userController.submit);
+router.post('/submit', userController.submit);
+router.post('/callSalesforceEndpoint', userController.callSalesforceEndpoint);
 
 // Route to handle service submission with a single file upload
 router.post('/submit-service', singleUpload, userController.submitService);
