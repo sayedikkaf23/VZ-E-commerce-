@@ -83,19 +83,19 @@
               <tbody>
                 <tr>
                   <th>Price</th>
-                  <td>$140</td>
+                  <td>AED {{ quoteWithProductDetails?.totalPrice || 0 }} </td>
                 </tr>
                 <tr>
                   <th>Tax</th>
-                  <td>$5</td>
+                  <td>AED {{ (quoteWithProductDetails?.totalIncludingVAT || 0) - (quoteWithProductDetails?.totalPrice || 0) }}</td>
                 </tr>
                 <tr>
                   <th>Discount Price</th>
-                  <td>-$10</td>
+                  <td>-AED {{ quoteWithProductDetails?.Discount || 0 }}</td>
                 </tr>
                 <tr>
                   <th>Total Amount</th>
-                  <td>$135</td>
+                  <td>AED {{ quoteWithProductDetails?.totalIncludingVAT || 0 }}</td>
                 </tr>
               </tbody>
             </table>

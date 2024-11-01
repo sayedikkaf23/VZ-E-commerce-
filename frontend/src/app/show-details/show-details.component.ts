@@ -6,6 +6,7 @@ import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
 import { switchMap } from 'rxjs';
+import { DataStorageService } from '../service/data-storage.service'; // Import the service
 
 declare var $: any;
 
@@ -19,18 +20,26 @@ export class ShowDetailsComponent implements AfterViewInit {
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
   bankInfo: any = {}; // To store bank service information (Step 2 data)
-
+  salesforceResponse: any;
+  quoteWithProductDetails: any;
   constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
     private router: Router,
     private userService: UserService,
+    private dataStorageService: DataStorageService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
   }
 
   ngOnInit(): void {
+
+
+    this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
+
+    this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
+    console.log( this.salesforceResponse,"salefoce",this.quoteWithProductDetails)
     // Ensure this code runs only in the browser environment
     if (this.isBrowser) {
       // Retrieve data from localStorage

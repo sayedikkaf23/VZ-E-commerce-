@@ -1,6 +1,8 @@
 const UserDetails = require("../models/userDetails");
 const fileUpload = require("../middleware/fileUpload"); 
 const Service = require("../models/service");
+const Pidata = require('../models/pidata');
+
 const Admin = require("../models/Admin");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -43,11 +45,21 @@ exports.submit = async (req, res) => {
     // Process mobile number as before
     let parsedMobileNumber = typeof mobileNumber === "string" ? JSON.parse(mobileNumber) : mobileNumber;
 
-    // Check if email already exists
+    // Check if email already exists in UserDetails
     const existingUser = await UserDetails.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "Email already exists" });
     }
+
+    // Find the corresponding user in Pidata using the email
+    const pidataUser = await Pidata.findOne({ "leadWithDetails.Email": email });
+    if (!pidataUser) {
+      return res.status(404).json({ message: "Related Pidata entry not found" });
+    }
+
+    // Extract LeadId and QuotePaymentId from the found Pidata document
+    const { LeadId } = pidataUser.leadWithDetails;
+    const { QuotePaymentId } = pidataUser.quotePaymentWithDetails;
 
     // Parse shareholders if provided as a string
     let parsedShareholders = [];
@@ -79,6 +91,8 @@ exports.submit = async (req, res) => {
       jurisdiction,
       shareholders: parsedShareholders,
       Turnover,
+      LeadId, // Add LeadId from Pidata
+      QuotePaymentId, // Add QuotePaymentId from Pidata
     });
 
     await userDetails.save();
@@ -89,59 +103,107 @@ exports.submit = async (req, res) => {
   }
 };
 
+
+
 exports.callSalesforceEndpoint = async (req, res) => {
-  // Destructure the necessary fields from the request body
+  // Destructure fields from the request body
   const { firstName, lastName, email, nationality, phone, dob } = req.body;
+  const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
 
-  const formattedPhone = phone.internationalNumber || phone.number || ""; // Use the preferred phone format
-
-  // Construct the JSON body to send
+  // Construct the JSON body to send to Salesforce
   const requestBody = {
     firstName,
     lastName,
     email,
     nationality,
-    phone,
-    phone: formattedPhone, // Use the formatted phone number
+    phone: formattedPhone,
     dob,
   };
 
-
-console.log(requestBody)
-
-
   try {
-
-
-    const TokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`,
-     
+    // Get access token from Salesforce
+    const tokenResponse = await axios.post(
+      `https://test.salesforce.com/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
     );
-    const accessToken = TokenResponse.data.access_token;
-    const saleforcUrl = TokenResponse.data.instance_url;
 
-console.log(accessToken,saleforcUrl,"gggg")
-
+    const accessToken = tokenResponse.data.access_token;
+    const salesforceUrl = tokenResponse.data.instance_url;
 
     // Make the HTTP POST request to the Salesforce endpoint
-    const response = await axios.post(
-      `${saleforcUrl}/services/apexrest/opportunityService/`,
+    const salesforceResponse = await axios.post(
+      `${salesforceUrl}/services/apexrest/opportunityService/`,
       requestBody,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json", // Specify the content type as JSON
+          "Content-Type": "application/json",
         },
       }
     );
-console.log(response.data)
-    // Send the response from Salesforce back to the client
-    res.status(200).json(response.data);
+
+    // Extract the Salesforce response data
+    const responseData = salesforceResponse.data;
+
+    // Create a new Pidata document
+    const newPidata = new Pidata({
+      leadWithDetails: {
+        Nationality: responseData.leadWithDetails.Nationality,
+        Phone: responseData.leadWithDetails.Phone,
+        Origin__c: responseData.leadWithDetails.Origin__c,
+        Email: responseData.leadWithDetails.Email,
+        LeadSource: responseData.leadWithDetails.LeadSource,
+        Status: responseData.leadWithDetails.Status,
+        Company: responseData.leadWithDetails.Comapny,
+        LastName: responseData.leadWithDetails.LastName,
+        FirstName: responseData.leadWithDetails.FirstName,
+        LeadId: responseData.leadWithDetails.LeadId || "N/A",
+      },
+      quotePaymentWithDetails: {
+        Currency: responseData.quotePaymentWithDetails.Currency || null,
+        QuotePaymentId: responseData.quotePaymentWithDetails.QuotePaymentId || "N/A",
+        AccountId: responseData.quotePaymentWithDetails.AccountId || "N/A",
+      },
+      quoteWithProductDetails: {
+        AccountName: responseData.quoteWithProductDetails.AccountName,
+        Discount: responseData.quoteWithProductDetails.Discount || 0,
+        invoiceCurrency: responseData.quoteWithProductDetails.invoiceCurrency || null,
+        invoiceDate: responseData.quoteWithProductDetails.invoiceDate,
+        invoiceNumber: responseData.quoteWithProductDetails.invoiceNumber || null,
+        mobile: formattedPhone,
+        oppurtunityId: responseData.quoteWithProductDetails.oppurtunityId || "N/A",
+        ownerId: responseData.quoteWithProductDetails.ownerId || "N/A",
+        partPayment: responseData.quoteWithProductDetails.partPayment || null,
+        paymentLink: responseData.quoteWithProductDetails.paymentLink || null,
+        paymentMethod: responseData.quoteWithProductDetails.paymentMethod || null,
+        product: responseData.quoteWithProductDetails.product || [],
+        quoteEmail: responseData.quoteWithProductDetails.quoteEmail,
+        quoteId: responseData.quoteWithProductDetails.quoteId || "N/A",
+        quoteName: responseData.quoteWithProductDetails.quoteName || "Test Quote",
+        quotePaymentId: responseData.quoteWithProductDetails.quotePaymentId || "N/A",
+        quotePdf: {
+          ContentType: responseData.quoteWithProductDetails.quotePdf.ContentType,
+          name: responseData.quoteWithProductDetails.quotePdf.name,
+          pdfContent: responseData.quoteWithProductDetails.quotePdf.pdfContent,
+        },
+        sendToPaymentGateway: responseData.quoteWithProductDetails.sendToPaymentGateway || false,
+        status: responseData.quoteWithProductDetails.status || "Draft",
+        subTotal: responseData.quoteWithProductDetails.subTotal || 0,
+        totalIncludingVAT: responseData.quoteWithProductDetails.totalIncludingVAT || 0,
+        totalPrice: responseData.quoteWithProductDetails.totalPrice || 0,
+      },
+    });
+
+    // Save the document to MongoDB
+    await newPidata.save();
+
+    // Send a success response
+    res.status(200).json({ message: "Data saved successfully", data: responseData });
   } catch (error) {
     console.error("Error calling Salesforce endpoint:", error);
     res.status(500).json({ message: "Error calling Salesforce endpoint", details: error.message });
   }
 };
+
 
 exports.getAllSubmissions = async (req, res) => {
   try {

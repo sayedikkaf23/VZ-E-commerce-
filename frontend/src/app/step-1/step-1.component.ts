@@ -8,6 +8,7 @@ import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import e
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 import { UserService } from '../service/user.service';
 import { GetnationalityService } from '../service/getnationality.service';
+import { DataStorageService } from '../service/data-storage.service';
 
 
 @Component({
@@ -31,6 +32,8 @@ export class Step1Component implements OnInit {
     private toastr: ToastrService,
     private userService: UserService,
     private getnationalityService: GetnationalityService,
+    private dataStorageService: DataStorageService ,// Inject the service
+
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -86,6 +89,7 @@ export class Step1Component implements OnInit {
           // Handle the successful response from Salesforce
           this.toastr.success('Details sent successfully to Salesforce', 'Success');
           console.log('Salesforce Response:', response);
+          this.dataStorageService.setSalesforceResponse(response);
 
           // Save form data to localStorage only in the browser environment
           if (this.isBrowser) {

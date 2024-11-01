@@ -35,6 +35,8 @@ const userDetailsSchema = new mongoose.Schema({
       shareholder: { type: String },     // Added shareholder field
       Turnover: { type: String },        // Added Turnover field
       shareholders: [shareholderSchema], // Changed to an array of shareholder objects
+      LeadId: { type: String }, 
+      QuotePaymentId: { type: String }, 
 }, { timestamps: true });
  
 module.exports = mongoose.model('UserDetails', userDetailsSchema);
