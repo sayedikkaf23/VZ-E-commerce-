@@ -26,6 +26,10 @@ export class UserService {  // Changed the service name to UserService
   checkUser(payload: { email: string, mobileNumber: string }): Observable<any> {
     return this.http.post(`${this.url}/user/checkUser`, payload); // Sending the payload to the backend
   }
+
+  callSalesforceEndpoint(payload:any): Observable<any> {
+    return this.http.post(`${this.url}/user/callSalesforceEndpoint`, payload); // Sending the payload to the backend
+  }
   
 
   getServices(): Observable<any> {

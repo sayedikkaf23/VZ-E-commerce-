@@ -7,6 +7,8 @@ import { ToastrService } from 'ngx-toastr';
 import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import enums
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 import { UserService } from '../service/user.service';
+import { GetnationalityService } from '../service/getnationality.service';
+
 
 @Component({
   selector: 'app-step-1',
@@ -28,6 +30,7 @@ export class Step1Component implements OnInit {
     private cdRef: ChangeDetectorRef,
     private toastr: ToastrService,
     private userService: UserService,
+    private getnationalityService: GetnationalityService,
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -44,9 +47,14 @@ export class Step1Component implements OnInit {
 
   ngOnInit(): void {
     // Fetch nationalities using REST Countries API
-    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
-      this.nationalities = data.map((country) => country.name.common);
-      this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    // this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
+    //   this.nationalities = data.map((country) => country.name.common);
+    //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    // });
+
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
 
     // Check if we are in the browser before accessing localStorage
@@ -63,47 +71,48 @@ export class Step1Component implements OnInit {
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;
 
-
       const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
-        mobileNumber: formData.mobileNumber // Add this field if available in the form
+        nationality: formData.nationality,
+        phone: formData.mobileNumber, // Ensure to map this correctly
+        dob: formData.birthday,
       };
-  
-      // Check if the user already exists
-      this.userService.checkUser(payload).subscribe(
+
+      // Call the Salesforce API using the UserService
+      this.userService.callSalesforceEndpoint(payload).subscribe(
         (response: any) => {
-          if (response.exists) {
-            // Show a toast notification if the user already exists
-            this.toastr.error('User with this email already exists', 'Error');
-          } else {
-            // Save form data to localStorage only in the browser environment
-            if (this.isBrowser) {
-              localStorage.setItem('step1Data', JSON.stringify(formData));
+          // Handle the successful response from Salesforce
+          this.toastr.success('Details sent successfully to Salesforce', 'Success');
+          console.log('Salesforce Response:', response);
+
+          // Save form data to localStorage only in the browser environment
+          if (this.isBrowser) {
+            localStorage.setItem('step1Data', JSON.stringify(formData));
+          }
+
+          // Check if step2Data exists in localStorage
+          if (this.isBrowser) {
+            if (localStorage.getItem('mailform2')) {
+              // If mailform2 data exists, navigate to MailMangamentShowDetails
+              this.router.navigate(['/BusinessBankShowDetails']);
+            } else if (localStorage.getItem('step2Data')) {
+              // If step2Data exists, navigate to step-2
+              this.router.navigate(['/step-2']);
+            } else {
+              // Otherwise, navigate to account-type
+              this.router.navigate(['/account-type']);
             }
-  
-            // Check if step2Data exists in localStorage
-            if (this.isBrowser) {
-              if (localStorage.getItem('mailform2')) {
-                // If mailform2 data exists, navigate to MailMangamentShowDetails
-                this.router.navigate(['/BusinessBankShowDetails']);
-              } else if (localStorage.getItem('step2Data')) {
-                // If step2Data exists, navigate to step-2
-                this.router.navigate(['/step-2']);
-              } else {
-                // Otherwise, navigate to account-type
-                this.router.navigate(['/account-type']);
-              }
-            }
-            
           }
         },
         error => {
-          // Handle error in user check
-          this.toastr.error(error.error.message);
-          console.error('Error:', error);
+          // Handle error from the Salesforce API call
+          this.toastr.error('Failed to send details to Salesforce', 'Error');
+          console.error('Salesforce API Error:', error);
         }
       );
-    }  else {
+    } else {
       // Check specifically if mobileNumber is invalid and show toaster for it
       if (this.personalDetailsForm.get('mobileNumber')?.invalid) {
         this.toastr.error('Please provide a valid mobile number.', 'Validation Error');
@@ -113,11 +122,10 @@ export class Step1Component implements OnInit {
       }
     }
   }
-  
 
   // Show one toaster for all invalid fields
   showSingleValidationError(formGroup: FormGroup) {
-    const missingFields: string[] = []; // Explicitly define the type as string[]
+    const missingFields: string[] = [];
 
     Object.keys(formGroup.controls).forEach((field) => {
       const control = formGroup.get(field);
