@@ -21,7 +21,7 @@ export class Step1Component implements OnInit {
   nationalities: string[] = []; // Initialize as an empty array
   selectedNationality: string = '';
   SearchCountryField = SearchCountryField;  // Assign to use in template
-  CountryISO = CountryISO;
+  CountryISO = CountryISO;  
   isBrowser: boolean;
 
   constructor(

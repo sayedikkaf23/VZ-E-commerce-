@@ -1307,13 +1307,27 @@ ngx-intl-tel-input .iti {
   .iti--allow-dropdown .iti__flag-container:hover .iti__selected-flag {
     background-color: transparent;
   }
-  #toast-container {
+/* Common styles for all toasts */
+#toast-container .custom-toast {
     position: fixed;
-    top: 10%; /* Vertically centered */
-    right: 0; /* Positioned at the right side */
-    transform: translateY(-50%); /* Adjust vertical centering */
+    top: 10%; /* Adjust to place the toast near the top */
+    right: 20px; /* Position on the right with some padding */
     z-index: 9999;
+    border-radius: 4px; /* Rounded corners */
+    padding: 12px; /* Padding for a better appearance */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
+    color: #ffffff !important; /* White text for better readability */
     pointer-events: none; /* To avoid interference with user interactions */
-    padding-right: 20px; /* Adjust this value as needed to add some space from the right edge */
   }
+  
+  /* Error toaster with gradient background */
+  #toast-container .custom-toast.toast-error {
+    background: linear-gradient(90deg, #FA2E52 0%, #5A3F95 100%) !important;
+  }
+  
+  /* Success toaster with green background */
+  #toast-container .custom-toast.toast-success {
+    background-color: #299e60 !important; /* Green background for success */
+  }
+  
   

@@ -83,7 +83,11 @@ import { VirtualManagementComponent } from './virtual-management/virtual-managem
     ToastrModule.forRoot({
       positionClass: 'toast-top-center', // Center the toast notifications at the top
       preventDuplicates: true,           // Prevent duplicate messages
-    }),    NgxIntlTelInputModule,
+      toastClass: 'custom-toast',        // Custom class for styling
+    }),
+    
+      
+     NgxIntlTelInputModule,
     BsDropdownModule.forRoot(),
 
     // HttpClientModule is no longer needed here
