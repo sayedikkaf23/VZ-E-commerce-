@@ -8,6 +8,8 @@ import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import e
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 import { UserService } from '../service/user.service';
 import { GetnationalityService } from '../service/getnationality.service';
+import { DataStorageService } from '../service/data-storage.service';
+
 @Component({
   selector: 'app-mails-management-1',
   templateUrl: './mails-management-1.component.html',
@@ -21,6 +23,7 @@ export class MailsManagement1Component {
   SearchCountryField = SearchCountryField;  // Assign to use in template
   CountryISO = CountryISO;
   isBrowser: boolean;
+  isLoading = false;
 
   constructor(
     private router: Router,
@@ -30,6 +33,7 @@ export class MailsManagement1Component {
     private toastr: ToastrService,
     private userService: UserService,
     private getnationalityService: GetnationalityService,
+    private dataStorageService: DataStorageService ,// Inject the service
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -73,27 +77,56 @@ export class MailsManagement1Component {
       //   email: formData.email,
       //   mobileNumber: formData.mobileNumber // Add this field if available in the form
       // };
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        nationality: formData.nationality,
+        phone: formData.mobileNumber, // Ensure to map this correctly
+        dob: formData.birthday,
+        service:"mail_management"
+      };
+      this.isLoading = true;
+      this.userService.callSalesforceEndpoint(payload).subscribe(
+        (response: any) => {
+          // Handle the successful response from Salesforce
+          this.toastr.success('Details sent successfully to Salesforce', 'Success');
+          console.log('Salesforce Response:', response);
+          this.dataStorageService.setSalesforceResponse(response);
+          this.isLoading = false;
+
+          // Save form data to localStorage only in the browser environment
+          if (this.isBrowser) {
+            localStorage.setItem('mailform', JSON.stringify(formData));
+          }
+
+          // Check if step2Data exists in localStorage
+          if (this.isBrowser) {
+            if (localStorage.getItem('mailform2')) {
+              // If mailform2 data exists, navigate to MailMangamentShowDetails
+              this.router.navigate(['/mails-management-details']);
+            } else if (localStorage.getItem('mailform')) {
+              // If step2Data exists, navigate to step-2
+              this.router.navigate(['/mails-management-2']);
+            } else {
+              // Otherwise, navigate to account-type
+              this.router.navigate(['/mails-management-2']);
+            }
+          }
+        },
+        error => {
+          // Handle error from the Salesforce API call
+          this.isLoading = false;
+
+          this.toastr.error('Failed to send details to Salesforce', 'Error');
+          console.error('Salesforce API Error:', error);
+        }
+      );
   
       // Check if the user already exists
    
             // Save form data to localStorage only in the browser environment
-            if (this.isBrowser) {
-              localStorage.setItem('mailform', JSON.stringify(formData));
-            }
-  
-            // Check if step2Data exists in localStorage
-            if (this.isBrowser) {
-              if (localStorage.getItem('mailform2')) {
-                // If mailform2 data exists, navigate to MailMangamentShowDetails
-                this.router.navigate(['/mails-management-details']);
-              } else if (localStorage.getItem('mailform')) {
-                // If step2Data exists, navigate to step-2
-                this.router.navigate(['/mails-management-2']);
-              } else {
-                // Otherwise, navigate to account-type
-                this.router.navigate(['/mails-management-2']);
-              }
-            }
+          
             
           
       

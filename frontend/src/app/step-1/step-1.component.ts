@@ -23,6 +23,7 @@ export class Step1Component implements OnInit {
   SearchCountryField = SearchCountryField;  // Assign to use in template
   CountryISO = CountryISO;  
   isBrowser: boolean;
+  isLoading = false;
 
   constructor(
     private router: Router,
@@ -73,6 +74,7 @@ export class Step1Component implements OnInit {
   onSubmit() {
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;
+      this.isLoading = true; // Show loader
 
       const payload = {
         firstName: formData.firstName,
@@ -81,6 +83,7 @@ export class Step1Component implements OnInit {
         nationality: formData.nationality,
         phone: formData.mobileNumber, // Ensure to map this correctly
         dob: formData.birthday,
+        service:"Bank_opening"
       };
 
       // Call the Salesforce API using the UserService
@@ -90,6 +93,7 @@ export class Step1Component implements OnInit {
           this.toastr.success('Details sent successfully to Salesforce', 'Success');
           console.log('Salesforce Response:', response);
           this.dataStorageService.setSalesforceResponse(response);
+          this.isLoading = false; // Show loader
 
           // Save form data to localStorage only in the browser environment
           if (this.isBrowser) {
@@ -112,6 +116,7 @@ export class Step1Component implements OnInit {
         },
         error => {
           // Handle error from the Salesforce API call
+          this.isLoading = false; // Show loader
           this.toastr.error('Failed to send details to Salesforce', 'Error');
           console.error('Salesforce API Error:', error);
         }

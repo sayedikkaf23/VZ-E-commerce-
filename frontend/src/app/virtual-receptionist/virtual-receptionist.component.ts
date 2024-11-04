@@ -8,6 +8,8 @@ import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import e
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 import { UserService } from '../service/user.service';
 import { GetnationalityService } from '../service/getnationality.service';
+import { DataStorageService } from '../service/data-storage.service';
+
 @Component({
   selector: 'app-virtual-receptionist',
   templateUrl: './virtual-receptionist.component.html',
@@ -20,6 +22,7 @@ export class VirtualReceptionistComponent {
   SearchCountryField = SearchCountryField;  // Assign to use in template
   CountryISO = CountryISO;
   isBrowser: boolean;
+  isLoading = false;
 
   constructor(
     private router: Router,
@@ -29,6 +32,8 @@ export class VirtualReceptionistComponent {
     private toastr: ToastrService,
     private userService: UserService,
     private getnationalityService: GetnationalityService,
+    private dataStorageService: DataStorageService ,// Inject the service
+
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -67,24 +72,59 @@ export class VirtualReceptionistComponent {
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;
   
-      // Save form data to localStorage only in the browser environment
-      if (this.isBrowser) {
-        localStorage.setItem('virtualdata', JSON.stringify(formData));
-      }
-  
-      // Check if step2Data exists in localStorage
-      if (this.isBrowser) {
-        if (localStorage.getItem('virtualdata2')) {
-          // Navigate to MailMangamentShowDetails if mailform2 data exists
-          this.router.navigate(['/virtual-receptionist-details']);
-        } else if (localStorage.getItem('step2Data')) {
-          // Navigate to step-2 if step2Data exists
-          this.router.navigate(['/virtual-receptionist-1']);
-        } else {
-          // Otherwise, navigate to account-type
-          this.router.navigate(['/virtual-receptionist-1']);
+
+      this.isLoading = true;
+      const payload = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        nationality: formData.nationality,
+        phone: formData.mobileNumber, // Ensure to map this correctly
+        dob: formData.birthday,
+        service:"virtual_receptionist"
+      };
+
+      this.userService.callSalesforceEndpoint(payload).subscribe(
+        (response: any) => {
+          this.isLoading = false;
+
+          // Handle the successful response from Salesforce
+          this.toastr.success('Details sent successfully to Salesforce', 'Success');
+          console.log('Salesforce Response:', response);
+          this.dataStorageService.setSalesforceResponse(response);
+
+          // Save form data to localStorage only in the browser environment
+          if (this.isBrowser) {
+            localStorage.setItem('virtualdata', JSON.stringify(formData));
+          }
+      
+          // Check if step2Data exists in localStorage
+          if (this.isBrowser) {
+            if (localStorage.getItem('virtualdata2')) {
+              // Navigate to MailMangamentShowDetails if mailform2 data exists
+              this.router.navigate(['/virtual-receptionist-details']);
+            } else if (localStorage.getItem('step2Data')) {
+              // Navigate to step-2 if step2Data exists
+              this.router.navigate(['/virtual-receptionist-1']);
+            } else {
+              // Otherwise, navigate to account-type
+              this.router.navigate(['/virtual-receptionist-1']);
+            }
+          }
+        },
+        error => {
+          this.isLoading = false;
+
+          // Handle error from the Salesforce API call
+          this.toastr.error('Failed to send details to Salesforce', 'Error');
+          console.error('Salesforce API Error:', error);
         }
-      }
+      );
+
+
+
+      // Save form data to localStorage only in the browser environment
+    
     } else {
       // Check specifically if mobileNumber is invalid and show toaster for it
       if (this.personalDetailsForm.get('mobileNumber')?.invalid) {

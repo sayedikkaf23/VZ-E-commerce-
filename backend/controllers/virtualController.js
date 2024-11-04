@@ -60,6 +60,14 @@ exports.submitVirtualDetails = async (req, res) => {
       };
     });
 
+    const pidataUser = await Pidata.findOne({ "leadWithDetails.Email": email });
+    if (!pidataUser) {
+      return res.status(404).json({ message: "Related Pidata entry not found" });
+    }
+
+    // Extract LeadId and QuotePaymentId from the found Pidata document
+    const { LeadId } = pidataUser.leadWithDetails;
+    const { QuotePaymentId } = pidataUser.quotePaymentWithDetails;
     // Create a new record including all details
     const userDetails = new VirtualDetails({
       firstName,
@@ -74,7 +82,9 @@ exports.submitVirtualDetails = async (req, res) => {
       tradelicense,
       companylicensed,
       shareholdercount,
-      shareholders: parsedShareholders // Includes file paths and metadata for each shareholder
+      shareholders: parsedShareholders, // Includes file paths and metadata for each shareholder
+      LeadId, // Add LeadId from Pidata
+      QuotePaymentId, // Add QuotePaymentId from Pidata
     });
 
     await userDetails.save();

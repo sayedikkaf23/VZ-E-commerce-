@@ -1,11 +1,19 @@
-<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+
+
+
+<div class="loader-container" *ngIf="isLoading">
+  <div class="loader"></div>
+</div>
+
+<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0" >
    
   <app-user-header></app-user-header>
   
     <div class="gradient_color">
       <h3>Step 1</h3>
     </div>
-    
+
+
     <section class="step_1_section">
       <div class="container">
         <div class="head_text">

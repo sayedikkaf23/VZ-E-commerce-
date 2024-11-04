@@ -32,6 +32,8 @@ const virtualDetailsSchema = new mongoose.Schema(
     tradelicense: { type: String },
     shareholdercount: { type: String },
     shareholders: [shareholderSchema], // Array of shareholder objects
+    LeadId: { type: String }, 
+    QuotePaymentId: { type: String }, 
   },
   { timestamps: true }
 );

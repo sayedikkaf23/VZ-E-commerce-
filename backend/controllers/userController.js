@@ -107,7 +107,7 @@ exports.submit = async (req, res) => {
 
 exports.callSalesforceEndpoint = async (req, res) => {
   // Destructure fields from the request body
-  const { firstName, lastName, email, nationality, phone, dob } = req.body;
+  const { firstName, lastName, email, nationality, phone, dob,service } = req.body;
   const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
 
   // Construct the JSON body to send to Salesforce
@@ -118,8 +118,9 @@ exports.callSalesforceEndpoint = async (req, res) => {
     nationality,
     phone: formattedPhone,
     dob,
+    service
   };
-
+  console.log(requestBody)
   try {
     // Get access token from Salesforce
     const tokenResponse = await axios.post(
