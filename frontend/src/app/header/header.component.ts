@@ -153,6 +153,18 @@ export class HeaderComponent implements OnInit {
     }
     return false;
   }
+  get isBankMangementNavShow() {
+    if (isPlatformBrowser(this.platformId)) {
+      const routes = [
+     
+        '/panel/PersonalBank-account-opening',
+        '/panel/business-bank-account',
+   
+      ];
+      return routes.includes(location.pathname);
+    }
+    return false;
+  }
 
   get activeCustomerMangement() {
     if (isPlatformBrowser(this.platformId)) {

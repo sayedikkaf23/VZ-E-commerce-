@@ -188,6 +188,30 @@
                 </li>
               </ul>
             </nav>
+            <nav *ngIf="
+                isBankMangementNavShow &&
+                !isCustomerMangementNavShow &&
+                !isSettingsNavShow &&
+                !isReportsNavShow &&
+                !isDashboardNavShow &&
+                !isCustomersNavShow &&
+                !isPaymentModeNavShow &&
+                !isPaymentMethodNavShow
+              ">
+              <ul>
+                <li routerLinkActive="active">
+                  <a [routerLink]="['/panel/PersonalBank-account-opening']">{{
+                    "Personal Bank"
+                    }}</a>
+                </li>
+                <li routerLinkActive="active">
+                  <a [routerLink]="['/panel/business-bank-account']">{{
+                    "Business Bank"
+                    }}</a>
+                </li>
+               
+              </ul>
+            </nav>
   
             <nav *ngIf="
                 isPaymentModeNavShow &&

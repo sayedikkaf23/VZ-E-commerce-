@@ -75,6 +75,30 @@
               </tbody>
             </table>
           </div>
+          <div class="box-light">
+            <div class="d-flex align-items-center justify-content-between">
+              <h4>Service</h4>
+            </div>
+            <table class="w-100 product-table">
+              <thead>
+                <tr>
+                  <th>Product Name</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Total Price (Including VAT)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let product of salesforceResponse?.data?.quoteWithProductDetails?.product">
+                  <td>{{ product.productName }}</td>
+                  <td>{{ product.productQunatity }}</td>
+                  <td class="currency">{{ product.productUnitPrice | currency }}</td>
+                  <td class="currency">{{ (product.productUnitPrice * product.productQunatity * 1.05) | currency }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
         </div>
         <div class="col-md-5 col-lg-4 order-summery-col">
           <div class="order-summery box-light">
@@ -100,7 +124,7 @@
               </tbody>
             </table>
           </div>
-          <button (click)="submitData()" class="btn primary-btn w-100">Payment Now</button>
+          <button (click)="submitData()" class="btn primary-btn w-100">Pay Now</button>
         </div>
       </div>
     </div>

@@ -83,14 +83,14 @@ export class Step1Component implements OnInit {
         nationality: formData.nationality,
         phone: formData.mobileNumber, // Ensure to map this correctly
         dob: formData.birthday,
-        service:"Bank_opening"
+        // service:"Bank_opening"
       };
 
       // Call the Salesforce API using the UserService
       this.userService.callSalesforceEndpoint(payload).subscribe(
         (response: any) => {
           // Handle the successful response from Salesforce
-          this.toastr.success('Details sent successfully to Salesforce', 'Success');
+          // this.toastr.success('Details sent successfully to Salesforce', 'Success');
           console.log('Salesforce Response:', response);
           this.dataStorageService.setSalesforceResponse(response);
           this.isLoading = false; // Show loader

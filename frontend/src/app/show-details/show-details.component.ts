@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import AOS from 'aos';
 import { switchMap } from 'rxjs';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
+import { of } from 'rxjs';
 
 declare var $: any;
 
@@ -116,6 +117,49 @@ export class ShowDetailsComponent implements AfterViewInit {
   }
 
   // Submit data to backend and clear localStorage
+  // submitData() {
+  //   const finalData = {
+  //     ...this.personalInfo, // Merge personal information (Step 1 data)
+  //     ...this.bankInfo // Merge bank information (Step 2 data)
+  //   };
+  
+  //   // Send data to the backend using userService
+  //   this.userService.uploadUserData(finalData).pipe(
+  //     switchMap(response => {
+  //       if (response.message) {
+  //         // Clear localStorage after successful submission
+  //         localStorage.removeItem('step1Data');
+  //         localStorage.removeItem('step2Data');
+
+  //         // Call payNowByStripe with the necessary payload
+  //         const stripePayload = { amount: 135, currency: 'USD' }; // Example payload, replace with your actual data
+  //         return this.userService.payNowByStripe(stripePayload);
+  //       } else {
+  //         throw new Error('Data submission failed'); // Handle case where response does not contain expected message
+  //       }
+  //     })
+  //   ).subscribe(
+  //     payNowResponse => {
+  //       // Assuming the response contains a URL to redirect for payment
+  //       const paymentUrl = payNowResponse.stripeData.url; // Replace 'url' with the actual field name from the response
+
+  //       if (paymentUrl) {
+  //         // Navigate to the payment URL
+  //         window.location.href = paymentUrl; // Redirecting the browser to the payment page
+  //       } else {
+  //         this.toastr.error('Payment URL not found', 'Error');
+  //       }
+  //     },
+  //     error => {
+  //       // Show error toast on failure
+  //       this.showError(error.error.message || 'An error occurred');
+  //       console.error(error); // Log the error for debugging
+  //     }
+  //   );
+  // }
+
+
+
   submitData() {
     const finalData = {
       ...this.personalInfo, // Merge personal information (Step 1 data)
@@ -129,31 +173,32 @@ export class ShowDetailsComponent implements AfterViewInit {
           // Clear localStorage after successful submission
           localStorage.removeItem('step1Data');
           localStorage.removeItem('step2Data');
+  
 
-          // Call payNowByStripe with the necessary payload
-          const stripePayload = { amount: 135, currency: 'USD' }; // Example payload, replace with your actual data
-          return this.userService.payNowByStripe(stripePayload);
+          const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
+  
+          if (quotePaymentId) {
+            // Redirect to the payment URL
+            const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
+            window.location.href = paymentUrl;
+  
+            // Return an observable to satisfy switchMap's requirement
+            return of(null);
+          } else {
+            throw new Error('Quote Payment ID not found');
+          }
         } else {
           throw new Error('Data submission failed'); // Handle case where response does not contain expected message
         }
       })
     ).subscribe(
-      payNowResponse => {
-        // Assuming the response contains a URL to redirect for payment
-        const paymentUrl = payNowResponse.stripeData.url; // Replace 'url' with the actual field name from the response
-
-        if (paymentUrl) {
-          // Navigate to the payment URL
-          window.location.href = paymentUrl; // Redirecting the browser to the payment page
-        } else {
-          this.toastr.error('Payment URL not found', 'Error');
-        }
-      },
+      () => {},
       error => {
         // Show error toast on failure
-        this.showError(error.error.message || 'An error occurred');
+        this.toastr.error(error.message || 'An error occurred', 'Error');
         console.error(error); // Log the error for debugging
       }
     );
   }
+  
 }
