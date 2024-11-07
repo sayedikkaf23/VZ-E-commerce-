@@ -169,58 +169,52 @@ export class ShowDetailsComponent implements AfterViewInit {
     };
   
     // Show a SweetAlert confirmation dialog
-    Swal.fire({
-      title: 'Confirm Your Data',
-      text: 'Once you proceed to the next step, you won’t be able to edit your information. Please confirm your data.',
-      icon: 'warning',
-      
-      showCancelButton: true,
-      confirmButtonColor: '#FA2E52',
-      confirmButtonText: 'Yes, I confirm',
-      cancelButtonText: 'Review Data'
+       // Show a SweetAlert confirmation dialog
+       Swal.fire({
+        title: 'Confirm Your Data',
+        text: 'Once you proceed to the next step, you won’t be able to edit your information. Please confirm your data.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#FA2E52',
+        confirmButtonText: 'Yes, I confirm',
+        cancelButtonText: 'Review Data'
     }).then((result) => {
-      if (result.isConfirmed) {
+        if (result.isConfirmed) {
+            const payload = {
+                firstName: finalData.firstName,
+                lastName: finalData.lastName,
+                email: finalData.email,
+                nationality: finalData.nationality,
+                phone: finalData.mobileNumber, // Ensure to map this correctly
+                dob: finalData.birthday,
+                service: "Bank_opening"
+            };
 
+            this.isLoading = true; // Show loading indicator if necessary
 
-        const payload = {
-          firstName: finalData.firstName,
-          lastName: finalData.lastName,
-          email: finalData.email,
-          nationality: finalData.nationality,
-          phone: finalData.mobileNumber, // Ensure to map this correctly
-          dob: finalData.birthday,
-          service:"Bank_opening"
-        };
-        // If the user confirms, call the Salesforce API
-        // const payload = { ...finalData }; // Define your payload here based on the API requirements
-        this.isLoading = true; // Show loading indicator if necessary
-  
-        this.userService.callSalesforceEndpoint(payload).subscribe(
-          (response: any) => {
-            // Handle the successful response from Salesforce
-            console.log('Salesforce Response:', response);
-            this.dataStorageService.setSalesforceResponse(response);
-            this.isLoading = false; // Hide loader
-  
-            // Save finalData in localStorage
-            localStorage.setItem('finalData', JSON.stringify(finalData));
-  
-            // Navigate to the next step
-            this.router.navigate(['/ShowDetails-2']); // Replace '/next-step' with your actual route
-          },
-          (error) => {
-            // Handle errors from the Salesforce API call
-            Swal.fire('Error', 'There was an error sending data to Salesforce. Please try again.', 'error');
-            console.error(error);
-            this.isLoading = false; // Hide loader in case of error
-          }
-        );
-      } else {
-        // User chose to review data
-        Swal.fire('Review Your Data', 'Please make any necessary changes before proceeding.', 'info');
-      }
+            this.userService.callSalesforceEndpoint(payload).subscribe(
+                (response: any) => {
+                    // Handle the successful response from Salesforce
+                    console.log('Salesforce Response:', response);
+                    this.dataStorageService.setSalesforceResponse(response);
+                    this.isLoading = false; // Hide loader
+
+                    // Save finalData in localStorage
+                    localStorage.setItem('finalData', JSON.stringify(finalData));
+
+                    // Navigate to the next step
+                    this.router.navigate(['/ShowDetails-2']); // Replace '/next-step' with your actual route
+                },
+                (error) => {
+                    // Handle errors from the Salesforce API call
+                    Swal.fire('Error', 'There was an error sending data to Salesforce. Please try again.', 'error');
+                    console.error(error);
+                    this.isLoading = false; // Hide loader in case of error
+                }
+            );
+        } 
+        // No action needed if the user cancels the confirmation
     });
   }
-  
   
 }
