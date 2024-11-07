@@ -8,6 +8,7 @@ import AOS from 'aos';
 import { switchMap } from 'rxjs';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { of } from 'rxjs';
+import Swal from 'sweetalert2';
 
 declare var $: any;
 
@@ -17,7 +18,8 @@ declare var $: any;
   styleUrls: ['./show-details.component.css'] // Correct styleUrls syntax
 })
 export class ShowDetailsComponent implements AfterViewInit {
-  
+  isLoading = false;
+
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
   bankInfo: any = {}; // To store bank service information (Step 2 data)
@@ -159,46 +161,64 @@ export class ShowDetailsComponent implements AfterViewInit {
   // }
 
 
-
   submitData() {
+    // Combine personalInfo and bankInfo into finalData
     const finalData = {
-      ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.bankInfo // Merge bank information (Step 2 data)
+      ...this.personalInfo, // Merge personal information
+      ...this.bankInfo      // Merge bank service information
     };
   
-    // Send data to the backend using userService
-    this.userService.uploadUserData(finalData).pipe(
-      switchMap(response => {
-        if (response.message) {
-          // Clear localStorage after successful submission
-          localStorage.removeItem('step1Data');
-          localStorage.removeItem('step2Data');
-  
+    // Show a SweetAlert confirmation dialog
+    Swal.fire({
+      title: 'Confirm Your Data',
+      text: 'Once you proceed to the next step, you won’t be able to edit your information. Please confirm your data.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, I confirm',
+      cancelButtonText: 'Review Data'
+    }).then((result) => {
+      if (result.isConfirmed) {
 
-          const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
+
+        const payload = {
+          firstName: finalData.firstName,
+          lastName: finalData.lastName,
+          email: finalData.email,
+          nationality: finalData.nationality,
+          phone: finalData.mobileNumber, // Ensure to map this correctly
+          dob: finalData.birthday,
+          service:"Bank_opening"
+        };
+        // If the user confirms, call the Salesforce API
+        // const payload = { ...finalData }; // Define your payload here based on the API requirements
+        this.isLoading = true; // Show loading indicator if necessary
   
-          if (quotePaymentId) {
-            // Redirect to the payment URL
-            const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
-            window.location.href = paymentUrl;
+        this.userService.callSalesforceEndpoint(payload).subscribe(
+          (response: any) => {
+            // Handle the successful response from Salesforce
+            console.log('Salesforce Response:', response);
+            this.dataStorageService.setSalesforceResponse(response);
+            this.isLoading = false; // Hide loader
   
-            // Return an observable to satisfy switchMap's requirement
-            return of(null);
-          } else {
-            throw new Error('Quote Payment ID not found');
+            // Save finalData in localStorage
+            localStorage.setItem('finalData', JSON.stringify(finalData));
+  
+            // Navigate to the next step
+            this.router.navigate(['/ShowDetails-2']); // Replace '/next-step' with your actual route
+          },
+          (error) => {
+            // Handle errors from the Salesforce API call
+            Swal.fire('Error', 'There was an error sending data to Salesforce. Please try again.', 'error');
+            console.error(error);
+            this.isLoading = false; // Hide loader in case of error
           }
-        } else {
-          throw new Error('Data submission failed'); // Handle case where response does not contain expected message
-        }
-      })
-    ).subscribe(
-      () => {},
-      error => {
-        // Show error toast on failure
-        this.toastr.error(error.message || 'An error occurred', 'Error');
-        console.error(error); // Log the error for debugging
+        );
+      } else {
+        // User chose to review data
+        Swal.fire('Review Your Data', 'Please make any necessary changes before proceeding.', 'info');
       }
-    );
+    });
   }
+  
   
 }

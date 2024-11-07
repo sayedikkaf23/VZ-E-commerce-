@@ -26,7 +26,7 @@ import { MailsManagement2Component } from './mails-management-2/mails-management
 import { MailsManagement3Component } from './mails-management-3/mails-management-3.component';
 import { AdminMailManagementComponent } from './admin-mail-management/admin-mail-management.component';
 import { VirtualManagementComponent } from './virtual-management/virtual-management.component';
-
+import { ShowDetails2Component } from './show-details-2/show-details-2.component';
 
 
 
@@ -87,6 +87,11 @@ const routes: Routes = [
   {
     path: 'ShowDetails',
     component: ShowDetailsComponent,
+   
+  },
+  {
+    path: 'ShowDetails-2',
+    component: ShowDetails2Component,
    
   },
   {

@@ -74,54 +74,32 @@ export class Step1Component implements OnInit {
   onSubmit() {
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;
-      this.isLoading = true; // Show loader
 
-      const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        nationality: formData.nationality,
-        phone: formData.mobileNumber, // Ensure to map this correctly
-        dob: formData.birthday,
-        // service:"Bank_opening"
-      };
 
-      // Call the Salesforce API using the UserService
-      this.userService.callSalesforceEndpoint(payload).subscribe(
-        (response: any) => {
-          // Handle the successful response from Salesforce
-          // this.toastr.success('Details sent successfully to Salesforce', 'Success');
-          console.log('Salesforce Response:', response);
-          this.dataStorageService.setSalesforceResponse(response);
-          this.isLoading = false; // Show loader
-
-          // Save form data to localStorage only in the browser environment
-          if (this.isBrowser) {
-            localStorage.setItem('step1Data', JSON.stringify(formData));
-          }
-
-          // Check if step2Data exists in localStorage
-          if (this.isBrowser) {
-            if (localStorage.getItem('mailform2')) {
-              // If mailform2 data exists, navigate to MailMangamentShowDetails
-              this.router.navigate(['/BusinessBankShowDetails']);
-            } else if (localStorage.getItem('step2Data')) {
-              // If step2Data exists, navigate to step-2
-              this.router.navigate(['/step-2']);
-            } else {
-              // Otherwise, navigate to account-type
-              this.router.navigate(['/account-type']);
+  
+ 
+            // Save form data to localStorage only in the browser environment
+            if (this.isBrowser) {
+              localStorage.setItem('step1Data', JSON.stringify(formData));
             }
-          }
-        },
-        error => {
-          // Handle error from the Salesforce API call
-          this.isLoading = false; // Show loader
-          this.toastr.error('Failed to send details to Salesforce', 'Error');
-          console.error('Salesforce API Error:', error);
-        }
-      );
-    } else {
+  
+            // Check if step2Data exists in localStorage
+            if (this.isBrowser) {
+              if (localStorage.getItem('mailform2')) {
+                // If mailform2 data exists, navigate to MailMangamentShowDetails
+                this.router.navigate(['/BusinessBankShowDetails']);
+              } else if (localStorage.getItem('step2Data')) {
+                // If step2Data exists, navigate to step-2
+                this.router.navigate(['/step-2']);
+              } else {
+                // Otherwise, navigate to account-type
+                this.router.navigate(['/account-type']);
+              }
+            }
+        
+       
+    
+    }  else {
       // Check specifically if mobileNumber is invalid and show toaster for it
       if (this.personalDetailsForm.get('mobileNumber')?.invalid) {
         this.toastr.error('Please provide a valid mobile number.', 'Validation Error');
@@ -131,7 +109,6 @@ export class Step1Component implements OnInit {
       }
     }
   }
-
   // Show one toaster for all invalid fields
   showSingleValidationError(formGroup: FormGroup) {
     const missingFields: string[] = [];
