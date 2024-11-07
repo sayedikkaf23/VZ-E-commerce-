@@ -4,6 +4,7 @@
     "/admin/login",
     "/BusinessBankform",
     "/BusinessBankShowDetails",
+    "/bussiness-show-details",
     "/home",
     "/mail-management-1",
     "/mail-management-2",

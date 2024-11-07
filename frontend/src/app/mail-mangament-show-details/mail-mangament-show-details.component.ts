@@ -6,6 +6,9 @@ import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
 import { switchMap } from 'rxjs';
+import Swal from 'sweetalert2';
+import { DataStorageService } from '../service/data-storage.service'; // Import the service
+
 
 declare var $: any;
 @Component({
@@ -14,6 +17,7 @@ declare var $: any;
   styleUrl: './mail-mangament-show-details.component.css'
 })
 export class MailMangamentShowDetailsComponent {
+  isLoading = false;
   showAll = false;
   displayShareholders :any= [];
   isBrowser: boolean;
@@ -26,6 +30,8 @@ export class MailMangamentShowDetailsComponent {
     private toastr: ToastrService, // For showing notifications
     private router: Router,
     private userService: UserService,
+    private dataStorageService: DataStorageService,
+
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -118,47 +124,117 @@ export class MailMangamentShowDetailsComponent {
   }
 
   // Submit data to backend and clear localStorage
+  // submitData() {
+  //   const finalData = {
+  //     ...this.personalInfo, // Merge personal information (Step 1 data)
+  //     ...this.companyInfo // Merge bank information (Step 2 data)
+  //   };
+  
+  //   // Send data to the backend using userService
+  //   this.userService.uploadUserData(finalData).pipe(
+  //     switchMap(response => {
+  //       if (response.message) {
+  //         // Clear localStorage after successful submission
+  //         localStorage.removeItem('mailform');
+  //         localStorage.removeItem('mailform2');
+
+  //         // Call payNowByStripe with the necessary payload
+  //         const stripePayload = { amount: 135, currency: 'USD' }; // Example payload, replace with your actual data
+  //         return this.userService.payNowByStripe(stripePayload);
+  //       } else {
+  //         throw new Error('Data submission failed'); // Handle case where response does not contain expected message
+  //       }
+  //     })
+  //   ).subscribe(
+  //     payNowResponse => {
+  //       // Assuming the response contains a URL to redirect for payment
+  //       const paymentUrl = payNowResponse.stripeData.url; // Replace 'url' with the actual field name from the response
+
+  //       if (paymentUrl) {
+  //         // Navigate to the payment URL
+  //         window.location.href = paymentUrl; // Redirecting the browser to the payment page
+  //       } else {
+  //         this.toastr.error('Payment URL not found', 'Error');
+  //       }
+  //     },
+  //     error => {
+  //       // Show error toast on failure
+  //       this.showError(error.error.message || 'An error occurred');
+  //       console.error(error); // Log the error for debugging
+  //     }
+  //   );
+  // }
+
+
   submitData() {
+    // Combine personalInfo and bankInfo into finalData
     const finalData = {
       ...this.personalInfo, // Merge personal information (Step 1 data)
       ...this.companyInfo // Merge bank information (Step 2 data)
     };
   
-    // Send data to the backend using userService
-    this.userService.uploadUserData(finalData).pipe(
-      switchMap(response => {
-        if (response.message) {
-          // Clear localStorage after successful submission
-          localStorage.removeItem('mailform');
-          localStorage.removeItem('mailform2');
-
-          // Call payNowByStripe with the necessary payload
-          const stripePayload = { amount: 135, currency: 'USD' }; // Example payload, replace with your actual data
-          return this.userService.payNowByStripe(stripePayload);
-        } else {
-          throw new Error('Data submission failed'); // Handle case where response does not contain expected message
-        }
-      })
-    ).subscribe(
-      payNowResponse => {
-        // Assuming the response contains a URL to redirect for payment
-        const paymentUrl = payNowResponse.stripeData.url; // Replace 'url' with the actual field name from the response
-
-        if (paymentUrl) {
-          // Navigate to the payment URL
-          window.location.href = paymentUrl; // Redirecting the browser to the payment page
-        } else {
-          this.toastr.error('Payment URL not found', 'Error');
-        }
-      },
-      error => {
-        // Show error toast on failure
-        this.showError(error.error.message || 'An error occurred');
-        console.error(error); // Log the error for debugging
+    // Show a SweetAlert confirmation dialog
+    Swal.fire({
+      title: 'Confirm Your Data',
+      text: 'Once you proceed to the next step, you won’t be able to edit your information. Please confirm your data.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#FA2E52',
+      confirmButtonText: 'Yes, I confirm',
+      cancelButtonText: 'Review Data'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const payload = {
+          firstName: finalData.firstName,
+          lastName: finalData.lastName,
+          email: finalData.email,
+          nationality: finalData.nationality,
+          phone: finalData.mobileNumber, // Ensure to map this correctly
+          dob: finalData.birthday,
+          service: "Bank_opening"
+        };
+  
+        this.isLoading = true; // Show loading indicator if necessary
+  
+        // First API call to callSalesforceEndpoint
+        this.userService.callSalesforceEndpoint(payload).pipe(
+          switchMap((response: any) => {
+            console.log('Salesforce Response:', response);
+            this.dataStorageService.setSalesforceResponse(response);
+            // Prepare payload for the second API call
+            const quotePayload = {
+              lead_source: response.data.leadWithDetails.LeadSource,
+              currencyCode: response.data.quotePaymentWithDetails.Currency, // Update this as needed
+              quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has quotePaymentId
+              account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has account_id
+              payment_url: `https://virtuzone.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
+            };
+            // Call the second API
+            return this.userService.callSalesforceQuoteService(quotePayload);
+          })
+        ).subscribe(
+          (quoteResponse: any) => {
+            console.log('Quote Service Response:', quoteResponse);
+            this.isLoading = false; // Hide loader
+  
+            // Save finalData in localStorage
+            localStorage.setItem('finalDatabussiness', JSON.stringify(finalData));
+  
+            // Navigate to the next step
+            this.router.navigate(['/bussiness-show-details']); // Replace with your actual route
+          },
+          (error) => {
+            // Handle errors from the Salesforce API calls
+            Swal.fire('Error', 'There was an error processing your request. Please try again.', 'error');
+            console.error(error);
+            this.isLoading = false; // Hide loader in case of error
+          }
+        );
       }
-    );
+      // No action needed if the user cancels the confirmation
+    });
   }
-
+  
 
 
   toggleView() {

@@ -24,6 +24,13 @@ export class BussinessShowDeatilsComponent {
   salesforceResponse: any;
   quoteWithProductDetails: any;
 
+  showAll = false;
+  displayShareholders :any= [];
+
+
+  companyInfo: any = {}; // To store bank service information (Step 2 data)
+  shareholders :any= [];
+  
   constructor(
     private http: HttpClient,
     private toastr: ToastrService,
@@ -54,17 +61,23 @@ export class BussinessShowDeatilsComponent {
         }
       });
     } else if (this.isBrowser) {
-      const step1Data = localStorage.getItem('step1Data');
-      const step2Data = localStorage.getItem('step2Data');
-
-      if (!step1Data || !step2Data) {
-        this.router.navigate(['/home']);  // Navigate to home if there's no data
+      // Retrieve data from localStorage
+   
+      const mailform = localStorage.getItem('step1Data');
+      const mailform2 = localStorage.getItem('mailform2');
+  console.log(mailform2,"sssss")
+      // If there is no data in localStorage, navigate away from this page
+      if ( !mailform || !mailform2 ) {
+        // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
+        this.router.navigate(['/home']); // Replace with the correct route
       } else {
-        this.personalInfo = JSON.parse(step1Data);
-        this.bankInfo = JSON.parse(step2Data);
+        // Parse and store data if it exists
+        this.personalInfo = JSON.parse(mailform);
+        this.companyInfo = JSON.parse(mailform2);
+        this.shareholders=this.companyInfo.shareholders
+        this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
+        console.log(  this.displayShareholders)
 
-        // Prevent back navigation
-        this.preventBackNavigation();
       }
     }
   }
@@ -116,17 +129,54 @@ export class BussinessShowDeatilsComponent {
     });
   }
   
+  // submitData() {
+  //   const finalData = {
+  //     ...this.personalInfo,
+  //     ...this.bankInfo
+  //   };
+
+  //   this.userService.uploadUserData(finalData).pipe(
+  //     switchMap(response => {
+  //       if (response.message) {
+  //         localStorage.removeItem('step1Data');
+  //         localStorage.removeItem('step2Data');
+
+  //         const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
+
+  //         if (quotePaymentId) {
+  //           const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
+  //           window.location.href = paymentUrl;
+  //           return of(null);
+  //         } else {
+  //           throw new Error('Quote Payment ID not found');
+  //         }
+  //       } else {
+  //         throw new Error('Data submission failed');
+  //       }
+  //     })
+  //   ).subscribe(
+  //     () => {},
+  //     error => {
+  //       this.toastr.error(error.message || 'An error occurred', 'Error');
+  //       console.error(error);
+  //     }
+  //   );
+  // }
+
+
   submitData() {
     const finalData = {
-      ...this.personalInfo,
-      ...this.bankInfo
+      ...this.personalInfo, // Merge personal information (Step 1 data)
+      ...this.companyInfo // Merge bank information (Step 2 data)
     };
-
+  
+    // Send data to the backend using userService
     this.userService.uploadUserData(finalData).pipe(
       switchMap(response => {
         if (response.message) {
           localStorage.removeItem('step1Data');
-          localStorage.removeItem('step2Data');
+          localStorage.removeItem('mailform');
+          localStorage.removeItem('mailform2');
 
           const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
 
@@ -149,4 +199,15 @@ export class BussinessShowDeatilsComponent {
       }
     );
   }
+  showError(errorMessage: string): void {
+    this.toastr.error(errorMessage || 'Error submitting data', 'Error', {
+      positionClass: this.getToastPosition()
+    });
+  }
+
+  getToastPosition(): string {
+    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left'; // Adjust based on scroll
+  }
+
 }
