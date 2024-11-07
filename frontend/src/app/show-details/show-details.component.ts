@@ -173,7 +173,9 @@ export class ShowDetailsComponent implements AfterViewInit {
       title: 'Confirm Your Data',
       text: 'Once you proceed to the next step, you won’t be able to edit your information. Please confirm your data.',
       icon: 'warning',
+      
       showCancelButton: true,
+      confirmButtonColor: '#FA2E52',
       confirmButtonText: 'Yes, I confirm',
       cancelButtonText: 'Review Data'
     }).then((result) => {
