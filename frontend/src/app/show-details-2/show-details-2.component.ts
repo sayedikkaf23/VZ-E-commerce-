@@ -46,7 +46,8 @@ export class ShowDetails2Component implements AfterViewInit {
         title: 'Session Terminated',
         text: 'Your session has expired. You need to fill the form from the start.',
         icon: 'warning',
-        confirmButtonText: 'OK'
+        confirmButtonText: 'OK',
+         confirmButtonColor: '#FF5A5F'
       }).then((result) => {
         if (result.value) {
           this.router.navigate(['/home']);  // Navigate to the start of the form
@@ -111,7 +112,7 @@ export class ShowDetails2Component implements AfterViewInit {
     window.addEventListener('popstate', (event) => {
       history.pushState(null, '', this.router.url);
       // Display an optional warning message
-      this.toastr.warning('Back navigation is disabled on this page.', 'Warning');
+      this.toastr.error('Back navigation is disabled on this page.', 'Warning');
     });
   }
   

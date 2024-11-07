@@ -57,7 +57,9 @@
 .w-200 thead tr:nth-child(2) th {
   border: none;
 }
-
+.sweet-alert button.cancel {
+  background-color: #FE9475;
+}
 /* Responsive Layout for Smaller Screens */
 @media (max-width: 768px) {
   .w-200 th, .w-200 td {
