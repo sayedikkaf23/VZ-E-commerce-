@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ToastrService } from 'ngx-toastr'; // For toast notifications
 
 @Component({
   selector: 'app-show-details-2',
@@ -6,5 +7,6 @@ import { Component } from '@angular/core';
   styleUrl: './show-details-2.component.css'
 })
 export class ShowDetails2Component {
+  isLoading = false;
 
 }
