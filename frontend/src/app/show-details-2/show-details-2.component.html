@@ -32,12 +32,12 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>5</td>
-                                    <td>6</td>
-                                    <td class="currency">8</td>
-                                    <td class="currency">5</td>
-                                </tr>
+                                <tr *ngFor="let product of salesforceResponse?.data?.quoteWithProductDetails?.product">
+                                    <td>{{ product.productName }}</td>
+                                    <td>{{ product.productQunatity }}</td>
+                                    <td class="currency">{{ product.productUnitPrice | currency }}</td>
+                                    <td class="currency">{{ (product.productUnitPrice * product.productQunatity * 1.05) | currency }}</td>
+                                  </tr>
                             </tbody>
                         </table>
                     </div>
@@ -53,27 +53,27 @@
                         <table class="w-100">
                             <tbody>
                                 <tr>
-                                    <th>Price</th>
-                                    <td>$140</td>
+                                  <th>Price</th>
+                                  <td>AED {{ quoteWithProductDetails?.totalPrice || 0 }} </td>
                                 </tr>
                                 <tr>
-                                    <th>Tax</th>
-                                    <td>$5</td>
+                                  <th>VAT</th>
+                                  <td>AED {{ (quoteWithProductDetails?.totalIncludingVAT || 0) - (quoteWithProductDetails?.totalPrice || 0) }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Discount Price</th>
-                                    <td>-$10</td>
+                                  <th>Discount Price</th>
+                                  <td>AED {{ quoteWithProductDetails?.Discount || 0 }}</td>
                                 </tr>
                                 <tr>
-                                    <th>Total Amount</th>
-                                    <td>$135</td>
+                                  <th>Total Amount</th>
+                                  <td>AED {{ quoteWithProductDetails?.totalIncludingVAT || 0 }}</td>
                                 </tr>
-                            </tbody>
+                              </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-            <button class="btn primary-btn w-100">Pay Now</button>
+            <button (click)="submitData()"  class="btn primary-btn w-100">Pay Now</button>
         </div>
     </section>
 

@@ -14,7 +14,7 @@ const userDetailsSchema = new mongoose.Schema({
    type: { type: String },
     firstName: { type: String },
     lastName: { type: String },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: true },
     nationality: { type: String },
     birthday: { type: Date },
     resident: { type: String }, // added 'resident' field
