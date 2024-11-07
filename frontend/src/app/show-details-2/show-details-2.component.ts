@@ -1,71 +1,75 @@
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, Location } from '@angular/common';
 import { Component, AfterViewInit, Inject, PLATFORM_ID, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ToastrService } from 'ngx-toastr'; // For toast notifications
+import { ToastrService } from 'ngx-toastr';
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
-import { DataStorageService } from '../service/data-storage.service'; // Import the service
+import { DataStorageService } from '../service/data-storage.service';
 import AOS from 'aos';
-import { switchMap } from 'rxjs';
-import { of } from 'rxjs';
+import { switchMap, of } from 'rxjs';
 import Swal from 'sweetalert2';
+
 declare var $: any;
 
 @Component({
   selector: 'app-show-details-2',
   templateUrl: './show-details-2.component.html',
-  styleUrls: ['./show-details-2.component.css'] // Fixed styleUrls
+  styleUrls: ['./show-details-2.component.css']
 })
-export class ShowDetails2Component implements AfterViewInit { // Implement AfterViewInit interface
+export class ShowDetails2Component implements AfterViewInit {
   isLoading = false;
-
   isBrowser: boolean;
-  personalInfo: any = {}; // To store personal information (Step 1 data)
-  bankInfo: any = {}; // To store bank service information (Step 2 data)
+  personalInfo: any = {};
+  bankInfo: any = {};
   salesforceResponse: any;
   quoteWithProductDetails: any;
- 
+
   constructor(
     private http: HttpClient,
-    private toastr: ToastrService, // For showing notifications
+    private toastr: ToastrService,
     private router: Router,
     private dataStorageService: DataStorageService,
     private userService: UserService,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private location: Location // Inject Location service
   ) {
-    this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
+    this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
-
   ngOnInit(): void {
-
-
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
-
     this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
-    console.log( this.salesforceResponse,"salefoce",this.quoteWithProductDetails)
-    // Ensure this code runs only in the browser environment
-    if (this.isBrowser) {
-      // Retrieve data from localStorage
+
+    // Check if the salesforceResponse is empty or null
+    if (!this.salesforceResponse) {
+      Swal.fire({
+        title: 'Session Terminated',
+        text: 'Your session has expired. You need to fill the form from the start.',
+        icon: 'warning',
+        confirmButtonText: 'OK'
+      }).then((result) => {
+        if (result.value) {
+          this.router.navigate(['/home']);  // Navigate to the start of the form
+        }
+      });
+    } else if (this.isBrowser) {
       const step1Data = localStorage.getItem('step1Data');
       const step2Data = localStorage.getItem('step2Data');
-    
-  
-      // If there is no data in localStorage, navigate away from this page
-      if (!step1Data || !step2Data  ) {
-        // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
-        this.router.navigate(['/home']); // Replace with the correct route
+
+      if (!step1Data || !step2Data) {
+        this.router.navigate(['/home']);  // Navigate to home if there's no data
       } else {
-        // Parse and store data if it exists
         this.personalInfo = JSON.parse(step1Data);
         this.bankInfo = JSON.parse(step2Data);
+
+        // Prevent back navigation
+        this.preventBackNavigation();
       }
     }
   }
-  
 
   ngAfterViewInit(): void {
-    if (this.isBrowser) {  // Ensure AOS and jQuery code runs only in the browser
+    if (this.isBrowser) {
       AOS.init();
 
       $(window).scroll(function () {
@@ -99,48 +103,49 @@ export class ShowDetails2Component implements AfterViewInit { // Implement After
     }
   }
 
-
+  preventBackNavigation() {
+    // Push the current route to history to prevent back navigation
+    history.pushState(null, '', this.router.url);
+  
+    // Listen for 'popstate' events to block back navigation
+    window.addEventListener('popstate', (event) => {
+      history.pushState(null, '', this.router.url);
+      // Display an optional warning message
+      this.toastr.warning('Back navigation is disabled on this page.', 'Warning');
+    });
+  }
+  
   submitData() {
     const finalData = {
-      ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.bankInfo // Merge bank information (Step 2 data)
+      ...this.personalInfo,
+      ...this.bankInfo
     };
- 
-    // Send data to the backend using userService
+
     this.userService.uploadUserData(finalData).pipe(
       switchMap(response => {
         if (response.message) {
-          // Clear localStorage after successful submission
           localStorage.removeItem('step1Data');
           localStorage.removeItem('step2Data');
- 
- 
+
           const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
- 
+
           if (quotePaymentId) {
-            // Redirect to the payment URL
             const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
             window.location.href = paymentUrl;
- 
-            // Return an observable to satisfy switchMap's requirement
             return of(null);
           } else {
             throw new Error('Quote Payment ID not found');
           }
         } else {
-          throw new Error('Data submission failed'); // Handle case where response does not contain expected message
+          throw new Error('Data submission failed');
         }
       })
     ).subscribe(
       () => {},
       error => {
-        // Show error toast on failure
         this.toastr.error(error.message || 'An error occurred', 'Error');
-        console.error(error); // Log the error for debugging
+        console.error(error);
       }
     );
   }
-
-
-  
 }

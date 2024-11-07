@@ -206,6 +206,61 @@ exports.callSalesforceEndpoint = async (req, res) => {
 };
 
 
+exports.callSalesforceQuoteService = async (req, res) => {
+  try {
+    // Step 1: Find the document in the database using quotePaymentId
+    const { quotePaymentId } = req.body; // Assume quotePaymentId is passed in the request body
+    const document = await Pidata.findOne({ "quotePaymentWithDetails.QuotePaymentId": quotePaymentId });
+
+    if (!document) {
+      return res.status(404).json({ message: "No record found for the provided quotePaymentId" });
+    }
+
+    // Step 2: Construct the JSON body to send to Salesforce using data from the found document
+    const requestBody = {
+      lead_source: "App",
+      currencyCode: "AED",
+      quotePaymentId: document.quotePaymentWithDetails.QuotePaymentId,
+      account_id: document.quotePaymentWithDetails.AccountId,
+      payment_url: `https://virtuzone.yeepeey.com/onlinepayment/${document.quotePaymentWithDetails.QuotePaymentId}`
+    };
+    console.log("Request to Salesforce:", requestBody);
+
+    // Step 3: Get an access token from Salesforce
+    const tokenResponse = await axios.post(
+      `https://test.salesforce.com/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
+    );
+
+    const accessToken = tokenResponse.data.access_token;
+    const salesforceUrl = tokenResponse.data.instance_url;
+
+    // Step 4: Make the HTTP POST request to the Salesforce endpoint
+    const salesforceResponse = await axios.put(
+      `${salesforceUrl}/services/apexrest/piQuoteService/`,
+      requestBody,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json"
+        }
+      }
+    );
+
+    const responseData = salesforceResponse.data;
+    console.log("Salesforce Response:", responseData);
+
+    // Optional Step 5: Update the database document with the Salesforce response data (if needed)
+    document.salesforceResponseData = responseData; // Assuming a field to store response data exists
+    await document.save();
+
+    // Step 6: Send a success response
+    res.status(200).json({ message: "Data sent successfully to Salesforce", data: responseData });
+  } catch (error) {
+    console.error("Error calling Salesforce endpoint:", error);
+    res.status(500).json({ message: "Error calling Salesforce endpoint", details: error.message });
+  }
+};
+
 exports.getAllSubmissions = async (req, res) => {
   try {
     const allSubmissions = await UserDetails.find(); // Fetch all user submissions

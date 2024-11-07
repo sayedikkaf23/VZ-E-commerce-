@@ -6,6 +6,7 @@ const { multipleUpload, singleUpload } = require('../middleware/fileUpload'); //
 // Route to handle form submission with multiple file uploads
 router.post('/submit', userController.submit);
 router.post('/callSalesforceEndpoint', userController.callSalesforceEndpoint);
+router.post('/callSalesforceQuoteService', userController.callSalesforceQuoteService);
 
 // Route to handle service submission with a single file upload
 router.post('/submit-service', singleUpload, userController.submitService);

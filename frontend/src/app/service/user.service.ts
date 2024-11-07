@@ -31,6 +31,10 @@ export class UserService {  // Changed the service name to UserService
     return this.http.post(`${this.url}/user/callSalesforceEndpoint`, payload); // Sending the payload to the backend
   }
   
+  callSalesforceQuoteService(payload:any): Observable<any> {
+    return this.http.post(`${this.url}/user/callSalesforceQuoteService`, payload); // Sending the payload to the backend
+  }
+  
 
   getServices(): Observable<any> {
     return this.http.get(`${this.url}/user/services`); // GET request to fetch all services

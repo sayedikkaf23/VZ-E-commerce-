@@ -169,52 +169,66 @@ export class ShowDetailsComponent implements AfterViewInit {
     };
   
     // Show a SweetAlert confirmation dialog
-       // Show a SweetAlert confirmation dialog
-       Swal.fire({
-        title: 'Confirm Your Data',
-        text: 'Once you proceed to the next step, you won’t be able to edit your information. Please confirm your data.',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#FA2E52',
-        confirmButtonText: 'Yes, I confirm',
-        cancelButtonText: 'Review Data'
+    Swal.fire({
+      title: 'Confirm Your Data',
+      text: 'Once you proceed to the next step, you won’t be able to edit your information. Please confirm your data.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#FA2E52',
+      confirmButtonText: 'Yes, I confirm',
+      cancelButtonText: 'Review Data'
     }).then((result) => {
-        if (result.isConfirmed) {
-            const payload = {
-                firstName: finalData.firstName,
-                lastName: finalData.lastName,
-                email: finalData.email,
-                nationality: finalData.nationality,
-                phone: finalData.mobileNumber, // Ensure to map this correctly
-                dob: finalData.birthday,
-                service: "Bank_opening"
+      if (result.isConfirmed) {
+        const payload = {
+          firstName: finalData.firstName,
+          lastName: finalData.lastName,
+          email: finalData.email,
+          nationality: finalData.nationality,
+          phone: finalData.mobileNumber, // Ensure to map this correctly
+          dob: finalData.birthday,
+          service: "Bank_opening"
+        };
+  
+        this.isLoading = true; // Show loading indicator if necessary
+  
+        // First API call to callSalesforceEndpoint
+        this.userService.callSalesforceEndpoint(payload).pipe(
+          switchMap((response: any) => {
+            console.log('Salesforce Response:', response);
+            this.dataStorageService.setSalesforceResponse(response);
+            // Prepare payload for the second API call
+            const quotePayload = {
+              lead_source: response.data.leadWithDetails.LeadSource,
+              currencyCode: response.data.quotePaymentWithDetails.Currency, // Update this as needed
+              quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has quotePaymentId
+              account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has account_id
+              payment_url: `https://virtuzone.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
             };
-
-            this.isLoading = true; // Show loading indicator if necessary
-
-            this.userService.callSalesforceEndpoint(payload).subscribe(
-                (response: any) => {
-                    // Handle the successful response from Salesforce
-                    console.log('Salesforce Response:', response);
-                    this.dataStorageService.setSalesforceResponse(response);
-                    this.isLoading = false; // Hide loader
-
-                    // Save finalData in localStorage
-                    localStorage.setItem('finalData', JSON.stringify(finalData));
-
-                    // Navigate to the next step
-                    this.router.navigate(['/ShowDetails-2']); // Replace '/next-step' with your actual route
-                },
-                (error) => {
-                    // Handle errors from the Salesforce API call
-                    Swal.fire('Error', 'There was an error sending data to Salesforce. Please try again.', 'error');
-                    console.error(error);
-                    this.isLoading = false; // Hide loader in case of error
-                }
-            );
-        } 
-        // No action needed if the user cancels the confirmation
+            // Call the second API
+            return this.userService.callSalesforceQuoteService(quotePayload);
+          })
+        ).subscribe(
+          (quoteResponse: any) => {
+            console.log('Quote Service Response:', quoteResponse);
+            this.isLoading = false; // Hide loader
+  
+            // Save finalData in localStorage
+            localStorage.setItem('finalData', JSON.stringify(finalData));
+  
+            // Navigate to the next step
+            this.router.navigate(['/ShowDetails-2']); // Replace with your actual route
+          },
+          (error) => {
+            // Handle errors from the Salesforce API calls
+            Swal.fire('Error', 'There was an error processing your request. Please try again.', 'error');
+            console.error(error);
+            this.isLoading = false; // Hide loader in case of error
+          }
+        );
+      }
+      // No action needed if the user cancels the confirmation
     });
   }
+  
   
 }
