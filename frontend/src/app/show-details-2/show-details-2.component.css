@@ -1,50 +1,4 @@
-.no-wrap {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  .product-table {
-    width: 100%;
-    border-collapse: collapse;
-  }
-  
-  .product-table th,
-  .product-table td {
-    padding: 10px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .currency {
-    text-align: right;
-    padding-right: 20px; /* Add extra padding to separate currency values */
-  }
-  
-  .product-table th {
-    font-weight: bold;
-  }
-  
-  .product-table thead th {
-    border-bottom: 2px solid #333;
-  }
-  
-  .product-table tbody tr:hover {
-    background-color: #f9f9f9; /* Highlight row on hover */
-  }
-  
-  
-  .right-align {
-    text-align: right;
-  }
-  
-  .no-wrap {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  
-   /* Loader Container */
+ /* Loader Container */
    .loader-container {
     position: fixed; /* Covers the whole viewport */
     top: 0;
@@ -67,19 +21,46 @@
     height: 40px;
     animation: spin 1s linear infinite;
   }
-  
-  /* Spin Animation */
-  @keyframes spin {
-    0% {
-      transform: rotate(0deg);
-      border-top-color: #FF5A5F;
-    }
-    50% {
-      border-top-color: #9B51E0; /* Transition color */
-    }
-    100% {
-      transform: rotate(360deg);
-      border-top-color: #FF5A5F;
-    }
+/* Table Styling */
+.w-200 {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  margin-top: 20px;
+}
+
+.w-200 th, .w-200 td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+/* .w-200 th {
+  font-weight: bold;
+} */
+
+.w-200 td.currency {
+  text-align: right; /* Align currency values to the right */
+}
+
+/* Specific Column Alignment */
+.w-200 th:nth-child(2), .w-200 td:nth-child(2) {
+  text-align: center; /* Center alignment for Quantity column */
+}
+
+/* Styling for Total Row */
+/* .w-200 .total-row td {
+  font-weight: bold;
+} */
+
+/* Remove border for empty header row */
+.w-200 thead tr:nth-child(2) th {
+  border: none;
+}
+
+/* Responsive Layout for Smaller Screens */
+@media (max-width: 768px) {
+  .w-200 th, .w-200 td {
+      padding: 8px 10px;
   }
-  
+}
