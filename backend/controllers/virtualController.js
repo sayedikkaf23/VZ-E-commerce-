@@ -1,100 +1,89 @@
 const fileUpload = require('../middleware/fileUpload'); // Import the multer middleware
 const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
+const Pidata = require('../models/pidata');
 
 // Handle form submission and file uploads
 exports.submitVirtualDetails = async (req, res) => {
   try {
-    console.log('Files:', req.files);  // Log req.files for debugging
-    console.log('Form Data:', req.body);
-
-    if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).json({ message: 'No files were uploaded.' });
-    }
-
-    const { 
-      firstName, 
-      lastName, 
-      email, 
-      nationality, 
+    console.log('Request Body:', req.body);
+    const {
+      firstName,
+      lastName,
+      email,
+      nationality,
       mobileNumber,
       birthday,
-      CompanyName, 
-      CompanyIncorporated, 
-      Website, 
-      companylicensed, 
-      tradelicense, 
-      shareholdercount, 
-      shareholders 
+      CompanyName,
+      CompanyIncorporated,
+      Website,
+      tradelicense,
+      shareholdercount,
+      Companylicensed,
+      shareholders = [], // Default to an empty array if not provided
+      companyTradeLicense
     } = req.body;
 
-    // Parse mobile number and shareholders if needed
-    const parsedMobileNumber = typeof mobileNumber === "string" ? JSON.parse(mobileNumber) : mobileNumber;
-
-    // Parse shareholders if it's a JSON string
-    let parsedShareholders = [];
-    if (Array.isArray(shareholders)) {
-      parsedShareholders = shareholders;
-    } else if (typeof shareholders === "string") {
-      try {
-        parsedShareholders = JSON.parse(shareholders);
-      } catch (e) {
-        console.error("Error parsing shareholders JSON:", e);
-      }
-    }
-
-    // Map over parsedShareholders to include file paths for each shareholder
-    parsedShareholders = parsedShareholders.map((shareholder, index) => {
-      // Find files associated with this shareholder by their fieldnames
-      const shareholderFiles = req.files.filter(file => 
-        file.fieldname.startsWith(`shareholders[${index}][files]`)
-      );
-
-      return {
-        ...shareholder,
-        files: shareholderFiles.map(file => ({
-          originalName: file.originalname,
-          path: file.path, // Path where the file was saved
-          mimetype: file.mimetype,
-          size: file.size
-        }))
-      };
-    });
+    // Check if Company is incorporated in UAE and shareholders is not empty
+    const shareholdersWithFiles = CompanyIncorporated == 'United Arab Emirates' && shareholders.length > 0 
+      ? shareholders.map((shareholder, index) => {
+          if (!shareholder.files || shareholder.files.length === 0 || !shareholder.files[0].url) {
+            throw new Error(`Files with URL are required for shareholder at index ${index}.`);
+          }
+          // Map file details to match schema
+          return {
+            ...shareholder,
+            files: shareholder.files.map(file => ({
+              name: file.name,
+              url: file.url // Assuming schema expects a 'url'
+            }))
+          };
+        })
+      : shareholders; // If not UAE or no shareholders, return them as is without file mapping
 
     const pidataUser = await Pidata.findOne({ "leadWithDetails.Email": email });
     if (!pidataUser) {
       return res.status(404).json({ message: "Related Pidata entry not found" });
     }
 
-    // Extract LeadId and QuotePaymentId from the found Pidata document
     const { LeadId } = pidataUser.leadWithDetails;
     const { QuotePaymentId } = pidataUser.quotePaymentWithDetails;
-    // Create a new record including all details
-    const userDetails = new VirtualDetails({
+
+    const virtualDetailsData = new VirtualDetails({
       firstName,
       lastName,
       email,
       nationality,
-      birthday,
-      mobileNumber: parsedMobileNumber,
+      mobileNumber,
+      birthday: new Date(birthday),
       CompanyName,
       CompanyIncorporated,
       Website,
       tradelicense,
-      companylicensed,
       shareholdercount,
-      shareholders: parsedShareholders, // Includes file paths and metadata for each shareholder
-      LeadId, // Add LeadId from Pidata
-      QuotePaymentId, // Add QuotePaymentId from Pidata
+      Companylicensed,
+      shareholders: shareholdersWithFiles,
+      companyTradeLicense,
+      LeadId,
+      QuotePaymentId
     });
 
-    await userDetails.save();
+    await virtualDetailsData.save();
 
-    res.status(201).json({ message: 'Details submitted successfully', userDetails });
+    res.status(201).json({
+      message: 'Virtual Details submitted successfully',
+      data: virtualDetailsData
+    });
+
   } catch (error) {
-    console.error("Error saving details:", error);
-    res.status(500).json({ error: 'Error saving details', details: error.message });
+    console.error("Error in processing:", error);
+    res.status(500).json({
+      error: 'Error processing request',
+      details: error.message
+    });
   }
 };
+
+
 
 
 

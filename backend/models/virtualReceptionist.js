@@ -6,7 +6,11 @@ const shareholderSchema = new mongoose.Schema({
   dob: { type: Date },
   nationalityshareholder: { type: String },
   passportNumber: { type: String }, // Passport number for identification
-  files: [{ name: String, path: String }], // Array of files associated with the shareholder, each with a name and path
+  files: [{
+    name: { type: String },
+    url: { type: String }
+}]
+
 });
 
 const virtualDetailsSchema = new mongoose.Schema(
@@ -14,7 +18,7 @@ const virtualDetailsSchema = new mongoose.Schema(
   
     firstName: { type: String },
     lastName: { type: String },
-    email: { type: String, required: true},
+    email: { type: String},
     nationality: { type: String },
     birthday:{ type: String },
     mobileNumber: {
@@ -32,8 +36,8 @@ const virtualDetailsSchema = new mongoose.Schema(
     tradelicense: { type: String },
     shareholdercount: { type: String },
     shareholders: [shareholderSchema], // Array of shareholder objects
-    LeadId: { type: String }, 
-    QuotePaymentId: { type: String }, 
+    LeadId: { type: String, index: true }, // Indexed for better performance on lookups
+    QuotePaymentId: { type: String, index: true }, 
   },
   { timestamps: true }
 );

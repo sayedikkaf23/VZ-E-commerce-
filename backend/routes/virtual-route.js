@@ -5,7 +5,7 @@ const virtualDetails = require('../controllers/virtualController'); // Ensure pa
 const awsController = require('../middleware/awsController');
 
 // Route for file uploads
-router.post('/SubmitvirtualDetail', upload.multipleUpload, virtualDetails.submitVirtualDetails);
+router.post('/SubmitvirtualDetail', virtualDetails.submitVirtualDetails);
 router.get('/getVirtualDetails', virtualDetails.getVirtualDetails);
 router.post('/upload-file', awsController.multerUpload, awsController.uploadFileToS3);
 

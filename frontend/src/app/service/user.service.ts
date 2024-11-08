@@ -14,9 +14,12 @@ export class UserService {  // Changed the service name to UserService
   uploadUserData(formData: FormData): Observable<any> {
     return this.http.post(`${this.url}/user/submit`, formData); // Combining base URL with endpoint
   }
-  virtualform(formData: FormData): Observable<any> {
-    return this.http.post(`${this.url}/virtual/SubmitvirtualDetail`, formData); // Combining base URL with endpoint
+  virtualForm(data: any): Observable<any> {
+    return this.http.post(`${this.url}/virtual/SubmitvirtualDetail`, data, {
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
+  
   mailform(formData: FormData): Observable<any> {
     return this.http.post(`${this.url}/mail/SubmitmailDetail`, formData); // Combining base URL with endpoint
   }

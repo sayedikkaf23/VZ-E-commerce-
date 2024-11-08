@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
 import AOS from 'aos';
 import { FileStorageService } from '../service/files.service';
 import { switchMap } from 'rxjs';
+import Swal from 'sweetalert2';
+import { DataStorageService } from '../service/data-storage.service'; // Import the service
 
 declare var $: any;
 
@@ -17,6 +19,7 @@ declare var $: any;
   styleUrl: './virtual-receptionist-details.component.css'
 })
 export class VirtualReceptionistDetailsComponent {
+  isLoading = false;
 
   showAll = false;
   displayShareholders :any= [];
@@ -32,6 +35,7 @@ i: any;
     private router: Router,
     private userService: UserService,
     private fileStorageService: FileStorageService,
+    private dataStorageService: DataStorageService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -149,61 +153,132 @@ i: any;
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left'; // Adjust based on scroll
   }
-  submitData() {
-    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
-    const formData = new FormData();
+  // submitData() {
+  //   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+  //   const formData = new FormData();
   
-    // Append general data fields, excluding shareholders
-    for (const key in mergedData) {
-      if (mergedData.hasOwnProperty(key) && key !== 'shareholders') {
-        const value = mergedData[key];
-        formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
-      }
-    }
+  //   // Append general data fields, excluding shareholders
+  //   for (const key in mergedData) {
+  //     if (mergedData.hasOwnProperty(key) && key !== 'shareholders') {
+  //       const value = mergedData[key];
+  //       formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
+  //     }
+  //   }
   
-    // Append each shareholder's data and their actual File objects
-    mergedData.shareholders.forEach((shareholder: any, index: number) => {
-      // Append shareholder metadata fields, excluding files
-      for (const field in shareholder) {
-        if (field !== 'files') {
-          formData.append(`shareholders[${index}][${field}]`, shareholder[field]);
-        }
-      }
+  //   // Append each shareholder's data and their actual File objects
+  //   mergedData.shareholders.forEach((shareholder: any, index: number) => {
+  //     // Append shareholder metadata fields, excluding files
+  //     for (const field in shareholder) {
+  //       if (field !== 'files') {
+  //         formData.append(`shareholders[${index}][${field}]`, shareholder[field]);
+  //       }
+  //     }
   
-      // Retrieve actual files from `fileStorageService`
-      const files = this.fileStorageService.getFiles(index);
-      if (files.length > 0) {
-        files.forEach((file: File, fileIndex: number) => {
-          formData.append(`shareholders[${index}][files][${fileIndex}]`, file);
-        });
-      } else {
-        console.warn(`No files found for shareholder index ${index}`);
-      }
-    });
+  //     // Retrieve actual files from `fileStorageService`
+  //     const files = this.fileStorageService.getFiles(index);
+  //     if (files.length > 0) {
+  //       files.forEach((file: File, fileIndex: number) => {
+  //         formData.append(`shareholders[${index}][files][${fileIndex}]`, file);
+  //       });
+  //     } else {
+  //       console.warn(`No files found for shareholder index ${index}`);
+  //     }
+  //   });
   
-    // Log FormData to verify structure
-    formData.forEach((value, key) => {
-      console.log(`${key}:`, value);
-    });
+  //   // Log FormData to verify structure
+  //   formData.forEach((value, key) => {
+  //     console.log(`${key}:`, value);
+  //   });
   
-    // Send the data to backend
-    this.userService.virtualform(formData).subscribe(
-      response => {
-        console.log('Data submitted successfully:', response);
-        localStorage.clear();
-        this.toastr.success('Data submitted successfully', 'Success');
-      },
-      error => {
-        console.error('Error submitting data:', error);
-        this.showError(error.error.message || 'An error occurred');
-      }
-    );
-  }
+  //   // Send the data to backend
+  //   this.userService.virtualform(formData).subscribe(
+  //     response => {
+  //       console.log('Data submitted successfully:', response);
+  //       localStorage.clear();
+  //       this.toastr.success('Data submitted successfully', 'Success');
+  //     },
+  //     error => {
+  //       console.error('Error submitting data:', error);
+  //       this.showError(error.error.message || 'An error occurred');
+  //     }
+  //   );
+  // }
   
   
   
   
 // VirtualReceptionist2Component.ts
+
+
+submitData() {
+  // Combine personalInfo and bankInfo into finalData
+
+  const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+
+  // Show a SweetAlert confirmation dialog
+  Swal.fire({
+    title: 'Confirm Your Data',
+    text: 'Once you proceed to the next step, you won’t be able to edit your information. Please confirm your data.',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#FA2E52',
+    confirmButtonText: 'Yes, I confirm',
+    cancelButtonText: 'Review Data'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      const payload = {
+        firstName: mergedData.firstName,
+        lastName: mergedData.lastName,
+        email: mergedData.email,
+        nationality: mergedData.nationality,
+        phone: mergedData.mobileNumber, // Ensure to map this correctly
+        dob: mergedData.birthday,
+        service: "virtual_reception"
+      };
+
+      this.isLoading = true; // Show loading indicator if necessary
+
+      // First API call to callSalesforceEndpoint
+      this.userService.callSalesforceEndpoint(payload).pipe(
+        switchMap((response: any) => {
+          console.log('Salesforce Response:', response);
+          this.dataStorageService.setSalesforceResponse(response);
+          // Prepare payload for the second API call
+          const quotePayload = {
+            lead_source: response.data.leadWithDetails.LeadSource,
+            currencyCode: response.data.quotePaymentWithDetails.Currency, // Update this as needed
+            quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has quotePaymentId
+            account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has account_id
+            payment_url: `https://virtuzone.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
+          };
+          // Call the second API
+          return this.userService.callSalesforceQuoteService(quotePayload);
+        })
+      ).subscribe(
+        (quoteResponse: any) => {
+          console.log('Quote Service Response:', quoteResponse);
+          this.isLoading = false; // Hide loader
+
+          // Save finalData in localStorage
+          localStorage.setItem('finalDataVirtual', JSON.stringify(mergedData));
+
+          // Navigate to the next step
+          this.router.navigate(['/virtual-summary']); // Replace with your actual route
+        },
+        (error) => {
+          // Handle errors from the Salesforce API calls
+          Swal.fire('Error', 'There was an error processing your request. Please try again.', 'error');
+          console.error(error);
+          this.isLoading = false; // Hide loader in case of error
+        }
+      );
+    }
+    // No action needed if the user cancels the confirmation
+  });
+}
+
+
+
 
 isImageFile(url: string): boolean {
   return url.match(/\.(jpeg|jpg|gif|png)$/) !== null;

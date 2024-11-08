@@ -41,6 +41,7 @@ import { AdminMailManagementComponent } from './admin-mail-management/admin-mail
 import { VirtualManagementComponent } from './virtual-management/virtual-management.component';
 import { ShowDetails2Component } from './show-details-2/show-details-2.component';
 import { BussinessShowDeatilsComponent } from './bussiness-show-deatils/bussiness-show-deatils.component';
+import { VirtualReceptionSummaryComponent } from './virtual-reception-summary/virtual-reception-summary.component';
 
 @NgModule({
   declarations: [
@@ -76,6 +77,7 @@ import { BussinessShowDeatilsComponent } from './bussiness-show-deatils/bussines
     VirtualManagementComponent,
     ShowDetails2Component,
     BussinessShowDeatilsComponent,
+    VirtualReceptionSummaryComponent,
     
   ],
   imports: [
