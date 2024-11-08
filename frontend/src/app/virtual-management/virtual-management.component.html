@@ -1,69 +1,75 @@
 <div class="content">
-    <div class="page-heading">
-      <div class="row align-items-center justify-content-between">
-        <div class="col-auto">
-          <div class="row align-items-center">
-            <div class="col-auto mb-2">
-              <h2>Virtual Management</h2>
-            </div>
+  <div class="page-heading">
+    <div class="row align-items-center justify-content-between">
+      <div class="col-auto">
+        <div class="row align-items-center">
+          <div class="col-auto mb-2">
+            <h2>Virtual Management</h2>
           </div>
         </div>
       </div>
     </div>
-  
-    <div class="table-responsive overflow-behaviour">
-      <table class="table table-list-data table-hover">
-        <thead class="bg-light">
+  </div>
+
+  <div class="table-responsive overflow-behaviour">
+    <table class="table table-list-data table-hover">
+      <thead class="bg-light">
+        <tr>
+          <th scope="col">Client Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Company</th>
+          <th scope="col">Incorporation Country</th>
+          <th scope="col">Shareholder Count</th>
+          <th scope="col">Mobile Number</th>
+          <th scope="col">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let client of clientList">
+          <td>{{ client.firstName }} {{ client.lastName }}</td>
+          <td>{{ client.email }}</td>
+          <td>{{ client.CompanyName }}</td>
+          <td>{{ client.CompanyIncorporated }}</td>
+          <td>{{ client.shareholdercount }}</td>
+          <td>{{ client.mobileNumber.internationalNumber }}</td>
+          <td>
+            <button (click)="openClientDetails(client)" class="btn btn-primary">View Shareholders</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Modal for Shareholder Details -->
+  <div class="modal-container" *ngIf="showModal">
+    <div class="modal-backdrop" (click)="closeModal()"></div>
+    <div class="modal-content">
+      <span class="close-btn" (click)="closeModal()">&times;</span>
+      <h5 class="modal-title">Shareholder Details</h5>
+      <table class="table">
+        <thead>
           <tr>
-            <th scope="col">Client Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Company</th>
-            <th scope="col">Incorporation Country</th>
-            <th scope="col">Shareholder Count</th>
-            <th scope="col">Mobile Number</th>
-            <th scope="col">Actions</th>
+            <th scope="col">Shareholder Name</th>
+            <th scope="col">Shareholder (%)</th>
+            <th scope="col">Date of Birth</th>
+            <th scope="col">Nationality</th>
+            <th scope="col">Passport Files</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let client of clientList">
-            <td>{{ client.firstName }} {{ client.lastName }}</td>
-            <td>{{ client.email }}</td>
-            <td>{{ client.CompanyName }}</td>
-            <td>{{ client.CompanyIncorporated }}</td>
-            <td>{{ client.shareholdercount }}</td>
-            <td>{{ client.mobileNumber.internationalNumber }}</td>
+          <tr *ngFor="let detail of selectedClientDetails">
+            <td>{{ detail.name }}</td>
+            <td>{{ detail.shareholderPercentage }}%</td>
+            <td>{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
+            <td>{{ detail.nationalityshareholder }}</td>
             <td>
-              <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary">View Shareholders</button>
+              <div *ngFor="let file of detail.files">
+                <a [href]="file.url" target="_blank">{{ file.name }}</a>
+              </div>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
-  
-    <div class="modal-container" *ngIf="showModal">
-      <div class="modal-backdrop" (click)="closeModal()"></div>
-      <div class="modal-content">
-        <span class="close-btn" (click)="closeModal()">&times;</span>
-        <h5 class="modal-title">Shareholder Details</h5>
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Shareholder Name</th>
-              <th scope="col">Shareholder (%)</th>
-              <th scope="col">Date of Birth</th>
-              <th scope="col">Nationality</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let detail of selectedClientDetails">
-              <td>{{ detail.name }}</td>
-              <td>{{ detail.shareholderPercentage }}%</td>
-              <td>{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
-              <td>{{ detail.nationalityshareholder }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
   </div>
-  
+</div>

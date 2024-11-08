@@ -83,6 +83,7 @@ export class BussinessShowDeatilsComponent {
         this.shareholders=this.companyInfo.shareholders
         this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
         console.log(  this.displayShareholders)
+        
 
       }
     }
