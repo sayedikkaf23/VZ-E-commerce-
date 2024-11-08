@@ -203,6 +203,11 @@ i: any;
   
   
   
+// VirtualReceptionist2Component.ts
+
+isImageFile(url: string): boolean {
+  return url.match(/\.(jpeg|jpg|gif|png)$/) !== null;
+}
 
 
   toggleView() {

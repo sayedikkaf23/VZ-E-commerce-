@@ -62,14 +62,14 @@ export class VirtualReceptionist1Component {
   ngOnInit(): void {
     // Retrieve Step 2 data from localStorage
 
-    // this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
-    //   this.nationalities = data.map((country) => country.name.common);
-    //   this.cdRef.detectChanges(); 
-    // });
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
+    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
+      this.nationalities = data.map((country) => country.name.common);
+      this.cdRef.detectChanges(); 
     });
+    // this.getnationalityService.getNationality().subscribe((data) => {
+    //   this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+    //   this.cdRef.detectChanges(); // Trigger change detection to update the view
+    // });
     const storedStep2Data = localStorage.getItem('virtualdata1');
     if (storedStep2Data) {
       const parsedData = JSON.parse(storedStep2Data);

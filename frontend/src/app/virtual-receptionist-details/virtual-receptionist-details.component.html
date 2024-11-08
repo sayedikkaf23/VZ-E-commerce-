@@ -138,11 +138,24 @@
                   <td>{{ shareholder.passportNumber }}</td>
                   <td>
                     <ul>
-                      <!-- Loop over uploadedFiles to display file names -->
-                      <li *ngFor="let file of shareholder.files">{{ file.name }}</li>
-
+                      <!-- Loop over uploadedFiles to display file names and URLs -->
+                      <li *ngFor="let file of shareholder.files">
+                        <!-- Display file name -->
+                        <!-- {{ file.name }} -->
+                        
+                        <!-- If the file is an image, show a small preview -->
+                        <div *ngIf="isImageFile(file.url)">
+                          <img [src]="file.url" alt="{{ file.name }}" width="50" height="50" style="margin-right: 10px;"/>
+                        </div>
+                        
+                        <!-- Link to open the file in a new tab -->
+                        <a [href]="file.url" target="_blank" rel="noopener noreferrer">
+                          Open
+                        </a>
+                      </li>
                     </ul>
                   </td>
+                  
 
                  
                 </tr>
@@ -160,7 +173,7 @@
           
         </div>
       </div>
-      <div class="col-md-5 col-lg-4 order-summery-col">
+      <!-- <div class="col-md-5 col-lg-4 order-summery-col">
         <div class="order-summery box-light">
           <h4>Order Summary</h4>
           <table class="w-100">
@@ -185,7 +198,7 @@
           </table>
         </div>
         <button (click)="submitData()" class="btn primary-btn w-100">Payment Now</button>
-      </div>
+      </div> -->
     </div>
   </div>
 </section>

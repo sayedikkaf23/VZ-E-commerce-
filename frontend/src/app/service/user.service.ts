@@ -34,6 +34,16 @@ export class UserService {  // Changed the service name to UserService
   callSalesforceQuoteService(payload:any): Observable<any> {
     return this.http.post(`${this.url}/user/callSalesforceQuoteService`, payload); // Sending the payload to the backend
   }
+  getPresignedUrl(file: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('file', file); // Add the file to the form data
+  
+    // Send the POST request with FormData
+    return this.http.post(`${this.url}/virtual/upload-file`, formData);
+  }
+  
+  
+  
   
 
   getServices(): Observable<any> {

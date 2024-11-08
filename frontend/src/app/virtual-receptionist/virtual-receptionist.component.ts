@@ -73,56 +73,25 @@ export class VirtualReceptionistComponent {
       const formData = this.personalDetailsForm.value;
   
 
-      this.isLoading = true;
-      const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        nationality: formData.nationality,
-        phone: formData.mobileNumber, // Ensure to map this correctly
-        dob: formData.birthday,
-        service:"virtual_receptionist"
-      };
 
-      this.userService.callSalesforceEndpoint(payload).subscribe(
-        (response: any) => {
-          this.isLoading = false;
-
-          // Handle the successful response from Salesforce
-          this.toastr.success('Details sent successfully to Salesforce', 'Success');
-          console.log('Salesforce Response:', response);
-          this.dataStorageService.setSalesforceResponse(response);
-
-          // Save form data to localStorage only in the browser environment
-          if (this.isBrowser) {
-            localStorage.setItem('virtualdata', JSON.stringify(formData));
-          }
-      
-          // Check if step2Data exists in localStorage
-          if (this.isBrowser) {
-            if (localStorage.getItem('virtualdata2')) {
-              // Navigate to MailMangamentShowDetails if mailform2 data exists
-              this.router.navigate(['/virtual-receptionist-details']);
-            } else if (localStorage.getItem('step2Data')) {
-              // Navigate to step-2 if step2Data exists
-              this.router.navigate(['/virtual-receptionist-1']);
-            } else {
-              // Otherwise, navigate to account-type
-              this.router.navigate(['/virtual-receptionist-1']);
-            }
-          }
-        },
-        error => {
-          this.isLoading = false;
-
-          // Handle error from the Salesforce API call
-          this.toastr.error('Failed to send details to Salesforce', 'Error');
-          console.error('Salesforce API Error:', error);
+      if (this.isBrowser) {
+        if (localStorage.getItem('virtualdata2')) {
+          // Navigate to MailMangamentShowDetails if mailform2 data exists
+          this.router.navigate(['/virtual-receptionist-details']);
+        } else if (localStorage.getItem('step2Data')) {
+          // Navigate to step-2 if step2Data exists
+          this.router.navigate(['/virtual-receptionist-1']);
+        } else {
+          // Otherwise, navigate to account-type
+          this.router.navigate(['/virtual-receptionist-1']);
         }
-      );
+      }
 
+      if (this.isBrowser) {
+        localStorage.setItem('virtualdata', JSON.stringify(formData));
+      }
 
-
+  
       // Save form data to localStorage only in the browser environment
     
     } else {

@@ -57,6 +57,12 @@ export class BussinessShowDeatilsComponent {
          confirmButtonColor: '#FF5A5F'
       }).then((result) => {
         if (result.value) {
+          localStorage.removeItem('step1Data');
+          localStorage.removeItem('mailform');
+          localStorage.removeItem('mailform2');
+          localStorage.removeItem('finalDatabussiness');
+
+
           this.router.navigate(['/home']);  // Navigate to the start of the form
         }
       });

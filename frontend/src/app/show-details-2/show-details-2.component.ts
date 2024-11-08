@@ -50,6 +50,8 @@ export class ShowDetails2Component implements AfterViewInit {
          confirmButtonColor: '#FF5A5F'
       }).then((result) => {
         if (result.value) {
+          localStorage.removeItem('step1Data');
+          localStorage.removeItem('step2Data');
           this.router.navigate(['/home']);  // Navigate to the start of the form
         }
       });

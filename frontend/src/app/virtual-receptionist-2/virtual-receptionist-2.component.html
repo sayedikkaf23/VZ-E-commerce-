@@ -1,3 +1,8 @@
+
+<div class="loader-container" *ngIf="isLoading">
+  <div class="loader"></div>
+</div>
+
 <div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
 
   <app-user-header></app-user-header>
@@ -58,13 +63,21 @@
                       style="text-align: center; display: block; margin: 0 auto; padding: 7px;"
                     />
                   </div>
+                
+                  <!-- Display the uploaded file names and "View File" links -->
                   <ul>
-                    <li *ngFor="let file of uploadedFiles[i]">{{ file.name }}</li>
+                    <li *ngFor="let file of uploadedFileNames[i]">
+                      {{ file.name }}
+                      <!-- Link to open the file in a new tab -->
+                      <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
+                    </li>
                   </ul>
+                
                   <div *ngIf="!uploadedFiles[i]?.length && shareholder.get('files')?.touched" class="error-message">
                     Please upload at least one file.
                   </div>
                 </div>
+                
               </div>
             </div>
           </div>
