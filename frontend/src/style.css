@@ -1265,9 +1265,13 @@ a.btn-edit:hover:before {
     background-color: hsla(0, 100%, 50%, 0.5); 
 }
 
-   
+.ngx-tel-input {
+    width: 100%; /* Full width */
+    font-size: 18px; /* Increase font size */
+}
 ngx-intl-tel-input .iti {
     width: 99% !important;
+    
   }
   
   ngx-intl-tel-input input {
@@ -1294,7 +1298,7 @@ ngx-intl-tel-input .iti {
   }
   /* Adjust placeholder alignment for the phone number input */
   ngx-intl-tel-input input::placeholder {
-    padding-left: 30px; /* Add some padding to the left to move the placeholder */
+    padding-left: 35px; /* Add some padding to the left to move the placeholder */
     color: rgba(0, 0, 0, 0.507); /* Maintain the existing placeholder color */
   }
   /* Remove rounded corners of the search input */
@@ -1310,7 +1314,7 @@ ngx-intl-tel-input .iti {
 /* Common styles for all toasts */
 #toast-container .custom-toast {
     position: fixed;
-    top: 10%; /* Adjust to place the toast near the top */
+    top: 9%; /* Adjust to place the toast near the top */
     right: 20px; /* Position on the right with some padding */
     z-index: 9999;
     border-radius: 4px; /* Rounded corners */
