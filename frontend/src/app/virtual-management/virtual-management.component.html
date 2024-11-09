@@ -10,7 +10,7 @@
       </div>
     </div>
   </div>
-
+ 
   <div class="table-responsive overflow-behaviour">
     <table class="table table-list-data table-hover">
       <thead class="bg-light">
@@ -33,13 +33,13 @@
           <td>{{ client.shareholdercount }}</td>
           <td>{{ client.mobileNumber.internationalNumber }}</td>
           <td>
-            <button (click)="openClientDetails(client)" class="btn btn-primary">View Shareholders</button>
+            <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary">View Shareholders</button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-
+ 
   <!-- Modal for Shareholder Details -->
   <div class="modal-container" *ngIf="showModal">
     <div class="modal-backdrop" (click)="closeModal()"></div>
@@ -53,7 +53,7 @@
             <th scope="col">Shareholder (%)</th>
             <th scope="col">Date of Birth</th>
             <th scope="col">Nationality</th>
-            <th scope="col">Passport Files</th>
+            <th scope="col">Files</th>
           </tr>
         </thead>
         <tbody>
@@ -63,13 +63,24 @@
             <td>{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
             <td>{{ detail.nationalityshareholder }}</td>
             <td>
-              <div *ngFor="let file of detail.files">
-                <a [href]="file.url" target="_blank">{{ file.name }}</a>
+              <div *ngIf="detail.files && detail.files.length > 0; else noFile">
+                <div *ngFor="let file of detail.files">
+                  <a [href]="file.url" target="_blank">
+                    <img [src]="file.url" alt="{{ file.name }}" width="50" height="50" style="object-fit: cover; margin-right: 5px;" />
+                  </a>
+                </div>
               </div>
+              <ng-template #noFile>
+                <span>No file</span>
+              </ng-template>
             </td>
+           
+           
           </tr>
         </tbody>
       </table>
     </div>
   </div>
 </div>
+ 
+ 
