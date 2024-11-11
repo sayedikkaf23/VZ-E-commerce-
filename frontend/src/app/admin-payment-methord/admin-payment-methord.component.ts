@@ -18,9 +18,13 @@ export class AdminPaymentMethordComponent {
   getPaymentMethods(): void {
     this.paymentService.getPaymentMethods().subscribe({
       next: (res: any) => {
-        this.paymentMethods = res;
+        console.log("object")
+        this.paymentMethods = [res]; // Wrap response in an array if only one object is returned
+
+        console.log( this.paymentMethods,"paymentMethods")
       },
       error: () => {
+        console.log("8")
         this.paymentMethods = [];
       },
     });

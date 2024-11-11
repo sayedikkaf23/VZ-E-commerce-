@@ -1,0 +1,97 @@
+/* Modal Container and Content Styling */
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    padding: 10px;
+  }
+  
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+  }
+  
+  .modal-content {
+    background: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 600px;
+    width: 90%;
+    z-index: 1051;
+    position: relative;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    max-height: 80vh; /* Prevent modal from exceeding viewport height */
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  /* Adjustments for Smaller Screens */
+  @media (max-width: 768px) {
+    .modal-content {
+      padding: 15px;
+      max-width: 90%;
+      width: 100%;
+      font-size: 14px;
+    }
+  
+    .close-btn {
+      font-size: 18px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .modal-content {
+      padding: 10px;
+      font-size: 14px;
+      width: 100%;
+      max-width: 100%;
+    }
+  
+    .close-btn {
+      font-size: 16px;
+      top: 8px;
+      right: 8px;
+    }
+  
+    /* Ensure table inside modal fits within screen */
+    .modal-content table {
+      font-size: 12px; /* Adjust table font size */
+    }
+  
+    /* Centering Button */
+    .btn {
+      font-size: 12px;
+      padding: 5px 8px;
+      width: 100%;
+    }
+  }
+  
+  /* Ensures modal scrolls well on very small screens */
+  .modal-content::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .modal-content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  
