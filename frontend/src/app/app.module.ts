@@ -42,6 +42,7 @@ import { VirtualManagementComponent } from './virtual-management/virtual-managem
 import { ShowDetails2Component } from './show-details-2/show-details-2.component';
 import { BussinessShowDeatilsComponent } from './bussiness-show-deatils/bussiness-show-deatils.component';
 import { VirtualReceptionSummaryComponent } from './virtual-reception-summary/virtual-reception-summary.component';
+import { AdminPaymentMethordComponent } from './admin-payment-methord/admin-payment-methord.component';
 
 @NgModule({
   declarations: [
@@ -78,6 +79,7 @@ import { VirtualReceptionSummaryComponent } from './virtual-reception-summary/vi
     ShowDetails2Component,
     BussinessShowDeatilsComponent,
     VirtualReceptionSummaryComponent,
+    AdminPaymentMethordComponent,
     
   ],
   imports: [

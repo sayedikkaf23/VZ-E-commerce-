@@ -1,0 +1,118 @@
+<!-- src/app/payment-methods/payment-methods.component.html -->
+<div class="content">
+    <div class="page-heading">
+      <div class="row align-items-center justify-content-between">
+        <div class="col-auto">
+          <div class="row align-items-center">
+            <div class="col-auto mb-2">
+              <h2>Payment Methods</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="table-responsive overflow-behaviour">
+      <table class="table table-list-data table-hover">
+        <thead class="bg-light">
+          <tr>
+            <th scope="col">Bank Transfer</th>
+            <th scope="col">Card Machine</th>
+            <th scope="col">Cash Deposit</th>
+            <th scope="col">Cash Over Counter</th>
+            <th scope="col">Cheque Deposit</th>
+            <th scope="col">Online Payment</th>
+            <th scope="col">PDC Cheque</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let payMethod of paymentMethods">
+            <td>
+              <div class="form-check form-switch form-switch-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [checked]="payMethod.bankTransfer"
+                  (change)="onPaymentMethodStatusChange(payMethod, 'bankTransfer')"
+                />
+              </div>
+            </td>
+  
+            <td>
+              <div class="form-check form-switch form-switch-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [checked]="payMethod.cardMachine"
+                  (change)="onPaymentMethodStatusChange(payMethod, 'cardMachine')"
+                />
+              </div>
+            </td>
+  
+            <td>
+              <div class="form-check form-switch form-switch-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [checked]="payMethod.cashDeposit"
+                  (change)="onPaymentMethodStatusChange(payMethod, 'cashDeposit')"
+                />
+              </div>
+            </td>
+  
+            <td>
+              <div class="form-check form-switch form-switch-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [checked]="payMethod.cashOverCounter"
+                  (change)="onPaymentMethodStatusChange(payMethod, 'cashOverCounter')"
+                />
+              </div>
+            </td>
+  
+            <td>
+              <div class="form-check form-switch form-switch-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [checked]="payMethod.chequeDeposit"
+                  (change)="onPaymentMethodStatusChange(payMethod, 'chequeDeposit')"
+                />
+              </div>
+            </td>
+  
+            <td>
+              <div class="form-check form-switch form-switch-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [checked]="payMethod.onlinePayment"
+                  (change)="onPaymentMethodStatusChange(payMethod, 'onlinePayment')"
+                />
+              </div>
+            </td>
+  
+            <td>
+              <div class="form-check form-switch form-switch-2">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  role="switch"
+                  [checked]="payMethod.pcdCheque"
+                  (change)="onPaymentMethodStatusChange(payMethod, 'pcdCheque')"
+                />
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
