@@ -1,15 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { AdminAuthService } from '../service/admin-auth.service'; // Import your service
+import { AdminAuthService } from '../service/admin-auth.service';
 
 @Component({
   selector: 'app-back-account-opening',
   templateUrl: './back-account-opening.component.html',
-  styleUrls: ['./back-account-opening.component.css']
+  styleUrls: ['./back-account-opening.component.css'],
 })
 export class BackAccountOpeningComponent implements OnInit {
   userList: any[] = []; // To store the fetched user data
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
+
   constructor(private adminAuthService: AdminAuthService) {}
 
   ngOnInit(): void {
@@ -22,6 +23,17 @@ export class BackAccountOpeningComponent implements OnInit {
         this.userList = response; // Assign the API response to the userList array
         this.checkColumnData(); // Check columns only after data is loaded
 
+        // Log LeadId for each user in the response
+        this.userList.forEach((user) => {
+          if (user.LeadId) {
+            const payload = {
+              CustomerId: user.LeadId,
+              CompanyName: 'Virtuzone',
+            };
+            console.log('payloed', payload);
+            console.log('LeadId:', user.LeadId);
+          }
+        });
       },
       (error) => {
         console.error('Error fetching user details:', error);
@@ -29,9 +41,8 @@ export class BackAccountOpeningComponent implements OnInit {
     );
   }
 
-
   checkColumnData(): void {
-    this.hasSalaryData = this.userList.some(user => !!user.salary);
-    this.hasCompanyNameData = this.userList.some(user => !!user.companyname);
+    this.hasSalaryData = this.userList.some((user) => !!user.salary);
+    this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
   }
 }

@@ -33,6 +33,9 @@
               Company Name &#x2191;&#x2193;
             </th>
             <th scope="col">Bank &#x2191;&#x2193;</th>
+            <th scope="col">KYC Status &#x2191;&#x2193;</th>
+            <th scope="col">Action &#x2191;&#x2193;</th>
+
           </tr>
         </thead>
         <tbody>
@@ -48,6 +51,10 @@
             <!-- Conditionally display "Company Name" cell if there's data -->
             <td *ngIf="user.companyname">{{ user.companyname }}</td>
             <td>{{ user.Bank }}</td>
+            <td>{{ user.Bank }}</td>
+
+            <td><button class="green-button">Check status</button></td>
+
           </tr>
         </tbody>
       </table>

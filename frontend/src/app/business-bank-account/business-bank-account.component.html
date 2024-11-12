@@ -28,6 +28,10 @@
           <th scope="col">Shareholder Count</th>
           <th scope="col">Turn Over</th>
           <th scope="col">Actions</th>
+          <th scope="col">KYC Status</th>
+
+          <th scope="col">Actions</th>
+
         </tr>
       </thead>
       <tbody>
@@ -40,6 +44,10 @@
           <td>{{ user.jurisdiction }}</td>
           <td>{{ user.shareholder }}</td>
           <td>{{ user.Turnover }}</td>
+
+          <td><button class="green-button">Check status</button></td>
+          <td>{{ user.Turnover }}</td>
+
       
           <td>
             <button (click)="openModal(user.shareholders)" class="btn btn-primary">View Details</button>
@@ -63,6 +71,7 @@
             <th scope="col">Shareholder(%)</th>
             <th scope="col">Date of Birth</th>
             <th scope="col">Nationality</th>
+            
           </tr>
         </thead>
         <tbody>
