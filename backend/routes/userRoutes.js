@@ -21,5 +21,6 @@ router.put('/services/:serviceId', singleUpload, userController.updateService);
 router.delete('/services/:serviceId', userController.deleteService); 
 router.get('/menu-items', userController.getMenuItems);
 router.post('/menu-items', userController.addMenuItems);
+router.post('/checkStatus', userController.checkStatus);
 
 module.exports = router;

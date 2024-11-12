@@ -191,7 +191,8 @@ export class MailMangamentShowDetailsComponent {
           nationality: finalData.nationality,
           phone: finalData.mobileNumber, // Ensure to map this correctly
           dob: finalData.birthday,
-          service: "Bank_opening"
+          service: "Bank_opening",
+          CustomerType:  finalData.CustomerType
         };
   
         this.isLoading = true; // Show loading indicator if necessary
