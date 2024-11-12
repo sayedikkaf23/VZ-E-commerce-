@@ -9,7 +9,7 @@ import { FileStorageService } from '../service/files.service';
 import { switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
-
+import { VirtualManagementService } from '../service/virtual-management.service';
 declare var $: any;
 
 
@@ -36,6 +36,8 @@ i: any;
     private userService: UserService,
     private fileStorageService: FileStorageService,
     private dataStorageService: DataStorageService,
+    private virtualManagementService: VirtualManagementService,
+
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -239,7 +241,7 @@ submitData() {
       this.isLoading = true; // Show loading indicator if necessary
 
       // First API call to callSalesforceEndpoint
-      this.userService.callSalesforceEndpoint(payload).pipe(
+      this.virtualManagementService.callSalesforceEndpoint(payload).pipe(
         switchMap((response: any) => {
           console.log('Salesforce Response:', response);
           this.dataStorageService.setSalesforceResponse(response);

@@ -16,5 +16,10 @@ export class MailManagementService {
     return this.http.get(`${this.url}/mail/getMailDetails`); // GET request to fetch all services
   }
 
+  callSalesforceEndpoint(payload:any): Observable<any> {
+    return this.http.post(`${this.url}/mail/callSalesforceEndpoint`, payload); // Sending the payload to the backend
+  }
+
+
 
 }

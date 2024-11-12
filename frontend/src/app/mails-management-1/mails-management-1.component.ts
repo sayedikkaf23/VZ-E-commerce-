@@ -24,8 +24,8 @@ export class MailsManagement1Component {
   CountryISO = CountryISO;
   isBrowser: boolean;
   isLoading = false;
-
   maxDate: string | undefined;
+
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -35,6 +35,7 @@ export class MailsManagement1Component {
     private userService: UserService,
     private getnationalityService: GetnationalityService,
     private dataStorageService: DataStorageService ,// Inject the service
+
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -53,7 +54,7 @@ export class MailsManagement1Component {
     // Fetch nationalities using REST Countries API
     // this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
     //   this.nationalities = data.map((country) => country.name.common);
-    //   this.cdRef.detectChanges(); 
+    //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
     
     const today = new Date();
@@ -67,7 +68,7 @@ export class MailsManagement1Component {
     });
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
-      const storedData = localStorage.getItem('mailform');
+      const storedData = localStorage.getItem('virtualdata');
       if (storedData) {
         const formData = JSON.parse(storedData);
         this.personalDetailsForm.patchValue(formData);
@@ -78,66 +79,30 @@ export class MailsManagement1Component {
   onSubmit() {
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;
-
-
-      // const payload = {
-      //   email: formData.email,
-      //   mobileNumber: formData.mobileNumber // Add this field if available in the form
-      // };
-      const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        nationality: formData.nationality,
-        phone: formData.mobileNumber, // Ensure to map this correctly
-        dob: formData.birthday,
-        service:"mail_management"
-      };
-      this.isLoading = true;
-      this.userService.callSalesforceEndpoint(payload).subscribe(
-        (response: any) => {
-          // Handle the successful response from Salesforce
-          this.toastr.success('Details sent successfully to Salesforce', 'Success');
-          console.log('Salesforce Response:', response);
-          this.dataStorageService.setSalesforceResponse(response);
-          this.isLoading = false;
-
-          // Save form data to localStorage only in the browser environment
-          if (this.isBrowser) {
-            localStorage.setItem('mailform', JSON.stringify(formData));
-          }
-
-          // Check if step2Data exists in localStorage
-          if (this.isBrowser) {
-            if (localStorage.getItem('mailform2')) {
-              // If mailform2 data exists, navigate to MailMangamentShowDetails
-              this.router.navigate(['/mails-management-details']);
-            } else if (localStorage.getItem('mailform')) {
-              // If step2Data exists, navigate to step-2
-              this.router.navigate(['/mails-management-2']);
-            } else {
-              // Otherwise, navigate to account-type
-              this.router.navigate(['/mails-management-2']);
-            }
-          }
-        },
-        error => {
-          // Handle error from the Salesforce API call
-          this.isLoading = false;
-
-          this.toastr.error('Failed to send details to Salesforce', 'Error');
-          console.error('Salesforce API Error:', error);
-        }
-      );
   
-      // Check if the user already exists
-   
-            // Save form data to localStorage only in the browser environment
-          
-            
-          
-      
-    }  else {
+
+
+      if (this.isBrowser) {
+        if (localStorage.getItem('mailform2')) {
+          // If mailform2 data exists, navigate to MailMangamentShowDetails
+          this.router.navigate(['/mails-management-details']);
+        } else if (localStorage.getItem('mailform')) {
+          // If step2Data exists, navigate to step-2
+          this.router.navigate(['/mails-management-2']);
+        } else {
+          // Otherwise, navigate to account-type
+          this.router.navigate(['/mails-management-2']);
+        }
+      }
+
+      if (this.isBrowser) {
+        localStorage.setItem('mailform', JSON.stringify(formData));
+      }
+
+  
+      // Save form data to localStorage only in the browser environment
+    
+    } else {
       // Check specifically if mobileNumber is invalid and show toaster for it
       if (this.personalDetailsForm.get('mobileNumber')?.invalid) {
         this.toastr.error('Please provide a valid mobile number.', 'Validation Error');

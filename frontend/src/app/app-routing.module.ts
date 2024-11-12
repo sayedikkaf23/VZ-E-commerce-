@@ -29,7 +29,7 @@ import { VirtualManagementComponent } from './virtual-management/virtual-managem
 import { ShowDetails2Component } from './show-details-2/show-details-2.component';
 import { VirtualReceptionSummaryComponent } from './virtual-reception-summary/virtual-reception-summary.component';
 import { BussinessShowDeatilsComponent } from './bussiness-show-deatils/bussiness-show-deatils.component';
-
+import { MailsManagementSummaryComponent } from './mails-management-summary/mails-management-summary.component';
 import { AdminPaymentMethordComponent } from './admin-payment-methord/admin-payment-methord.component';
 
 const routes: Routes = [
@@ -114,6 +114,11 @@ const routes: Routes = [
   {
     path: 'virtual-summary',
     component: VirtualReceptionSummaryComponent,
+   
+  },
+  {
+    path: 'mails-summary',
+    component: MailsManagementSummaryComponent,
    
   },
  
