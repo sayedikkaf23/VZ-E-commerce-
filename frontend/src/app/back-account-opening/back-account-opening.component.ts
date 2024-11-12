@@ -42,7 +42,7 @@ export class BackAccountOpeningComponent implements OnInit {
     };
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
-        user.CaseStatusCode = response.data?.CaseStatusCode || 'N/A'; // Store CaseStatusCode in user
+        user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
         console.log('Status check response:', response);
       },
       (error) => {

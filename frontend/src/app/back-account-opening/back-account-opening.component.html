@@ -42,7 +42,7 @@
           <td *ngIf="user.salary">{{ user.salary }}</td>
           <td *ngIf="user.companyname">{{ user.companyname }}</td>
           <td>{{ user.Bank }}</td>
-          <td>{{ user.CaseStatusCode || 'N/A' }}</td>
+          <td>{{ user.CustomerStatus  }}</td>
           <td>
             <button class="green-button" (click)="checkStatus(user)">Check Status</button>
           </td>
