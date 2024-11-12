@@ -2,101 +2,195 @@ const fileUpload = require('../middleware/fileUpload'); // Import the multer mid
 const MailDetails = require('../models/mailManagement'); // Import the model
 
 // Handle form submission and file uploads
-exports.submitMailDetails = async (req, res) => {
-    try {
-      console.log('Files:', req.files);  // Log req.files for debugging
-    console.log('Form Data:', req.body);
+const Pidata = require('../models/pidata');
 
-    if (!req.files || Object.keys(req.files).length === 0) {
-      return res.status(400).json({ message: 'No files were uploaded.' });
-    }
-
-    const { 
-      firstName, 
-      lastName, 
-      email, 
-      nationality, 
+// Handle form submission and file uploads
+exports.submitVirtualDetails = async (req, res) => {
+  try {
+    console.log('Request Body:', req.body);
+    const {
+      firstName,
+      lastName,
+      email,
+      nationality,
       mobileNumber,
       birthday,
-      CompanyName, 
-      CompanyIncorporated, 
-      Website, 
-      companylicensed, 
-      tradelicense, 
-      shareholdercount, 
-      shareholders 
+      CompanyName,
+      CompanyIncorporated,
+      Website,
+      tradelicense,
+      shareholdercount,
+      Companylicensed,
+      shareholders = [], // Default to an empty array if not provided
+      companyTradeLicense
     } = req.body;
 
-    // Parse mobile number and shareholders if needed
-    const parsedMobileNumber = typeof mobileNumber === "string" ? JSON.parse(mobileNumber) : mobileNumber;
-
-    // Parse shareholders if it's a JSON string
-    let parsedShareholders = [];
-    if (Array.isArray(shareholders)) {
-      parsedShareholders = shareholders;
-    } else if (typeof shareholders === "string") {
-      try {
-        parsedShareholders = JSON.parse(shareholders);
-      } catch (e) {
-        console.error("Error parsing shareholders JSON:", e);
-      }
-    }
-
-    // Map over parsedShareholders to include file paths for each shareholder
-    parsedShareholders = parsedShareholders.map((shareholder, index) => {
-      // Find files associated with this shareholder by their fieldnames
-      const shareholderFiles = req.files.filter(file => 
-        file.fieldname.startsWith(`shareholders[${index}][files]`)
-      );
-
-      return {
-        ...shareholder,
-        files: shareholderFiles.map(file => ({
-          originalName: file.originalname,
-          path: file.path, // Path where the file was saved
-          mimetype: file.mimetype,
-          size: file.size
-        }))
-      };
-    });
-
+    // Check if Company is incorporated in UAE and shareholders is not empty
+    const shareholdersWithFiles = CompanyIncorporated == 'United Arab Emirates' && shareholders.length > 0 
+      ? shareholders.map((shareholder, index) => {
+          if (!shareholder.files || shareholder.files.length === 0 || !shareholder.files[0].url) {
+            throw new Error(`Files with URL are required for shareholder at index ${index}.`);
+          }
+          // Map file details to match schema
+          return {
+            ...shareholder,
+            files: shareholder.files.map(file => ({
+              name: file.name,
+              url: file.url // Assuming schema expects a 'url'
+            }))
+          };
+        })
+      : shareholders; // If not UAE or no shareholders, return them as is without file mapping
 
     const pidataUser = await Pidata.findOne({ "leadWithDetails.Email": email });
     if (!pidataUser) {
       return res.status(404).json({ message: "Related Pidata entry not found" });
     }
 
-    // Extract LeadId and QuotePaymentId from the found Pidata document
     const { LeadId } = pidataUser.leadWithDetails;
     const { QuotePaymentId } = pidataUser.quotePaymentWithDetails;
 
-    // Create a new record including all details
-    const userDetails = new MailDetails({
+    const MailDetailsData = new MailDetails({
       firstName,
       lastName,
       email,
       nationality,
-      birthday,
-      mobileNumber: parsedMobileNumber,
+      mobileNumber,
+      birthday: new Date(birthday),
       CompanyName,
       CompanyIncorporated,
       Website,
       tradelicense,
-      companylicensed,
       shareholdercount,
-      shareholders: parsedShareholders, // Includes file paths and metadata for each shareholder
-      LeadId, // Add LeadId from Pidata
-      QuotePaymentId, // Add QuotePaymentId from Pidata
+      Companylicensed,
+      shareholders: shareholdersWithFiles,
+      companyTradeLicense,
+      LeadId,
+      QuotePaymentId
     });
 
-    await userDetails.save();
+    await MailDetailsData.save();
 
-    res.status(201).json({ message: 'Details submitted successfully', userDetails });
+    res.status(201).json({
+      message: 'Virtual Details submitted successfully',
+      data: MailDetailsData
+    });
 
-    } catch (error) {
-        res.status(500).json({ error: 'Error saving details', details: error.message });
-    }
+  } catch (error) {
+    console.error("Error in processing:", error);
+    res.status(500).json({
+      error: 'Error processing request',
+      details: error.message
+    });
+  }
 };
+
+
+
+exports.callSalesforceEndpoint = async (req, res) => {
+  // Destructure fields from the request body
+  const { firstName, lastName, email, nationality, phone, dob } = req.body;
+  const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
+
+  // Construct the JSON body to send to Salesforce
+  const requestBody = {
+    firstName,
+    lastName,
+    email,
+    nationality,
+    phone: formattedPhone,
+    dob,
+    // service
+  };
+  console.log(requestBody)
+  try {
+    // Get access token from Salesforce
+    const tokenResponse = await axios.post(
+      `https://test.salesforce.com/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
+    );
+
+    const accessToken = tokenResponse.data.access_token;
+    const salesforceUrl = tokenResponse.data.instance_url;
+
+    // Make the HTTP POST request to the Salesforce endpoint
+    const salesforceResponse = await axios.post(
+      `${salesforceUrl}/services/apexrest/opportunityService/`,
+      requestBody,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    // Extract the Salesforce response data
+    const responseData = salesforceResponse.data;
+
+    // Create a new Pidata document
+    const newPidata = new Pidata({
+      leadWithDetails: {
+        Nationality: responseData.leadWithDetails.Nationality,
+        Phone: responseData.leadWithDetails.Phone,
+        Origin__c: responseData.leadWithDetails.Origin__c,
+        Email: responseData.leadWithDetails.Email,
+        LeadSource: responseData.leadWithDetails.LeadSource,
+        Status: responseData.leadWithDetails.Status,
+        Company: responseData.leadWithDetails.Comapny,
+        LastName: responseData.leadWithDetails.LastName,
+        FirstName: responseData.leadWithDetails.FirstName,
+        LeadId: responseData.leadWithDetails.LeadId || "N/A",
+      },
+      quotePaymentWithDetails: {
+        Currency: responseData.quotePaymentWithDetails.Currency || null,
+        QuotePaymentId: responseData.quotePaymentWithDetails.QuotePaymentId || "N/A",
+        AccountId: responseData.quotePaymentWithDetails.AccountId || "N/A",
+      },
+      quoteWithProductDetails: {
+        AccountName: responseData.quoteWithProductDetails.AccountName,
+        Discount: responseData.quoteWithProductDetails.Discount || 0,
+        invoiceCurrency: responseData.quoteWithProductDetails.invoiceCurrency || null,
+        invoiceDate: responseData.quoteWithProductDetails.invoiceDate,
+        invoiceNumber: responseData.quoteWithProductDetails.invoiceNumber || null,
+        mobile: formattedPhone,
+        oppurtunityId: responseData.quoteWithProductDetails.oppurtunityId || "N/A",
+        ownerId: responseData.quoteWithProductDetails.ownerId || "N/A",
+        partPayment: responseData.quoteWithProductDetails.partPayment || null,
+        paymentLink: responseData.quoteWithProductDetails.paymentLink || null,
+        paymentMethod: responseData.quoteWithProductDetails.paymentMethod || null,
+        product: responseData.quoteWithProductDetails.product || [],
+        quoteEmail: responseData.quoteWithProductDetails.quoteEmail,
+        quoteId: responseData.quoteWithProductDetails.quoteId || "N/A",
+        quoteName: responseData.quoteWithProductDetails.quoteName || "Test Quote",
+        quotePaymentId: responseData.quoteWithProductDetails.quotePaymentId || "N/A",
+        quotePdf: {
+          ContentType: responseData.quoteWithProductDetails.quotePdf.ContentType,
+          name: responseData.quoteWithProductDetails.quotePdf.name,
+          pdfContent: responseData.quoteWithProductDetails.quotePdf.pdfContent,
+        },
+        sendToPaymentGateway: responseData.quoteWithProductDetails.sendToPaymentGateway || false,
+        status: responseData.quoteWithProductDetails.status || "Draft",
+        subTotal: responseData.quoteWithProductDetails.subTotal || 0,
+        totalIncludingVAT: responseData.quoteWithProductDetails.totalIncludingVAT || 0,
+        totalPrice: responseData.quoteWithProductDetails.totalPrice || 0,
+      },
+    });
+
+    // Save the document to MongoDB
+    await newPidata.save();
+
+    // Send a success response
+    res.status(200).json({ message: "Data saved successfully", data: responseData });
+  } catch (error) {
+    console.error("Error calling Salesforce endpoint:", error);
+    res.status(500).json({ message: "Error calling Salesforce endpoint", details: error.message });
+  }
+};
+
+
+
+
+
 exports.getMailDetails = async (req, res) => {
   try {
       const details = await MailDetails.find(); // Fetch all mail entries

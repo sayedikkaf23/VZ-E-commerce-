@@ -15,6 +15,8 @@ export class VirtualManagementService {
   getVirtaulData(): Observable<any> {
     return this.http.get(`${this.url}/virtual/getVirtualDetails`); // GET request to fetch all services
   }
-
+  callSalesforceEndpoint(payload:any): Observable<any> {
+    return this.http.post(`${this.url}/virtual/callSalesforceEndpoint`, payload); // Sending the payload to the backend
+  }
 
 }
