@@ -1,30 +1,67 @@
 /* Styling for the View All link */
 .view-all-link {
-    font-size: 0.875rem; /* Small text size */
-    color: #FA2E52; /* Link color */
-    text-decoration: underline; /* Optional underline */
-    cursor: pointer; /* Show pointer on hover */
-    padding: 0; /* Remove any padding */
-    background-color: transparent; /* No background */
-    border: none; /* No border */
-    display: inline-block; /* Ensure it behaves like inline text */
-    margin-left: 0; /* Align to the left */
+  font-size: 0.875rem; /* Small text size */
+  color: #FA2E52; /* Link color */
+  text-decoration: underline; /* Optional underline */
+  cursor: pointer; /* Show pointer on hover */
+  padding: 0; /* Remove any padding */
+  background-color: transparent; /* No background */
+  border: none; /* No border */
+  display: inline-block; /* Ensure it behaves like inline text */
+  margin-left: 0; /* Align to the left */
+}
+
+.view-all-link:hover {
+  color: #FA2E52; /* Keep color on hover */
+  text-decoration: underline; /* Keep underline on hover */
+}
+
+/* Align the text to the left */
+.text-left {
+  text-align: left;
+}
+
+/* No-wrap for table headers */
+table thead th {
+  white-space: nowrap; /* Prevent text wrapping */
+  text-align: left; /* Optional: Ensure text alignment is left */
+  padding-right: 1rem; /* Optional: Add spacing between headers */
+}
+
+.loader-container {
+  position: fixed; /* Covers the whole viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.5); /* Transparent background */
+  z-index: 9999; /* Ensures it stays on top of other elements */
+}
+
+/* Loader Styles */
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #FF5A5F; /* Starting color */
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+}
+
+/* Spin Animation */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+    border-top-color: #FF5A5F;
   }
-  
-  .view-all-link:hover {
-    color: #FA2E52; /* Keep color on hover */
-    text-decoration: underline; /* Keep underline on hover */
+  50% {
+    border-top-color: #9B51E0; /* Transition color */
   }
-  
-  /* Align the text to the left */
-  .text-left {
-    text-align: left;
+  100% {
+    transform: rotate(360deg);
+    border-top-color: #FF5A5F;
   }
-  
-  /* No-wrap for table headers */
-  table thead th {
-    white-space: nowrap; /* Prevent text wrapping */
-    text-align: left; /* Optional: Ensure text alignment is left */
-    padding-right: 1rem; /* Optional: Add spacing between headers */
-  }
-  
+}

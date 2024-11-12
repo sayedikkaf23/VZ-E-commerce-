@@ -5,7 +5,7 @@ const MailDetails = require('../models/mailManagement'); // Import the model
 const Pidata = require('../models/pidata');
 
 // Handle form submission and file uploads
-exports.submitVirtualDetails = async (req, res) => {
+exports.submitMailDetails = async (req, res) => {
   try {
     console.log('Request Body:', req.body);
     const {

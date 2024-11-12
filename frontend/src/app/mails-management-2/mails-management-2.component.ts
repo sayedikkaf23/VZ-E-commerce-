@@ -11,13 +11,13 @@ import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 declare var $: any;
 
+
 @Component({
   selector: 'app-mails-management-2',
   templateUrl: './mails-management-2.component.html',
   styleUrl: './mails-management-2.component.css'
 })
 export class MailsManagement2Component {
-
   @ViewChild('dateInput') dateInput!: ElementRef;
 
   formData: any = {
@@ -63,14 +63,14 @@ export class MailsManagement2Component {
   ngOnInit(): void {
     // Retrieve Step 2 data from localStorage
 
-    // this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
-    //   this.nationalities = data.map((country) => country.name.common);
-    //   this.cdRef.detectChanges(); 
-    // });
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
+    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
+      this.nationalities = data.map((country) => country.name.common);
+      this.cdRef.detectChanges(); 
     });
+    // this.getnationalityService.getNationality().subscribe((data) => {
+    //   this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+    //   this.cdRef.detectChanges(); // Trigger change detection to update the view
+    // });
     const storedStep2Data = localStorage.getItem('mailform1');
     if (storedStep2Data) {
       const parsedData = JSON.parse(storedStep2Data);
@@ -212,6 +212,7 @@ deleteShareholder(index: number) {
         // Save Step 2 data to localStorage
         localStorage.setItem('mailform1', JSON.stringify(combinedFormData));
 
+
         if (this.formData.CompanyIncorporated == 'United Arab Emirates') {
           // Navigate to the route for UAE-specific details
           this.router.navigate(['/mails-management-3']);
@@ -219,7 +220,6 @@ deleteShareholder(index: number) {
           // Navigate to the standard route
           this.router.navigate(['/mails-management-details']);
         }
-
 
     }
     }

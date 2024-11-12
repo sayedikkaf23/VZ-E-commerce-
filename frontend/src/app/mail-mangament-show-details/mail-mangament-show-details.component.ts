@@ -3,7 +3,6 @@ import { Component, AfterViewInit, Inject, PLATFORM_ID, HostListener } from '@an
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr'; // For toast notifications
 import { UserService } from '../service/user.service';
-import { VirtualManagementService } from '../service/virtual-management.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
 import { switchMap } from 'rxjs';
@@ -31,7 +30,6 @@ export class MailMangamentShowDetailsComponent {
     private toastr: ToastrService, // For showing notifications
     private router: Router,
     private userService: UserService,
-    private virtualManagementService: VirtualManagementService,
     private dataStorageService: DataStorageService,
 
     @Inject(PLATFORM_ID) private platformId: Object
@@ -201,7 +199,7 @@ export class MailMangamentShowDetailsComponent {
         this.isLoading = true; // Show loading indicator if necessary
   
         // First API call to callSalesforceEndpoint
-        this.virtualManagementService.callSalesforceEndpoint(payload).pipe(
+        this.userService.callSalesforceEndpoint(payload).pipe(
           switchMap((response: any) => {
             console.log('Salesforce Response:', response);
             this.dataStorageService.setSalesforceResponse(response);

@@ -1,8 +1,9 @@
-import { Component, Inject, PLATFORM_ID, AfterViewInit, OnInit } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import AOS from 'aos';
+import { UserService } from '../service/user.service';
 import { FileStorageService } from '../service/files.service';
 
 declare var $: any;
@@ -14,15 +15,15 @@ declare var $: any;
 export class MailsManagement3Component {
   formData: FormGroup;
   shareholdersData: any[] = [];
-  uploadedFiles: File[][] = []; // Array for each shareholder's files
-  uploadedFileNames: { [key: string]: string } = {};
-  totalFileSize = 0;
-  fileData: FormData = new FormData();
+  uploadedFiles: File[][] = [];
+  uploadedFileNames: { [key: string]: { name: string; url: string }[] } = {};
+  isLoading = false;
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
     private fileStorageService: FileStorageService,
+    private userService: UserService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.formData = this.fb.group({
@@ -30,6 +31,7 @@ export class MailsManagement3Component {
       shareholders: this.fb.array([])
     });
   }
+
   ngOnInit(): void {
     console.log('ngOnInit executed');
   
@@ -37,44 +39,31 @@ export class MailsManagement3Component {
       window.scrollTo(0, 0);
     }
   
-    // Retrieve saved data from localStorage for both keys
+    // Retrieve saved data from localStorage
     const savedData1 = localStorage.getItem('mailform1');
     const savedData2 = localStorage.getItem('mailform2');
-  
-    // Use savedData2 if available, otherwise fall back to savedData1
     const savedData = savedData2 || savedData1;
+
     if (savedData) {
       const parsedData = JSON.parse(savedData);
       this.shareholdersData = parsedData.shareholders || [];
       this.initializeShareholders();
-  
+
       // Repopulate form fields with saved data
       this.formData.patchValue({
         companyTradeLicense: parsedData.companyTradeLicense || '',
         shareholders: this.shareholdersData
       });
-  
-      // Restore file names and populate uploadedFiles
-      this.shareholdersData.forEach((shareholder: any, index: number) => {
-        const savedFiles = shareholder.files || [];
-        // Convert saved file names back to a simple representation in uploadedFiles
-        this.uploadedFiles[index] = savedFiles.map((file: any) => ({
-          name: file.name
-        }));
-        console.log(`Restored file names for Shareholder ${index + 1}:`, this.uploadedFiles[index]);
-      });
-  
-      console.log("Saved Data from localStorage:", savedData);
-      console.log("Parsed Shareholders Data:", this.shareholdersData);
-      console.log("Form Data after Initialization:", this.formData.value);
+
+      // Restore file URLs for each shareholder
+      this.uploadedFileNames = parsedData.uploadedFileNames || {};
+      console.log("Restored file URLs:", this.uploadedFileNames);
     } else {
       console.log("No savedData found in localStorage.");
-      this.initializeShareholders(); // Initialize empty form if no saved data exists
+      this.initializeShareholders();
     }
   }
   
-  
-
   get shareholders(): FormArray {
     return this.formData.get('shareholders') as FormArray;
   }
@@ -91,40 +80,74 @@ export class MailsManagement3Component {
       });
   
       this.shareholders.push(shareholderGroup);
-      this.uploadedFiles.push([]); // Initialize file array for each shareholder
+      this.uploadedFiles.push([]);
     });
   }
-  
+
   onFileChange(event: any, index: number): void {
     if (event.target.files && event.target.files.length > 0) {
       const filesArray: File[] = Array.from(event.target.files as FileList);
-      this.fileStorageService.setFiles(index, filesArray);
-      this.uploadedFiles[index] = filesArray; // Keep track of files in the component as well
-      console.log(`Files stored in service for Shareholder ${index + 1}:`, filesArray);
+      this.uploadedFiles[index] = filesArray;
+      this.uploadedFileNames[index] = [];
+
+      this.isLoading = true;
+
+      filesArray.forEach((file) => {
+        this.userService.getPresignedUrl(file).subscribe(
+          (response: any) => {
+            const presignedUrl = response.url;
+
+            fetch(presignedUrl, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': file.type,
+              },
+              body: file,
+            })
+              .then(() => {
+                console.log(`File uploaded successfully: ${file.name}`);
+                this.uploadedFileNames[index].push({ name: file.name, url: presignedUrl });
+              })
+              .catch((error) => {
+                console.error(`Error uploading file: ${file.name}`, error);
+              })
+              .finally(() => {
+                this.isLoading = false;
+              });
+          },
+          (error: any) => {
+            this.isLoading = false;
+            console.error('Error getting pre-signed URL', error);
+          }
+        );
+      });
+      console.log(`Files stored for Shareholder ${index + 1}:`, filesArray);
     }
   }
-  
+
   onSubmit(): void {
+    this.formData.markAllAsTouched();
+    this.shareholders.controls.forEach(control => control.markAllAsTouched());
+  
     if (this.formData.valid) {
       const formValues = this.formData.value;
-  
+
       const dataToSave = {
         ...formValues,
         shareholders: formValues.shareholders.map((shareholder: any, index: number) => ({
           ...shareholder,
           passportNumber: this.shareholders.at(index).get('passportNumber')?.value || '',
-          files: this.uploadedFiles[index]?.map(file => ({ name: file.name })) || []
-        }))
+          files: this.uploadedFileNames[index] || []
+        })),
+        uploadedFileNames: this.uploadedFileNames // Persist the uploaded file URLs
       };
-  
-      // Convert dataToSave to JSON and save in localStorage for persistence
+
       localStorage.setItem('mailform2', JSON.stringify(dataToSave));
   
       // Navigate to the next step
       this.router.navigate(['/mails-management-details']);
     } else {
       console.log('Please fill all required fields');
-      this.shareholders.controls.forEach((control: { markAllAsTouched: () => any; }) => control.markAllAsTouched());
     }
   }
 }
