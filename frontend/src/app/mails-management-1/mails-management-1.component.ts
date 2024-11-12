@@ -25,6 +25,7 @@ export class MailsManagement1Component {
   isBrowser: boolean;
   isLoading = false;
 
+  maxDate: string | undefined;
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -54,6 +55,12 @@ export class MailsManagement1Component {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); 
     // });
+    
+    const today = new Date();
+    const year = today.getFullYear() - 18;
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    this.maxDate = `${year}-${month}-${day}`;
     this.getnationalityService.getNationality().subscribe((data) => {
       this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
       this.cdRef.detectChanges(); // Trigger change detection to update the view

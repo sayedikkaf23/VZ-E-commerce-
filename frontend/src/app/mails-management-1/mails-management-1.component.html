@@ -84,7 +84,7 @@
               
               <div class="form-field">
                 <label for="birthday">Date of Birth<span class="required">*</span></label>
-                <input class="form-control" formControlName="birthday" type="date" id="birthday" />
+                <input class="form-control" formControlName="birthday"     [max]="maxDate" type="date" id="birthday" />
               </div>
               <div class="form-submit">
                 <button type="submit" class="btn" id="btn_submit">Next</button>
