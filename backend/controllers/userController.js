@@ -107,7 +107,7 @@ exports.submit = async (req, res) => {
 
 exports.callSalesforceEndpoint = async (req, res) => {
   // Destructure fields from the request body
-  const { firstName, lastName, email, nationality, phone, dob } = req.body;
+  const { firstName, lastName, email, nationality, phone, dob,CustomerType } = req.body;
   const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
 
   // Construct the JSON body to send to Salesforce
@@ -118,11 +118,32 @@ exports.callSalesforceEndpoint = async (req, res) => {
     nationality,
     phone: formattedPhone,
     dob,
-    // service
+    
   };
-  console.log(requestBody)
+  console.log(requestBody);
+
   try {
-    // Get access token from Salesforce
+    // Step 1: Authenticate with the external API
+    const authResponse = await axios.post(
+      'https://saasuat.digiveri5.com:5040/api/customer/authenticate',
+      {
+        username: 'VirtuUAT',
+        password: 'VirtuApiuat@123',
+        CompanyName: 'Virtuzone',
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const authToken = authResponse.data.token; // Assuming the token is in authResponse.data.token
+
+    // Step 2: Call the Screening API
+ 
+
+    // Step 3: Get access token from Salesforce
     const tokenResponse = await axios.post(
       `https://test.salesforce.com/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
     );
@@ -130,14 +151,14 @@ exports.callSalesforceEndpoint = async (req, res) => {
     const accessToken = tokenResponse.data.access_token;
     const salesforceUrl = tokenResponse.data.instance_url;
 
-    // Make the HTTP POST request to the Salesforce endpoint
+    // Step 4: Make the HTTP POST request to the Salesforce endpoint
     const salesforceResponse = await axios.post(
       `${salesforceUrl}/services/apexrest/opportunityService/`,
       requestBody,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
       }
     );
@@ -145,7 +166,54 @@ exports.callSalesforceEndpoint = async (req, res) => {
     // Extract the Salesforce response data
     const responseData = salesforceResponse.data;
 
-    // Create a new Pidata document
+
+
+
+    const screeningResponse = await axios.post(
+      'https://saasuat.digiveri5.com:5040/api/customer/Screening',
+      {
+        UserId: 'ComplianceUAT',
+        CompanyName: 'Virtuzone',
+        CustomerId: responseData.leadWithDetails.LeadId,
+        CustomerType:CustomerType,
+        FirstName: firstName,
+        MiddleName: '',
+        LastName: lastName,
+        Gender: '',
+        DOB: dob,
+        NationalityISOList: [nationality],
+        PlaceOfBirth: '',
+        CustomerIdType: '',
+        CustomerIdNumber: '',
+        CustomerIdExpiry: '',
+        MatchCategory: '',
+        CompanyCode: '',
+        SourceCode: '',
+        ScreeningPreset: '',
+        EmailIds: '',
+        ReplyBackEmailIds: '',
+        Threshold: 85,
+        OtherParameters: {
+          Header1: 'Value1',
+          Header2: 'Value2',
+          Header3: 'Value3',
+          Header4: 'Value4',
+          Header5: 'Value5',
+        },
+        Datasets: ['ALL'],
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    console.log('Screening Response:', screeningResponse.data);
+    const { matchScore } = screeningResponse.data.highestScoringResult;
+
+    // Step 5: Create a new Pidata document
     const newPidata = new Pidata({
       leadWithDetails: {
         Nationality: responseData.leadWithDetails.Nationality,
@@ -157,12 +225,12 @@ exports.callSalesforceEndpoint = async (req, res) => {
         Company: responseData.leadWithDetails.Comapny,
         LastName: responseData.leadWithDetails.LastName,
         FirstName: responseData.leadWithDetails.FirstName,
-        LeadId: responseData.leadWithDetails.LeadId || "N/A",
+        LeadId: responseData.leadWithDetails.LeadId || 'N/A',
       },
       quotePaymentWithDetails: {
         Currency: responseData.quotePaymentWithDetails.Currency || null,
-        QuotePaymentId: responseData.quotePaymentWithDetails.QuotePaymentId || "N/A",
-        AccountId: responseData.quotePaymentWithDetails.AccountId || "N/A",
+        QuotePaymentId: responseData.quotePaymentWithDetails.QuotePaymentId || 'N/A',
+        AccountId: responseData.quotePaymentWithDetails.AccountId || 'N/A',
       },
       quoteWithProductDetails: {
         AccountName: responseData.quoteWithProductDetails.AccountName,
@@ -171,39 +239,44 @@ exports.callSalesforceEndpoint = async (req, res) => {
         invoiceDate: responseData.quoteWithProductDetails.invoiceDate,
         invoiceNumber: responseData.quoteWithProductDetails.invoiceNumber || null,
         mobile: formattedPhone,
-        oppurtunityId: responseData.quoteWithProductDetails.oppurtunityId || "N/A",
-        ownerId: responseData.quoteWithProductDetails.ownerId || "N/A",
+        oppurtunityId: responseData.quoteWithProductDetails.oppurtunityId || 'N/A',
+        ownerId: responseData.quoteWithProductDetails.ownerId || 'N/A',
         partPayment: responseData.quoteWithProductDetails.partPayment || null,
         paymentLink: responseData.quoteWithProductDetails.paymentLink || null,
         paymentMethod: responseData.quoteWithProductDetails.paymentMethod || null,
         product: responseData.quoteWithProductDetails.product || [],
         quoteEmail: responseData.quoteWithProductDetails.quoteEmail,
-        quoteId: responseData.quoteWithProductDetails.quoteId || "N/A",
-        quoteName: responseData.quoteWithProductDetails.quoteName || "Test Quote",
-        quotePaymentId: responseData.quoteWithProductDetails.quotePaymentId || "N/A",
+        quoteId: responseData.quoteWithProductDetails.quoteId || 'N/A',
+        quoteName: responseData.quoteWithProductDetails.quoteName || 'Test Quote',
+        quotePaymentId: responseData.quoteWithProductDetails.quotePaymentId || 'N/A',
         quotePdf: {
           ContentType: responseData.quoteWithProductDetails.quotePdf.ContentType,
           name: responseData.quoteWithProductDetails.quotePdf.name,
           pdfContent: responseData.quoteWithProductDetails.quotePdf.pdfContent,
         },
         sendToPaymentGateway: responseData.quoteWithProductDetails.sendToPaymentGateway || false,
-        status: responseData.quoteWithProductDetails.status || "Draft",
+        status: responseData.quoteWithProductDetails.status || 'Draft',
         subTotal: responseData.quoteWithProductDetails.subTotal || 0,
         totalIncludingVAT: responseData.quoteWithProductDetails.totalIncludingVAT || 0,
         totalPrice: responseData.quoteWithProductDetails.totalPrice || 0,
       },
+      screeningDetails: { // Add screening details to the document
+        // screeningId: id,
+        matchScore: matchScore,
+      },
     });
 
-    // Save the document to MongoDB
+    // Step 6: Save the document to MongoDB
     await newPidata.save();
 
     // Send a success response
-    res.status(200).json({ message: "Data saved successfully", data: responseData });
+    res.status(200).json({ message: 'Data saved successfully', data: responseData });
   } catch (error) {
-    console.error("Error calling Salesforce endpoint:", error);
-    res.status(500).json({ message: "Error calling Salesforce endpoint", details: error.message });
+    console.error('Error calling Salesforce endpoint:', error);
+    res.status(500).json({ message: 'Error calling Salesforce endpoint', details: error.message });
   }
 };
+
 
 
 exports.callSalesforceQuoteService = async (req, res) => {

@@ -26,6 +26,7 @@ export class Step2Component implements AfterViewInit, OnInit {
     companyname: '',
     Bank: '',
     type: 'Personal Bank',
+    CustomerType: 'I',
   };
   isValidSalary = true;
 
@@ -134,6 +135,7 @@ export class Step2Component implements AfterViewInit, OnInit {
       formDataToSend.append('companyname', this.formData.companyname);
       formDataToSend.append('Bank', this.formData.Bank);
       formDataToSend.append('type', this.formData.type);
+      formDataToSend.append('CustomerType', this.formData.CustomerType);
 
       // Save Step 2 data to localStorage
       localStorage.setItem('step2Data', JSON.stringify(this.formData));

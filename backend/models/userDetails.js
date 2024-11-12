@@ -9,6 +9,13 @@ const shareholderSchema = new mongoose.Schema({
   nationalityshareholder: { type: String }
 });
  
+
+const screeningDetailsSchema = new mongoose.Schema({
+  // screeningId: { type: String },
+  matchScore: { type: Number }
+});
+
+
 const userDetailsSchema = new mongoose.Schema({
  
    type: { type: String },
@@ -35,6 +42,7 @@ const userDetailsSchema = new mongoose.Schema({
       shareholder: { type: String },     // Added shareholder field
       Turnover: { type: String },        // Added Turnover field
       shareholders: [shareholderSchema], // Changed to an array of shareholder objects
+      screeningDetails: screeningDetailsSchema, // Add screeningDetails as a sub-document
       LeadId: { type: String }, 
       QuotePaymentId: { type: String }, 
 }, { timestamps: true });

@@ -24,6 +24,7 @@ export class Step1Component implements OnInit {
   CountryISO = CountryISO;  
   isBrowser: boolean;
   isLoading = false;
+  maxDate: string | undefined;
 
   constructor(
     private router: Router,
@@ -55,6 +56,13 @@ export class Step1Component implements OnInit {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
+
+
+    const today = new Date();
+    const year = today.getFullYear() - 18;
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    this.maxDate = `${year}-${month}-${day}`;
 
     this.getnationalityService.getNationality().subscribe((data) => {
       this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
@@ -90,19 +98,22 @@ export class Step1Component implements OnInit {
               localStorage.setItem('step1Data', JSON.stringify(formData));
             }
   
+
+                            this.router.navigate(['/account-type']);
+
             // Check if step2Data exists in localStorage
-            if (this.isBrowser) {
-              if (localStorage.getItem('mailform2')) {
-                // If mailform2 data exists, navigate to MailMangamentShowDetails
-                this.router.navigate(['/BusinessBankShowDetails']);
-              } else if (localStorage.getItem('step2Data')) {
-                // If step2Data exists, navigate to step-2
-                this.router.navigate(['/step-2']);
-              } else {
-                // Otherwise, navigate to account-type
-                this.router.navigate(['/account-type']);
-              }
-            }
+            // if (this.isBrowser) {
+            //   if (localStorage.getItem('mailform2')) {
+            //     // If mailform2 data exists, navigate to MailMangamentShowDetails
+            //     this.router.navigate(['/BusinessBankShowDetails']);
+            //   } else if (localStorage.getItem('step2Data')) {
+            //     // If step2Data exists, navigate to step-2
+            //     this.router.navigate(['/step-2']);
+            //   } else {
+            //     // Otherwise, navigate to account-type
+            //     this.router.navigate(['/account-type']);
+            //   }
+            // }
         
        
     
