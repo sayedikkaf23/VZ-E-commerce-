@@ -30,6 +30,8 @@ import { ShowDetails2Component } from './show-details-2/show-details-2.component
 import { VirtualReceptionSummaryComponent } from './virtual-reception-summary/virtual-reception-summary.component';
 import { BussinessShowDeatilsComponent } from './bussiness-show-deatils/bussiness-show-deatils.component';
 
+import { AdminPaymentMethordComponent } from './admin-payment-methord/admin-payment-methord.component';
+
 const routes: Routes = [
 
   {
@@ -150,6 +152,7 @@ const routes: Routes = [
     component: VirtualReceptionist2Component,
    
   },
+ 
   {
     path: 'virtual-receptionist-details',
     component: VirtualReceptionistDetailsComponent,
@@ -199,6 +202,11 @@ const routes: Routes = [
       {
         path: 'admin-mail-management',
         component: AdminMailManagementComponent,
+       
+      },
+      {
+        path: 'payment-methord',
+        component:AdminPaymentMethordComponent,
        
       },
       {

@@ -13,6 +13,7 @@ var userRouter = require("./routes/userRoutes");
 var virtualDetails = require("./routes/virtual-route");
 var mailDetails = require("./routes/mailform");
 var nationalities=require('./routes/nationality')
+const paymentMethodRoutes = require('./routes/paymentMethodRoutes');
 
 var app = express();
 
@@ -51,7 +52,7 @@ app.use('/user', userRouter);
 app.use('/virtual', virtualDetails);
 app.use('/mail', mailDetails);
 app.use('/nationalities',nationalities)
-
+app.use('/payment',paymentMethodRoutes)
 if (!process.env.SALESFORCE_USERNAME || !process.env.SALESFORCE_PASSWORD) {
   console.error("Salesforce credentials are missing. Please check .env file.");
   setTimeout(() => process.exit(1), 5000);
