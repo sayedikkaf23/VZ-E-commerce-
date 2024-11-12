@@ -1,63 +1,53 @@
 <div class="content">
-    <div class="page-heading">
-      <div class="row align-items-center justify-content-between">
-        <div class="col-auto">
-          <div class="row align-items-center">
-            <div class="col-auto mb-2">
-              <h2>Personal Bank Account </h2>
-            </div>
+  <div class="page-heading">
+    <div class="row align-items-center justify-content-between">
+      <div class="col-auto">
+        <div class="row align-items-center">
+          <div class="col-auto mb-2">
+            <h2>Personal Bank Account</h2>
           </div>
         </div>
-        <div class="col-auto">
-          <!-- Optional search field here if needed in future -->
-        </div>
+      </div>
+      <div class="col-auto">
+        <!-- Optional search field here if needed in future -->
       </div>
     </div>
-  
-    <div class="table-responsive overflow-behaviour">
-      <table class="table table-list-data table-hover">
-        <thead class="bg-light">
-          <tr >
-            <th scope="col">Name &#x2191;&#x2193;</th>
-            <th scope="col">Email &#x2191;&#x2193;</th>
-            <th scope="col">Nationality &#x2191;&#x2193;</th>
-            <th scope="col">Birthday &#x2191;&#x2193;</th>
-            <th scope="col">Resident &#x2191;&#x2193;</th>
-            <th scope="col">Working &#x2191;&#x2193;</th>
-            <th scope="col" *ngIf="hasSalaryData">
-              Salary &#x2191;&#x2193;
-            </th>
-            
-            <!-- Conditionally display "Company Name" header if data exists -->
-            <th scope="col" *ngIf="hasCompanyNameData">
-              Company Name &#x2191;&#x2193;
-            </th>
-            <th scope="col">Bank &#x2191;&#x2193;</th>
-            <th scope="col">KYC Status &#x2191;&#x2193;</th>
-            <th scope="col">Action &#x2191;&#x2193;</th>
-
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let user of userList">
-            <td>{{ user.firstName }} {{ user.lastName }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.nationality }}</td>
-            <td>{{ user.birthday | date: 'yyyy-MM-dd' }}</td>
-            <td>{{ user.resident }}</td>
-            <td>{{ user.working }}</td>
-            <td *ngIf="user.salary">{{ user.salary }}</td>
-      
-            <!-- Conditionally display "Company Name" cell if there's data -->
-            <td *ngIf="user.companyname">{{ user.companyname }}</td>
-            <td>{{ user.Bank }}</td>
-            <td>{{ user.Bank }}</td>
-
-            <td><button class="green-button">Check status</button></td>
-
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
-  
+
+  <div class="table-responsive overflow-behaviour">
+    <table class="table table-list-data table-hover">
+      <thead class="bg-light">
+        <tr>
+          <th scope="col">Name &#x2191;&#x2193;</th>
+          <th scope="col">Email &#x2191;&#x2193;</th>
+          <th scope="col">Nationality &#x2191;&#x2193;</th>
+          <th scope="col">Birthday &#x2191;&#x2193;</th>
+          <th scope="col">Resident &#x2191;&#x2193;</th>
+          <th scope="col">Working &#x2191;&#x2193;</th>
+          <th scope="col" *ngIf="hasSalaryData">Salary &#x2191;&#x2193;</th>
+          <th scope="col" *ngIf="hasCompanyNameData">Company Name &#x2191;&#x2193;</th>
+          <th scope="col">Bank &#x2191;&#x2193;</th>
+          <th scope="col">KYC Status &#x2191;&#x2193;</th>
+          <th scope="col">Action &#x2191;&#x2193;</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of userList">
+          <td>{{ user.firstName }} {{ user.lastName }}</td>
+          <td>{{ user.email }}</td>
+          <td>{{ user.nationality }}</td>
+          <td>{{ user.birthday | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ user.resident }}</td>
+          <td>{{ user.working }}</td>
+          <td *ngIf="user.salary">{{ user.salary }}</td>
+          <td *ngIf="user.companyname">{{ user.companyname }}</td>
+          <td>{{ user.Bank }}</td>
+          <td>{{ user.CaseStatusCode || 'N/A' }}</td>
+          <td>
+            <button class="green-button" (click)="checkStatus(user)">Check Status</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

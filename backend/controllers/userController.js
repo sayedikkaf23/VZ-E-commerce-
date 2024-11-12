@@ -637,3 +637,52 @@ exports.addMenuItems = async (req, res) => {
     res.status(500).json({ error: 'Error creating menu items', details: error.message });
   }
 };
+
+
+exports.checkStatus = async (req, res) => {
+  // Destructure CustomerId and CompanyName from the request body
+  const { CustomerId, CompanyName } = req.body;
+
+  try {
+    // Step 1: Authenticate to get the token
+    const authResponse = await axios.post(
+      'https://saasuat.digiveri5.com:5040/api/customer/authenticate',
+      {
+        username: 'VirtuUAT',
+        password: 'VirtuApiuat@123',
+        CompanyName: 'Virtuzone',
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    const authToken = authResponse.data.token; // Assuming the token is in authResponse.data.token
+
+    // Step 2: Call the status API with the provided payload from the request body
+    const statusResponse = await axios.post(
+      'https://saasuat.digiveri5.com:5040/api/customer/status',
+      {
+        CustomerId: CustomerId,
+        CompanyName: CompanyName,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authToken}`,
+        },
+      }
+    );
+
+    // Extract response data from the status API
+    const statusData = statusResponse.data;
+
+    // Send a success response with status data
+    res.status(200).json({ message: 'Status retrieved successfully', data: statusData });
+  } catch (error) {
+    console.error('Error retrieving status:', error);
+    res.status(500).json({ error: 'Error retrieving status', details: error.message });
+  }
+};

@@ -28,6 +28,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     Turnover: '',
     shareholdercount:'',
     type: 'Business Bank',
+    CustomerType: 'C',
   };
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
 
@@ -191,6 +192,8 @@ deleteShareholder(index: number) {
         formDataToSend.append('jurisdiction', this.formData.jurisdiction);
         formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
         formDataToSend.append('Turnover', this.formData.Turnover);
+        formDataToSend.append('CustomerType', this.formData.CustomerType);
+
         this.shareholders.forEach((shareholder, index) => {
           formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
         });

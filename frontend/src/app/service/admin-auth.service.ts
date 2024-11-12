@@ -52,4 +52,7 @@ export class AdminAuthService {
   getMenuItems(): Observable<MenuItem[]> {
     return this.http.get<MenuItem[]>(`${this.url}/user/menu-items`);
   }
+  checkStatus(data: { CustomerId: string; CompanyName: string }): Observable<any> {
+    return this.http.post(`${this.url}/user/checkStatus`, data); // POST request to check status
+  }
 }

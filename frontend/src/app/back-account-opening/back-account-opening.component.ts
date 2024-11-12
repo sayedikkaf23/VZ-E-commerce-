@@ -22,18 +22,6 @@ export class BackAccountOpeningComponent implements OnInit {
       (response) => {
         this.userList = response; // Assign the API response to the userList array
         this.checkColumnData(); // Check columns only after data is loaded
-
-        // Log LeadId for each user in the response
-        this.userList.forEach((user) => {
-          if (user.LeadId) {
-            const payload = {
-              CustomerId: user.LeadId,
-              CompanyName: 'Virtuzone',
-            };
-            console.log('payloed', payload);
-            console.log('LeadId:', user.LeadId);
-          }
-        });
       },
       (error) => {
         console.error('Error fetching user details:', error);
@@ -44,5 +32,22 @@ export class BackAccountOpeningComponent implements OnInit {
   checkColumnData(): void {
     this.hasSalaryData = this.userList.some((user) => !!user.salary);
     this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
+  }
+
+  // Method to call checkStatus API and store CaseStatusCode
+  checkStatus(user: any): void {
+    const payload = {
+      CustomerId: user.LeadId,
+      CompanyName: 'Virtuzone',
+    };
+    this.adminAuthService.checkStatus(payload).subscribe(
+      (response) => {
+        user.CaseStatusCode = response.data?.CaseStatusCode || 'N/A'; // Store CaseStatusCode in user
+        console.log('Status check response:', response);
+      },
+      (error) => {
+        console.error('Error checking status:', error);
+      }
+    );
   }
 }
