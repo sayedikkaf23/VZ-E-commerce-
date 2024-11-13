@@ -1,40 +1,34 @@
 /* Styling for the View All link */
 .view-all-link {
-    font-size: 0.875rem; /* Small text size */
-    color: #FA2E52; /* Link color */
-    text-decoration: underline; /* Optional underline */
-    cursor: pointer; /* Show pointer on hover */
-    padding: 0; /* Remove any padding */
-    background-color: transparent; /* No background */
-    border: none; /* No border */
-    display: inline-block; /* Ensure it behaves like inline text */
-    margin-left: 0; /* Align to the left */
-  }
-  
-  .view-all-link:hover {
-    color: #FA2E52; /* Keep color on hover */
-    text-decoration: underline; /* Keep underline on hover */
-  }
-  
-  /* Align the text to the left */
-  .text-left {
-    text-align: left;
-  }
+  font-size: 0.875rem; /* Small text size */
+  color: #FA2E52; /* Link color */
+  text-decoration: underline; /* Optional underline */
+  cursor: pointer; /* Show pointer on hover */
+  padding: 0; /* Remove any padding */
+  background-color: transparent; /* No background */
+  border: none; /* No border */
+  display: inline-block; /* Ensure it behaves like inline text */
+  margin-left: 0; /* Align to the left */
+}
 
-  .no-wrap {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  /* No-wrap for table headers */
-  table thead th {
-    white-space: nowrap; /* Prevent text wrapping */
-    text-align: left; /* Optional: Ensure text alignment is left */
-    padding-right: 1rem; /* Optional: Add spacing between headers */
-  }
-  /* Loader Container */
- .loader-container {
+.view-all-link:hover {
+  color: #FA2E52; /* Keep color on hover */
+  text-decoration: underline; /* Keep underline on hover */
+}
+
+/* Align the text to the left */
+.text-left {
+  text-align: left;
+}
+
+/* No-wrap for table headers */
+table thead th {
+  white-space: nowrap; /* Prevent text wrapping */
+  text-align: left; /* Optional: Ensure text alignment is left */
+  padding-right: 1rem; /* Optional: Add spacing between headers */
+}
+
+.loader-container {
   position: fixed; /* Covers the whole viewport */
   top: 0;
   left: 0;
@@ -71,3 +65,56 @@
     border-top-color: #FF5A5F;
   }
 }
+/* Ensure table values are visible and wrap properly */
+table {
+  width: 100%; /* Ensure the table takes full width */
+  table-layout: auto; /* Automatically adjust column width */
+  border-collapse: collapse; /* Standardize table borders */
+}
+
+table th,
+table td {
+  text-align: left; /* Align content to the left */
+  padding: 12px; /* Add padding for readability */
+  font-size: 18px; /* Set font size to 15px */
+  white-space: normal; /* Allow text wrapping */
+  word-wrap: break-word; /* Prevent overflow for long text */
+  vertical-align: top; /* Align content to the top */
+}
+
+/* Adjust for smaller screens */
+@media screen and (max-width: 768px) {
+  table {
+    display: block; /* Allow table to be scrollable */
+    overflow-x: auto; /* Add horizontal scrolling for small screens */
+    white-space: nowrap; /* Prevent wrapping on extremely small screens */
+  }
+
+  table th,
+  table td {
+    font-size: 15px; /* Keep font size consistent on small screens */
+    padding: 10px; /* Adjust padding */
+  }
+
+  .row {
+    flex-direction: column; /* Stack rows vertically */
+  }
+
+  .col-md-6 {
+    width: 100%; /* Make columns full width on mobile */
+    margin-bottom: 20px; /* Add spacing between sections */
+  }
+
+  .btn-edit {
+    font-size: 15px; /* Match font size for buttons */
+    margin-top: 10px; /* Adjust top margin */
+  }
+}
+
+
+
+h4 {
+  font-size: 20px; /* Slightly larger font for headings */
+  margin-bottom: 15px; /* Adjust spacing */
+}
+
