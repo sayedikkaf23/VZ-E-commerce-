@@ -107,8 +107,12 @@ export class MailsManagement3Component {
               .then(() => {
                 console.log(`File uploaded successfully: ${file.name}`);
                 this.uploadedFileNames[index].push({ name: file.name, url: presignedUrl });
+                this.isLoading = false;
+
               })
               .catch((error) => {
+                this.isLoading = false;
+
                 console.error(`Error uploading file: ${file.name}`, error);
               })
               .finally(() => {

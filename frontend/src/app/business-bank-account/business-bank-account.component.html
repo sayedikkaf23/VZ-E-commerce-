@@ -14,7 +14,6 @@
     </div>
   </div>
 
- 
   <div class="table-responsive overflow-behaviour">
     <table class="table table-list-data table-hover">
       <thead class="bg-light">
@@ -28,9 +27,12 @@
           <th scope="col">Shareholder Count</th>
           <th scope="col">Turn Over</th>
           <th scope="col">Actions</th>
-          <th scope="col">KYC Status</th>
+
+          <th scope="col">Match Score</th>
 
           <th scope="col">Actions</th>
+
+          <th scope="col">KYC Status</th>
 
         </tr>
       </thead>
@@ -42,23 +44,28 @@
           <td>{{ user.birthday | date : "yyyy-MM-dd" }}</td>
           <td>{{ user.mobileNumber.internationalNumber }}</td>
           <td>{{ user.jurisdiction }}</td>
-          <td>{{ user.shareholder }}</td>
+          <td>{{ user.shareholdercount }}</td>
           <td>{{ user.Turnover }}</td>
-
-          <td><button class="green-button">Check status</button></td>
-          <td>{{ user.Turnover }}</td>
-
-      
           <td>
-            <button (click)="openModal(user.shareholders)" class="btn btn-primary">View Details</button>
+            <button
+              (click)="openModal(user.shareholders)"
+              class="btn btn-primary"
+              style="white-space: nowrap;"
+            >
+              View Details
+            </button>
           </td>
+          <td>{{ user.screeningDetails?.matchScore }}</td>
+
+          <button class="green-button" (click)="checkStatus(user)">Check Status</button>
+          <td>{{ user.CustomerStatus }}</td>
+
+          
         </tr>
       </tbody>
     </table>
   </div>
 
- 
-  
   <div class="modal-container" *ngIf="showModal">
     <div class="modal-backdrop" (click)="closeModal()"></div>
     <div class="modal-content">
@@ -71,7 +78,6 @@
             <th scope="col">Shareholder(%)</th>
             <th scope="col">Date of Birth</th>
             <th scope="col">Nationality</th>
-            
           </tr>
         </thead>
         <tbody>
@@ -85,3 +91,4 @@
       </table>
     </div>
   </div>
+</div>

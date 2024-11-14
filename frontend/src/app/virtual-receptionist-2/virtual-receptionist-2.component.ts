@@ -106,9 +106,13 @@ export class VirtualReceptionist2Component implements OnInit {
               .then(() => {
                 console.log(`File uploaded successfully: ${file.name}`);
                 this.uploadedFileNames[index].push({ name: file.name, url: presignedUrl });
+                this.isLoading = false;
+
               })
               .catch((error) => {
                 console.error(`Error uploading file: ${file.name}`, error);
+                this.isLoading = false;
+
               })
               .finally(() => {
                 this.isLoading = false;

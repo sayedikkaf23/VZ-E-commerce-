@@ -75,6 +75,10 @@ export class VirtualReceptionistComponent {
     }
   }
 
+  openDatePicker() {
+    const dateInput = document.getElementById('birthday') as HTMLInputElement;
+    dateInput.showPicker(); // Only works if supported by the browser
+}
   onSubmit() {
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;

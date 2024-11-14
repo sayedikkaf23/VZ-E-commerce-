@@ -1,4 +1,12 @@
-import { Component, ViewChild, ElementRef, OnInit, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  ElementRef,
+  OnInit,
+  AfterViewInit,
+  Inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import { ChangeDetectionStrategy } from '@angular/core';
 
 import { isPlatformBrowser } from '@angular/common';
@@ -14,7 +22,7 @@ declare var $: any;
 @Component({
   selector: 'app-virtual-receptionist-1',
   templateUrl: './virtual-receptionist-1.component.html',
-  styleUrl: './virtual-receptionist-1.component.css'
+  styleUrl: './virtual-receptionist-1.component.css',
 })
 export class VirtualReceptionist1Component {
   @ViewChild('dateInput') dateInput!: ElementRef;
@@ -23,26 +31,30 @@ export class VirtualReceptionist1Component {
     CompanyName: '',
     CompanyIncorporated: '',
     Website: '',
-    tradelicense:'',
-    shareholdercount:'',
-    Companylicensed:'',
-
+    tradelicense: '',
+    shareholdercount: '',
+    Companylicensed: '',
   };
-  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
+  shareholders: any[] = [
+    {
+      name: '',
+      shareholderPercentage: '',
+      dob: '',
+      nationalityshareholder: '',
+    },
+  ]; // Initialize with one shareholder
 
   openDatePicker() {
     if (this.dateInput && this.dateInput.nativeElement) {
-      this.dateInput.nativeElement.focus();  // Ensure the input is focused
-      this.dateInput.nativeElement.click();  // Programmatically click the input to open the date picker
+      this.dateInput.nativeElement.focus(); // Ensure the input is focused
+      this.dateInput.nativeElement.click(); // Programmatically click the input to open the date picker
     }
   }
-  
-  
+
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
   nationalities: string[] = []; // Initialize as an empty array
-
 
   constructor(
     private formDataService: FormDataService,
@@ -62,34 +74,37 @@ export class VirtualReceptionist1Component {
   ngOnInit(): void {
     // Retrieve Step 2 data from localStorage
 
-    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
-      this.nationalities = data.map((country) => country.name.common);
-      this.cdRef.detectChanges(); 
-    });
+    this.http
+      .get<any[]>('https://restcountries.com/v3.1/all')
+      .subscribe((data) => {
+        this.nationalities = data.map((country) => country.name.common);
+        this.cdRef.detectChanges();
+      });
     // this.getnationalityService.getNationality().subscribe((data) => {
     //   this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
     //   this.cdRef.detectChanges(); // Trigger change detection to update the view
     // });
+
     const storedStep2Data = localStorage.getItem('virtualdata1');
     if (storedStep2Data) {
       const parsedData = JSON.parse(storedStep2Data);
-      
+
       // Update formData and shareholders separately
-      this.formData = { 
-        CompanyName: parsedData.CompanyName, 
-        CompanyIncorporated: parsedData.CompanyIncorporated, 
-        Website: parsedData.Website, 
-      
-        tradelicense:parsedData.tradelicense,
+      this.formData = {
+        CompanyName: parsedData.CompanyName,
+        CompanyIncorporated: parsedData.CompanyIncorporated,
+        Website: parsedData.Website,
+
+        tradelicense: parsedData.tradelicense,
         shareholdercount: parsedData.shareholdercount,
-        Companylicensed:parsedData.Companylicensed
+        Companylicensed: parsedData.Companylicensed,
       };
-      
+
       // Update shareholders if it exists in the parsed data
       if (parsedData.shareholders) {
         this.shareholders = parsedData.shareholders;
       }
-    
+
       // Trigger change detection if necessary
       this.cdRef.detectChanges();
     }
@@ -127,17 +142,21 @@ export class VirtualReceptionist1Component {
         });
       });
     }
-    
   }
   addShareholder() {
     console.log('Add shareholder clicked');
-    this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+    this.shareholders.push({
+      name: '',
+      shareholderPercentage: '',
+      dob: '',
+      nationalityshareholder: '',
+    });
     this.cdRef.detectChanges(); // Only if necessary
-}
+  }
 
-deleteShareholder(index: number) {
-  this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
-}
+  deleteShareholder(index: number) {
+    this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
+  }
 
   // Handle file input changes
   onFileChange(event: any, fieldName: string) {
@@ -153,7 +172,12 @@ deleteShareholder(index: number) {
 
     // If the selected count is greater than current length, add more shareholder objects
     while (this.shareholders.length < count) {
-      this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+      this.shareholders.push({
+        name: '',
+        shareholderPercentage: '',
+        dob: '',
+        nationalityshareholder: '',
+      });
     }
 
     // If the selected count is smaller, remove extra shareholder objects
@@ -164,50 +188,67 @@ deleteShareholder(index: number) {
 
   isFormInvalid(): boolean {
     const shareholderCount = Number(this.formData.shareholdercount);
-  
+
     // Ensure that all fields of each shareholder up to the count are filled
     for (let i = 0; i < shareholderCount; i++) {
       const shareholder = this.shareholders[i];
-      if (!shareholder || !shareholder.name || !shareholder.shareholderPercentage || !shareholder.dob || !shareholder.nationalityshareholder) {
-        return true;  // Form is invalid if any required field is missing
+      if (
+        !shareholder ||
+        !shareholder.name ||
+        !shareholder.shareholderPercentage ||
+        !shareholder.dob ||
+        !shareholder.nationalityshareholder
+      ) {
+        return true; // Form is invalid if any required field is missing
       }
     }
-  
+
     return false; // Form is valid if all required fields are filled
   }
-  
+
   // Validation and submission logic
   onSubmit() {
-
     if (this.isFormInvalid()) {
-      this.toastr.error('Please fill out all required fields.', 'Form Incomplete');
+      this.toastr.error(
+        'Please fill out all required fields.',
+        'Form Incomplete'
+      );
     } else {
       if (this.validateForm()) {
         const formDataToSend = new FormData();
 
         // Append Step 1 data
         for (const key in this.step1Data) {
-            if (this.step1Data.hasOwnProperty(key)) {
-                formDataToSend.append(key, this.step1Data[key]);
-            }
+          if (this.step1Data.hasOwnProperty(key)) {
+            formDataToSend.append(key, this.step1Data[key]);
+          }
         }
 
         // Append Step 2 data
         formDataToSend.append('CompanyName', this.formData.CompanyName);
-        formDataToSend.append('CompanyIncorporated', this.formData.CompanyIncorporated);
-        formDataToSend.append('shareholdercount', this.formData.shareholdercount);
+        formDataToSend.append(
+          'CompanyIncorporated',
+          this.formData.CompanyIncorporated
+        );
+        formDataToSend.append(
+          'shareholdercount',
+          this.formData.shareholdercount
+        );
         formDataToSend.append('Website', this.formData.Website);
         formDataToSend.append('tradelicense', this.formData.tradelicense);
         formDataToSend.append('Companylicensed', this.formData.Companylicensed);
         this.shareholders.forEach((shareholder, index) => {
-          formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
+          formDataToSend.append(
+            `shareholders[${index}]`,
+            JSON.stringify(shareholder)
+          );
         });
 
         const combinedFormData = {
           ...this.formData, // Spread formData properties
-          shareholders: this.shareholders // Add the shareholders array
+          shareholders: this.shareholders, // Add the shareholders array
         };
-        
+
         // Save Step 2 data to localStorage
         localStorage.setItem('virtualdata1', JSON.stringify(combinedFormData));
 
@@ -218,24 +259,20 @@ deleteShareholder(index: number) {
           // Navigate to the standard route
           this.router.navigate(['/virtual-receptionist-details']);
         }
-
+      }
     }
-    }
+  }
 
-
-   
-}
-
-trackByShareholder(index: number, shareholder: any): number {
-  return index; // Or return a unique identifier if you have one
-}
+  trackByShareholder(index: number, shareholder: any): number {
+    return index; // Or return a unique identifier if you have one
+  }
 
   // Validate form and show a single toast for missing fields
   validateForm(): boolean {
     let isValid = true;
     const missingFields: string[] = [];
 
-console.log(missingFields)
+    console.log(missingFields);
 
     if (!this.formData.CompanyName) {
       missingFields.push('CompanyName');
@@ -245,8 +282,6 @@ console.log(missingFields)
       missingFields.push('CompanyIncorporated');
       isValid = false;
     }
-   
-   
 
     // Show a single toast for all missing fields if any
     if (missingFields.length > 0) {
@@ -256,5 +291,4 @@ console.log(missingFields)
 
     return isValid;
   }
-
 }

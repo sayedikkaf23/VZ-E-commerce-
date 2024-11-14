@@ -28,12 +28,12 @@
               </div>
               <table class="w-100">
                 <tbody>
-                  <tr><th>First Name :</th><td>{{ personalInfo.firstName }}</td></tr>
-                  <tr><th>Last Name :</th><td>{{ personalInfo.lastName }}</td></tr>
-                  <tr><th>Email ID :</th><td>{{ personalInfo.email }}</td></tr>
-                  <tr><th>Nationality :</th><td>{{ personalInfo.nationality }}</td></tr>
-                  <tr><th>Date of Birth :</th><td>{{ personalInfo.birthday }}</td></tr>
-                  <tr><th>Phone Number :</th><td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td></tr>
+                  <tr><th>First Name:</th><td>{{ personalInfo.firstName }}</td></tr>
+                  <tr><th>Last Name:</th><td>{{ personalInfo.lastName }}</td></tr>
+                  <tr><th>Email ID:</th><td>{{ personalInfo.email }}</td></tr>
+                  <tr><th>Nationality:</th><td>{{ personalInfo.nationality }}</td></tr>
+                  <tr><th>Date of Birth:</th><td>{{ personalInfo.birthday }}</td></tr>
+                  <tr><th>Phone Number:</th><td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td></tr>
                 </tbody>
               </table>
             </div>
@@ -47,12 +47,12 @@
               </div>
               <table class="w-100">
                 <tbody>
-                  <tr><th>Company Name :</th><td>{{ companyInfo.CompanyName }}</td></tr>
-                  <tr><th>Company Incorporated :</th><td>{{ companyInfo.CompanyIncorporated }}</td></tr>
-                  <tr><th>Website :</th><td>{{ companyInfo.Website }}</td></tr>
-                  <tr><th>Trade License Activities :</th><td>{{ companyInfo.tradelicense }}</td></tr>
+                  <tr><th>Company Name:</th><td>{{ companyInfo.CompanyName }}</td></tr>
+                  <tr><th>Company Incorporated:</th><td>{{ companyInfo.CompanyIncorporated }}</td></tr>
+                  <tr><th>Website:</th><td>{{ companyInfo.Website }}</td></tr>
+                  <tr><th>Trade License Activities:</th><td>{{ companyInfo.tradelicense }}</td></tr>
                   <tr *ngIf="companyInfo.CompanyIncorporated == 'United Arab Emirates'">
-                    <th>Company Licensed :</th><td>{{ companyInfo.Companylicensed }}</td>
+                    <th>Company Licensed:</th><td>{{ companyInfo.Companylicensed }}</td>
                   </tr>
                 </tbody>
               </table>

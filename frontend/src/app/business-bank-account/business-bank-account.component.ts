@@ -10,7 +10,8 @@ export class BusinessBankAccountComponent implements OnInit {
   userList: any[] = []; // To store the fetched user data
   selectedUserShareholders: any[] = []; // To store selected user's shareholder details
   showModal: boolean = false; // Flag to control modal visibility
-
+  hasSalaryData: boolean = false;
+  hasCompanyNameData: boolean = false;
   // Dummy data for shareholders
   dummyShareholders = [
     { name: 'John Doe', id: 'SH001', percentage: 25 },
@@ -28,6 +29,8 @@ export class BusinessBankAccountComponent implements OnInit {
     this.adminAuthService.getBusinessBank().subscribe(
       (response) => {
         this.userList = response; // Assign the API response to the userList array
+        this.checkColumnData(); // Check columns only after data is loaded
+
       },
       (error) => {
         console.error('Error fetching user details:', error);
@@ -35,6 +38,27 @@ export class BusinessBankAccountComponent implements OnInit {
     );
   }
 
+  checkColumnData(): void {
+    this.hasSalaryData = this.userList.some((user) => !!user.salary);
+    this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
+  }
+
+  // Method to call checkStatus API and store CaseStatusCode
+  checkStatus(user: any): void {
+    const payload = {
+      CustomerId: user.LeadId,
+      CompanyName: 'Virtuzone',
+    };
+    this.adminAuthService.checkStatus(payload).subscribe(
+      (response) => {
+        user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
+        console.log('Status check response:', response);
+      },
+      (error) => {
+        console.error('Error checking status:', error);
+      }
+    );
+  }
   openModal(data:any): void {
     this.selectedUserShareholders = data; // Assign dummy data directly
     this.showModal = true; // Open the modal
