@@ -38,6 +38,8 @@ exports.submit = async (req, res) => {
       jurisdiction,
       shareholders,
       Turnover,
+      LeadId, // Assume LeadId is now provided in the request
+      shareholdercount
     } = req.body;
 
     console.log("Salary received:", salary); // Check if salary is received correctly
@@ -46,21 +48,27 @@ exports.submit = async (req, res) => {
     let parsedMobileNumber = typeof mobileNumber === "string" ? JSON.parse(mobileNumber) : mobileNumber;
 
     // Check if email already exists in UserDetails
-    const existingUser = await UserDetails.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already exists" });
-    }
-
+    // const existingUser = await UserDetails.findOne({ email });
+    // if (existingUser) {
+    //   return res.status(400).json({ message: "Email already exists" });
+    // }
+console.log(LeadId,"LeadId")
     // Find the corresponding user in Pidata using the email
-    const pidataUser = await Pidata.findOne({ "leadWithDetails.Email": email });
+    const pidataUser = await Pidata.findOne({ "leadWithDetails.LeadId": LeadId });
     if (!pidataUser) {
       return res.status(404).json({ message: "Related Pidata entry not found" });
     }
 
     // Extract LeadId and QuotePaymentId from the found Pidata document
-    const { LeadId } = pidataUser.leadWithDetails;
+    // const { LeadId } = pidataUser.leadWithDetails;
     const { QuotePaymentId } = pidataUser.quotePaymentWithDetails;
+    const matchScore = pidataUser?.screeningDetails?.matchScore; // Correct casing here
+    if (matchScore === undefined) {
+      console.error("matchScore is undefined. pidataUser:", pidataUser);
+    }
 
+
+    
     // Parse shareholders if provided as a string
     let parsedShareholders = [];
     if (Array.isArray(shareholders)) {
@@ -92,7 +100,11 @@ exports.submit = async (req, res) => {
       shareholders: parsedShareholders,
       Turnover,
       LeadId, // Add LeadId from Pidata
+      shareholdercount,
       QuotePaymentId, // Add QuotePaymentId from Pidata
+      screeningDetails: { // Add screening details to the document
+        matchScore: matchScore,
+      },
     });
 
     await userDetails.save();
@@ -340,14 +352,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
     console.log("Extracted Salesforce Data:", responseData);
 
     
-    const formattedShareholders = shareholders.map(shareholder => ({
-      FirstName: shareholder.firstName || '',
-      MiddleName: shareholder.middleName || '',
-      LastName: shareholder.name || shareholder.lastName || '',
-      Nationality: shareholder.nationalityshareholder || '',
-      DOB: shareholder.dob || '',
-      Gender: shareholder.gender || ''
-    }));
+   
 
     // Step 4: Call the appropriate Screening API based on CustomerType
     let screeningResponse;
@@ -395,6 +400,18 @@ exports.callSalesforceEndpoint = async (req, res) => {
       );
     } else if (CustomerType == "C") {
       // Call corporate customer screening API
+
+      const formattedShareholders = shareholders.map(shareholder => ({
+        FirstName: shareholder.firstName || '',
+        MiddleName: shareholder.middleName || '',
+        LastName: shareholder.name || shareholder.lastName || '',
+        Nationality: shareholder.nationalityshareholder || '',
+        DOB: shareholder.dob || '',
+        Gender: shareholder.gender || ''
+      }));
+
+
+
       screeningResponse = await axios.post(
         'https://saasuat.digiveri5.com:5040/api/customer/Screening',
         {

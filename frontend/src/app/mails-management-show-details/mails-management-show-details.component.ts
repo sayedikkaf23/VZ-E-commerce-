@@ -268,7 +268,7 @@ submitData() {
           localStorage.setItem('finalDataMail', JSON.stringify(mergedData));
 
           // Navigate to the next step
-          this.router.navigate(['/virtual-summary']); // Replace with your actual route
+          this.router.navigate(['/mails-summary']); // Replace with your actual route
         },
         (error) => {
           // Handle errors from the Salesforce API calls

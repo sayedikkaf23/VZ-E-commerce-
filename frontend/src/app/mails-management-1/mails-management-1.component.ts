@@ -68,7 +68,7 @@ export class MailsManagement1Component {
     });
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
-      const storedData = localStorage.getItem('virtualdata');
+      const storedData = localStorage.getItem('mailform');
       if (storedData) {
         const formData = JSON.parse(storedData);
         this.personalDetailsForm.patchValue(formData);

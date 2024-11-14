@@ -1,6 +1,16 @@
 // models/pidata.model.js
 const mongoose = require('mongoose');
 
+
+
+const screeningDetailsSchema = new mongoose.Schema({
+  // screeningId: { type: String },
+  matchScore: { type: Number }
+});
+
+
+
+
 const pidataSchema = new mongoose.Schema({
   leadWithDetails: {
     Nationality: String,
@@ -46,7 +56,8 @@ const pidataSchema = new mongoose.Schema({
     subTotal: Number,
     totalIncludingVAT: Number,
     totalPrice: Number
-  }
+  },
+  screeningDetails: screeningDetailsSchema, // Add screeningDetails as a sub-document
 });
 
 module.exports = mongoose.model('Pidata', pidataSchema);

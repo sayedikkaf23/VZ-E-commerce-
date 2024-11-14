@@ -119,36 +119,53 @@ export class ShowDetails2Component implements AfterViewInit {
   }
   
   submitData() {
+
+    if (!this.salesforceResponse || !this.salesforceResponse.data || !this.salesforceResponse.data.leadWithDetails) {
+      console.error("salesforceResponse.data.leadWithDetails is not ready or missing");
+      return;
+    }
+    
+    const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
+    if (!LeadId) {
+      console.error("LeadId is not found in salesforceResponse.data.leadWithDetails");
+    }
     const finalData = {
       ...this.personalInfo,
-      ...this.bankInfo
+      ...this.bankInfo,
+      LeadId
     };
-
+  console.log("bank",finalData)
     this.userService.uploadUserData(finalData).pipe(
       switchMap(response => {
         if (response.message) {
+          // Clear stored data
           localStorage.removeItem('step1Data');
           localStorage.removeItem('step2Data');
-
+  
           const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
-
+  
           if (quotePaymentId) {
+            // Redirect to payment URL
             const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
             window.location.href = paymentUrl;
             return of(null);
           } else {
+            // Handle missing Quote Payment ID
             throw new Error('Quote Payment ID not found');
           }
         } else {
+          // Handle failed data submission
           throw new Error('Data submission failed');
         }
       })
     ).subscribe(
       () => {},
       error => {
+        // Display error notification
         this.toastr.error(error.message || 'An error occurred', 'Error');
         console.error(error);
       }
     );
   }
+  
 }
