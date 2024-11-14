@@ -27,11 +27,13 @@
           <th scope="col">Shareholder Count</th>
           <th scope="col">Turn Over</th>
           <th scope="col">Actions</th>
+
           <th scope="col">Match Score</th>
+
+          <th scope="col">Actions</th>
 
           <th scope="col">KYC Status</th>
 
-          <th scope="col">Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -42,21 +44,23 @@
           <td>{{ user.birthday | date : "yyyy-MM-dd" }}</td>
           <td>{{ user.mobileNumber.internationalNumber }}</td>
           <td>{{ user.jurisdiction }}</td>
-          <td>{{ user.shareholder }}</td>
+          <td>{{ user.shareholdercount }}</td>
           <td>{{ user.Turnover }}</td>
-          <td>Match Score</td>
-
-          <td><button class="green-button">Check status</button></td>
-          <td>{{ user.Turnover }}</td>
-
           <td>
             <button
               (click)="openModal(user.shareholders)"
               class="btn btn-primary"
+              style="white-space: nowrap;"
             >
               View Details
             </button>
           </td>
+          <td>{{ user.screeningDetails?.matchScore }}</td>
+
+          <button class="green-button" (click)="checkStatus(user)">Check Status</button>
+          <td>{{ user.CustomerStatus }}</td>
+
+          
         </tr>
       </tbody>
     </table>

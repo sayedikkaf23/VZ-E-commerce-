@@ -29,8 +29,9 @@
           <th scope="col">Bank &#x2191;&#x2193;</th>
           <th scope="col">Match Score &#x2191;&#x2193;</th>
 
-          <th scope="col">KYC Status &#x2191;&#x2193;</th>
           <th scope="col">Action &#x2191;&#x2193;</th>
+          <th scope="col">KYC Status &#x2191;&#x2193;</th>
+
         </tr>
       </thead>
       <tbody>
@@ -45,12 +46,13 @@
           <td *ngIf="user.companyname">{{ user.companyname }}</td>
 
           <td>{{ user.Bank }}</td>
-          <td>matchscore</td>
+          <td>{{ user.screeningDetails?.matchScore }}</td>
 
-          <td>{{ user.CustomerStatus  }}</td>
           <td>
             <button class="green-button" (click)="checkStatus(user)">Check Status</button>
           </td>
+          <td>{{ user.CustomerStatus  }}</td>
+
         </tr>
       </tbody>
     </table>
