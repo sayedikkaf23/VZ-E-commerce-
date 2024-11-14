@@ -14,7 +14,6 @@
     </div>
   </div>
 
- 
   <div class="table-responsive overflow-behaviour">
     <table class="table table-list-data table-hover">
       <thead class="bg-light">
@@ -33,7 +32,6 @@
           <th scope="col">KYC Status</th>
 
           <th scope="col">Actions</th>
-
         </tr>
       </thead>
       <tbody>
@@ -48,21 +46,22 @@
           <td>{{ user.Turnover }}</td>
           <td>Match Score</td>
 
-
           <td><button class="green-button">Check status</button></td>
           <td>{{ user.Turnover }}</td>
 
-      
           <td>
-            <button (click)="openModal(user.shareholders)" class="btn btn-primary">View Details</button>
+            <button
+              (click)="openModal(user.shareholders)"
+              class="btn btn-primary"
+            >
+              View Details
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
 
- 
-  
   <div class="modal-container" *ngIf="showModal">
     <div class="modal-backdrop" (click)="closeModal()"></div>
     <div class="modal-content">
@@ -75,7 +74,6 @@
             <th scope="col">Shareholder(%)</th>
             <th scope="col">Date of Birth</th>
             <th scope="col">Nationality</th>
-            
           </tr>
         </thead>
         <tbody>
@@ -89,3 +87,4 @@
       </table>
     </div>
   </div>
+</div>
