@@ -228,6 +228,16 @@ submitData() {
     cancelButtonText: 'Review Data'
   }).then((result) => {
     if (result.isConfirmed) {
+      // const payload = {
+      //   firstName: mergedData.firstName,
+      //   lastName: mergedData.lastName,
+      //   email: mergedData.email,
+      //   nationality: mergedData.nationality,
+      //   phone: mergedData.mobileNumber, // Ensure to map this correctly
+      //   dob: mergedData.birthday,
+      //   service: "virtual_reception"
+      // };
+
       const payload = {
         firstName: mergedData.firstName,
         lastName: mergedData.lastName,
@@ -235,7 +245,9 @@ submitData() {
         nationality: mergedData.nationality,
         phone: mergedData.mobileNumber, // Ensure to map this correctly
         dob: mergedData.birthday,
-        service: "virtual_reception"
+        service: "virtual_reception",
+        CustomerType:'C',
+        shareholders:   this.displayShareholders,
       };
 
       this.isLoading = true; // Show loading indicator if necessary

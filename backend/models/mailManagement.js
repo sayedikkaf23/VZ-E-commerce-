@@ -14,6 +14,12 @@ const shareholderSchema = new mongoose.Schema({
 
 });
 
+
+const screeningDetailsSchema = new mongoose.Schema({
+  // screeningId: { type: String },
+  matchScore: { type: Number }
+});
+
 const MailDetailsSchema = new mongoose.Schema(
   {
   
@@ -39,6 +45,7 @@ const MailDetailsSchema = new mongoose.Schema(
     shareholders: [shareholderSchema], // Array of shareholder objects
     LeadId: { type: String, index: true }, // Indexed for better performance on lookups
     QuotePaymentId: { type: String, index: true }, 
+    screeningDetails: screeningDetailsSchema, // Add screeningDetails as a sub-document
   },
   { timestamps: true }
 );

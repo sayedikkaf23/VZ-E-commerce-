@@ -75,11 +75,27 @@ export class MailsManagementSummaryComponent {
           ? additionalShareholderInfo.shareholders 
           : shareholdersFromMailform2;
 
+
+
+
+          if (!this.salesforceResponse || !this.salesforceResponse.data || !this.salesforceResponse.data.leadWithDetails) {
+            console.error("salesforceResponse.data.leadWithDetails is not ready or missing");
+            return;
+          }
+          
+          const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
+          if (!LeadId) {
+            console.error("LeadId is not found in salesforceResponse.data.leadWithDetails");
+          }
+      
+
+
         const mergedData = {
           ...this.personalInfo,
           ...this.companyInfo,
           companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-          shareholders: mergedShareholders
+          shareholders: mergedShareholders,
+          LeadId
         };
 
         localStorage.setItem('mergedData', JSON.stringify(mergedData));
