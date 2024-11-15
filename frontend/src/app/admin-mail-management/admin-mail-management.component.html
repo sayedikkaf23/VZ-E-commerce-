@@ -22,6 +22,10 @@
             <th scope="col">Mobile Number</th>
             <th scope="col">Shareholder Count</th>
             <th scope="col">Actions</th>
+            <th scope="col">Match Score &#x2191;&#x2193;</th>
+          <th scope="col">Action &#x2191;&#x2193;</th>
+         
+          <th scope="col">KYC Status &#x2191;&#x2193;</th>
           </tr>
         </thead>
         <tbody>
@@ -33,8 +37,13 @@
             <td>{{ mail.mobileNumber.internationalNumber }}</td>
             <td>{{ mail.shareholdercount }}</td>
             <td>
-              <button (click)="openMailDetails(mail.shareholders)" class="btn btn-primary">View Shareholders</button>
+              <button (click)="openMailDetails(mail.shareholders)" class="btn btn-primary" style="white-space: nowrap;">View Shareholders</button>
             </td>
+            <td>{{ mail.screeningDetails?.matchScore }}</td>
+            <td>
+              <button class="green-button" >Check Status</button>
+            </td>
+            <td>{{ mail.CustomerStatus  }}</td>
           </tr>
         </tbody>
       </table>
