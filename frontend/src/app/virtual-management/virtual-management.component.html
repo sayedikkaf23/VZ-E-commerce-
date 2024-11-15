@@ -22,6 +22,11 @@
           <th scope="col">Shareholder Count</th>
           <th scope="col">Mobile Number</th>
           <th scope="col">Actions</th>
+          <th scope="col">Match Score &#x2191;&#x2193;</th>
+          <th scope="col">Action &#x2191;&#x2193;</th>
+         
+          <th scope="col">KYC Status &#x2191;&#x2193;</th>
+
         </tr>
       </thead>
       <tbody>
@@ -32,9 +37,15 @@
           <td>{{ client.CompanyIncorporated }}</td>
           <td>{{ client.shareholdercount }}</td>
           <td>{{ client.mobileNumber.internationalNumber }}</td>
+
           <td>
             <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary">View Shareholders</button>
           </td>
+          <td>{{ client.screeningDetails?.matchScore }}</td>
+          <td>
+            <button class="green-button" >Check Status</button>
+          </td>
+          <td>{{ client.CustomerStatus  }}</td>
         </tr>
       </tbody>
     </table>
