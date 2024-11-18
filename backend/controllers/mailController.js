@@ -116,9 +116,9 @@ exports.callSalesforceEndpoint = async (req, res) => {
     const authResponse = await axios.post(
       `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
       {
-        username: 'VirtuUAT',
-        password: 'VirtuApiuat@123',
-        CompanyName: 'Virtuzone',
+        username: SALESFORCE_USERNAME,
+        password: SALESFORCE_PASSWORD,
+        CompanyName: SALESFORCE_COMPANYNAME
       },
       {
         headers: {
