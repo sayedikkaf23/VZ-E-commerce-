@@ -31,7 +31,7 @@ import { VirtualReceptionSummaryComponent } from './virtual-reception-summary/vi
 import { BussinessShowDeatilsComponent } from './bussiness-show-deatils/bussiness-show-deatils.component';
 import { MailsManagementSummaryComponent } from './mails-management-summary/mails-management-summary.component';
 import { AdminPaymentMethordComponent } from './admin-payment-methord/admin-payment-methord.component';
-
+import { UserLoginComponent } from './user-login/user-login.component';
 const routes: Routes = [
 
   {
@@ -161,6 +161,11 @@ const routes: Routes = [
   {
     path: 'virtual-receptionist-details',
     component: VirtualReceptionistDetailsComponent,
+   
+  },
+  {
+    path: 'login',
+    component: UserLoginComponent,
    
   },
   {
