@@ -611,8 +611,8 @@ exports.MatchScoreProductService = async (req, res) => {
 
     const accessToken = tokenResponse.data.access_token;
     const salesforceUrl = tokenResponse.data.instance_url;
-
-    // Step 4: Make the HTTP POST request to the Salesforce endpoint
+console.log(accessToken)    // Step 4: Make the HTTP POST request to the Salesforce endpoint
+console.log(salesforceUrl)    // Step 4: Make the HTTP POST request to the Salesforce endpoint
     const salesforceResponse = await axios.put(
       `${salesforceUrl}/services/apexrest/MatchScoreProductService/`,
       requestBody,
