@@ -312,9 +312,9 @@ exports.callSalesforceEndpoint = async (req, res) => {
     const authResponse = await axios.post(
       `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
       {
-        username: SALESFORCE_USERNAME,
-        password: SALESFORCE_PASSWORD,
-        CompanyName: SALESFORCE_COMPANYNAME
+        username: SCREENING_USERNAME,
+        password: SCREENING_PASSWORD,
+        CompanyName: SCREENING_COMPANYNAME
       },
       {
         headers: {
