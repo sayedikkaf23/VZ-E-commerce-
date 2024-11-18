@@ -309,7 +309,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
   try {
     // Step 1: Authenticate with the external API
     const authResponse = await axios.post(
-      'https://saasuat.digiveri5.com:5040/api/customer/authenticate',
+      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
       {
         username: 'VirtuUAT',
         password: 'VirtuApiuat@123',
@@ -326,7 +326,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
 
     // Step 2: Get access token from Salesforce
     const tokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
     );
 
     const accessToken = tokenResponse.data.access_token;
@@ -359,7 +359,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
     if (CustomerType == "I") {
       // Call individual customer screening API
       screeningResponse = await axios.post(
-        'https://saasuat.digiveri5.com:5040/api/customer/Screening',
+        `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/Screening`,
         {
           UserId: 'ComplianceUAT',
           CompanyName: 'Virtuzone',
@@ -413,7 +413,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
 
 
       screeningResponse = await axios.post(
-        'https://saasuat.digiveri5.com:5040/api/customer/Screening',
+        `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/Screening`,
         {
           UserId: 'ComplianceUAT',
           CompanyName: 'Virtuzone',
@@ -550,7 +550,7 @@ exports.callSalesforceQuoteService = async (req, res) => {
 
     // Step 3: Get an access token from Salesforce
     const tokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
     );
 
     const accessToken = tokenResponse.data.access_token;
@@ -895,7 +895,7 @@ exports.checkStatus = async (req, res) => {
   try {
     // Step 1: Authenticate to get the token
     const authResponse = await axios.post(
-      'https://saasuat.digiveri5.com:5040/api/customer/authenticate',
+      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
       {
         username: 'VirtuUAT',
         password: 'VirtuApiuat@123',
@@ -912,7 +912,7 @@ exports.checkStatus = async (req, res) => {
 
     // Step 2: Call the status API with the provided payload from the request body
     const statusResponse = await axios.post(
-      'https://saasuat.digiveri5.com:5040/api/customer/status',
+      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
       {
         CustomerId: CustomerId,
         CompanyName: CompanyName,
