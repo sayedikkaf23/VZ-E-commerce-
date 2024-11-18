@@ -22,5 +22,6 @@ router.delete('/services/:serviceId', userController.deleteService);
 router.get('/menu-items', userController.getMenuItems);
 router.post('/menu-items', userController.addMenuItems);
 router.post('/checkStatus', userController.checkStatus);
+router.post('/MatchScoreProductService', userController.MatchScoreProductService);
 
 module.exports = router;
