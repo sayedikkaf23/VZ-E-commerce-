@@ -3,6 +3,7 @@ const PaymentMode = require("../models/paymentMode");
 const AccountDetail=require("../models/accountDetail")
 const SidebarData = require("../models/SidebarData");
 const PiData = require("../models/PiDatas");
+const PaymentMethod = require("../models/paymentMethodModel");
 
 
 const getPaymentModesHome = async (req, res) => {
