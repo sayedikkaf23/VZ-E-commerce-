@@ -1,4 +1,5 @@
 const PaymentMode = require("../models/paymentMode");
+const { validationResult } = require("express-validator");
 
 const AccountDetail=require("../models/accountDetail")
 const SidebarData = require("../models/SidebarData");
