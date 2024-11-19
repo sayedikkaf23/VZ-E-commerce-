@@ -597,14 +597,14 @@ exports.MatchScoreProductService = async (req, res) => {
 
     // Step 2: Construct the JSON body to send to Salesforce using data from the found document
     const requestBody = JSON.stringify({
-      // quotePayementId: document.quotePaymentWithDetails.QuotePaymentId,
-      // accountId: document.quotePaymentWithDetails.AccountId,
-      // leadId: document.leadWithDetails.LeadId,
-      // matchScore: String(document.screeningDetails.matchScore),
-      quotePayementId: "aAWdu0000000WHdGAM",
-      accountId: "001du000002qGHFAA2",
-      leadId: "00Qdu000001objnEAA",
-      matchScore: "70",
+      quotePayementId: document.quotePaymentWithDetails.QuotePaymentId,
+      accountId: document.quotePaymentWithDetails.AccountId,
+      leadId: document.leadWithDetails.LeadId,
+      matchScore: String(document.screeningDetails.matchScore),
+      // quotePayementId: "aAWdu0000000WHdGAM",
+      // accountId: "001du000002qGHFAA2",
+      // leadId: "00Qdu000001objnEAA",
+      // matchScore: "70",
 
     });
     console.log("Request to Salesforce:", requestBody);
