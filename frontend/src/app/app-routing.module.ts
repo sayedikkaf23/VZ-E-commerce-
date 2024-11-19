@@ -32,6 +32,9 @@ import { BussinessShowDeatilsComponent } from './bussiness-show-deatils/bussines
 import { MailsManagementSummaryComponent } from './mails-management-summary/mails-management-summary.component';
 import { AdminPaymentMethordComponent } from './admin-payment-methord/admin-payment-methord.component';
 import { UserLoginComponent } from './user-login/user-login.component';
+import { OnlinepaymentComponent } from './onlinepayment/onlinepayment.component';
+
+
 const routes: Routes = [
 
   {
@@ -43,6 +46,12 @@ const routes: Routes = [
     path: 'home',
     component: _HomeComponent,
    
+  },
+
+  {
+    path: 'onlinepayment/:id',
+    component: OnlinepaymentComponent,
+    data: { type: 'online' },
   },
   // new
   {
