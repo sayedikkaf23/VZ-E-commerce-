@@ -152,8 +152,8 @@ export class ShowDetails2Component implements AfterViewInit {
   
           if (quotePaymentId) {
             // Redirect to payment URL
-            const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
-            window.location.href = paymentUrl;
+            this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+            // window.location.href = paymentUrl;
             return of(null);
           } else {
             // Handle missing Quote Payment ID
