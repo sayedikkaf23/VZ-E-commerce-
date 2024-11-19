@@ -7,7 +7,7 @@ const jsforce = require('jsforce');
 var cors = require("cors");
 var connectDB = require("./db/db");
 require('dotenv').config();
-
+var onlinePayment=require('./routes/onlinePayment')
 var indexRouter = require("./routes/index");
 var userRouter = require("./routes/userRoutes");
 var virtualDetails = require("./routes/virtual-route");
@@ -55,6 +55,8 @@ app.use('/mail', mailDetails);
 app.use('/nationalities',nationalities)
 app.use('/payment',paymentMethodRoutes)
 app.use('/auth', authRoutes);
+app.use('/online', onlinePayment);
+
 
 if (!process.env.SALESFORCE_USERNAME || !process.env.SALESFORCE_PASSWORD) {
   console.error("Salesforce credentials are missing. Please check .env file.");
