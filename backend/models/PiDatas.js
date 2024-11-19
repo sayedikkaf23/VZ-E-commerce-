@@ -46,6 +46,6 @@ const PiData_Schema = new mongoose.Schema({
   // Add any additional fields you need here
 });
 
-const PiData = mongoose.model('PIdata', PiData_Schema);
+const PiData = mongoose.model('PIdatasecond', PiData_Schema);
 
 module.exports = PiData;
