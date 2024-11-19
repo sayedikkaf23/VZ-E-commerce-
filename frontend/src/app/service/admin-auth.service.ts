@@ -55,4 +55,7 @@ export class AdminAuthService {
   checkStatus(data: { CustomerId: string; CompanyName: string }): Observable<any> {
     return this.http.post(`${this.url}/user/checkStatus`, data); // POST request to check status
   }
+  login(data: { email: string; password: string }): Observable<any> {
+    return this.http.post(`${this.url}/auth/login`, data); // POST request to /auth/login
+  }
 }

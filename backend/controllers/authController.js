@@ -1,26 +1,57 @@
-const User = require('../models/userModel');
+const User = require("../models/loginModel");
+const bcrypt = require("bcrypt");
 
-// Handle Login Submission
-exports.postLogin = async (req, res) => {
+exports.signup = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Find user by email
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.render('login', { errorMessage: 'Invalid username or password' });
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({ message: "Email and password are required" });
         }
 
-        // Compare passwords
-        const isMatch = await user.comparePassword(password);
-        if (!isMatch) {
-            return res.render('login', { errorMessage: 'Invalid username or password' });
+        // Check if user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "User already exists" });
         }
 
-        // Login successful
-        return res.json({ user });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).send('Internal Server Error');
+        // Hash password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create new user
+        const newUser = await User.create({ email, password: hashedPassword });
+
+        res.status(201).json({ message: "Signup successful", user: newUser });
+    } catch (error) {
+        console.error("Signup Error:", error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
+};
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+      // Validate input
+      if (!email || !password) {
+          return res.status(400).json({ message: "Email and password are required" });
+      }
+
+      // Find user by email
+      const user = await User.findOne({ email });
+      if (!user) {
+          return res.status(404).json({ message: "User not found" });
+      }
+
+      // Validate password
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+          return res.status(400).json({ message: "Invalid credentials" });
+      }
+
+      res.status(200).json({ message: "Login successful" });
+  } catch (error) {
+      console.error("Login Error:", error);
+      res.status(500).json({ message: "Internal server error", error: error.message });
+  }
 };

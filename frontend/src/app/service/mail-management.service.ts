@@ -20,6 +20,8 @@ export class MailManagementService {
     return this.http.post(`${this.url}/mail/callSalesforceEndpoint`, payload); // Sending the payload to the backend
   }
 
-
+  checkStatus(data: { CustomerId: string; CompanyName: string }): Observable<any> {
+    return this.http.post(`${this.url}/user/checkStatus`, data); // POST request to check status
+  }
 
 }
