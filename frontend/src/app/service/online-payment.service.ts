@@ -15,38 +15,38 @@ export class OnlinePaymentService {
   }
 
   getPiDataById(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/admin/pi-data/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/online/pi-data/${quoteId}`;
     return this.http.get(apiUrl);
   }
 
   // Fix: Add parentheses to define getPaymentMethod as a function returning an Observable
   getPaymentMethods(): Observable<any[]> {
-    const apiUrl = `${environment.apiUrl}/admin/getpayment`;
+    const apiUrl = `${environment.apiUrl}/online/getpayment`;
     return this.http.get<any[]>(apiUrl);
   }
 
   getPayNowDataById(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/user/paynow/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/online/paynow/${quoteId}`;
     return this.http.get(apiUrl);
   }
 
   getAccountDetails(): Observable<any[]> {
-    const apiUrl = `${environment.apiUrl}/admin/account-details`;
+    const apiUrl = `${environment.apiUrl}/online/account-details`;
     return this.http.get<any[]>(apiUrl);
   }
 
   getQuoteById(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/user/checkQuoteId/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/online/checkQuoteId/${quoteId}`;
     return this.http.get(apiUrl);
   }
 
   getSidebarData(): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/user/sidebardata`;
+    const apiUrl = `${environment.apiUrl}/online/sidebardata`;
     return this.http.get(apiUrl);
   }
 
   payNowSaleforce(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/user/payNowSaleforce/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/online/payNowSaleforce/${quoteId}`;
     // Assuming an empty request body, adjust as needed
     const requestBody = {};
 
@@ -54,21 +54,21 @@ export class OnlinePaymentService {
   }
 
   payNowByStripe(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/user/payNowByStripe/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/online/payNowByStripe/${quoteId}`;
     return this.http.get(apiUrl);
   }
   PayViaTelr(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/user/payNowByTelr/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/online/payNowByTelr/${quoteId}`;
     return this.http.get(apiUrl);
   }
 
   payNowByMagnati(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/user/payNowByFiserv/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/online/payNowByFiserv/${quoteId}`;
     return this.http.get(apiUrl);
   }
 
   getPaymentModesHome(): Observable<any[]> {
-    const apiUrl = `${environment.apiUrl}/admin/getpaymentmods`;
+    const apiUrl = `${environment.apiUrl}/online/getpaymentmods`;
     return this.http.get<any[]>(apiUrl);
   }
 }
