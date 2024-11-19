@@ -2,25 +2,25 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { AdminAuthService } from '../service/admin-auth.service';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr'; // Import ToastrService
+import { ToastrService } from 'ngx-toastr'; // Import ToastrServiceImport ToastrService
 @Component({
   selector: 'app-user-login',
   templateUrl: './user-login.component.html',
   styleUrl: './user-login.component.css'
 })
 export class UserLoginComponent {
-
   loginForm: FormGroup;
 
   constructor(
     private fb: FormBuilder,
     private authService: AdminAuthService,
     private router: Router,
-    private toastr: ToastrService // Inject ToastrService
+    private toastr: ToastrService
   ) {
+    // Initialize the form
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]]
+      password: ['', [Validators.required]],
     });
   }
 
@@ -28,24 +28,23 @@ export class UserLoginComponent {
 
   submit(): void {
     if (this.loginForm.valid) {
-      const loginData = {
-        email: this.loginForm.get('email')?.value,
-        password: this.loginForm.get('password')?.value
-      };
+      const loginData = this.loginForm.value; // Access values directly from the form group
 
-      this.authService.adminLogin(loginData).subscribe(
+      this.authService.login(loginData).subscribe(
         (response) => {
-          this.toastr.success('Login successful!', 'Success'); // Success notification
-          this.router.navigate(['/panel/dashboard']);
+          this.toastr.success('Login successful!', 'Success'); // Show success notification
+          // this.router.navigate(['/panel/dashboard']); 
         },
         (error) => {
-          this.toastr.error('Login failed! Please check your credentials.', 'Error'); // Error notification
-          console.log('Login failed', error); 
+          this.toastr.error(
+            error?.error?.message || 'Login failed! Please check your credentials.',
+            'Error'
+          ); // Handle error response
+          console.error('Login failed:', error);
         }
       );
     } else {
-      this.toastr.warning('Please fill in all required fields!', 'Warning'); // Validation warning
+      this.toastr.warning('Please fill in all required fields!', 'Warning'); // Show validation warning
     }
   }
 }
-

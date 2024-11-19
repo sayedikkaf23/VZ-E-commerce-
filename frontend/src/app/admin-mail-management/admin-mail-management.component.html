@@ -41,7 +41,7 @@
             </td>
             <td>{{ mail.screeningDetails?.matchScore }}</td>
             <td>
-              <button class="green-button" >Check Status</button>
+              <button class="green-button" (click)="checkStatus(mail)">Check Status</button>
             </td>
             <td>{{ mail.CustomerStatus  }}</td>
           </tr>

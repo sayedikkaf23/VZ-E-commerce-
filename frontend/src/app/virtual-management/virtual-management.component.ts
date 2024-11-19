@@ -10,7 +10,10 @@ export class VirtualManagementComponent implements OnInit {
   clientList: any[] = []; // To store fetched client data
   selectedClientDetails: any[] = []; // To store selected client's shareholder details
   showModal: boolean = false; // Flag to control modal visibility
- 
+  hasSalaryData: boolean = false;
+  hasCompanyNameData: boolean = false;
+  userList: any[] = []; // To store the fetched user data
+
   constructor(private virtualManagementService: VirtualManagementService) {}
  
   ngOnInit(): void {
@@ -21,9 +24,31 @@ export class VirtualManagementComponent implements OnInit {
     this.virtualManagementService.getVirtaulData().subscribe(
       (response) => {
         this.clientList = response; // Assign the API response to the clientList array
+        this.checkColumnData(); // Check columns only after data is loaded
+
       },
       (error) => {
         console.error('Error fetching client details:', error);
+      }
+    );
+  }
+  
+  checkColumnData(): void {
+    this.hasSalaryData = this.userList.some((user) => !!user.salary);
+    this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
+  }
+  checkStatus(user: any): void {
+    const payload = {
+      CustomerId: user.LeadId,
+      CompanyName: 'Virtuzone',
+    };
+    this.virtualManagementService.checkStatus(payload).subscribe(
+      (response) => {
+        user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
+        console.log('Status check response:', response);
+      },
+      (error) => {
+        console.error('Error checking status:', error);
       }
     );
   }
