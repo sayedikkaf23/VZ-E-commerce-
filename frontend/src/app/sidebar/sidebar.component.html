@@ -18,10 +18,10 @@
       </div>
       <div class="col-auto">
               <h3>{{ sidebarData?.msg }}</h3>
-              <h2>{{ piData?.contactName }}!</h2>
+              <h2>{{ piData?.quoteWithProductDetails.AccountName }}!</h2>
               <hr/>
-              <p>{{ sidebarData?.prominvoiceText }} <br/>No - <b>{{ piData?.quoteNumber }}</b> is </p>
-              <h2>AED {{ piData?.partPayment | number: '1.2-2' }}</h2>
+              <p>{{ sidebarData?.prominvoiceText }} <br/>No - <b>{{ piData?.quoteWithProductDetails.quotePaymentId }}</b> is </p>
+              <h2>AED {{ piData?.quoteWithProductDetails.totalIncludingVAT | number: '1.2-2' }}</h2>
   
       </div>
       <div class="col-auto d-none d-md-block">
