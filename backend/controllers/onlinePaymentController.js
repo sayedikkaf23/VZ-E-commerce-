@@ -1040,7 +1040,7 @@ async function payNowByStripe(req, res) {
 
 
   //get payment mode
-exports.getPaymentModeById = async (req, res) => {
+  async function getPaymentModeById  (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -1059,7 +1059,7 @@ exports.getPaymentModeById = async (req, res) => {
     }
   };
   //get payment modes
-exports.getPaymentModes = async (req, res) => {
+  async function getPaymentModes  (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -1248,11 +1248,225 @@ exports.getPaymentModes = async (req, res) => {
   }
   
 
- 
+ //update payment status
+ async function updatePaymentModeStatus  (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  
+    try {
+      const paymentModeId = req?.body?.paymentModeId;
+  
+      if (!paymentModeId) {
+        res
+          .status(400)
+          .json({ success: false, message: "Payment Mode Not Found!" });
+        return;
+      }
+      const filter = { _id: paymentModeId };
+      const update = {
+        isActive: req?.body.isActive,
+      };
+  
+      await PaymentMode.findOneAndUpdate(filter, update, {
+        new: true,
+      });
+  
+      const { name, isActive } = req.body;
+  console.log(req.body)
+      // Define the update object
+      let updateObject = {};
+      if (name === "Stripe") {
+        updateObject.stripePayment = isActive;
+      } else if (name === "Total Pay") {
+        updateObject.totalpay = isActive;
+      } else if (name === "Magnati") {
+        updateObject.magnati = isActive;
+      }  else if (name === "Telr") {
+        updateObject.Telr = isActive;
+      }else {
+        return res.status(400).json({
+          success: false,
+          message: "Invalid payment method name.",
+        });
+      }
+  
+      const adminObjectId = new mongoose.Types.ObjectId(
+        "653f5041f94b9319a2bb17bd"
+      );
+  
+      // Update the payment method document
+      const updateResult = await PaymentMethod.findOneAndUpdate(
+        { admin: adminObjectId },
+        { $set: updateObject },
+        { new: true }
+      );
+  
+      if (updateResult) {
+        // Log the operation
+        await logger.info({
+          type: "Payment Mode",
+          entityType: `Payment mode: ${name}`,
+          name: req?.user?.user_name,
+          email: req?.user?.email,
+        });
+  
+        return res.status(200).json({
+          success: true,
+          message: "Payment mode status updated successfully.",
+          data: updateResult,
+        });
+      } else {
+        return res.status(404).json({
+          success: false,
+          message: "Payment method not found.",
+        });
+      }
+    } catch (err) {
+      console.error("Error during payment mode status update:", err);
+      return res.status(500).json({
+        success: false,
+        message: "Server error",
+      });
+    }
+  };
+  async function updatePaymentMethod (req, res) {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  
+    try {
+      await PaymentMethod.updateOne({ _id: req.params.id }, { $set: req.body });
+  
+      const paymentTypes = {
+        cardMachine: "Card Machine",
+        bankTransfer: "Bank Transfer",
+        cashDeposit: "Cash Deposit",
+        cashOverCounter: "Cash Over Counter",
+        chequeDeposit: "Cheque Deposit",
+        onlinePayment: "Online Payment",
+        pcdCheque: "PDC Cheque",
+      };
+  
+      // Find the first matching payment type, even if its value is false
+      const payment_type_key = Object.keys(paymentTypes).find(
+        (key) => key in req.body
+      );
+  
+      // Assign the corresponding payment type value with its state (true/false)
+      const paymentTypeValue = payment_type_key
+        ? paymentTypes[payment_type_key]
+        : "";
+  
+      await logger.info({
+        type: "Payment Type",
+        entityType: `Payment type: ${paymentTypeValue}`,
+        name: req?.user?.user_name,
+        email: req?.user?.email,
+      });
+  
+      return res.status(200).json({
+        success: true,
+        message: "Payment method update successfully.",
+      });
+    } catch (err) {
+      console.error("Error during user updation:", err);
+      return res.status(500).json({ success: false, message: "Server error" });
+    }
+  }
   
 
+  async function getPaymentMethodData  (req, res)  {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+  
+    try {
+      let condition = {
+        bankTransfer: true,
+      };
+  
+      const page = Number(req.query.page) ? Number(req.query.page) : 1;
+      const limit = Number(req.query.limit) ? Number(req.query.limit) : 10;
+      const skip = (page - 1) * limit;
+  
+      const data = await PaymentMethod.find(condition)
+        .skip(skip)
+        .limit(limit)
+        .sort({ _id: 1 });
+  
+      const count = await PaymentMethod.countDocuments(condition);
+      const pages = Math.ceil(count / limit);
+  
+      return res.status(200).json({
+        success: true,
+        data,
+        pages,
+      });
+    } catch (err) {
+      console.error("Error during get payment method data:", err);
+      return res.status(500).json({ success: false, message: "Server error" });
+    }
+  };
 
-
+  async function activatePaymentMethod  (req, res)  {
+    try {
+      const { method } = req.body;
+      const adminObjectId = new mongoose.Types.ObjectId(
+        "653f5041f94b9319a2bb17bd"
+      );
+  
+      // Find the payment method document based on admin ID
+      const paymentMethod = await PaymentMethod.findOne({ admin: adminObjectId });
+  
+      if (!paymentMethod) {
+        return res.status(404).json({ message: "Payment method not found" });
+      }
+  
+      // Toggle the value of the specified method field
+      paymentMethod[method] = !paymentMethod[method];
+  
+      // Save the updated document
+      await paymentMethod.save();
+  
+      return res.status(200).json({
+        message: `Payment method '${method}' toggled successfully`,
+        paymentMethod,
+      });
+    } catch (error) {
+      console.error("Error toggling payment method:", error);
+      return res.status(500).json({ message: "Error toggling payment method" });
+    }
+  };
+  async function getPaymentMethods  (req, res) {
+    try {
+      const adminObjectId = new mongoose.Types.ObjectId(
+        "653f5041f94b9319a2bb17bd"
+      );
+      // Find all payment methods documents based on admin ID
+  
+      console.log(adminObjectId);
+  
+      const paymentMethods = await PaymentMethod.find({ admin: adminObjectId });
+  
+      console.log(paymentMethods);
+  
+      if (!paymentMethods || paymentMethods.length === 0) {
+        return res.status(404).json({ message: "No payment methods found" });
+      }
+  
+      return res.status(200).json({
+        // message: "Payment methods retrieved successfully",
+        paymentMethods,
+      });
+    } catch (error) {
+      console.error("Error getting payment methods:", error);
+      return res.status(500).json({ message: "Error getting payment methods" });
+    }
+  };
   exports.getPaymentModesHome = getPaymentModesHome;
   exports.getAccountDetails = getAccountDetails;
   exports.addAccountDetail = addAccountDetail;
@@ -1267,5 +1481,12 @@ exports.getPaymentModes = async (req, res) => {
   exports.payNowByStripe = payNowByStripe;
   exports.payNowByTelr = payNowByTelr;
 
- 
+  exports.updatePaymentModeStatus = updatePaymentModeStatus;
+
   exports.payNowByFiserv = payNowByFiserv;
+  exports.getPaymentModeById = getPaymentModeById;
+  exports.getPaymentModes = getPaymentModes;
+  exports.updatePaymentMethod = updatePaymentMethod;
+  exports.getPaymentMethodData = getPaymentMethodData;
+  exports.activatePaymentMethod = activatePaymentMethod;
+  exports.getPaymentMethods = getPaymentMethods;
