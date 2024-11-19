@@ -2,7 +2,7 @@ const PaymentMode = require("../models/paymentMode");
 
 const AccountDetail=require("../models/accountDetail")
 const SidebarData = require("../models/SidebarData");
-const PiData = require("../models/PiDatas");
+const PiData = require("../models/pidata");
 const PaymentMethod = require("../models/paymentMethodModel");
 
 
@@ -101,32 +101,27 @@ const getPaymentModesHome = async (req, res) => {
       res.status(500).json({ error: "Internal server error" });
     }
   };
+
+
   async function getPiDataBySfId(req, res) {
     const { quoteId } = req.params; // Assuming sf_id is passed as a URL parameter
     console.log(quoteId);
+  
     try {
+      // Search in PiData collection
       const data = await PiData.findOne({
-        $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
+        $or: [
+          { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+          { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+        ],
       });
+  
       if (data) {
-        // Data found, send it to the frontend
-        res.status(200).json(data);
+        // Data found in PiData
+        return res.status(200).json(data);
       } else {
-        if (!data) {
-          const data = await manualPiData.findOne({
-            accountId: quoteId,
-          });
-          if (data) {
-            // Data found, send it to the frontend
-            return res.status(200).json(data);
-          } else {
-            // Data not found for the provided sf_id
-            return res
-              .status(404)
-              .json({ message: "Data not found for the provided sf_id" });
-          }
-        }
-        res
+        // No data found
+        return res
           .status(404)
           .json({ message: "Data not found for the provided sf_id" });
       }
@@ -136,6 +131,8 @@ const getPaymentModesHome = async (req, res) => {
       res.status(500).json({ message: "Internal Server Error" });
     }
   }
+
+  
   async function payNow(req, res) {
     const { quoteId } = req.params;
   
@@ -1093,6 +1090,8 @@ async function payNowByStripe(req, res) {
       return res.status(500).json({ success: false, message: "Server error" });
     }
   };
+
+
   async function payNowByFiserv(req, res) {
     const { quoteId } = req.params;
   
