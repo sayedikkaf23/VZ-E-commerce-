@@ -1,10 +1,11 @@
 const PaymentMode = require("../models/paymentMode");
 const { validationResult } = require("express-validator");
-
+const axios = require("axios");
 const AccountDetail=require("../models/accountDetail")
 const SidebarData = require("../models/SidebarData");
 const PiData = require("../models/pidata");
 const PaymentMethod = require("../models/paymentMethodModel");
+const mongoose = require("mongoose");
 
 
 const getPaymentModesHome = async (req, res) => {
@@ -14,7 +15,8 @@ const getPaymentModesHome = async (req, res) => {
       );
       // Find all payment methods documents based on admin ID
       const paymentMethods = await PaymentMode.find();
-  
+  console.log(  paymentMethods
+)
       if (!paymentMethods || paymentMethods.length === 0) {
         return res.status(404).json({ message: "No payment methods found" });
       }

@@ -9,7 +9,7 @@ const {
 const { authMiddleware } = require("../middleware/checkAuth");
 
 const router = express.Router();
-router.get("/getpaymentmode", getPaymentModesHome);
+router.get("/getpaymentmods", getPaymentModesHome);
 router.post("/bank-transfer", addAccountDetail);
 router.get("/account-details", getAccountDetails);
 router.get("/sidebardata", getSidebarData);
