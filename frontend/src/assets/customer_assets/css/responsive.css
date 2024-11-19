@@ -39,7 +39,7 @@
         font-size: 16px;
         margin: 0 0 28px;
     }
-    .btn-radio-field label {
+    /* .btn-radio-field label {
         padding: 0 14px;
         font-size: 13px;
         height: 46px;
@@ -49,7 +49,7 @@
     }
     .btn-radio-field {
         margin-bottom: 22px;
-    }
+    } */
     .details-content .details-footer {
         padding: 0  35px 20px;
     }
@@ -219,7 +219,7 @@
         font-size: 10px;
         margin: 0 0 24px;
     }
-    .btn-radio-field label {
+    /* .btn-radio-field label {
         height: 34px;
         border-radius: 6px;
         padding: 0 10px;
@@ -239,7 +239,7 @@
     }
     .btn-radio-field .row {
         --bs-gutter-x: 7px;
-    }
+    } */
     .details-content .details-footer {
         position: relative;
         padding:40px 15px 15px;
@@ -253,12 +253,12 @@
         padding-right: 10px;
         margin-right: 10px;
     }
-    html .btn {
+    /* html .btn {
         font-size: 12px;
         padding: 0 15px;
         border-radius: 6px;
         height: 24px;
-    }
+    } */
     .detils-sidebar hr {
         border-top: 1px solid var(--primary);
     }
@@ -326,10 +326,10 @@
     .form-field {
         margin: 0 0 15px;
     }
-    html .btn.paybtn {
+    /* html .btn.paybtn {
         background: var(--primary)!important;
         color: #fff !important;
-    }
+    } */
 
     .accordion.accordion-style-1  .accordion-item .accordion-button {
         font-size: 14px;
@@ -431,9 +431,9 @@
     .login-content .form-control {
         height: 42px;
     }
-    .login-content  .btn {
+    /* .login-content  .btn {
         height: 42px;
-    }
+    } */
     html .form-control, html .form-select {
         font-size: 14px;
     }
@@ -467,14 +467,14 @@
     .admin-header h3 {
         font-size: 18px;
     }
-    .header-profile-name .btn .icon {
+    /* .header-profile-name .btn .icon {
         width: 40px;
         height: 40px;
         margin-right: 0;
-    }
-    .header-profile-name .btn h5{
+    } */
+    /* .header-profile-name .btn h5{
         display: none;
-    }
+    } */
     .admin-header {
         padding: 0 15px 15px;
         margin: 0 -15px 0;

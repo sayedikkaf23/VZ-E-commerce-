@@ -13,7 +13,7 @@
     --sidebar-width:440px;
     --body-font-size:15px;
 }
-body{
+/* body{
     font-family: 'Inter', sans-serif;
     font-size: var(--body-font-size);
     color:var(--dark);
@@ -21,7 +21,7 @@ body{
     transition:all 0.3s;;
     overflow-x: hidden;
     padding-left: var(--sidebar-width);
-}
+} */
 html {
     font-size: var(--body-font-size);
 }
@@ -72,7 +72,7 @@ h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
 b, strong {
     font-weight: 700;
 }
-html .btn {
+/* html .btn {
     font-size:20px;
     padding: 0 25px;
     border-radius: 10px;
@@ -119,7 +119,7 @@ html .btn-sm {
 }
 .btn.d-block{
     width: 100%;
-}
+} */
 html .bg-primary{
     background-color: var(--primary) !important;
 }
