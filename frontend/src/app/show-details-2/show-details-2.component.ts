@@ -8,6 +8,8 @@ import { DataStorageService } from '../service/data-storage.service';
 import AOS from 'aos';
 import { switchMap, of } from 'rxjs';
 import Swal from 'sweetalert2';
+import { MatchScoreStorageService } from '../service/matchscore-storage.service';
+
 
 declare var $: any;
 
@@ -22,6 +24,8 @@ export class ShowDetails2Component implements AfterViewInit {
   personalInfo: any = {};
   bankInfo: any = {};
   salesforceResponse: any;
+  matchScoreResponse: any;
+
   quoteWithProductDetails: any;
 
   constructor(
@@ -29,6 +33,7 @@ export class ShowDetails2Component implements AfterViewInit {
     private toastr: ToastrService,
     private router: Router,
     private dataStorageService: DataStorageService,
+    private matchScoreStorageService: MatchScoreStorageService,
     private userService: UserService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private location: Location // Inject Location service
@@ -38,8 +43,9 @@ export class ShowDetails2Component implements AfterViewInit {
 
   ngOnInit(): void {
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
-    this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
-
+    this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
+    this.quoteWithProductDetails = this.matchScoreResponse?.data;
+// console.log(matchScoreResponse)
     // Check if the salesforceResponse is empty or null
     if (!this.salesforceResponse) {
       Swal.fire({

@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import AOS from 'aos';
 import { switchMap } from 'rxjs';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
+import { MatchScoreStorageService } from '../service/matchscore-storage.service';
 import { of } from 'rxjs';
 import Swal from 'sweetalert2';
 
@@ -31,6 +32,7 @@ export class ShowDetailsComponent implements AfterViewInit {
     private router: Router,
     private userService: UserService,
     private dataStorageService: DataStorageService,
+    private matchScoreStorageService: MatchScoreStorageService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -197,6 +199,7 @@ export class ShowDetailsComponent implements AfterViewInit {
           switchMap((response: any) => {
             console.log('Salesforce Response:', response);
             this.dataStorageService.setSalesforceResponse(response);
+  
             // Prepare payload for the second API call
             const quotePayload = {
               lead_source: response.data.leadWithDetails.LeadSource,
@@ -205,22 +208,39 @@ export class ShowDetailsComponent implements AfterViewInit {
               account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has account_id
               payment_url: `https://virtuzone.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
             };
+  
             // Call the second API
-            return this.userService.callSalesforceQuoteService(quotePayload);
+            return this.userService.callSalesforceQuoteService(quotePayload).pipe(
+              switchMap((quoteResponse: any) => {
+                console.log('Quote Service Response:', quoteResponse);
+  
+                // Prepare payload for MatchScoreProductService
+                const matchScorePayload = {
+                  quotePaymentId: quotePayload.quotePaymentId,
+                  // accountId: quotePayload.account_id,
+                  // leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
+                  // matchScore: response.data.matchScore, // Adjust based on response structure
+                };
+  
+                // Call the third API
+                return this.userService.MatchScoreProductService(matchScorePayload);
+              })
+            );
           })
         ).subscribe(
-          (quoteResponse: any) => {
-            console.log('Quote Service Response:', quoteResponse);
+          (matchScoreResponse: any) => {
+            console.log('Match Score Service Response:', matchScoreResponse);
             this.isLoading = false; // Hide loader
   
-            // Save finalData in localStorage
+            // Save finalData and matchScoreResponse in localStorage or state management service
             localStorage.setItem('finalData', JSON.stringify(finalData));
-  
-            // Navigate to the next step
+            // localStorage.setItem('summaryPageData', JSON.stringify(matchScoreResponse));
+            this.matchScoreStorageService.setMatchScoreResponse(matchScoreResponse);
+            // Navigate to the summary page
             this.router.navigate(['/ShowDetails-2']); // Replace with your actual route
           },
           (error) => {
-            // Handle errors from the Salesforce API calls
+            // Handle errors from any of the API calls
             Swal.fire('Error', 'There was an error processing your request. Please try again.', 'error');
             console.error(error);
             this.isLoading = false; // Hide loader in case of error
@@ -230,6 +250,7 @@ export class ShowDetailsComponent implements AfterViewInit {
       // No action needed if the user cancels the confirmation
     });
   }
+  
   
   
 }

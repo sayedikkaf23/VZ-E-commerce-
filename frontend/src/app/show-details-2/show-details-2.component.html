@@ -35,7 +35,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let product of salesforceResponse?.data?.quoteWithProductDetails?.product">
+                                <tr *ngFor="let product of matchScoreResponse?.data?.products">
                                     <td>{{ product.productName }}</td>
                                     <td>{{ product.productQunatity }}</td>
                                     <td class="currency">{{ product.productUnitPrice }}</td>
@@ -71,7 +71,7 @@
                                 </tr>
                                 <tr>
                                     <th>Total Amount</th>
-                                    <td>AED {{ quoteWithProductDetails?.totalIncludingVAT || 0 }}</td>
+                                    <td>AED {{ quoteWithProductDetails?.total_including_Vat || 0 }}</td>
                                 </tr>
                                 <tr>
                                     <th style="border: none;"></th>

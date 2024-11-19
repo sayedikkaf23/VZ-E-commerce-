@@ -312,9 +312,9 @@ exports.callSalesforceEndpoint = async (req, res) => {
     const authResponse = await axios.post(
       `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
       {
-        username: SCREENING_USERNAME,
-        password: SCREENING_PASSWORD,
-        CompanyName: SCREENING_COMPANYNAME
+        username: process.env.SCREENING_USERNAME,
+        password: process.env.SCREENING_PASSWORD,
+        CompanyName: process.env.SCREENING_COMPANYNAME
       },
       {
         headers: {
@@ -588,7 +588,7 @@ exports.callSalesforceQuoteService = async (req, res) => {
 exports.MatchScoreProductService = async (req, res) => {
   try {
     // Step 1: Find the document in the database using quotePaymentId
-    const { quotePaymentId} = req.body; // Assume quotePaymentId is passed in the request body
+    const { quotePaymentId } = req.body; // Assume quotePaymentId is passed in the request body
     const document = await Pidata.findOne({ "quotePaymentWithDetails.QuotePaymentId": quotePaymentId });
 
     if (!document) {
@@ -596,12 +596,17 @@ exports.MatchScoreProductService = async (req, res) => {
     }
 
     // Step 2: Construct the JSON body to send to Salesforce using data from the found document
-    const requestBody = {
-      quotePayementId: document.quotePaymentWithDetails.QuotePaymentId,
-      accountId: document.quotePaymentWithDetails.AccountId,
-      leadId: document.leadWithDetails.LeadId,
-      matchScore: document.screeningDetails.matchScore
-    };
+    const requestBody = JSON.stringify({
+      // quotePayementId: document.quotePaymentWithDetails.QuotePaymentId,
+      // accountId: document.quotePaymentWithDetails.AccountId,
+      // leadId: document.leadWithDetails.LeadId,
+      // matchScore: String(document.screeningDetails.matchScore),
+      quotePayementId: "aAWdu0000000WHdGAM",
+      accountId: "001du000002qGHFAA2",
+      leadId: "00Qdu000001objnEAA",
+      matchScore: "70",
+
+    });
     console.log("Request to Salesforce:", requestBody);
 
     // Step 3: Get an access token from Salesforce
@@ -611,18 +616,22 @@ exports.MatchScoreProductService = async (req, res) => {
 
     const accessToken = tokenResponse.data.access_token;
     const salesforceUrl = tokenResponse.data.instance_url;
-console.log(accessToken)    // Step 4: Make the HTTP POST request to the Salesforce endpoint
-console.log(salesforceUrl)    // Step 4: Make the HTTP POST request to the Salesforce endpoint
-    const salesforceResponse = await axios.put(
-      `${salesforceUrl}/services/apexrest/MatchScoreProductService/`,
-      requestBody,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/json"
-        }
-      }
-    );
+    console.log("Access Token:", accessToken);
+    console.log("Salesforce URL:", salesforceUrl);
+
+    // Step 4: Make the HTTP GET request to the Salesforce endpoint
+    const config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `${salesforceUrl}/services/apexrest/MatchScoreProductService/`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      data: requestBody,
+    };
+
+    const salesforceResponse = await axios.request(config);
 
     const responseData = salesforceResponse.data;
     console.log("Salesforce Response:", responseData);
