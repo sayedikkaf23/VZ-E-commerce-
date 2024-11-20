@@ -8,37 +8,46 @@ import { PaymentMethodService } from '../service/payment-methord.service';
 export class AdminPaymentMethordComponent {
 
   paymentMethods: any = [];
+  page: number | undefined;
+  total_page: number | undefined;
+  total_pages: number[] | undefined;
+  pageLimit: any;
+  searchTerm: any = '';
 
   constructor(private paymentService: PaymentMethodService) {}
 
   ngOnInit(): void {
-    this.getPaymentMethods();
+    this.page = 1;
+    this.getPaymentMethods(this.page);
   }
 
-  getPaymentMethods(): void {
-    this.paymentService.getPaymentMethods().subscribe({
+  getPaymentMethods(page: any) {
+    this.page = page;
+    this.paymentService.getPaymentMethods(this.page, this.pageLimit).subscribe({
       next: (res: any) => {
-        console.log("object")
-        this.paymentMethods = [res]; // Wrap response in an array if only one object is returned
-
-        console.log( this.paymentMethods,"paymentMethods")
+        this.paymentMethods = res?.data;
+        this.total_page = res.pages;
+        this.total_pages = Array(res.pages)
+          .fill((x: any, i: number) => i)
+          .map((x: any, i: number) => i + 1);
       },
       error: () => {
-        console.log("8")
         this.paymentMethods = [];
       },
+      complete: () => {},
     });
   }
 
-  onPaymentMethodStatusChange(payment: any, methodType: string): void {
-    const updatedValue = { [methodType]: !payment[methodType] };
-    this.paymentService.updatePaymentMethodStatus(payment._id, updatedValue).subscribe({
-      next: () => {
-        payment[methodType] = !payment[methodType]; // Update local data on success
-      },
-      error: (err) => {
-        console.error('Error updating payment method status:', err);
-      },
-    });
+  onPaymentMethodStatusChange(payment: any, methodType: string) {
+    if (payment?._id) {
+      const updateObject = { [methodType]: payment[methodType] };
+      this.paymentService
+        .updatePaymentMethodStatus(payment._id, updateObject)
+        .subscribe({
+          next: () => {},
+          error: (err) => {},
+          complete: () => {},
+        });
+    }
   }
 }

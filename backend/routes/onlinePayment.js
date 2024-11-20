@@ -34,17 +34,17 @@ router.get("/checkQuoteId/:quoteId", checkQuoteIdExists);
 router.post("/payNowSaleforce/:quoteId", payNowSaleforce);
 router.get("/payNowByStripe/:quoteId", payNowByStripe);
 router.get("/payNowByTelr/:quoteId", payNowByTelr);
-router.get("/get_payment_modes", getPaymentModes);
+// router.get("/get_payment_modes", getPaymentModes);
 router.get("/payNowByFiserv/:quoteId", payNowByFiserv);
 router.patch(
   "/update_payment_mode_status",
-  authMiddleware,
+
   updatePaymentModeStatus
 );
 router.get("/get_payment_mode/:id", authMiddleware, getPaymentModeById);
-router.get("/get_payment_modes", authMiddleware, getPaymentModes);
-router.put("/update_payment_method/:id", authMiddleware, updatePaymentMethod);
-router.get("/get_payment_methods", authMiddleware, getPaymentMethodData);
+router.get("/get_payment_modes", getPaymentModes);
+router.put("/update_payment_method/:id", updatePaymentMethod);
+router.get("/get_payment_methods", getPaymentMethodData);
 router.post("/activatepay", activatePaymentMethod);
 router.get("/getpayment", getPaymentMethods);
 

@@ -1,26 +1,35 @@
 <div class="content">
-    <div class="page-heading" style="margin: 20px; margin-top: 25px;">
-      <div class="row align-items-center justify-content-between">
-        <div class="col-auto">
-          <div class="row align-items-center">
-            <div class="col-auto mb-2">
-              <h2>Payment Mode Management</h2>
-            </div>
+  <div class="page-heading" style=" margin: 20px; margin-top: 25px;">
+
+    <div class="row align-items-center justify-content-between">
+      <div class="col-auto">
+        <div class="row align-items-center">
+          <div class="col-auto mb-2">
+            <h2>{{ "Payment Modes" }}</h2>
           </div>
+          <!-- <div class="col-auto mb-2">
+            <a
+              class="btn btn-sm btn-light-primary"
+              [routerLink]="['/panel/add_payment_mode']"
+              ><i class="fa-solid fa-plus"></i>{{ "New Payment Mode" }}</a
+            >
+          </div> -->
         </div>
-        <div class="col-auto">
-          <div class="row align-items-center">
-            <div class="col-auto mb-2">
-              <div class="form-field page-heading-search-field mb-0">
-                <div class="field-icon">
-                  <input
-                    type="text"
-                    class="form-control form-control-sm form-control-shadow"
-                    placeholder="Search..."
-                  />
-                  <div class="icon">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                  </div>
+      </div>
+      <div class="col-auto">
+        <div class="row align-items-center">
+          <div class="col-auto mb-2">
+            <div class="form-feild page-heading-search-field mb-0">
+              <div class="field-icon">
+                <input
+                  type="text"
+                  class="form-control form-c ontrol-sm form-control-shadow"
+                  placeholder="Search..."
+                  [(ngModel)]="searchTerm"
+                  (input)="onPaymentModeSearch()"
+                />
+                <div class="icon">
+                  <i class="fa-solid fa-magnifying-glass"></i>
                 </div>
               </div>
             </div>
@@ -28,63 +37,123 @@
         </div>
       </div>
     </div>
-    <div class="table-responsive overflow-behaviour">
-      <table class="table table-list-data table-hover">
-        <thead class="bg-light">
-          <tr>
-            <th scope="col">{{ "Payment Mode" }}</th>
-            <th scope="col">{{ "Status" }}</th>
-            <th scope="col">{{ "Updated On" }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Stripe</td>
-            <td>
-              <div class="form-check form-switch form-switch-2">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="Status_id1"
-                  checked
-                />
-              </div>
-            </td>
-            <td>2024-10-01</td>
-          </tr>
-          <tr>
-            <td>Magnati</td>
-            <td>
-              <div class="form-check form-switch form-switch-2">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="Status_id2"
-                />
-              </div>
-            </td>
-            <td>2024-10-05</td>
-          </tr>
-          <!-- <tr>
-            <td>Bank Transfer</td>
-            <td>
-              <div class="form-check form-switch form-switch-2">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  role="switch"
-                  id="Status_id3"
-                  checked
-                />
-              </div>
-            </td>
-            <td>2024-10-10</td>
-          </tr> -->
-        </tbody>
-      </table>
-    </div>
-    
   </div>
-  
+  <div class="table-responsive overflow-behaviour">
+    <table class="table table-list-data table-hover">
+      <thead class="bg-light">
+        <tr>
+          <th scope="col" (click)="sortColumn('name')">
+            {{ "Payment Mode" }}
+            <span
+              class="cursor-pointer"
+              [ngClass]="
+                sortOrder.direction === 'asc' ? 'asc-icon' : 'desc-icon'
+              "
+            >
+              &#x2191;&#x2193;
+            </span>
+          </th>
+
+          <th scope="col" (click)="sortColumn('isActive')">
+            {{ "Status" }}
+            <span
+              class="cursor-pointer"
+              [ngClass]="
+                sortOrder.direction === 'asc' ? 'asc-icon' : 'desc-icon'
+              "
+            >
+              &#x2191;&#x2193;
+            </span>
+          </th>
+
+          <th scope="col" (click)="sortColumn('updatedAt')">
+            {{ "Updated On" }}
+            <span
+              class="cursor-pointer"
+              [ngClass]="
+                sortOrder.direction === 'asc' ? 'asc-icon' : 'desc-icon'
+              "
+            >
+              &#x2191;&#x2193;
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let payMode of paymentModeList; let i = index">
+          <td>{{ payMode?.name }}</td>
+
+          <td>
+            <div class="form-check form-switch form-switch-2">
+              <input
+              class="form-check-input"
+              type="checkbox"
+              role="switch"
+              id="Status_id2"
+              [(ngModel)]="payMode.isActive"
+              (change)="onUserStatusChange(payMode)"
+            />
+            
+            </div>
+          </td>
+
+          <td>
+            {{ payMode?.updatedAt }}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- <div class="data-footer">
+    <div class="row align-items-center justify-content-end">
+      <div class="col-auto">
+        <ul class="pagination cursor-pointer">
+          <li class="page-item d-flex" *ngIf="page !== 1">
+            <a class="page-link" (click)="getPaymentModes(page - 1)">
+              <span aria-hidden="true"
+                ><i class="fa-solid fa-chevron-left"></i></span
+            ></a>
+          </li>
+          <li
+            class="page-item d-flex"
+            *ngFor="let index of total_pages"
+            [class.active]="page == index"
+          >
+            <a
+              *ngIf="
+                index == 1 ||
+                index == total_page ||
+                index == page ||
+                index == page - 1 ||
+                index == page + 1
+              "
+              (click)="getPaymentModes(index)"
+              class="page-link"
+              >{{ index }}</a
+            >
+            <a
+              *ngIf="
+                (index == 1 && page !== 1 && page !== 2 && page !== 3) ||
+                (index == total_page - 1 &&
+                  page !== total_page &&
+                  page !== total_page - 1 &&
+                  page !== total_page - 2)
+              "
+              class="page-link"
+              >...</a
+            >
+          </li>
+          <li
+            class="page-item d-flex"
+            *ngIf="page !== total_page && paymentModeList.length !== 0"
+          >
+            <a class="page-link" (click)="getPaymentModes(page + 1)">
+              <span aria-hidden="true"
+                ><i class="fa-solid fa-chevron-right"></i></span
+            ></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div> -->
+</div>

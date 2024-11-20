@@ -13,15 +13,30 @@ export class PaymentMethodService {
   constructor(private http: HttpClient) {}
 
   // GET request to fetch payment methods
-  getPaymentMethods(): Observable<any> {
-    return this.http.get<any>(`${this.url}/payment/payment-methods`);
+  // getPaymentMethods(page: number | undefined, pageLimit: any): Observable<any> {
+  //   return this.http.get<any>(`${this.url}/payment/payment-methods`);
+  // }
+
+  // // PUT request to update payment method status
+  // updatePaymentMethodStatus(paymentMethodId: string, payload: any): Observable<any> {
+  //   return this.http.put<any>(
+  //     `${this.url}/payment/payment-methods/update/${paymentMethodId}`,
+  //     payload
+  //   );
+  // }
+
+  getPaymentMethods(page = 1, limit = '') {
+    return this.http.get(
+      `${this.url}/online/get_payment_methods?page=${page}&limit=${limit}`
+    );
   }
 
-  // PUT request to update payment method status
-  updatePaymentMethodStatus(paymentMethodId: string, payload: any): Observable<any> {
-    return this.http.put<any>(
-      `${this.url}/payment/payment-methods/update/${paymentMethodId}`,
+  updatePaymentMethodStatus(paymentMethodId: any, payload: any) {
+    return this.http.put(
+      `${this.url}/online/update_payment_method/${paymentMethodId}`,
       payload
     );
   }
+
+
 }

@@ -6,7 +6,7 @@ const SidebarData = require("../models/SidebarData");
 const PiData = require("../models/pidata");
 const PaymentMethod = require("../models/paymentMethodModel");
 const mongoose = require("mongoose");
-
+// const { logger } = require("../logger");
 
 const getPaymentModesHome = async (req, res) => {
     try {
@@ -1308,12 +1308,12 @@ async function payNowByStripe(req, res) {
   
       if (updateResult) {
         // Log the operation
-        await logger.info({
-          type: "Payment Mode",
-          entityType: `Payment mode: ${name}`,
-          name: req?.user?.user_name,
-          email: req?.user?.email,
-        });
+        // await logger.info({
+        //   type: "Payment Mode",
+        //   entityType: `Payment mode: ${name}`,
+        //   name: req?.user?.user_name,
+        //   email: req?.user?.email,
+        // });
   
         return res.status(200).json({
           success: true,
@@ -1334,6 +1334,10 @@ async function payNowByStripe(req, res) {
       });
     }
   };
+
+
+
+
   async function updatePaymentMethod (req, res) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -1363,12 +1367,12 @@ async function payNowByStripe(req, res) {
         ? paymentTypes[payment_type_key]
         : "";
   
-      await logger.info({
-        type: "Payment Type",
-        entityType: `Payment type: ${paymentTypeValue}`,
-        name: req?.user?.user_name,
-        email: req?.user?.email,
-      });
+      // await logger.info({
+      //   type: "Payment Type",
+      //   entityType: `Payment type: ${paymentTypeValue}`,
+      //   name: req?.user?.user_name,
+      //   email: req?.user?.email,
+      // });
   
       return res.status(200).json({
         success: true,
@@ -1470,6 +1474,10 @@ async function payNowByStripe(req, res) {
       return res.status(500).json({ message: "Error getting payment methods" });
     }
   };
+
+
+
+  
   exports.getPaymentModesHome = getPaymentModesHome;
   exports.getAccountDetails = getAccountDetails;
   exports.addAccountDetail = addAccountDetail;

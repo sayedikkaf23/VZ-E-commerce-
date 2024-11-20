@@ -2,7 +2,8 @@ var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 const bodyParser = require('body-parser');
-
+const paymentRoute=require('./routes/paymentRoute')
+ 
 const jsforce = require('jsforce');
 var cors = require("cors");
 var connectDB = require("./db/db");
@@ -56,7 +57,7 @@ app.use('/nationalities',nationalities)
 app.use('/payment',paymentMethodRoutes)
 app.use('/auth', authRoutes);
 app.use('/online', onlinePayment);
-
+app.use('/payment', paymentRoute);
 
 if (!process.env.SALESFORCE_USERNAME || !process.env.SALESFORCE_PASSWORD) {
   console.error("Salesforce credentials are missing. Please check .env file.");
