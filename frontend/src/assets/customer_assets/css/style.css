@@ -534,8 +534,9 @@ html .dropdown-menu {
     color:var(--primary);
 }
 .details-content {
-    position: relative;
-    padding: 85px 85px 120px;
+    position: absolute;
+    left: 100px;
+        padding: 85px 85px 120px;
     min-height: 100vh;
     display: flex;
     align-items: center;
