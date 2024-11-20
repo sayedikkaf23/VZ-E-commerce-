@@ -540,13 +540,21 @@ html .dropdown-menu {
     display: flex;
     align-items: center;
     justify-content: center;
+    font-family: 'Inter', sans-serif;
+    font-size: var(--body-font-size);
+    color:var(--dark);
+    font-weight: 500;
+    transition:all 0.3s;;
+    overflow-x: hidden;
+    padding-left: var(--sidebar-width);
 }
 .details-content .details-footer {
     position: absolute;
-    left: 0;
+    left: 200px;
     right: 0;
     bottom: 0;
     padding: 0  85px 20px;
+    
 }
 .details-footer ul {
     font-size: 13px;

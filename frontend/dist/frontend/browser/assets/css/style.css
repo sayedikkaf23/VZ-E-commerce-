@@ -576,11 +576,13 @@ html .dropdown-menu {
     width: 850px;
     max-width: 100%;
     padding: 0 15px;
+
 }
 .pm-select-wrap h3 {
     font-size: 20px;
     text-align: center;
     margin: 0 0 55px;
+
 }
 .btn-radio-field {
     margin-bottom: 30px;
