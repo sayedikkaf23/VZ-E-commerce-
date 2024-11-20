@@ -5,6 +5,7 @@ const AWS = require("aws-sdk"); // Remove the import * as AWS from 'aws-sdk';
 const fs = require("fs");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
+const crypto = require("crypto");
 
 require("dotenv").config();
 //  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
@@ -55,16 +56,19 @@ async function payNow(req, res) {
     const { quoteId } = req.params;
   
     const data = await PiData.findOne({
-      $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
-    });
+        $or: [
+          { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+          { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+        ],
+      });
   
     console.log("Data received in createTotalpaySession:", data);
     // Static data
   
-    const order_number = data.quotePaymentId;
-    const acountname = data.quoteName;
-    const acountemail = data.quoteEmail;
-    const order_amount = Number(data.partPayment).toFixed(2);
+    order_number = data.quotePaymentWithDetails.QuotePaymentId;
+    acountname = data.quoteWithProductDetails.AccountName;
+    acountemail = data.quoteWithProductDetails.quoteEmail;
+    order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(2);
     // const order_number = "order-1234";
     // const order_amount = "0.19";
     const order_currency = "AED";
@@ -84,10 +88,10 @@ async function payNow(req, res) {
     const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
     console.log("SHA-1 Hash:", sha1Hash);
   
-    const accountDetailsResult = await AccountDetail.find();
-    if (!accountDetailsResult || accountDetailsResult.length === 0) {
-      return res.status(400).json({ message: "Account details not found" });
-    }
+    // const accountDetailsResult = await AccountDetail.find();
+    // if (!accountDetailsResult || accountDetailsResult.length === 0) {
+    //   return res.status(400).json({ message: "Account details not found" });
+    // }
   
     const TokenResponse = await axios.post(
       `https://test.salesforce.com/services/oauth2/token`,
@@ -108,26 +112,27 @@ async function payNow(req, res) {
   
     // Create a new PaymentForm instance
     const newOnlinePayForm = new OnlinePayment({
-      transactionDetails: {
-        amount: data.totalIncludingVAT,
-        quotePaymentId: data.quotePaymentId,
-        partPayment: data.partPayment,
+        transactionDetails: {
+          amount:data.quoteWithProductDetails.totalIncludingVAT,
+          quotePaymentId: order_number,
+        //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
   
-        // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
-        // toCurrency: currency_convertingto,
-        proformaInvoiceNumber: data.invoiceNumber,
-        currencyPaid: "AED",
-        // amountPaid:existingUser.totalIncludingVAT,
-      },
-      customerDetails: {
-        name: data.AccountName,
-        id: data.quoteEmail, // Assuming this is the desired ID
-      },
+          // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+          // toCurrency: currency_convertingto,
+          proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
+          currencyPaid: "AED",
+          // amountPaid:existingUser.totalIncludingVAT,
+        },
+        customerDetails: {
+          name: data.quoteWithProductDetails.AccountName,
+          id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
+        },
   
-      status: "Paid",
-      quoteId: data.quoteId,
-      // Default status
-    });
+        paymentType:  "Online",
+        status: "Paid",
+        quoteId: data.quoteWithProductDetails.oppurtunityId,
+        // Default status
+      });
   
     await newOnlinePayForm.save();
   
@@ -153,8 +158,8 @@ async function payNow(req, res) {
         zip: "00000",
         phone: "+971090450954",
       },
-      cancel_url: `https://virtuzone.yeepeey.com/failure/${data.quotePaymentId}`,
-      success_url: `https://virtuzone.yeepeey.com/successful/${data.quotePaymentId}`,
+      cancel_url: `https://virtuzone.yeepeey.com/failure/${order_number}`,
+      success_url: `https://virtuzone.yeepeey.com/successful/${order_number}`,
       customer: {
         // name: acountname,
         email: acountemail,
@@ -213,33 +218,35 @@ async function payNow(req, res) {
     let acountemail;
     let order_amount;
     let type = "Online";
-    let data = await PiData.findOne({
-      $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
-    });
-  
-    if (!data) {
-      const ManualPiData = await manualPiData.findOne({
-        accountId: quoteId,
+    const data = await PiData.findOne({
+        $or: [
+          { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+          { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+        ],
       });
   
-      data = {
-        quotePaymentId: ManualPiData.accountId,
-        quoteName: ManualPiData.billTo,
-        quoteEmail: ManualPiData.email,
-        partPayment: ManualPiData.totalAmount,
-        totalIncludingVAT: ManualPiData.totalAmount,
-        invoiceNumber: ManualPiData.invoiceNumber,
-        quoteId: ManualPiData.invoiceNumber,
-        AccountName: ManualPiData.billTo,
-      };
-      type = "Manual";
-    }
+    // if (!data) {
+    //   const ManualPiData = await manualPiData.findOne({
+    //     accountId: quoteId,
+    //   });
   
-    order_number = data.quotePaymentId;
-    acountname = data.quoteName;
-    acountemail = data.quoteEmail;
-    order_amount = Number(data.partPayment).toFixed(2);
+    //   data = {
+    //     quotePaymentId: ManualPiData.accountId,
+    //     quoteName: ManualPiData.billTo,
+    //     quoteEmail: ManualPiData.email,
+    //     partPayment: ManualPiData.totalAmount,
+    //     totalIncludingVAT: ManualPiData.totalAmount,
+    //     invoiceNumber: ManualPiData.invoiceNumber,
+    //     quoteId: ManualPiData.invoiceNumber,
+    //     AccountName: ManualPiData.billTo,
+    //   };
+    //   type = "Manual";
+    // }
   
+    order_number = data.quotePaymentWithDetails.QuotePaymentId;
+    acountname = data.quoteWithProductDetails.AccountName;
+    acountemail = data.quoteWithProductDetails.quoteEmail;
+    order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(2);
     // const order_number = "order-1234";
     // const order_amount = "0.19";
     const order_currency = "AED";
@@ -257,15 +264,15 @@ async function payNow(req, res) {
   
     const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
   
-    const accountDetailsResult = await AccountDetail.find();
-    if (!accountDetailsResult || accountDetailsResult.length === 0) {
-      return res.status(400).json({ message: "Account details not found" });
-    }
+    // const accountDetailsResult = await AccountDetail.find();
+    // if (!accountDetailsResult || accountDetailsResult.length === 0) {
+    //   return res.status(400).json({ message: "Account details not found" });
+    // }
   
     try {
-      const isManual = type === "Manual";
-      const successType = isManual ? "?type=manual" : "";
-      const cancelType = isManual ? "?type=manual" : "";
+    //   const isManual = type === "Manual";
+    //   const successType = isManual ? "?type=manual" : "";
+    //   const cancelType = isManual ? "?type=manual" : "";
   
       const stripeResponse = await stripe.checkout.sessions.create({
         payment_method_types: ["card"],
@@ -282,34 +289,35 @@ async function payNow(req, res) {
           },
         ],
         mode: "payment",
-        success_url: `https://virtuzone.yeepeey.com/successful/${data.quotePaymentId}${successType}`,
-        cancel_url: `https://virtuzone.yeepeey.com/failure/${data.quotePaymentId}${cancelType}`,
+        success_url: `https://virtuzone.yeepeey.com/successful/${data.quotePaymentId}`,
+        cancel_url: `https://virtuzone.yeepeey.com/failure/${data.quotePaymentId}`,
       });
   
       const stripeResponseData = stripeResponse;
   
       const newOnlinePayForm = new OnlinePayment({
         transactionDetails: {
-          amount: data.totalIncludingVAT,
-          quotePaymentId: data.quotePaymentId,
-          partPayment: data.partPayment,
+          amount:data.quoteWithProductDetails.totalIncludingVAT,
+          quotePaymentId: order_number,
+        //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
   
           // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
           // toCurrency: currency_convertingto,
-          proformaInvoiceNumber: data.invoiceNumber,
+          proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
           currencyPaid: "AED",
           // amountPaid:existingUser.totalIncludingVAT,
         },
         customerDetails: {
-          name: data.AccountName,
-          id: data.quoteEmail, // Assuming this is the desired ID
+          name: data.quoteWithProductDetails.AccountName,
+          id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
         },
   
-        paymentType: isManual ? "Manual" : "Online",
+        paymentType:  "Online",
         status: "Paid",
-        quoteId: data.quoteId,
+        quoteId: data.quoteWithProductDetails.oppurtunityId,
         // Default status
       });
+  
   
       await newOnlinePayForm.save();
   
@@ -557,10 +565,10 @@ async function payNow(req, res) {
     const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
     console.log("SHA-1 Hash:", sha1Hash);
   
-    const accountDetailsResult = await AccountDetail.find();
-    if (!accountDetailsResult || accountDetailsResult.length === 0) {
-      return res.status(400).json({ message: "Account details not found" });
-    }
+    // const accountDetailsResult = await AccountDetail.find();
+    // if (!accountDetailsResult || accountDetailsResult.length === 0) {
+    //   return res.status(400).json({ message: "Account details not found" });
+    // }
   
     const TokenResponse = await axios.post(
       `https://test.salesforce.com/services/oauth2/token`,
