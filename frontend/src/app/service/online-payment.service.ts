@@ -26,7 +26,7 @@ export class OnlinePaymentService {
   }
 
   getPayNowDataById(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/online/paynow/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/payment/paynow/${quoteId}`;
     return this.http.get(apiUrl);
   }
 
@@ -46,7 +46,7 @@ export class OnlinePaymentService {
   }
 
   payNowSaleforce(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/online/payNowSaleforce/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/payment/payNowSaleforce/${quoteId}`;
     // Assuming an empty request body, adjust as needed
     const requestBody = {};
 
@@ -54,16 +54,16 @@ export class OnlinePaymentService {
   }
 
   payNowByStripe(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/online/payNowByStripe/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/payment/payNowByStripe/${quoteId}`;
     return this.http.get(apiUrl);
   }
   PayViaTelr(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/online/payNowByTelr/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/payment/payNowByTelr/${quoteId}`;
     return this.http.get(apiUrl);
   }
 
   payNowByMagnati(quoteId: string): Observable<any> {
-    const apiUrl = `${environment.apiUrl}/online/payNowByFiserv/${quoteId}`;
+    const apiUrl = `${environment.apiUrl}/payment/payNowByFiserv/${quoteId}`;
     return this.http.get(apiUrl);
   }
 

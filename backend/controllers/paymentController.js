@@ -334,33 +334,38 @@ async function payNow(req, res) {
     let order_number, acountname, acountemail, order_amount, type = "Online";
   
     // Fetch order details
-    let data = await PiData.findOne({ $or: [{ quoteId }, { quotePaymentId: quoteId }] });
-    if (!data) {
-      const ManualPiData = await manualPiData.findOne({ accountId: quoteId });
-      data = {
-        quotePaymentId: ManualPiData.accountId,
-        quoteName: ManualPiData.billTo,
-        quoteEmail: ManualPiData.email,
-        partPayment: ManualPiData.totalAmount,
-        totalIncludingVAT: ManualPiData.totalAmount,
-        invoiceNumber: ManualPiData.invoiceNumber,
-        AccountName: ManualPiData.billTo,
-      };
-      type = "Manual";
-    }
+    const data = await PiData.findOne({
+        $or: [
+          { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+          { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+        ],
+      });
+    // if (!data) {
+    // //   const ManualPiData = await manualPiData.findOne({ accountId: quoteId });
+    //   data = {
+    //     quotePaymentId: ManualPiData.accountId,
+    //     quoteName: ManualPiData.billTo,
+    //     quoteEmail: ManualPiData.email,
+    //     partPayment: ManualPiData.totalAmount,
+    //     totalIncludingVAT: ManualPiData.totalAmount,
+    //     invoiceNumber: ManualPiData.invoiceNumber,
+    //     AccountName: ManualPiData.billTo,
+    //   };
+    // //   type = "Manual";
+    // }
   
-    order_number = data.quotePaymentId;
-    acountname = data.quoteName;
-    acountemail = data.quoteEmail;
-    order_amount = Number(data.partPayment).toFixed(2);
+    order_number = data.quotePaymentWithDetails.QuotePaymentId;
+    acountname = data.quoteWithProductDetails.AccountName;
+    acountemail = data.quoteWithProductDetails.quoteEmail;
+    order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(2);
     const order_currency = "AED";
     const order_description = "payment_description";
   
     try {
       // Define success and cancel URLs based on payment type
-      const isManual = type === "Manual";
-      const successType = type === "Manual" ? "?type=manual" : "";
-      const cancelType = type === "Manual" ? "?type=manual" : "";
+    //   const isManual = type === "Manual";
+    //   const successType = type === "Manual" ? "?type=manual" : "";
+    //   const cancelType = type === "Manual" ? "?type=manual" : "";
    
       const telrResponse = await axios.post("https://secure.telr.com/gateway/order.json", {
         method: "create",
@@ -376,9 +381,9 @@ async function payNow(req, res) {
         },
         
         return: {
-          authorised: `https://virtuzone.yeepeey.com/successful/${data.quotePaymentId}${successType}`,
-          declined: `https://virtuzone.yeepeey.com/failure/${data.quotePaymentId}${cancelType}`,
-          cancelled: `https://virtuzone.yeepeey.com/cancelled/${data.quotePaymentId}${cancelType}`
+          authorised: `https://virtuzone.yeepeey.com/successful/${order_number}`,
+          declined: `https://virtuzone.yeepeey.com/failure/${order_number}`,
+          cancelled: `https://virtuzone.yeepeey.com/cancelled/${order_number}`
         },  customer: {
           ref:order_number,
           email: acountemail,
@@ -405,24 +410,24 @@ async function payNow(req, res) {
   
       const newOnlinePayForm = new OnlinePayment({
         transactionDetails: {
-          amount: data.totalIncludingVAT,
-          quotePaymentId: data.quotePaymentId,
-          partPayment: data.partPayment,
+          amount:data.quoteWithProductDetails.totalIncludingVAT,
+          quotePaymentId: order_number,
+        //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
   
           // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
           // toCurrency: currency_convertingto,
-          proformaInvoiceNumber: data.invoiceNumber,
+          proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
           currencyPaid: "AED",
           // amountPaid:existingUser.totalIncludingVAT,
         },
         customerDetails: {
-          name: data.AccountName,
-          id: data.quoteEmail, // Assuming this is the desired ID
+          name: data.quoteWithProductDetails.AccountName,
+          id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
         },
   
-        paymentType: isManual ? "Manual" : "Online",
+        paymentType:  "Online",
         status: "Paid",
-        quoteId: data.quoteId,
+        quoteId: data.quoteWithProductDetails.oppurtunityId,
         // Default status
       });
   
