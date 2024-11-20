@@ -21,48 +21,41 @@
     height: 40px;
     animation: spin 1s linear infinite;
   }
-/* Table Styling */
 .w-200 {
   width: 100%;
   border-collapse: collapse;
-  text-align: left;
   margin-top: 20px;
+  table-layout: fixed; /* Fixes alignment when text wraps */
+  text-align: left;
 }
 
-.w-200 th, .w-200 td {
+.w-200 th,
+.w-200 td {
   padding: 10px 12px;
   border-bottom: 1px solid #ddd;
   text-align: left;
+  word-wrap: break-word; /* Allows text wrapping */
+  overflow-wrap: break-word; /* Handles long unbroken text */
 }
 
-/* .w-200 th {
-  font-weight: bold;
-} */
+.w-200 th:nth-child(2),
+.w-200 td:nth-child(2) {
+  text-align: center; /* Center-align Quantity column */
+}
 
 .w-200 td.currency {
-  text-align: right; /* Align currency values to the right */
+  text-align: right; /* Right-align currency values */
 }
-
-/* Specific Column Alignment */
-.w-200 th:nth-child(2), .w-200 td:nth-child(2) {
-  text-align: center; /* Center alignment for Quantity column */
-}
-
-/* Styling for Total Row */
-/* .w-200 .total-row td {
-  font-weight: bold;
-} */
 
 /* Remove border for empty header row */
 .w-200 thead tr:nth-child(2) th {
   border: none;
 }
-.sweet-alert button.cancel {
-  background-color: #FE9475;
-}
-/* Responsive Layout for Smaller Screens */
+
+/* Responsive Design for Smaller Screens */
 @media (max-width: 768px) {
-  .w-200 th, .w-200 td {
-      padding: 8px 10px;
+  .w-200 th,
+  .w-200 td {
+    padding: 8px 10px;
   }
 }
