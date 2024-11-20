@@ -45,6 +45,10 @@
 	left: 56px;
 	animation: data-loader-3 0.6s infinite;
 }
+.colored-image {
+	color: #CF3236;
+}
+  
 
 @keyframes data-loader-1 {
 	0% {
