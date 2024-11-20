@@ -20,6 +20,45 @@
     height: 40px;
     animation: spin 1s linear infinite;
   }
+  .w-200 {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    table-layout: fixed; /* Fixes alignment when text wraps */
+    text-align: left;
+  }
+  
+  .w-200 th,
+  .w-200 td {
+    padding: 10px 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    word-wrap: break-word; /* Allows text wrapping */
+    overflow-wrap: break-word; /* Handles long unbroken text */
+  }
+  
+  .w-200 th:nth-child(2),
+  .w-200 td:nth-child(2) {
+    text-align: center; /* Center-align Quantity column */
+  }
+  
+  .w-200 td.currency {
+    text-align: right; /* Right-align currency values */
+  }
+  
+  /* Remove border for empty header row */
+  .w-200 thead tr:nth-child(2) th {
+    border: none;
+  }
+  
+  /* Responsive Design for Smaller Screens */
+  @media (max-width: 768px) {
+    .w-200 th,
+    .w-200 td {
+      padding: 8px 10px;
+    }
+  }
+  
   
   /* Spin Animation */
   @keyframes spin {
