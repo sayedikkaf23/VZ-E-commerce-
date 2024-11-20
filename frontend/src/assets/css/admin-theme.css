@@ -330,8 +330,8 @@ html .bg-warning {
 }
 .menu-sidebar .sidebar-inner-content {
   flex-grow: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow-y: auto; 
+   overflow-x: hidden; 
 }
 .menu-sidebar .sidebar-footer {
   padding-bottom: 23px;
