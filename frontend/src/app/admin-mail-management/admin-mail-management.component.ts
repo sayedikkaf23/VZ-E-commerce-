@@ -2,11 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { MailManagementService } from '../service/mail-management.service';
 import { ToastrService } from 'ngx-toastr'; // Import ToastrService
 
-
 @Component({
   selector: 'app-admin-mail-management',
   templateUrl: './admin-mail-management.component.html',
-  styleUrl: './admin-mail-management.component.css'
+  styleUrl: './admin-mail-management.component.css',
 })
 export class AdminMailManagementComponent {
   mailList: any[] = []; // To store fetched mail data
@@ -28,7 +27,6 @@ export class AdminMailManagementComponent {
       (response) => {
         this.mailList = response; // Assign the API response to the mailList array
         this.checkColumnData(); // Check columns only after data is loaded
-
       },
       (error) => {
         console.error('Error fetching mail details:', error);
@@ -36,7 +34,6 @@ export class AdminMailManagementComponent {
     );
   }
 
-  
   checkColumnData(): void {
     this.hasSalaryData = this.userList.some((user) => !!user.salary);
     this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
