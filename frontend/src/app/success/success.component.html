@@ -12,7 +12,7 @@
                     <h5>Hooray! You have completed your payment</h5>
                     <hr/>
                     <h6>AMOUNT PAID</h6>
-                    <h2 *ngIf="piData">AED {{ piData.partPayment | number: '1.2-2' }}</h2>
+                    <h2 *ngIf="piData">AED {{ piData.salesforceResponseMatchScreening.total_including_Vat | number: '1.2-2' }}</h2>
 
                     <div class="pmnotes">
                         <strong>Note:</strong> You will receive the payment confirmation receipt & the invoice for your services via your registered <b>E-mail ID</b>.
@@ -67,8 +67,7 @@
                 <ul>
                     <!-- <li><a href="#">Terms and Conditions</a></li>
                     <li><a href="#">FAQs</a></li> -->
-                    <li><a target="__blank" href="https://virtuzone.com/privacy-policy/">Privacy Policy</a></li>
-                    <li > <a style="text-align: right;" href="https://www.yeepeey.com" target="_blank"><b> © 2024, Powered by Virtuzone & Developed by Yeepeey</b></a></li>
+                    <app-user-footer></app-user-footer>
                 </ul>
             </div>
         </div>

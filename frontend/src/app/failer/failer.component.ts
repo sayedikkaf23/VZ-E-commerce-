@@ -28,8 +28,8 @@ export class FailerComponent implements OnInit {
   }
 
   tryAgain() {
-    const baseUrl = 'https://virtuzone.yeepeey.com';
-    const endpoint = this.type === 'manual' ? 'manual' : 'onlinepayment';
+    const baseUrl = 'http://localhost:4200';
+    const endpoint =  'onlinepayment';
     window.location.href = `${baseUrl}/${endpoint}/${this.transactionId}`;
   }
 }
