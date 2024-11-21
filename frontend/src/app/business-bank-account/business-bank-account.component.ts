@@ -45,20 +45,27 @@ export class BusinessBankAccountComponent implements OnInit {
 
   // Method to call checkStatus API and store CaseStatusCode
   checkStatus(user: any): void {
+    // Set the loading state for the button
+    user.isLoading = true;
+  
     const payload = {
       CustomerId: user.LeadId,
       CompanyName: 'Virtuzone',
     };
+  
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
         user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
         console.log('Status check response:', response);
+        user.isLoading = false; // Turn off loading after response
       },
       (error) => {
         console.error('Error checking status:', error);
+        user.isLoading = false; // Turn off loading even on error
       }
     );
   }
+  
   openModal(data:any): void {
     this.selectedUserShareholders = data; // Assign dummy data directly
     this.showModal = true; // Open the modal
