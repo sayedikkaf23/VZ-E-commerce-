@@ -55,9 +55,10 @@
               View Details
             </button>
           </td>
-          <td>{{ user.screeningDetails?.matchScore }}</td>
+   <td>
+    <button class="green-button" (click)="checkStatus(user)">Check Status</button>
 
-          <button class="green-button" (click)="checkStatus(user)">Check Status</button>
+   </td>
           <td>{{ user.CustomerStatus }}</td>
 
           

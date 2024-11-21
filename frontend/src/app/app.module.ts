@@ -48,7 +48,8 @@ import { UserLoginComponent } from './user-login/user-login.component';
 import { OnlinepaymentComponent } from './onlinepayment/onlinepayment.component';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { UserFooterComponent } from './user-footer/user-footer.component';
-
+import { FailerComponent } from './failer/failer.component';
+import { SuccessComponent } from './success/success.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -90,6 +91,8 @@ import { UserFooterComponent } from './user-footer/user-footer.component';
     OnlinepaymentComponent,
     SidebarComponent,
     UserFooterComponent,
+    FailerComponent,
+    SuccessComponent,
     
   ],
   imports: [
