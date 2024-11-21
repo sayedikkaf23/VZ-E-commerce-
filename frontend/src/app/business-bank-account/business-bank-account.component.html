@@ -55,12 +55,24 @@
               View Details
             </button>
           </td>
+   
           <td>{{ user.screeningDetails?.matchScore }}</td>
 
-          <button class="green-button" (click)="checkStatus(user)">Check Status</button>
-          <td>{{ user.CustomerStatus }}</td>
+          <td>
+            <button 
+              class="green-button d-flex align-items-center justify-content-center" 
+              (click)="checkStatus(user)"
+              [disabled]="user.isLoading"
+            >
+              <span class="button-text">Check Status</span>
+              <span *ngIf="user.isLoading" class="spinner-border spinner-border-sm me-2"></span>
 
+            </button>
+          </td>
           
+          
+           <td>{{ user.CustomerStatus }}</td>
+
         </tr>
       </tbody>
     </table>

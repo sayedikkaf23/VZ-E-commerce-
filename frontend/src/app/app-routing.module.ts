@@ -33,7 +33,8 @@ import { MailsManagementSummaryComponent } from './mails-management-summary/mail
 import { AdminPaymentMethordComponent } from './admin-payment-methord/admin-payment-methord.component';
 import { UserLoginComponent } from './user-login/user-login.component';
 import { OnlinepaymentComponent } from './onlinepayment/onlinepayment.component';
-
+import { FailerComponent } from './failer/failer.component';
+import { SuccessComponent } from './success/success.component';
 
 const routes: Routes = [
 
@@ -53,7 +54,11 @@ const routes: Routes = [
     component: OnlinepaymentComponent,
     data: { type: 'online' },
   },
+  // { path: 'successful/:id', component: SuccessComponent },
+  { path: 'failure/:id', component: FailerComponent },
   // new
+  { path: 'successful/:id', component: SuccessComponent },
+
   {
     path: 'mail-management-1',
     component: MailsManagement1Component,
