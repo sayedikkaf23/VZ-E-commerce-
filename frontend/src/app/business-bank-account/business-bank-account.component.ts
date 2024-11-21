@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminAuthService } from '../service/admin-auth.service'; // Import your service
+import { ToastrService } from 'ngx-toastr'; // Import ToastrService
 
 @Component({
   selector: 'app-business-bank-account',
@@ -18,6 +19,7 @@ export class BusinessBankAccountComponent implements OnInit {
     { name: 'Jane Smith', id: 'SH002', percentage: 35 },
     { name: 'Robert Wilson', id: 'SH003', percentage: 40 }
   ];
+  loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
 
   constructor(private adminAuthService: AdminAuthService) {}
 
@@ -45,23 +47,25 @@ export class BusinessBankAccountComponent implements OnInit {
 
   // Method to call checkStatus API and store CaseStatusCode
   checkStatus(user: any): void {
-    // Set the loading state for the button
-    user.isLoading = true;
-  
     const payload = {
       CustomerId: user.LeadId,
       CompanyName: 'Virtuzone',
     };
-  
+
+    // Set loading state for the user
+    this.loadingStatuses[user.LeadId] = true;
+
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
         user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
         console.log('Status check response:', response);
-        user.isLoading = false; // Turn off loading after response
       },
       (error) => {
         console.error('Error checking status:', error);
-        user.isLoading = false; // Turn off loading even on error
+      },
+      () => {
+        // Clear loading state for the user
+        this.loadingStatuses[user.LeadId] = false;
       }
     );
   }

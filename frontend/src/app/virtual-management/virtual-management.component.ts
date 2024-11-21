@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { VirtualManagementService } from '../service/virtual-management.service';
- 
+import { ToastrService } from 'ngx-toastr'; // Import ToastrService
+
 @Component({
   selector: 'app-virtual-management',
   templateUrl: './virtual-management.component.html',
@@ -13,6 +14,7 @@ export class VirtualManagementComponent implements OnInit {
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
   userList: any[] = []; // To store the fetched user data
+  loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
 
   constructor(private virtualManagementService: VirtualManagementService) {}
  
@@ -42,6 +44,10 @@ export class VirtualManagementComponent implements OnInit {
       CustomerId: user.LeadId,
       CompanyName: 'Virtuzone',
     };
+
+    // Set loading state for the user
+    this.loadingStatuses[user.LeadId] = true;
+
     this.virtualManagementService.checkStatus(payload).subscribe(
       (response) => {
         user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
@@ -49,10 +55,13 @@ export class VirtualManagementComponent implements OnInit {
       },
       (error) => {
         console.error('Error checking status:', error);
+      },
+      () => {
+        // Clear loading state for the user
+        this.loadingStatuses[user.LeadId] = false;
       }
     );
   }
- 
   openClientDetails(shareholders: any[]): void {
     console.log(shareholders)
     this.selectedClientDetails = shareholders; // Assign shareholder data to display in the modal

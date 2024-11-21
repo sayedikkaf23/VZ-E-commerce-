@@ -39,13 +39,19 @@
           <td>{{ client.mobileNumber.internationalNumber }}</td>
 
           <td>
-            <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary">View Shareholders</button>
+            <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary" style="text-wrap: nowrap; overflow: hidden;">View Shareholders</button>
           </td>
           <td>{{ client.screeningDetails?.matchScore }}</td>
           <td>
-            <button class="green-button" (click)="checkStatus(client)">Check Status</button>
+            <button class="green-button" (click)="checkStatus(client)" [disabled]="loadingStatuses[client.LeadId]">
+              <ng-container *ngIf="!loadingStatuses[client.LeadId]">Check Status</ng-container>
+              <ng-container *ngIf="loadingStatuses[client.LeadId]">
+                <span class="spinner-border spinner-border-sm"></span> Loading...
+              </ng-container>
+            </button>
           </td>
-          <td>{{ client.CustomerStatus  }}</td>
+          <td>{{ client.CustomerStatus }}</td>
+          
         </tr>
       </tbody>
     </table>

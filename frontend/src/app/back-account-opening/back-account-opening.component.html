@@ -49,9 +49,15 @@
           <td>{{ user.screeningDetails?.matchScore }}</td>
 
           <td>
-            <button class="green-button" (click)="checkStatus(user)">Check Status</button>
+            <button class="green-button" (click)="checkStatus(user)" [disabled]="loadingStatuses[user.LeadId]">
+              <ng-container *ngIf="!loadingStatuses[user.LeadId]">Check Status</ng-container>
+              <ng-container *ngIf="loadingStatuses[user.LeadId]">
+                <span class="spinner-border spinner-border-sm"></span> Loading...
+              </ng-container>
+            </button>
           </td>
-          <td>{{ user.CustomerStatus  }}</td>
+          <td>{{ user.CustomerStatus }}</td>
+          
 
         </tr>
       </tbody>

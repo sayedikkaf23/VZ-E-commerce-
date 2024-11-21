@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MailManagementService } from '../service/mail-management.service';
+import { ToastrService } from 'ngx-toastr'; // Import ToastrService
 
 
 @Component({
@@ -14,6 +15,7 @@ export class AdminMailManagementComponent {
   userList: any[] = []; // To store the fetched user data
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
+  loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
 
   constructor(private mailManagementService: MailManagementService) {}
 
@@ -44,6 +46,10 @@ export class AdminMailManagementComponent {
       CustomerId: user.LeadId,
       CompanyName: 'Virtuzone',
     };
+
+    // Set loading state for the user
+    this.loadingStatuses[user.LeadId] = true;
+
     this.mailManagementService.checkStatus(payload).subscribe(
       (response) => {
         user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
@@ -51,6 +57,10 @@ export class AdminMailManagementComponent {
       },
       (error) => {
         console.error('Error checking status:', error);
+      },
+      () => {
+        // Clear loading state for the user
+        this.loadingStatuses[user.LeadId] = false;
       }
     );
   }

@@ -18,21 +18,21 @@
     <table class="table table-list-data table-hover">
       <thead class="bg-light">
         <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Email</th>
-          <th scope="col">Nationality</th>
-          <th scope="col">Birthday</th>
-          <th scope="col">Mobile Number</th>
-          <th scope="col">Jurisdiction</th>
-          <th scope="col">Shareholder Count</th>
-          <th scope="col">Turn Over</th>
-          <th scope="col">Actions</th>
+          <th scope="col">Name &#x2191;&#x2193;</th>
+          <th scope="col">Email &#x2191;&#x2193;</th>
+          <th scope="col">Nationality &#x2191;&#x2193;</th>
+          <th scope="col">Birthday &#x2191;&#x2193;</th>
+          <th scope="col">Mobile Numbern &#x2191;&#x2193; </th>
+          <th scope="col">Jurisdiction &#x2191;&#x2193;</th>
+          <th scope="col">Shareholder Count &#x2191;&#x2193;</th>
+          <th scope="col">Turn Over &#x2191;&#x2193;</th>
+          <th scope="col">Actions &#x2191;&#x2193;</th>
 
-          <th scope="col">Match Score</th>
+          <th scope="col">Match Score &#x2191;&#x2193;</th>
 
-          <th scope="col">Actions</th>
+          <th scope="col">Actions &#x2191;&#x2193;</th>
 
-          <th scope="col">KYC Status</th>
+          <th scope="col">KYC Status &#x2191;&#x2193;</th>
 
         </tr>
       </thead>
@@ -59,19 +59,15 @@
           <td>{{ user.screeningDetails?.matchScore }}</td>
 
           <td>
-            <button 
-              class="green-button d-flex align-items-center justify-content-center" 
-              (click)="checkStatus(user)"
-              [disabled]="user.isLoading"
-            >
-              <span class="button-text">Check Status</span>
-              <span *ngIf="user.isLoading" class="spinner-border spinner-border-sm me-2"></span>
-
+            <button class="green-button" (click)="checkStatus(user)" [disabled]="loadingStatuses[user.LeadId]">
+              <ng-container *ngIf="!loadingStatuses[user.LeadId]">Check Status</ng-container>
+              <ng-container *ngIf="loadingStatuses[user.LeadId]">
+                <span class="spinner-border spinner-border-sm"></span> Loading...
+              </ng-container>
             </button>
           </td>
+          <td>{{ user.CustomerStatus }}</td>
           
-          
-           <td>{{ user.CustomerStatus }}</td>
 
         </tr>
       </tbody>

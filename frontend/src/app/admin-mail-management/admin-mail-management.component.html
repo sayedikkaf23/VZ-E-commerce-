@@ -15,13 +15,13 @@
       <table class="table table-list-data table-hover">
         <thead class="bg-light">
           <tr>
-            <th scope="col">Sender Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Company Name</th>
-            <th scope="col">Incorporation Country</th>
-            <th scope="col">Mobile Number</th>
-            <th scope="col">Shareholder Count</th>
-            <th scope="col">Actions</th>
+            <th scope="col">Sender Name &#x2191;&#x2193;</th>
+            <th scope="col">Email &#x2191;&#x2193;</th>
+            <th scope="col">Company Name &#x2191;&#x2193;</th>
+            <th scope="col">Incorporation Country &#x2191;&#x2193;</th>
+            <th scope="col">Mobile Number &#x2191;&#x2193;</th>
+            <th scope="col">Shareholder Count &#x2191;&#x2193;</th>
+            <th scope="col">Actions &#x2191;&#x2193;</th>
             <th scope="col">Match Score &#x2191;&#x2193;</th>
           <th scope="col">Action &#x2191;&#x2193;</th>
          
@@ -41,9 +41,15 @@
             </td>
             <td>{{ mail.screeningDetails?.matchScore }}</td>
             <td>
-              <button class="green-button" (click)="checkStatus(mail)">Check Status</button>
+              <button class="green-button" (click)="checkStatus(mail)" [disabled]="loadingStatuses[mail.LeadId]">
+                <ng-container *ngIf="!loadingStatuses[mail.LeadId]">Check Status</ng-container>
+                <ng-container *ngIf="loadingStatuses[mail.LeadId]">
+                  <span class="spinner-border spinner-border-sm"></span> Loading...
+                </ng-container>
+              </button>
             </td>
-            <td>{{ mail.CustomerStatus  }}</td>
+            <td>{{ mail.CustomerStatus }}</td>
+            
           </tr>
         </tbody>
       </table>

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminAuthService } from '../service/admin-auth.service';
+import { ToastrService } from 'ngx-toastr'; // Import ToastrService
 
 @Component({
   selector: 'app-back-account-opening',
@@ -10,6 +11,7 @@ export class BackAccountOpeningComponent implements OnInit {
   userList: any[] = []; // To store the fetched user data
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
+  loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
 
   constructor(private adminAuthService: AdminAuthService) {}
 
@@ -40,6 +42,10 @@ export class BackAccountOpeningComponent implements OnInit {
       CustomerId: user.LeadId,
       CompanyName: 'Virtuzone',
     };
+
+    // Set loading state for the user
+    this.loadingStatuses[user.LeadId] = true;
+
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
         user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
@@ -47,6 +53,10 @@ export class BackAccountOpeningComponent implements OnInit {
       },
       (error) => {
         console.error('Error checking status:', error);
+      },
+      () => {
+        // Clear loading state for the user
+        this.loadingStatuses[user.LeadId] = false;
       }
     );
   }
