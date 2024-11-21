@@ -13,3 +13,29 @@
 .green-button:hover {
     background-color: #238d4e; /* Darker green on hover */
 }
+/* General scrollbar customization */
+.table-responsive {
+    overflow-y: auto;
+    overflow-x: auto;
+    scrollbar-width: thin; /* For modern browsers */
+    scrollbar-color: #ccc transparent; /* Light grey scrollbar with no track color */
+  }
+  
+  /* Webkit-based browsers (e.g., Chrome, Edge, Safari) */
+  .table-responsive::-webkit-scrollbar {
+    height: 6px; /* Thin scrollbar height */
+  }
+  
+  .table-responsive::-webkit-scrollbar-thumb {
+    background-color: #ccc; /* Scrollbar thumb color */
+    border-radius: 3px; /* Rounded edges for thumb */
+  }
+  
+  .table-responsive::-webkit-scrollbar-thumb:hover {
+    background-color: #999; /* Darker on hover */
+  }
+  
+  .table-responsive::-webkit-scrollbar-track {
+    background-color: transparent; /* Transparent track */
+  }
+  
