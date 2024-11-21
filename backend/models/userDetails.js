@@ -16,6 +16,23 @@ const screeningDetailsSchema = new mongoose.Schema({
 });
 
 
+const responseSchema = new mongoose.Schema({
+  products: [
+    {
+      productId: { type: String,required: true },
+      productName: { type: String },
+      productQuantity: { type: Number },
+      productUnitPrice: { type: Number }
+    }
+  ],
+  total_including_Vat: { type: Number },
+  matchScore: { type: Number },
+  leadId: { type: String },
+  accountId: { type: String },
+  quotePayementId: { type: String }
+});
+
+
 const userDetailsSchema = new mongoose.Schema({
  
    type: { type: String },
@@ -46,6 +63,7 @@ const userDetailsSchema = new mongoose.Schema({
       screeningDetails: screeningDetailsSchema, // Add screeningDetails as a sub-document
       LeadId: { type: String }, 
       QuotePaymentId: { type: String }, 
+      // salesforceResponseMatchScreening: responseSchema // Added field for Salesforce response
 }, { timestamps: true });
  
 module.exports = mongoose.model('UserDetails', userDetailsSchema);

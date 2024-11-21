@@ -8,6 +8,7 @@ import { DataStorageService } from '../service/data-storage.service';
 import AOS from 'aos';
 import { switchMap, of } from 'rxjs';
 import Swal from 'sweetalert2';
+import { MatchScoreStorageService } from '../service/matchscore-storage.service';
 
 declare var $: any;
 
@@ -23,7 +24,7 @@ export class BussinessShowDeatilsComponent {
   bankInfo: any = {};
   salesforceResponse: any;
   quoteWithProductDetails: any;
-
+  matchScoreResponse: any;
   showAll = false;
   displayShareholders :any= [];
 
@@ -37,6 +38,8 @@ export class BussinessShowDeatilsComponent {
     private router: Router,
     private dataStorageService: DataStorageService,
     private userService: UserService,
+    private matchScoreStorageService: MatchScoreStorageService,
+
     @Inject(PLATFORM_ID) private platformId: Object,
     private location: Location // Inject Location service
   ) {
@@ -45,8 +48,9 @@ export class BussinessShowDeatilsComponent {
 
   ngOnInit(): void {
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
-    this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
-
+    // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
+    this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
+    this.quoteWithProductDetails = this.matchScoreResponse?.data;
     // Check if the salesforceResponse is empty or null
     if (!this.salesforceResponse) {
       Swal.fire({
@@ -201,8 +205,8 @@ export class BussinessShowDeatilsComponent {
           const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
 
           if (quotePaymentId) {
-            const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
-            window.location.href = paymentUrl;
+            this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+            // window.location.href = paymentUrl;
             return of(null);
           } else {
             throw new Error('Quote Payment ID not found');

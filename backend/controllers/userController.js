@@ -637,7 +637,7 @@ exports.MatchScoreProductService = async (req, res) => {
     console.log("Salesforce Response:", responseData);
 
     // Optional Step 5: Update the database document with the Salesforce response data (if needed)
-    document.salesforceResponseData = responseData; // Assuming a field to store response data exists
+    document.salesforceResponseMatchScreening = responseData; // Assuming a field to store response data exists
     await document.save();
 
     // Step 6: Send a success response
