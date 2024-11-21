@@ -7,6 +7,7 @@ import { Router } from '@angular/router';
 import { DataStorageService } from '../service/data-storage.service';
 import AOS from 'aos';
 import Swal from 'sweetalert2';
+import { MatchScoreStorageService } from '../service/matchscore-storage.service';
 
 declare var $: any;
 
@@ -26,6 +27,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
   displayShareholders: any = [];
   companyInfo: any = {};
   shareholders: any = [];
+  matchScoreResponse: any;
 
   constructor(
     private http: HttpClient,
@@ -33,6 +35,8 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     private router: Router,
     private dataStorageService: DataStorageService,
     private userService: UserService,
+    private matchScoreStorageService: MatchScoreStorageService,
+
     @Inject(PLATFORM_ID) private platformId: Object,
     private locationStrategy: LocationStrategy // Inject LocationStrategy for back navigation control
   ) {
@@ -42,8 +46,10 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
   ngOnInit(): void {
     this.preventBackNavigation(); // Prevent back navigation on this page
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
-    this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
-
+    // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
+    this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
+    this.quoteWithProductDetails = this.matchScoreResponse?.data;
+    
     if (!this.salesforceResponse) {
       Swal.fire({
         title: 'Session Terminated',
@@ -160,8 +166,9 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
           console.log("quotePaymentId")
           
           localStorage.clear();
-          const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
-          window.location.href = paymentUrl; // Redirect to payment URL
+          this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+          // window.location.href = paymentUrl;
+          // return of(null);
         } else {
           console.error('Quote Payment ID not found');
           this.toastr.error('Quote Payment ID not found', 'Error');

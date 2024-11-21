@@ -10,6 +10,8 @@ import { switchMap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { VirtualManagementService } from '../service/virtual-management.service';
+import { MatchScoreStorageService } from '../service/matchscore-storage.service';
+
 declare var $: any;
 
 
@@ -37,7 +39,7 @@ i: any;
     private fileStorageService: FileStorageService,
     private dataStorageService: DataStorageService,
     private virtualManagementService: VirtualManagementService,
-
+    private matchScoreStorageService: MatchScoreStorageService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -266,7 +268,22 @@ submitData() {
             payment_url: `https://virtuzone.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
           };
           // Call the second API
-          return this.userService.callSalesforceQuoteService(quotePayload);
+          return this.userService.callSalesforceQuoteService(quotePayload).pipe(
+            switchMap((quoteResponse: any) => {
+              console.log('Quote Service Response:', quoteResponse);
+
+              // Prepare payload for MatchScoreProductService
+              const matchScorePayload = {
+                quotePaymentId: quotePayload.quotePaymentId,
+                // accountId: quotePayload.account_id,
+                // leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
+                // matchScore: response.data.matchScore, // Adjust based on response structure
+              };
+
+              // Call the third API
+              return this.userService.MatchScoreProductService(matchScorePayload);
+            })
+          );
         })
       ).subscribe(
         (quoteResponse: any) => {
@@ -275,7 +292,7 @@ submitData() {
 
           // Save finalData in localStorage
           localStorage.setItem('finalDataVirtual', JSON.stringify(mergedData));
-
+          this.matchScoreStorageService.setMatchScoreResponse(quoteResponse);
           // Navigate to the next step
           this.router.navigate(['/virtual-summary']); // Replace with your actual route
         },

@@ -68,7 +68,7 @@ async function payNow(req, res) {
     order_number = data.quotePaymentWithDetails.QuotePaymentId;
     acountname = data.quoteWithProductDetails.AccountName;
     acountemail = data.quoteWithProductDetails.quoteEmail;
-    order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(2);
+    order_amount = Number(data.salesforceResponseMatchScreening.total_including_Vat).toFixed(2);
     // const order_number = "order-1234";
     // const order_amount = "0.19";
     const order_currency = "AED";
@@ -113,7 +113,7 @@ async function payNow(req, res) {
     // Create a new PaymentForm instance
     const newOnlinePayForm = new OnlinePayment({
         transactionDetails: {
-          amount:data.quoteWithProductDetails.totalIncludingVAT,
+          amount:data.salesforceResponseMatchScreening.total_including_Vat,
           quotePaymentId: order_number,
         //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
   
@@ -246,7 +246,7 @@ async function payNow(req, res) {
     order_number = data.quotePaymentWithDetails.QuotePaymentId;
     acountname = data.quoteWithProductDetails.AccountName;
     acountemail = data.quoteWithProductDetails.quoteEmail;
-    order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(2);
+    order_amount = Number(data.salesforceResponseMatchScreening.total_including_Vat).toFixed(2);
     // const order_number = "order-1234";
     // const order_amount = "0.19";
     const order_currency = "AED";
@@ -297,7 +297,7 @@ async function payNow(req, res) {
   
       const newOnlinePayForm = new OnlinePayment({
         transactionDetails: {
-          amount:data.quoteWithProductDetails.totalIncludingVAT,
+          amount:data.salesforceResponseMatchScreening.total_including_Vat,
           quotePaymentId: order_number,
         //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
   
@@ -367,7 +367,7 @@ async function payNow(req, res) {
     order_number = data.quotePaymentWithDetails.QuotePaymentId;
     acountname = data.quoteWithProductDetails.AccountName;
     acountemail = data.quoteWithProductDetails.quoteEmail;
-    order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(2);
+    order_amount = Number(data.salesforceResponseMatchScreening.total_including_Vat).toFixed(2);
     const order_currency = "AED";
     const order_description = "payment_description";
   
@@ -420,7 +420,7 @@ async function payNow(req, res) {
   
       const newOnlinePayForm = new OnlinePayment({
         transactionDetails: {
-          amount:data.quoteWithProductDetails.totalIncludingVAT,
+          amount:data.salesforceResponseMatchScreening.total_including_Vat,
           quotePaymentId: order_number,
         //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
   
@@ -489,10 +489,10 @@ async function payNow(req, res) {
       const requestBodySalesforce = {
         qp: {
           paymentmethod: "Pay Now",
-          amount_received: paynowdata.transactionDetails.partPayment,
+          amount_received: paynowdata.transactionDetails.amount,
           bank_name: "Payment Gateway",
           GL_code: "1301 - VZ ADCB (AED) 10515838124001",
-          Pay_Currency: paynowdata.transactionDetails.currencyPaid,
+          // Pay_Currency: paynowdata.transactionDetails.currencyPaid,
           payment_status: "Paid",
           quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
         },

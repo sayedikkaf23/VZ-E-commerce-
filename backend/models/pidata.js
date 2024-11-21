@@ -9,6 +9,21 @@ const screeningDetailsSchema = new mongoose.Schema({
 });
 
 
+const responseSchema = new mongoose.Schema({
+  products: [
+    {
+      productId: { type: String,required: true },
+      productName: { type: String },
+      productQuantity: { type: Number },
+      productUnitPrice: { type: Number }
+    }
+  ],
+  total_including_Vat: { type: Number },
+  matchScore: { type: Number },
+  leadId: { type: String },
+  accountId: { type: String },
+  quotePayementId: { type: String }
+});
 
 
 const pidataSchema = new mongoose.Schema({
@@ -57,7 +72,9 @@ const pidataSchema = new mongoose.Schema({
     totalIncludingVAT: Number,
     totalPrice: Number
   },
-  screeningDetails: screeningDetailsSchema, // Add screeningDetails as a sub-document
+  screeningDetails: screeningDetailsSchema,
+  salesforceResponseMatchScreening: responseSchema // Added field for Salesforce response
+   // Add screeningDetails as a sub-document
 });
 
 module.exports = mongoose.model('Pidata', pidataSchema);
