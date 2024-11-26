@@ -1,0 +1,27 @@
+.chart-card {
+    background: #ffffff;
+    box-shadow: 6px 6px 30px rgba(0, 0, 0, 0.04);
+    border-radius: 10px;
+    /* padding: 20px 90px 20px 20px; */
+    position: relative;
+    margin-bottom: 20px;
+    /* height: auto; */
+    /* width: fit-content; */
+  }
+  
+  .chart-main-container {
+    display: flex;
+    gap: 5%;
+  }
+  
+  .chart {
+    position: relative;
+    min-height: unset;
+  }
+  
+  .chart-wrapper {
+    position: relative;
+    /* height: 40vh; */
+    max-width: 100%;
+  }
+  

@@ -1,0 +1,136 @@
+<ng-container>
+    <div class="user-dashboard">
+      <div class="sidebar">
+        <div class="sidebar-logo">
+          <img src="assets/logo.png" alt="Virtuzone Logo" />
+        </div>
+        <ul class="menu-navigation">
+          <li routerLinkActive="active">
+            <a routerLink="/dashboard">
+              <span class="icon">
+                <i class="fas fa-home"></i>
+              </span>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li routerLinkActive="active">
+            <a routerLink="/customer-management">
+              <span class="icon">
+                <i class="fas fa-users"></i>
+              </span>
+              <span>Customer Management</span>
+            </a>
+          </li>
+          <li routerLinkActive="active">
+            <a routerLink="/bank-accounts">
+              <span class="icon">
+                <i class="fas fa-university"></i>
+              </span>
+              <span>Bank Accounts</span>
+            </a>
+          </li>
+          <li routerLinkActive="active">
+            <a routerLink="/virtual-management">
+              <span class="icon">
+                <i class="fas fa-briefcase"></i>
+              </span>
+              <span>Virtual Management</span>
+            </a>
+          </li>
+          <li routerLinkActive="active">
+            <a routerLink="/mail-management">
+              <span class="icon">
+                <i class="fas fa-envelope"></i>
+              </span>
+              <span>Mail Management</span>
+            </a>
+          </li>
+          <li routerLinkActive="active">
+            <a routerLink="/settings">
+              <span class="icon">
+                <i class="fas fa-cog"></i>
+              </span>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+  
+      <div class="main-content">
+        <header class="dashboard-header">
+          <h1>Dashboard</h1>
+          <div class="filters">
+            <input type="date" class="filter-input" placeholder="Start Date" />
+            <input type="date" class="filter-input" placeholder="End Date" />
+            <button class="btn btn-primary">Apply</button>
+          </div>
+        </header>
+  
+        <section class="dashboard-cards">
+          <div class="card">
+            <h3>Total Sales</h3>
+            <p>0</p>
+          </div>
+          <div class="card">
+            <h3>POS Cancelled</h3>
+            <p>0</p>
+          </div>
+          <div class="card">
+            <h3>Total Customers</h3>
+            <p>0</p>
+          </div>
+          <div class="card">
+            <h3>Total Suppliers</h3>
+            <p>0</p>
+          </div>
+        </section>
+  
+        <section class="dashboard-details">
+          <div class="details-card">
+            <h3>Order Details</h3>
+            <div class="details-grid">
+              <div class="detail">
+                <h4>Order (All Orders)</h4>
+                <p>0</p>
+              </div>
+              <div class="detail">
+                <h4>Cancelled</h4>
+                <p>0</p>
+              </div>
+              <div class="detail">
+                <h4>Total Item Sold</h4>
+                <p>0</p>
+              </div>
+              <div class="detail">
+                <h4>Completed</h4>
+                <p>0</p>
+              </div>
+            </div>
+          </div>
+  
+          <div class="details-card">
+            <h3>Invoice Details</h3>
+            <div class="details-grid">
+              <div class="detail">
+                <h4>Invoice</h4>
+                <p>0</p>
+              </div>
+              <div class="detail">
+                <h4>Open</h4>
+                <p>0</p>
+              </div>
+              <div class="detail">
+                <h4>Paid</h4>
+                <p>0</p>
+              </div>
+              <div class="detail">
+                <h4>Return</h4>
+                <p>0</p>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </ng-container>
+  
