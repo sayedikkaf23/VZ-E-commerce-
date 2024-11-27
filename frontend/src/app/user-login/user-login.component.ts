@@ -33,7 +33,7 @@ export class UserLoginComponent {
       this.authService.login(loginData).subscribe(
         (response) => {
           this.toastr.success('Login successful!', 'Success'); // Show success notification
-          // this.router.navigate(['/panel/dashboard']); 
+          this.router.navigate(['/user/dashboard']); 
         },
         (error) => {
           this.toastr.error(

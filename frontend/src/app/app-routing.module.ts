@@ -35,7 +35,7 @@ import { UserLoginComponent } from './user-login/user-login.component';
 import { OnlinepaymentComponent } from './onlinepayment/onlinepayment.component';
 import { FailerComponent } from './failer/failer.component';
 import { SuccessComponent } from './success/success.component';
-
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 const routes: Routes = [
 
   {
@@ -242,7 +242,60 @@ const routes: Routes = [
       
     ],
   },
-  
+  {
+    path: 'user',
+    component: DashboardLayoutComponent,
+    children: [
+      {
+        path: 'dashboard',
+        component: UserDashboardComponent,
+       
+      },
+      {
+        path: 'PersonalBank-account-opening',
+        component: BackAccountOpeningComponent,
+       
+      },
+      {
+        path: 'admin-settings',
+        component: SettingsComponent,
+       
+      },
+      {
+        path: 'payment-modes',
+        component: PaymentModesManagementComponent,
+       
+      },
+      {
+        path: 'business-bank-account',
+        component: BusinessBankAccountComponent,
+       
+      },
+
+        {
+        path: 'customer-management',
+        component: CustomerManagementComponent,
+       
+      },
+      {
+        path: 'admin-mail-management',
+        component: AdminMailManagementComponent,
+       
+      },
+      {
+        path: 'payment-methord',
+        component:AdminPaymentMethordComponent,
+       
+      },
+      {
+        path: 'admin-virtual-management',
+        component: VirtualManagementComponent,
+       
+      },
+     
+      
+    ],
+  },
 ];
 
 @NgModule({
