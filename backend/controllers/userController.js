@@ -545,7 +545,7 @@ exports.callSalesforceQuoteService = async (req, res) => {
       currencyCode: "AED",
       quotePaymentId: document.quotePaymentWithDetails.QuotePaymentId,
       account_id: document.quotePaymentWithDetails.AccountId,
-      payment_url: `https://virtuzone.yeepeey.com/onlinepayment/${document.quotePaymentWithDetails.QuotePaymentId}`
+      payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${document.quotePaymentWithDetails.QuotePaymentId}`
     };
     console.log("Request to Salesforce:", requestBody);
 

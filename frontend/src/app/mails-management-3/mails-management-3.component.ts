@@ -7,6 +7,7 @@ import { UserService } from '../service/user.service';
 import { FileStorageService } from '../service/files.service';
 
 declare var $: any;
+
 @Component({
   selector: 'app-mails-management-3',
   templateUrl: './mails-management-3.component.html',
@@ -17,6 +18,7 @@ export class MailsManagement3Component {
   shareholdersData: any[] = [];
   uploadedFiles: File[][] = [];
   uploadedFileNames: { [key: string]: { name: string; url: string }[] } = {};
+  companyTradeLicenseFile: File[] = []; // Store the uploaded company trade license file
   isLoading = false;
 
   constructor(
@@ -52,11 +54,13 @@ export class MailsManagement3Component {
       // Repopulate form fields with saved data
       this.formData.patchValue({
         companyTradeLicense: parsedData.companyTradeLicense || '',
+        companyTradeLicenseFile: parsedData.companyTradeLicenseFile || null,
         shareholders: this.shareholdersData
       });
 
       // Restore file URLs for each shareholder
       this.uploadedFileNames = parsedData.uploadedFileNames || {};
+      this.companyTradeLicenseFile = parsedData.companyTradeLicenseFile || []; // Restore company trade license file
       console.log("Restored file URLs:", this.uploadedFileNames);
     } else {
       console.log("No savedData found in localStorage.");
@@ -78,10 +82,40 @@ export class MailsManagement3Component {
         passportNumber: [shareholder.passportNumber || '', Validators.required],
         files: [[]]
       });
-  
+
       this.shareholders.push(shareholderGroup);
       this.uploadedFiles.push([]);
     });
+  }
+
+  onFileChangeTrade(event: any): void {
+    if (event.target.files && event.target.files.length > 0) {
+      const file: File = event.target.files[0];
+      this.companyTradeLicenseFile = [file]; // Store the uploaded file for company trade license
+      
+      this.isLoading = true;
+      this.userService.getPresignedUrl(file).subscribe(
+        (response: any) => {
+          const presignedUrl = response.url;
+          fetch(presignedUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': file.type },
+            body: file
+          }).then(() => {
+            // Save the file details (name and URL)
+            this.uploadedFileNames['companyTradeLicenseFile'] = [{ name: file.name, url: presignedUrl }];
+            this.isLoading = false;
+          }).catch((error) => {
+            console.error('File upload failed', error);
+            this.isLoading = false;
+          });
+        },
+        (error) => {
+          console.error('Error getting presigned URL', error);
+          this.isLoading = false;
+        }
+      );
+    }
   }
 
   onFileChange(event: any, index: number): void {
@@ -108,7 +142,6 @@ export class MailsManagement3Component {
                 console.log(`File uploaded successfully: ${file.name}`);
                 this.uploadedFileNames[index].push({ name: file.name, url: presignedUrl });
                 this.isLoading = false;
-
               })
               .catch((error) => {
                 this.isLoading = false;
@@ -138,6 +171,7 @@ export class MailsManagement3Component {
 
       const dataToSave = {
         ...formValues,
+        companyTradeLicenseFile: this.companyTradeLicenseFile, // Save company trade license file
         shareholders: formValues.shareholders.map((shareholder: any, index: number) => ({
           ...shareholder,
           passportNumber: this.shareholders.at(index).get('passportNumber')?.value || '',
