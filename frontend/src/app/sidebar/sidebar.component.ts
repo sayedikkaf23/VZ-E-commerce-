@@ -16,6 +16,8 @@ export class SidebarComponent implements OnInit {
   orderId: string = ''; // Initialize orderId property
   sidebarData: any;
   type: string = '';
+  loading: boolean = true;
+
   constructor(
     private onlinePaymentService: OnlinePaymentService,
     private route: ActivatedRoute,
@@ -38,13 +40,15 @@ export class SidebarComponent implements OnInit {
 
     // Call createSession method when the component is initialized
     this.createSession(this.orderData);
-
+    this.loading =true
     this.onlinePaymentService.getSidebarData().subscribe(
       (data: any) => {
         this.sidebarData = data;
+        this.loading =false
       },
       (error: any) => {
         console.error('Error fetching sidebar data:', error);
+        this.loading =false
       }
     );
   }

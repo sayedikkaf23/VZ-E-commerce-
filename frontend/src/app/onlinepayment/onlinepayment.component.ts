@@ -43,46 +43,43 @@ export class OnlinepaymentComponent implements OnInit {
   ngOnInit(): void {
     this.type = (this.route.snapshot.data as any).type;
     this.orderId = this.route.snapshot.paramMap.get('id') || '';
-
-
+  
     if (this.type === 'online') {
       this.onlinePaymentFunction();
     }
-
-    // if (this.type === 'manual') {
-    //   this.manualPaymentFunction();
-    // }
-
-    this.onlinePaymentService.getPaymentMethods().subscribe(
-      (response: any) => {
-        this.availablePaymentMethods = response.paymentMethods;
-        if (this.type === 'online') {
-          this.loading = false;
+  
+    // Simulate a 3-second delay for the loader
+    setTimeout(() => {
+      this.onlinePaymentService.getPaymentMethods().subscribe(
+        (response: any) => {
+          this.availablePaymentMethods = response.paymentMethods;
+          if (this.type === 'online') {
+            this.loading = false;
+          }
+          console.log(this.availablePaymentMethods);
+        },
+        (error) => {
+          console.error('Error fetching available payment methods:', error);
+          // Handle error
         }
-        console.log(this.availablePaymentMethods);
-      },
-
-      (error) => {
-        console.error('Error fetching available payment methods:', error);
-        // Handle error
-      }
-    );
-
-    this.onlinePaymentService.getPaymentModesHome().subscribe(
-      (response: any) => {
-        this.onlinepayment = response.paymentMethods;
-        if (this.type === 'online') {
-          this.loading = false;
+      );
+  
+      this.onlinePaymentService.getPaymentModesHome().subscribe(
+        (response: any) => {
+          this.onlinepayment = response.paymentMethods;
+          if (this.type === 'online') {
+            this.loading = false;
+          }
+          console.log('onlinepayment', this.onlinepayment);
+        },
+        (error) => {
+          console.error('Error fetching available payment methods:', error);
+          // Handle error
         }
-        console.log('onlinepayment', this.onlinepayment);
-      },
-
-      (error) => {
-        console.error('Error fetching available payment methods:', error);
-        // Handle error
-      }
-    );
+      );
+    }, 2000); // Delay in milliseconds
   }
+  
 
   onlinePaymentFunction() {
     this.route.params.subscribe((params) => {
