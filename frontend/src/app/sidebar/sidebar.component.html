@@ -1,4 +1,20 @@
-<div class="detils-sidebar" data-simplebar>
+
+<div *ngIf="loading">
+  <!-- Display your loader here -->
+  <!-- Example: -->
+  <div class="data-loader">
+    <div>
+      <div></div>
+      <div></div>
+      <div></div>
+      <div></div>
+    </div>
+  </div>
+</div>
+
+
+
+<div class="detils-sidebar" data-simplebar *ngIf="!loading">
     <div class="row justify-content-between sidebar-row gx-0">
       <div class="col-auto">
         <div class="logo">
