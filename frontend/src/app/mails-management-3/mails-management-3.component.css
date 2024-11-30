@@ -68,3 +68,50 @@ ul li::before {
   font-size: 0.875rem;
   margin-top: 4px;
 }
+.form-field .form-control.rounded-input {
+  border: 1px solid #e0e0e0; /* Subtle border color */
+  border-radius: 25px; /* Rounded edges */
+  padding: 10px 15px;
+  background-color: #f5f5f5; /* Light gray background */
+  color: #333; /* Text color */
+  font-size: 1rem;
+  outline: none;
+  text-align: left; /* Consistent alignment */
+}
+
+.form-field .form-control.rounded-input:focus {
+  border-color: #ff5a5f; /* Focus border color */
+  background-color: #f5f5f5; /* Focus background color */
+}
+
+
+/* Custom Input Wrapper */
+.custom-file-upload {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.custom-file-upload label.upload-button {
+  position: absolute;
+  right: 17px; /* Adjust spacing */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #ff5a5f;
+  border-radius: 20px; /* Rounded button */
+  padding: 5px 15px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+}
+
+
+
+/* Icon Styling */
+.custom-file-upload label.upload-button i {
+  font-size: 1rem;
+}
+
