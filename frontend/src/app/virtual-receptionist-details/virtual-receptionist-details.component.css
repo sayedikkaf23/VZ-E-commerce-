@@ -27,7 +27,6 @@ table thead th {
   text-align: left; /* Optional: Ensure text alignment is left */
   padding-right: 1rem; /* Optional: Add spacing between headers */
 }
-/* Loader Container */
 .loader-container {
   position: fixed; /* Covers the whole viewport */
   top: 0;
@@ -68,8 +67,6 @@ table thead th {
     border-top-color: #FF5A5F;
   }
 }
-
-/* Text Styles */
 /* Text Styles */
 .loader-text {
   font-size: 14px; /* Smaller font size */
@@ -86,6 +83,7 @@ table thead th {
 .loader-text::first-letter {
   text-transform: uppercase; /* Uppercase for the first letter */
 }
+
 /* Fade-In Animation for Text */
 @keyframes fadeIn {
   0% {
@@ -95,6 +93,8 @@ table thead th {
     opacity: 1;
   }
 }
+
+
 
 /* Ensure table values are visible and wrap properly */
 table {
