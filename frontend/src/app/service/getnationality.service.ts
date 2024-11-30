@@ -13,4 +13,7 @@ export class GetnationalityService {
   getNationality(): Observable<any> {
     return this.http.get(`${this.url}/nationalities/get-nationalities`); // GET request to fetch all services
   }
+  getCountries(): Observable<any> {
+    return this.http.get(`${this.url}/nationalities/getCountries`); // GET request to fetch all services
+  }
 }

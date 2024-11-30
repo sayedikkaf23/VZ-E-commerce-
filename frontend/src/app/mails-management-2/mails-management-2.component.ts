@@ -5,6 +5,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormDataService } from '../service/form-data.service';
 import { UserService } from '../service/user.service';
+// import { GetnationalityService } from '../service/getnationality.service';
 import AOS from 'aos';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
@@ -63,9 +64,10 @@ export class MailsManagement2Component {
   ngOnInit(): void {
     // Retrieve Step 2 data from localStorage
 
-    this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
-      this.nationalities = data.map((country) => country.name.common);
-      this.cdRef.detectChanges(); 
+    this.getnationalityService.getCountries().subscribe((data) => {
+      // Assuming data is an array of country objects
+      this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
+      this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     });
     // this.getnationalityService.getNationality().subscribe((data) => {
     //   this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values

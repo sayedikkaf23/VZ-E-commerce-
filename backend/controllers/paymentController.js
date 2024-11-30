@@ -158,8 +158,8 @@ async function payNow(req, res) {
         zip: "00000",
         phone: "+971090450954",
       },
-      cancel_url: `https://virtuzone.yeepeey.com/failure/${order_number}`,
-      success_url: `https://virtuzone.yeepeey.com/successful/${order_number}`,
+      cancel_url: `https://ecommerce.yeepeey.com/failure/${order_number}`,
+      success_url: `https://ecommerce.yeepeey.com/successful/${order_number}`,
       customer: {
         // name: acountname,
         email: acountemail,
@@ -289,8 +289,8 @@ async function payNow(req, res) {
           },
         ],
         mode: "payment",
-        success_url: `https://virtuzone.yeepeey.com/successful/${data.quotePaymentId}`,
-        cancel_url: `https://virtuzone.yeepeey.com/failure/${data.quotePaymentId}`,
+        success_url: `https://ecommerce.yeepeey.com/successful/${data.quotePaymentId}`,
+        cancel_url: `https://ecommerce.yeepeey.com/failure/${data.quotePaymentId}`,
       });
   
       const stripeResponseData = stripeResponse;
@@ -391,9 +391,9 @@ async function payNow(req, res) {
         },
         
         return: {
-          authorised: `https://virtuzone.yeepeey.com/successful/${order_number}`,
-          declined: `https://virtuzone.yeepeey.com/failure/${order_number}`,
-          cancelled: `https://virtuzone.yeepeey.com/cancelled/${order_number}`
+          authorised: `https://ecommerce.yeepeey.com/successful/${order_number}`,
+          declined: `https://ecommerce.yeepeey.com/failure/${order_number}`,
+          cancelled: `https://ecommerce.yeepeey.com/cancelled/${order_number}`
         },  customer: {
           ref:order_number,
           email: acountemail,

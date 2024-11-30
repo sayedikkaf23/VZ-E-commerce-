@@ -13,35 +13,42 @@
 
   <section class="step_1_section step_2_section">
     <div class="container">
-
       <div class="step_1_form step_2_form">
         <form [formGroup]="formData" (ngSubmit)="onSubmit()">
+          <!-- Company Documents Section -->
           <div class="item">
             <h3>Company Documents</h3>
+            
+            <!-- Company Trade License Text Input -->
             <div class="form-field">
               <label for="companytradelicense">Enter Company Trade License<span class="required">*</span></label>
               <input class="form-control" type="text" id="companytradelicense" placeholder="Enter Company Trade License"
                 formControlName="companyTradeLicense" />
-                <div *ngIf="formData.get('companyTradeLicense')?.invalid && formData.get('companyTradeLicense')?.touched" class="error-message">
-                  Company Trade License is required.
-                </div>
+              <div *ngIf="formData.get('companyTradeLicense')?.invalid && formData.get('companyTradeLicense')?.touched" class="error-message">
+                Company Trade License is required.
+              </div>
             </div>
-
-            <!-- <div class="form-field">
-                      <label for="shareholderid">Enter Shareholder ID's/Passport<span class="required">*</span></label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        id="shareholderid"
-                        placeholder="Enter Shareholder ID's/Passport"
-                        formControlName="shareholderId"
-                      />
-                    </div> -->
+  
+            <!-- Company Trade License File Upload -->
+            <div class="form-field">
+              <label for="companyTradeLicenseFile">Upload Trade License <span class="required">*</span></label>
+              <input
+                type="file"
+                (change)="onFileChangeTrade($event)"
+                style="text-align: center; display: block; margin: 0 auto; padding: 7px;"
+              />
+              <div *ngIf="!companyTradeLicenseFile?.length && formData.get('companyTradeLicenseFile')?.touched" class="error-message">
+                Please upload the Trade License file.
+              </div>
+            </div>
           </div>
+  
+          <!-- Shareholder Details Section -->
           <div class="item" formArrayName="shareholders">
             <h3>Shareholder Details</h3>
             <div *ngFor="let shareholder of shareholders.controls; let i = index" [formGroupName]="i" class="shareholder-section">
               <div class="shareholder-row">
+                
                 <!-- Passport Number Field -->
                 <div class="form-field">
                   <label for="passportNumber">ID's/Passport for Shareholder {{ i + 1 }}<span class="required">*</span></label>
@@ -50,12 +57,11 @@
                     Passport Number is required.
                   </div>
                 </div>
-          
-                <!-- File Upload Field -->
+  
+                <!-- File Upload Field for Shareholder -->
                 <div class="form-field">
                   <label for="files">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
                   <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
-                    <!-- Updated file input field to handle file uploads by index -->
                     <input
                       type="file"
                       multiple
@@ -63,37 +69,33 @@
                       style="text-align: center; display: block; margin: 0 auto; padding: 7px;"
                     />
                   </div>
-                
+                  
                   <!-- Display the uploaded file names and "View File" links -->
                   <ul>
                     <li *ngFor="let file of uploadedFileNames[i]">
                       {{ file.name }}
-                      <!-- Link to open the file in a new tab -->
                       <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
                     </li>
                   </ul>
-                
+                  
                   <div *ngIf="!uploadedFiles[i]?.length && shareholder.get('files')?.touched" class="error-message">
                     Please upload at least one file.
                   </div>
                 </div>
-                
               </div>
             </div>
           </div>
-          
-          
-
-
+  
+          <!-- Submit Button -->
           <div class="form-submit">
             <button type="submit" class="btn" id="btn_submit">Next</button>
           </div>
-
+  
         </form>
       </div>
-
     </div>
   </section>
+  
 
   <app-footer></app-footer>
 
