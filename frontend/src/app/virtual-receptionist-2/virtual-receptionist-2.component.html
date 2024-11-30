@@ -30,15 +30,29 @@
 
             <div class="form-field">
               <label for="companyTradeLicenseFile">Upload Trade License <span class="required">*</span></label>
-              <input
-                type="file"
-                (change)="onFileChangeTrade($event)"
-                style="text-align: center; display: block; margin: 0 auto; padding: 7px;"
-              />
+              <div class="custom-file-upload">
+                <input
+                  type="text"
+                  class="form-control rounded-input"
+                  readonly
+                  [value]="companyTradeLicenseFile?.[0]?.name || 'No file chosen'"
+                  placeholder="No file chosen"
+                />
+                <label class="upload-button" for="companyTradeLicenseFile">
+                  <i class="fa fa-upload"></i> 
+                </label>
+                <input
+                  type="file"
+                  id="companyTradeLicenseFile"
+                  (change)="onFileChangeTrade($event)"
+                  style="display: none;"
+                />
+              </div>
               <div *ngIf="!companyTradeLicenseFile?.length && formData.get('companyTradeLicenseFile')?.touched" class="error-message">
                 Please upload the Trade License file.
               </div>
             </div>
+            
    
             <!-- <div class="form-field">
                       <label for="shareholderid">Enter Shareholder ID's/Passport<span class="required">*</span></label>
@@ -66,14 +80,24 @@
           
                 <!-- File Upload Field -->
                 <div class="form-field">
-                  <label for="files">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
-                  <div style="display: flex; justify-content: center; align-items: center; width: 100%;">
-                    <!-- Updated file input field to handle file uploads by index -->
+                  <label for="files{{ i }}">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
+                  <div class="custom-file-upload">
+                    <input
+                      type="text"
+                      class="form-control rounded-input"
+                      readonly
+                      [value]="uploadedFileNames[i]?.[0]?.name || 'No file chosen'"
+                      placeholder="No file chosen"
+                    />
+                    <label class="upload-button" for="files{{ i }}">
+                      <i class="fa fa-upload"></i> 
+                    </label>
                     <input
                       type="file"
+                      id="files{{ i }}"
                       multiple
                       (change)="onFileChange($event, i)"
-                      style="text-align: center; display: block; margin: 0 auto; padding: 7px;"
+                      style="display: none;"
                     />
                   </div>
                 
@@ -81,7 +105,6 @@
                   <ul>
                     <li *ngFor="let file of uploadedFileNames[i]">
                       {{ file.name }}
-                      <!-- Link to open the file in a new tab -->
                       <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
                     </li>
                   </ul>
@@ -90,6 +113,7 @@
                     Please upload at least one file.
                   </div>
                 </div>
+                
                 
               </div>
             </div>
