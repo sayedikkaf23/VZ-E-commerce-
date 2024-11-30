@@ -78,6 +78,7 @@
     border-top-color: #FF5A5F;
   }
 }
+
 /* Text Styles */
 .loader-text {
   font-size: 14px; /* Smaller font size */
@@ -86,13 +87,8 @@
   display: flex;
   align-items: center; /* Vertically center text with the loader */
   letter-spacing: 0.5px; /* Slight spacing between letters for clarity */
-  text-transform: lowercase; /* Ensure text is lowercase by default */
+  text-transform: uppercase; /* Uppercase for a more modern feel */
   animation: fadeIn 1.5s ease-in-out; /* Fade-in effect for the text */
-}
-
-/* Capitalize First Letter Only */
-.loader-text::first-letter {
-  text-transform: uppercase; /* Uppercase for the first letter */
 }
 
 /* Fade-In Animation for Text */
@@ -104,5 +100,3 @@
     opacity: 1;
   }
 }
-
-
