@@ -22,28 +22,25 @@
                             <h4>Service</h4>
                             <!-- <a [routerLink]="['/step-1']" class="btn-edit">Edit</a> -->
                         </div>
-                        <table class="w-200">
+                        <table class="product-table">
                             <thead>
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Quantity</th>
-                                    <th>Unit Price</th>
-                                    <th>Total Price (Including VAT)</th>
-                                </tr>
-                                <tr>
-                                    <th style="border: none;"></th>
-                                </tr>
+                              <tr>
+                                <th style="width: 40%;">Product Name</th>
+                                <th style="width: 15%; text-align: center;">Quantity</th>
+                                <th style="width: 15%; text-align: right;">Unit Price</th>
+                                <th style="width: 30%; text-align: right;">Total Price (Including VAT)</th>
+                              </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let product of matchScoreResponse?.data?.products">
-                                    <td>{{ product.productName }}</td>
-                                    <td>{{ product.productQuantity }}</td>
-                                    <td class="currency">{{ product.productUnitPrice }}</td>
-                                    <td class="currency">{{ (product.productUnitPrice * product.productQuantity * 1.05)
-                                        }}</td>
-                                </tr>
+                              <tr *ngFor="let product of matchScoreResponse?.data?.products">
+                                <td>{{ product.productName }}</td>
+                                <td style="text-align: center;">{{ product.productQuantity }}</td>
+                                <td class="currency">{{ product.productUnitPrice }}</td>
+                                <td class="currency">{{ (product.productUnitPrice * product.productQuantity * 1.05) }}</td>
+                              </tr>
                             </tbody>
-                        </table>
+                          </table>
+                          
                     </div>
                 </div>
 
