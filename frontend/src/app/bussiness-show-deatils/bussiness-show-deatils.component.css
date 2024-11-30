@@ -1,42 +1,43 @@
-.w-200 {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    table-layout: fixed; /* Fixes alignment when text wraps */
-    text-align: left;
-  }
-  
-  .w-200 th,
-  .w-200 td {
-    padding: 10px 12px;
-    border-bottom: 1px solid #ddd;
-    text-align: left;
-    word-wrap: break-word; /* Allows text wrapping */
-    overflow-wrap: break-word; /* Handles long unbroken text */
-  }
-  
-  .w-200 th:nth-child(2),
-  .w-200 td:nth-child(2) {
-    text-align: center; /* Center-align Quantity column */
-  }
-  
-  .w-200 td.currency {
-    text-align: right; /* Right-align currency values */
-  }
-  
-  /* Remove border for empty header row */
-  .w-200 thead tr:nth-child(2) th {
-    border: none;
-  }
-  
-  /* Responsive Design for Smaller Screens */
-  @media (max-width: 768px) {
-    .w-200 th,
-    .w-200 td {
-      padding: 8px 10px;
-    }
-  }
-  /* Loader Container */
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.product-table th,
+.product-table td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.currency {
+  text-align: right;
+  padding-right: 20px; /* Add extra padding to separate currency values */
+}
+
+.product-table th {
+  font-weight: bold;
+}
+
+.product-table thead th {
+  border-bottom: 2px solid #333;
+}
+
+.product-table tbody tr:hover {
+  background-color: #f9f9f9; /* Highlight row on hover */
+}
+
+
+.right-align {
+  text-align: right;
+}
+
+.no-wrap {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Loader Container */
 .loader-container {
   position: fixed; /* Covers the whole viewport */
   top: 0;
@@ -77,6 +78,7 @@
     border-top-color: #FF5A5F;
   }
 }
+
 /* Text Styles */
 .loader-text {
   font-size: 14px; /* Smaller font size */
@@ -85,13 +87,8 @@
   display: flex;
   align-items: center; /* Vertically center text with the loader */
   letter-spacing: 0.5px; /* Slight spacing between letters for clarity */
-  text-transform: lowercase; /* Ensure text is lowercase by default */
+  text-transform: uppercase; /* Uppercase for a more modern feel */
   animation: fadeIn 1.5s ease-in-out; /* Fade-in effect for the text */
-}
-
-/* Capitalize First Letter Only */
-.loader-text::first-letter {
-  text-transform: uppercase; /* Uppercase for the first letter */
 }
 
 /* Fade-In Animation for Text */
@@ -103,5 +100,3 @@
     opacity: 1;
   }
 }
-
-
