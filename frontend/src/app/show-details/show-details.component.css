@@ -1,35 +1,44 @@
 .product-table {
   width: 100%;
   border-collapse: collapse;
+  margin-top: 15px; /* Adds space above the table */
+  margin-bottom: 15px; /* Adds space below the table */
 }
 
 .product-table th,
 .product-table td {
-  padding: 10px;
+  padding: 15px; /* Increase padding for better readability */
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
 
-.currency {
-  text-align: right;
-  padding-right: 20px; /* Add extra padding to separate currency values */
-}
-
 .product-table th {
-  font-weight: bold;
-}
-
-.product-table thead th {
-  border-bottom: 2px solid #333;
+  background-color: #f8f8f8; /* Light background for headers */
 }
 
 .product-table tbody tr:hover {
   background-color: #f9f9f9; /* Highlight row on hover */
 }
 
+.currency {
+  text-align: right;
+  padding-right: 15px; /* Add extra padding for separation */
+}
 
 .right-align {
   text-align: right;
+}
+
+.container {
+  margin-top: 30px; /* Adds space around the container */
+  margin-bottom: 30px;
+}
+
+.box-light {
+  padding: 20px; /* Adds padding inside the box for better alignment */
+  border-radius: 8px; /* Adds rounded corners */
+  background-color: #f9f9f9; /* Light background */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
 }
 
 .no-wrap {
@@ -37,7 +46,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* Loader Container */
+
 .loader-container {
   position: fixed; /* Covers the whole viewport */
   top: 0;

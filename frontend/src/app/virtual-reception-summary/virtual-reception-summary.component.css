@@ -47,6 +47,7 @@
   text-overflow: ellipsis;
 }
 
+
 /* Loader Container */
 .loader-container {
   position: fixed; /* Covers the whole viewport */
