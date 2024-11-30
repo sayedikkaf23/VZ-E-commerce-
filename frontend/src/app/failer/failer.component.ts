@@ -28,7 +28,7 @@ export class FailerComponent implements OnInit {
   }
 
   tryAgain() {
-    const baseUrl = 'http://localhost:4200';
+    const baseUrl = 'https://ecommerce.yeepeey.com';
     const endpoint =  'onlinepayment';
     window.location.href = `${baseUrl}/${endpoint}/${this.transactionId}`;
   }
