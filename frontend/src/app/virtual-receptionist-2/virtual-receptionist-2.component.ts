@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ViewChild, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -12,6 +12,9 @@ import { FileStorageService } from '../service/files.service';
   styleUrls: ['./virtual-receptionist-2.component.css']
 })
 export class VirtualReceptionist2Component implements OnInit {
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  @ViewChildren('fileInputShareholder') fileInputsShareholder!: QueryList<ElementRef>;
+
   formData: FormGroup;
   shareholdersData: any[] = [];
   uploadedFiles: File[][] = [];
@@ -86,6 +89,20 @@ export class VirtualReceptionist2Component implements OnInit {
       this.shareholders.push(shareholderGroup);
       this.uploadedFiles.push([]);
     });
+  }
+
+
+  triggerFileUpload() {
+    this.fileInput.nativeElement.click();
+  }
+
+
+  triggerFileUploadShareholder(index: number) {
+    const fileInputArray = this.fileInputsShareholder.toArray();
+    const fileInput = fileInputArray[index];
+    if (fileInput) {
+      fileInput.nativeElement.click();
+    }
   }
 
   onFileChange(event: any, index: number): void {

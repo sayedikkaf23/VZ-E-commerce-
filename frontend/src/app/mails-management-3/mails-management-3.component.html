@@ -32,7 +32,7 @@
             <!-- Company Trade License File Upload -->
  <!-- Company Trade License File Upload -->
 <!-- Company Trade License File Upload -->
-<div class="form-field">
+<div class="form-field" (click)="triggerFileUpload()">
   <label for="companyTradeLicenseFile">Upload Trade License <span class="required">*</span></label>
   <div class="custom-file-upload">
     <input
@@ -48,6 +48,8 @@
     <input
       type="file"
       id="companyTradeLicenseFile"
+      #fileInput
+
       (change)="onFileChangeTrade($event)"
       style="display: none;"
     />
@@ -77,7 +79,7 @@
                 </div>
   
                 <!-- File Upload Field for Shareholder -->
-                <div class="form-field">
+                <div class="form-field" (click)="triggerFileUploadShareholder(i)" >
                   <label for="files">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
                   <div class="custom-file-upload">
                     <input
@@ -93,6 +95,8 @@
                     <input
                       type="file"
                       id="files{{ i }}"
+                      #fileInputShareholder
+
                       multiple
                       (change)="onFileChange($event, i)"
                       style="display: none;"

@@ -28,7 +28,7 @@
             </div>
 
 
-            <div class="form-field">
+            <div class="form-field" (click)="triggerFileUpload()">
               <label for="companyTradeLicenseFile">Upload Trade License <span class="required">*</span></label>
               <div class="custom-file-upload">
                 <input
@@ -44,6 +44,8 @@
                 <input
                   type="file"
                   id="companyTradeLicenseFile"
+                  #fileInput
+
                   (change)="onFileChangeTrade($event)"
                   style="display: none;"
                 />
@@ -79,7 +81,7 @@
                 </div>
           
                 <!-- File Upload Field -->
-                <div class="form-field">
+                <div class="form-field" (click)="triggerFileUploadShareholder(i)">
                   <label for="files{{ i }}">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
                   <div class="custom-file-upload">
                     <input
@@ -89,30 +91,22 @@
                       [value]="uploadedFileNames[i]?.[0]?.name || 'No file chosen'"
                       placeholder="No file chosen"
                     />
-                    <label class="upload-button" for="files{{ i }}">
+                    <label class="upload-button" for="files{{ i }}" (click)="$event.stopPropagation()">
                       <i class="fa fa-upload"></i> 
                     </label>
                     <input
                       type="file"
                       id="files{{ i }}"
+                      #fileInputShareholder
                       multiple
                       (change)="onFileChange($event, i)"
                       style="display: none;"
                     />
                   </div>
                 
-                  <!-- Display the uploaded file names and "View File" links -->
-                  <ul>
-                    <li *ngFor="let file of uploadedFileNames[i]">
-                      {{ file.name }}
-                      <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
-                    </li>
-                  </ul>
-                
-                  <div *ngIf="!uploadedFiles[i]?.length && shareholder.get('files')?.touched" class="error-message">
-                    Please upload at least one file.
-                  </div>
+                  <!-- Rest of your code -->
                 </div>
+                
                 
                 
               </div>
