@@ -50,6 +50,11 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { UserFooterComponent } from './user-footer/user-footer.component';
 import { FailerComponent } from './failer/failer.component';
 import { SuccessComponent } from './success/success.component';
+import { CardmachineComponent } from './cardmachine/cardmachine.component';
+import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
+import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
+import { CashoverCounterComponent } from './cashover-counter/cashover-counter.component';
+import { BanktransferComponent } from './banktransfer/banktransfer.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -93,6 +98,11 @@ import { SuccessComponent } from './success/success.component';
     UserFooterComponent,
     FailerComponent,
     SuccessComponent,
+    CardmachineComponent,
+    CashdepositComponent,
+    ChequedepositComponent,
+    CashoverCounterComponent,
+    BanktransferComponent,
     
   ],
   imports: [

@@ -36,6 +36,10 @@ import { OnlinepaymentComponent } from './onlinepayment/onlinepayment.component'
 import { FailerComponent } from './failer/failer.component';
 import { SuccessComponent } from './success/success.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+// import { CardmachineComponent } from './cardmachine/cardmachine.component';
+// import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
+// import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
+// import { CashoverCounterComponent } from './cashover-counter/cashover-counter.component';
 const routes: Routes = [
 
   {
@@ -79,7 +83,26 @@ const routes: Routes = [
     component: MailsManagementShowDetailsComponent,
    
   },
-  // end
+  //new payment
+  // {
+  //   path: 'cardmachine',
+  //   component: CardmachineComponent,
+   
+  // },
+  // {
+  //   path: 'cashdeposite',
+  //   component: CashdepositComponent,
+   
+  // },
+  // {
+  //   path: 'chequedeposite',
+  //   component: ChequedepositComponent,
+   
+  // },
+  // {
+  //   path: 'cashover-counter',
+  //   component: CashoverCounterComponent,
+  // },
   {
     path: 'step-1',
     component: Step1Component,

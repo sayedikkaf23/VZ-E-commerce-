@@ -35,7 +35,7 @@
                   type="text"
                   class="form-control rounded-input"
                   readonly
-                  [value]="companyTradeLicenseFile?.[0]?.name || 'No file chosen'"
+                  [value]="companyTradeLicenseFile.length > 0 ? companyTradeLicenseFile[0].name : 'No file chosen'"
                   placeholder="No file chosen"
                 />
                 <label class="upload-button" for="companyTradeLicenseFile">
