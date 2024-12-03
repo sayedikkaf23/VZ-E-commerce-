@@ -36,6 +36,8 @@ import { OnlinepaymentComponent } from './onlinepayment/onlinepayment.component'
 import { FailerComponent } from './failer/failer.component';
 import { SuccessComponent } from './success/success.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+import { UserDashboardLayoutComponent } from './user-dashboard-layout/user-dashboard-layout.component';
+
 const routes: Routes = [
 
   {
@@ -244,7 +246,7 @@ const routes: Routes = [
   },
   {
     path: 'user',
-    component: DashboardLayoutComponent,
+    component: UserDashboardLayoutComponent,
     children: [
       {
         path: 'dashboard',

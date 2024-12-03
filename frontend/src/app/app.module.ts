@@ -50,6 +50,13 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { UserFooterComponent } from './user-footer/user-footer.component';
 import { FailerComponent } from './failer/failer.component';
 import { SuccessComponent } from './success/success.component';
+import { UserDashboardLayoutComponent } from './user-dashboard-layout/user-dashboard-layout.component';
+// import { RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { ClientHeaderComponent } from './client-header/client-header.component';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -93,6 +100,9 @@ import { SuccessComponent } from './success/success.component';
     UserFooterComponent,
     FailerComponent,
     SuccessComponent,
+    UserDashboardLayoutComponent,
+    UserDashboardComponent,
+    ClientHeaderComponent,
     
   ],
   imports: [
@@ -100,6 +110,7 @@ import { SuccessComponent } from './success/success.component';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    RouterModule,
     FormsModule,            // Add FormsModule to imports
     ToastrModule.forRoot({
       positionClass: 'toast-top-center', // Center the toast notifications at the top
