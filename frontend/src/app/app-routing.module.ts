@@ -189,6 +189,11 @@ const routes: Routes = [
     component: AdminLoginComponent,
    
   },
+  {
+        path: 'user/dashboard',
+        component: UserDashboardComponent,
+       
+      },
 
   {
     path: 'panel',
@@ -248,11 +253,11 @@ const routes: Routes = [
     path: 'user',
     component: UserDashboardLayoutComponent,
     children: [
-      {
-        path: 'dashboard',
-        component: UserDashboardComponent,
+      // {
+      //   path: 'dashboard',
+      //   component: UserDashboardComponent,
        
-      },
+      // },
       {
         path: 'PersonalBank-account-opening',
         component: BackAccountOpeningComponent,

@@ -1002,4 +1002,32 @@ exports.checkStatus = async (req, res) => {
 };
 
 
+exports.getallUserSerive = async (req, res) => {
+  try {
+    // Extract the email from the request body or query (depending on how you send the email)
+    const { email } = req.body; // Or use req.query.email if you're passing the email via query params
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    // Fetch all data associated with the user's email from the Pidata model
+    const userData = await Pidata.find({ "leadWithDetails.Email": email });
+
+    if (!userData || userData.length === 0) {
+      return res.status(404).json({ message: "No data found for this user" });
+    }
+
+    // Send the fetched data back to the frontend
+    res.status(200).json({
+      message: "User data fetched successfully",
+      data: userData
+    });
+  } catch (error) {
+    console.log("Error fetching user data:", error);
+    res.status(500).json({ message: "Internal Server Error", error: error.message });
+  }
+};
+
+
 
