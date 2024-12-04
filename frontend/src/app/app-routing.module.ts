@@ -37,7 +37,7 @@ import { FailerComponent } from './failer/failer.component';
 import { SuccessComponent } from './success/success.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { UserDashboardLayoutComponent } from './user-dashboard-layout/user-dashboard-layout.component';
-
+import { ServicePageComponent } from './service-page/service-page.component';
 const routes: Routes = [
 
   {
@@ -213,6 +213,8 @@ const routes: Routes = [
         component: UserDashboardComponent,
        
       },
+      { path: 'services', component: ServicePageComponent },
+
 
   {
     path: 'panel',

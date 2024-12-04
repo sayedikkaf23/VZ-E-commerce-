@@ -1,0 +1,24 @@
+/* service-page.component.css */
+table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  th, td {
+    padding: 12px;
+    text-align: left;
+  }
+  
+  th {
+    background-color: #4c51bf;
+    color: white;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f7fafc;
+  }
+  
+  tr:hover {
+    background-color: #edf2f7;
+  }
+  

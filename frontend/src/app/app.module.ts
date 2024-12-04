@@ -55,7 +55,7 @@ import { UserDashboardLayoutComponent } from './user-dashboard-layout/user-dashb
 import { RouterModule } from '@angular/router';
 import { ClientHeaderComponent } from './client-header/client-header.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
-
+import { ServicePageComponent } from './service-page/service-page.component';
 
 @NgModule({
   declarations: [
@@ -74,6 +74,7 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
     PaymentModesManagementComponent,
     FooterComponent,
     UserHeaderComponent,
+    ServicePageComponent,
     // MailMangamentFormComponent,
     BusinessBankAccountComponent,
     MailMangamentForm2Component,
@@ -127,7 +128,8 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 
   providers: [
-    provideHttpClient(withInterceptorsFromDi()) // Use the new HttpClient setup
+    provideHttpClient(withInterceptorsFromDi()) 
+    // Use the new HttpClient setup,
   ],
   bootstrap: [AppComponent]
 })

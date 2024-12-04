@@ -1,0 +1,11 @@
+/* users-sidebar.component.css */
+.fixed {
+    z-index: 40;
+  }
+  .bg-indigo-700 {
+    background-color: #4c51bf; /* Tailwind indigo-700 color */
+  }
+  .text-white {
+    color: white;
+  }
+  
