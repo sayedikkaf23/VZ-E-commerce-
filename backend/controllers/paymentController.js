@@ -6,11 +6,24 @@ const fs = require("fs");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
 const crypto = require("crypto");
+const User = require('../models/user'); // Assuming the User model is in 'models/user'
+const bcrypt = require('bcrypt');
 
 require("dotenv").config();
 //  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
 const stripe = require("stripe")(process.env.STRIP_KEY);
 
+
+const saltRounds = 15;
+
+
+// const mailTransporter = nodemailer.createTransport({
+//   service: "gmail",
+//   auth: {
+//     user: "mishalnunu@gmail.com",
+//     pass: "qgwlzriynfzukuwy",
+//   },
+// });
 
 // Load AWS credentials and S3 bucket name from environment variables
 const awsAccessKeyId = process.env.AWS_ACCESS_KEY_ID;
@@ -458,6 +471,7 @@ async function payNow(req, res) {
   async function payNowSaleforce(req, res) {
     const { quoteId } = req.params;
     console.log("salesforce called");
+  
     const TokenResponse = await axios.post(
       `https://test.salesforce.com/services/oauth2/token`,
       null,
@@ -471,6 +485,7 @@ async function payNow(req, res) {
         },
       }
     );
+  
     const accessToken = TokenResponse.data.access_token;
   
     try {
@@ -492,7 +507,6 @@ async function payNow(req, res) {
           amount_received: paynowdata.transactionDetails.amount,
           bank_name: "Payment Gateway",
           GL_code: "1301 - VZ ADCB (AED) 10515838124001",
-          // Pay_Currency: paynowdata.transactionDetails.currencyPaid,
           payment_status: "Paid",
           quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
         },
@@ -509,6 +523,7 @@ async function payNow(req, res) {
           },
         ],
       };
+  
       const headers = {
         Authorization: `Bearer ${accessToken}`,
         "Content-Type": "application/json", // Specify the content type as JSON
@@ -516,6 +531,7 @@ async function payNow(req, res) {
   
       const endpointUrl = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${paynowdata.transactionDetails.quotePaymentId}`;
       // console.log("url",endpointUrl)
+  
       axios
         .put(endpointUrl, requestBodySalesforce, { headers })
         .then((response) => {
@@ -526,14 +542,57 @@ async function payNow(req, res) {
           // Handle errors here
           console.error("Error:", error);
         });
+  
+      const userEmail = paynowdata.customerDetails.id; // Get the email
+  
+      console.log("User Email:", userEmail);
+  
+      // Step 2: Check if the user already exists in the database
+      const existingUser = await User.findOne({ email: userEmail });
+  
+      if (!existingUser) {
+        // User doesn't exist, create a new user and send email
+        // Create a random password for the new user
+        const randomPassword = Math.random().toString(36).slice(-8); // Simple 8-character random password
+  
+        // Hash the password and save the new user
+        const hashedPassword = await bcrypt.hash(randomPassword, saltRounds);
+  
+        const newUser = new User({
+          email: userEmail, // Use email from the payment data
+          password: hashedPassword,
+        });
+  
+        await newUser.save();
+  
+        // Send the email with login details
+        const mailOptions = {
+          from: "mishalnunu@gmail.com", // Sender address
+          to: userEmail, // Receiver email address (from the OnlinePayment document)
+          subject: 'Your New Account Details',
+          text: `Hello,\n\nYour account has been created successfully. Here are your login details:\n\nEmail: ${userEmail}\nPassword: ${randomPassword}\n\nPlease change your password after logging in.\n\nThank you!`,
+        };
+  
+        // Send the email
+        mailTransporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error("Error sending email:", error);
+          } else {
+            console.log("Email sent:", info.response);
+          }
+        });
+      } else {
+        // If the user already exists, log a message
+        console.log("User already exists, no need to create or send email");
+      }
+  
       res.json({ message: "Success" });
     } catch (error) {
       console.log(error);
-      res
-        .status(500)
-        .json({ message: "Internal Server Error", error: error.message });
+      res.status(500).json({ message: "Internal Server Error", error: error.message });
     }
   }
+  
   
   async function payNowByFiserv(req, res) {
     const { quoteId } = req.params;

@@ -20,6 +20,7 @@ router.post('/checkUser', userController.checkUser);
 router.put('/services/:serviceId', singleUpload, userController.updateService);
 router.delete('/services/:serviceId', userController.deleteService); 
 router.get('/menu-items', userController.getMenuItems);
+router.post('/getallUserSerive', userController.getallUserSerive);
 router.post('/menu-items', userController.addMenuItems);
 router.post('/checkStatus', userController.checkStatus);
 router.post('/MatchScoreProductService', userController.MatchScoreProductService);

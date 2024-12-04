@@ -39,7 +39,9 @@
       type="text"
       class="form-control rounded-input"
       readonly
-      [value]="companyTradeLicenseFile.length > 0 ? companyTradeLicenseFile[0].name : 'No file chosen'"
+      [value]="companyTradeLicenseFile[0].name || 'No file chosen'"
+
+
       placeholder="No file chosen"
     />
     <label class="upload-button" for="companyTradeLicenseFile">
@@ -86,7 +88,9 @@
                       type="text"
                       class="form-control rounded-input"
                       readonly
-                      [value]="uploadedFileNames[i]?.[0]?.name || 'No file chosen'"
+                      [value]="uploadedFileNames[i][0].name || 'No file chosen'"
+
+
                       placeholder="No file chosen"
                     />
                     <label class="upload-button" for="files{{ i }}">

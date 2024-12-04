@@ -50,11 +50,13 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { UserFooterComponent } from './user-footer/user-footer.component';
 import { FailerComponent } from './failer/failer.component';
 import { SuccessComponent } from './success/success.component';
-import { CardmachineComponent } from './cardmachine/cardmachine.component';
-import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
-import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
-import { CashoverCounterComponent } from './cashover-counter/cashover-counter.component';
-import { BanktransferComponent } from './banktransfer/banktransfer.component';
+import { UserDashboardLayoutComponent } from './user-dashboard-layout/user-dashboard-layout.component';
+// import { RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
+import { ClientHeaderComponent } from './client-header/client-header.component';
+import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
+
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -98,11 +100,9 @@ import { BanktransferComponent } from './banktransfer/banktransfer.component';
     UserFooterComponent,
     FailerComponent,
     SuccessComponent,
-    CardmachineComponent,
-    CashdepositComponent,
-    ChequedepositComponent,
-    CashoverCounterComponent,
-    BanktransferComponent,
+    UserDashboardLayoutComponent,
+    UserDashboardComponent,
+    ClientHeaderComponent,
     
   ],
   imports: [
@@ -110,6 +110,7 @@ import { BanktransferComponent } from './banktransfer/banktransfer.component';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    RouterModule,
     FormsModule,            // Add FormsModule to imports
     ToastrModule.forRoot({
       positionClass: 'toast-top-center', // Center the toast notifications at the top

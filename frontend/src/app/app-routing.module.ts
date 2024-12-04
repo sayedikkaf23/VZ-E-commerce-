@@ -36,10 +36,8 @@ import { OnlinepaymentComponent } from './onlinepayment/onlinepayment.component'
 import { FailerComponent } from './failer/failer.component';
 import { SuccessComponent } from './success/success.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
-// import { CardmachineComponent } from './cardmachine/cardmachine.component';
-// import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
-// import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
-// import { CashoverCounterComponent } from './cashover-counter/cashover-counter.component';
+import { UserDashboardLayoutComponent } from './user-dashboard-layout/user-dashboard-layout.component';
+
 const routes: Routes = [
 
   {
@@ -210,6 +208,11 @@ const routes: Routes = [
     component: AdminLoginComponent,
    
   },
+  {
+        path: 'user/dashboard',
+        component: UserDashboardComponent,
+       
+      },
 
   {
     path: 'panel',
@@ -267,13 +270,13 @@ const routes: Routes = [
   },
   {
     path: 'user',
-    component: DashboardLayoutComponent,
+    component: UserDashboardLayoutComponent,
     children: [
-      {
-        path: 'dashboard',
-        component: UserDashboardComponent,
+      // {
+      //   path: 'dashboard',
+      //   component: UserDashboardComponent,
        
-      },
+      // },
       {
         path: 'PersonalBank-account-opening',
         component: BackAccountOpeningComponent,
