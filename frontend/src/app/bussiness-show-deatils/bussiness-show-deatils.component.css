@@ -1,3 +1,47 @@
+/* Common Table Styles */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures equal column widths */
+}
+
+.table th,
+.table td {
+  padding: 10px 15px; /* Adds consistent spacing */
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  overflow: hidden; /* Prevents content from spilling */
+  text-overflow: ellipsis; /* Adds ellipsis for extremely long text */
+}
+
+.table th {
+  font-weight: bold;
+  text-align: left;
+  white-space: nowrap; /* Prevents wrapping for table headers */
+}
+
+.table thead th {
+  border-bottom: 2px solid #333;
+}
+
+.table tbody tr:hover {
+  background-color: #f9f9f9; /* Highlight row on hover */
+}
+
+/* Currency Alignment */
+.currency {
+  text-align: right; /* Aligns currency values to the right */
+}
+
+.column-space {
+  width: 25%; /* Ensures equal column space for 4 columns */
+  text-align: center; /* Centers text for headings */
+}
+
+.w-100 {
+  width: 100%;
+}
+
 .order-summary-table {
   width: 100%;
   border-collapse: collapse;
@@ -50,6 +94,7 @@
 .product-table th {
   /* font-weight: bold; */
   text-align: left; /* Align headers properly */
+  
 }
 
 /* .product-table thead th {

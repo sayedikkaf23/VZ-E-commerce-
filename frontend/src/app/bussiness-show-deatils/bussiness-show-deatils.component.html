@@ -16,7 +16,7 @@
     <section class="step_1_section order-review">
         <div class="container">
             <div class="row align-items-start">
-                <div class="col-md-6">
+                <div class="col-md-10">
                     <div class="box-light">
                         <div class="d-flex align-items-center justify-content-between">
                             <h4>Service</h4>
@@ -25,10 +25,10 @@
                         <table class="product-table">
                             <thead>
                               <tr>
-                                <th>Product Name</th>
-                                <th>Quantity</th>
-                                <th>Unit Price</th>
-                                <th>Total Price (Including VAT)</th>
+                                <th style="text-wrap: nowrap;">Product Name</th>
+                                <th style="text-wrap: nowrap;">Quantity</th>
+                                <th style="text-wrap: nowrap;">Unit Price</th>
+                                <th style="text-wrap: nowrap;">Total Price (Including VAT)</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -47,7 +47,7 @@
                 </div>
 
                 <!-- Right Column for Personal Bank Service -->
-                <div class="col-md-6">
+                <div class="col-md-10">
                     <div class="box-light">
                         <div class="d-flex align-items-center justify-content-between">
                             <h4>Order Summary</h4>
@@ -56,7 +56,7 @@
                         <table class="order-summary-table">
                             <thead>
                               <tr>
-                                <th class="column-space">Price</th>
+                                <th class="column-space" >Price</th>
                                 <th class="column-space">VAT</th>
                                 <th class="column-space">Discount Price</th>
                                 <th class="column-space">Total Amount</th>
@@ -78,7 +78,7 @@
                     </div>
                 </div>
             </div>
-            <button (click)="submitData()" class="btn primary-btn w-100">Pay Now</button>
+            <button (click)="submitData()" class="btn primary-btn"  style="width: 900px;">Pay Now</button>
         </div>
     </section>
 
