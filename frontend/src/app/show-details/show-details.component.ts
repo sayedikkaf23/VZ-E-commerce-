@@ -219,7 +219,7 @@ export class ShowDetailsComponent implements AfterViewInit {
                   quotePaymentId: quotePayload.quotePaymentId,
                   accountId: quotePayload.account_id,
                   leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
-                  matchScore: response.data.matchScore, // Adjust based on response structure
+                  matchScore: response.screeningmatchScore.matchScore, // Adjust based on response structure
                 };
   
                 // Call the third API
