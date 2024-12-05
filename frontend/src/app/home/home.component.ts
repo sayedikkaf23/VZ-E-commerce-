@@ -27,7 +27,7 @@ export class _HomeComponent {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-
+    localStorage.clear();
   }
 
   loadServices(): void {
