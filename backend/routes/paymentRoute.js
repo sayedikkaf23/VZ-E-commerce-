@@ -16,7 +16,7 @@ const router = express.Router();
  
 router.post(
     "/addCashMachin/:quoteId",
-    upload.array("transfer_copy"),
+    // upload.array("transfer_copy"),
     AddCashMachin
   );
 router.post("/payNowSaleforce/:quoteId", payNowSaleforce);
