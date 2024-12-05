@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { UserService } from '../service/user.service';
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 interface Service {
   name: string;
@@ -15,9 +17,11 @@ interface Service {
 export class ServicePageComponent implements OnInit {
   services: Service[] = []; // Initialize an empty array for services
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService,private route: ActivatedRoute,private router: Router) {}
 
   ngOnInit(): void {
+    console.log("rouerttyy",this.route.snapshot.url); // Check the current URL
+
     // Retrieve the email from localStorage
     const email = localStorage.getItem('userEmail');
     if (email) {
@@ -26,6 +30,9 @@ export class ServicePageComponent implements OnInit {
     } else {
       console.error('No email found in localStorage.');
     }
+  }
+  isActive(route: string): boolean {
+    return this.router.url === route;
   }
   fetchUserServices(email: string): void {
     const payload = { email };
