@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../service/user.service';
 
 interface Service {
   name: string;
   description: string;
-  status: string; // Removed 'price'
+  status: string;
 }
 
 @Component({
@@ -12,16 +13,37 @@ interface Service {
   styleUrls: ['./service-page.component.css']
 })
 export class ServicePageComponent implements OnInit {
-  services: Service[] = [
-    { name: 'Web Development', description: 'Full-stack web development services.', status: 'Active' },
-    { name: 'SEO Optimization', description: 'Improve your website ranking.', status: 'Active' },
-    { name: 'Graphic Design', description: 'Design logos, brochures, and more.', status: 'Inactive' },
-    { name: 'App Development', description: 'Mobile app development services.', status: 'Active' }
-  ];
+  services: Service[] = []; // Initialize an empty array for services
 
-  constructor() {}
+  constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    // No API needed for dummy data
+    // Retrieve the email from localStorage
+    const email = localStorage.getItem('userEmail');
+    if (email) {
+      // Call the API with the email
+      this.fetchUserServices(email);
+    } else {
+      console.error('No email found in localStorage.');
+    }
+  }
+  fetchUserServices(email: string): void {
+    const payload = { email };
+
+    this.userService.fetchUserServices(payload).subscribe(
+      (response) => {
+        if (response && response.data) {
+          console.log('Response Data:', response.data);
+          this.services = response.data.map((item: any) => ({
+            name: item.leadWithDetails?.Company || 'No company name provided',
+            description: item.quoteWithProductDetails?.product[0]?.productName || 'No description available',
+            status: item.leadWithDetails?.Status || 'Unknown'
+          }));
+        }
+      },
+      (error) => {
+        console.error('Error fetching user services:', error);
+      }
+    );
   }
 }

@@ -41,6 +41,9 @@ export class UserService {  // Changed the service name to UserService
   MatchScoreProductService(payload:any): Observable<any> {
     return this.http.post(`${this.url}/user/MatchScoreProductService`, payload); // Sending the payload to the backend
   }
+  fetchUserServices(payload:any): Observable<any> {
+    return this.http.post(`${this.url}/user/getallUserSerive`, payload); // Sending the payload to the backend
+  }
   
   getPresignedUrl(file: File): Observable<any> {
     const formData = new FormData();

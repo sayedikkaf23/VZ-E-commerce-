@@ -26,12 +26,18 @@ export class UserLoginComponent {
 
   ngOnInit(): void {}
 
+  
   submit(): void {
     if (this.loginForm.valid) {
       const loginData = this.loginForm.value; // Access values directly from the form group
-
+  
       this.authService.login(loginData).subscribe(
         (response) => {
+          // Save email to localStorage
+          if (response && response.email) {
+            localStorage.setItem('userEmail', response.email);
+          }
+  
           this.toastr.success('Login successful!', 'Success'); // Show success notification
           this.router.navigate(['/user/dashboard']); 
         },
@@ -47,4 +53,5 @@ export class UserLoginComponent {
       this.toastr.warning('Please fill in all required fields!', 'Warning'); // Show validation warning
     }
   }
+  
 }
