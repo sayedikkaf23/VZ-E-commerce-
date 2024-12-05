@@ -113,10 +113,14 @@ export class MailsManagement1Component {
     }
   }
   
-  openDatePicker() {
-    const dateInput = document.getElementById('birthday') as HTMLInputElement;
-    dateInput.showPicker(); // Only works if supported by the browser
-}
+  preventManualInput(event: KeyboardEvent): void {
+    event.preventDefault(); // Prevent manual input via keyboard
+  }
+  
+  openDatePicker(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.showPicker(); // Explicitly trigger the date picker
+  }
 
   // Show one toaster for all invalid fields
   showSingleValidationError(formGroup: FormGroup) {
