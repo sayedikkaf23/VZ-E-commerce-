@@ -79,11 +79,14 @@ export class Step1Component implements OnInit {
     }
   }
 
-  openDatePicker() {
-    const dateInput = document.getElementById('birthday') as HTMLInputElement;
-    dateInput.showPicker(); // Only works if supported by the browser
-}
-
+  preventManualInput(event: KeyboardEvent): void {
+    event.preventDefault(); // Prevent manual input via keyboard
+  }
+  
+  openDatePicker(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.showPicker(); // Explicitly trigger the date picker
+  }
 
 onSubmit() {
   if (this.personalDetailsForm.valid) {
