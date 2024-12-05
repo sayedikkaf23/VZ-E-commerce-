@@ -25,7 +25,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
 
   formData: any = {
     companylocation: '',
-    jurisdiction: '',
+    // jurisdiction: '',
     Turnover: '',
     shareholdercount:'',
     type: 'Business Bank',
@@ -193,7 +193,7 @@ deleteShareholder(index: number) {
 
         // Append Step 2 data
         formDataToSend.append('companylocation', this.formData.companylocation);
-        formDataToSend.append('jurisdiction', this.formData.jurisdiction);
+        // formDataToSend.append('jurisdiction', this.formData.jurisdiction);
         formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
         formDataToSend.append('Turnover', this.formData.Turnover);
         formDataToSend.append('CustomerType', this.formData.CustomerType);
@@ -235,10 +235,10 @@ console.log(missingFields)
       missingFields.push('Company Location');
       isValid = false;
     }
-    if (!this.formData.jurisdiction) {
-      missingFields.push('Jurisdiction');
-      isValid = false;
-    }
+    // if (!this.formData.jurisdiction) {
+    //   missingFields.push('Jurisdiction');
+    //   isValid = false;
+    // }
     if (this.shareholders.length === 0 || this.shareholders.some(s => !s.name || !s.shareholderPercentage || !s.dob || !s.nationalityshareholder)) {
       missingFields.push('Shareholder details');
       isValid = false;

@@ -20,13 +20,10 @@
             <h3>Business Bank Service</h3>
             <div class="form-field">
               <div class="form-field">
-                <label for="resident">is Your Company located in the UAE? <span class="required">*</span></label>
-
+                <label for="resident">Is your company located in UAE? <span class="required">*</span></label>
                 <fieldset>
                   <select name="resident" id="resident" class="form-select" [(ngModel)]="formData.companylocation">
-                    <option value="" disabled selected>
-                      is Your Company located in the UAE?
-                    </option>
+                    <option value="" disabled selected>Is your company located in UAE?</option>
                     <option value="yes">Yes</option>
                     <option value="no">No</option>
                   </select>
@@ -51,13 +48,13 @@
                   </select>
                 </fieldset>
               </div> -->
-            <div class="form-field">
+            <!-- <div class="form-field">
               <label for="jurisdiction">Which Jurisdiction is your Company Located it?<span
                   class="required">*</span></label>
 
               <input type="text" name="jurisdiction" id="jurisdiction" class="form-input"
                 [(ngModel)]="formData.jurisdiction" placeholder="Which Jurisdiction is your Company Located it?" />
-            </div>
+            </div> -->
 
             <div class="form-field">
               <label for="resident">How many shareholder does your company have?
