@@ -715,46 +715,52 @@ async function payNow(req, res) {
     //   const successType = type === "Manual" ? "?type=manual" : "";
     //   const cancelType = type === "Manual" ? "?type=manual" : "";
    
-      const telrResponse = await axios.post("https://secure.telr.com/gateway/order.json", {
+    const telrResponse = await axios.post(
+      "https://secure.telr.com/gateway/order.json",
+      {
         method: "create",
         store: process.env.TELR_STORE_ID,
         authkey: process.env.TELR_AUTH_KEY,
-        framed: 0,
+        framed: 0, // Use 0 to disable iframe integration
         order: {
-          cartid: order_number,
-          test: "1", // Use "1" for testing; "0" for live
-          amount: order_amount,
-          currency: order_currency,
-          description: order_description,
+          cartid: order_number, // Unique order reference
+          test: "1", // Use "1" for test mode; "0" for live transactions
+          amount: order_amount, // Transaction amount
+          currency: order_currency, // Currency (e.g., "AED")
+          description: order_description, // Order description
         },
-        
         return: {
           authorised: `https://ecommerce.yeepeey.com/successful/${order_number}`,
           declined: `https://ecommerce.yeepeey.com/failure/${order_number}`,
-          cancelled: `https://ecommerce.yeepeey.com/cancelled/${order_number}`
-        },  customer: {
-          ref:order_number,
-          email: acountemail,
+          cancelled: `https://ecommerce.yeepeey.com/cancelled/${order_number}`,
+        },
+        customer: {
+          ref: order_number, // Unique customer reference
+          email: acountemail, // Customer email
           name: {
-            title: "",                // Leave empty if not available
-            forenames: acountname,    // Use `acountname` here for full name or first name if split
-            surname: ""               // Leave empty or set surname here if available
-          } ,
+            title: "", // Leave empty if not required
+            forenames: acountname, // Full or first name of the customer
+            surname: "", // Leave empty if no surname is needed
+          },
+          // Address fields left empty to hide them
           address: {
-            line1: "",               // Leave address fields empty to avoid display
-            city: "",
-            country: ""
-          }
-         
-        }
-      }, {
+            line1: "", // Address line 1 - left empty to avoid display
+            city: "", // City - left empty to avoid display
+            country: "", // Country - left empty to avoid display
+          },
+          // Optionally, leave out the phone field
+          phone: "", // Leave empty to avoid displaying the phone number
+        },
+      },
+      {
         headers: {
-          "Authorization": `Basic ${process.env.TELR_BASIC_AUTH}`,
+          Authorization: `Basic ${process.env.TELR_BASIC_AUTH}`,
           "Content-Type": "application/json",
-          "accept": "application/json"
-        }
-      });
-  
+          accept: "application/json",
+        },
+      }
+    );
+    
   
       const newOnlinePayForm = new OnlinePayment({
         transactionDetails: {

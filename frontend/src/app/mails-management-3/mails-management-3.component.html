@@ -1,4 +1,3 @@
-
 <div class="loader-container" *ngIf="isLoading">
   <div class="loader"></div>
 </div>
@@ -32,16 +31,14 @@
             <!-- Company Trade License File Upload -->
  <!-- Company Trade License File Upload -->
 <!-- Company Trade License File Upload -->
-<div class="form-field" (click)="triggerFileUpload()">
+<div class="form-field">
   <label for="companyTradeLicenseFile">Upload Trade License <span class="required">*</span></label>
   <div class="custom-file-upload">
     <input
       type="text"
       class="form-control rounded-input"
       readonly
-      [value]="companyTradeLicenseFile[0].name || 'No file chosen'"
-
-
+      [value]="companyTradeLicenseFile?.[0]?.name || 'No file chosen'"
       placeholder="No file chosen"
     />
     <label class="upload-button" for="companyTradeLicenseFile">
@@ -50,8 +47,6 @@
     <input
       type="file"
       id="companyTradeLicenseFile"
-      #fileInput
-
       (change)="onFileChangeTrade($event)"
       style="display: none;"
     />
@@ -81,16 +76,14 @@
                 </div>
   
                 <!-- File Upload Field for Shareholder -->
-                <div class="form-field" (click)="triggerFileUploadShareholder(i)" >
+                <div class="form-field">
                   <label for="files">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
                   <div class="custom-file-upload">
                     <input
                       type="text"
                       class="form-control rounded-input"
                       readonly
-                      [value]="uploadedFileNames[i][0].name || 'No file chosen'"
-
-
+                      [value]="uploadedFileNames[i]?.[0]?.name || 'No file chosen'"
                       placeholder="No file chosen"
                     />
                     <label class="upload-button" for="files{{ i }}">
@@ -99,8 +92,6 @@
                     <input
                       type="file"
                       id="files{{ i }}"
-                      #fileInputShareholder
-
                       multiple
                       (change)="onFileChange($event, i)"
                       style="display: none;"

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID, ViewChild, ElementRef, QueryList, ViewChildren } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,10 +14,6 @@ declare var $: any;
   styleUrl: './mails-management-3.component.css'
 })
 export class MailsManagement3Component {
-  @ViewChild('fileInput') fileInput!: ElementRef;
-  @ViewChildren('fileInputShareholder') fileInputsShareholder!: QueryList<ElementRef>;
-
-
   formData: FormGroup;
   shareholdersData: any[] = [];
   uploadedFiles: File[][] = [];
@@ -163,20 +159,6 @@ export class MailsManagement3Component {
         );
       });
       console.log(`Files stored for Shareholder ${index + 1}:`, filesArray);
-    }
-  }
-
-
-  triggerFileUpload() {
-    this.fileInput.nativeElement.click();
-  }
-
-
-  triggerFileUploadShareholder(index: number) {
-    const fileInputArray = this.fileInputsShareholder.toArray();
-    const fileInput = fileInputArray[index];
-    if (fileInput) {
-      fileInput.nativeElement.click();
     }
   }
 
