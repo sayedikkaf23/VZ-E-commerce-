@@ -895,7 +895,7 @@ async function payNow(req, res) {
           from: "mishalnunu@gmail.com", // Sender address
           to: userEmail, // Receiver email address (from the OnlinePayment document)
           subject: 'Your New Account Details',
-          text: `Hello,\n\nYour account has been created successfully. Here are your login details:\n\nEmail: ${userEmail}\nPassword: ${randomPassword}\n\nPlease change your password after logging in.\n\nThank you!`,
+          text: `Hello,\n\nYour account has been created successfully. Here are your login details:\n\nEmail: ${userEmail}\nPassword: ${randomPassword}\n\n https://ecommerce.yeepeey.com/login .\n\nThank you!`,
         };
   
         // Send the email
