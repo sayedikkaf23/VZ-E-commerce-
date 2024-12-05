@@ -68,7 +68,7 @@ export class _HomeComponent {
   startNow(check:any): void {
     console.log(check)
 // Check the serviceName and navigate accordingly
-if (check == 'Bank Accounts Opening') {
+if (check == 'Bank Account Opening') {
   this.router.navigate(['/step-1']); // Replace with the actual route for Service A
 } else if (check == 'Accounting & VAT') {
   this.router.navigate(['/service-b']); // Replace with the actual route for Service B

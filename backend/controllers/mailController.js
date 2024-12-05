@@ -325,7 +325,7 @@ console.log(`${process.env.EXTERNAL_API_SCREENING_URL}`)
     await newPidata.save();
 
     // Send a success response
-    res.status(200).json({ message: 'Data saved successfully', data: responseData });
+    res.status(200).json({ message: 'Data saved successfully', data: responseData ,screeningmatchScore:screeningResponse.data});
   } catch (error) {
     console.error('Error calling Salesforce endpoint:', error);
     res.status(500).json({ message: 'Error calling Salesforce endpoint', details: error.message });
