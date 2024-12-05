@@ -62,7 +62,332 @@ const mailTransporter = nodemailer.createTransport({
 
 
 
+const AddCashMachin = async (req, res) => {
+  // Validation errors check
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const { quoteId } = req.params;
 
+  const TokenResponse = await axios.post(
+    `https://test.salesforce.com/services/oauth2/token`,
+    null,
+    {
+      params: {
+        client_id: process.env.SALESFORCE_CLIENT_ID,
+        client_secret: process.env.SALESFORCE_CLIENT_SECRET,
+        grant_type: "password",
+        username: process.env.SALESFORCE_USERNAME,
+        password: process.env.SALESFORCE_PASSWORD,
+      },
+    }
+  );
+  const accessToken = TokenResponse.data.access_token;
+
+  console.log("Access Token:", accessToken);
+  // const uploadedFiles = req.files;
+  // const fileNames = uploadedFiles.map((file) => file.filename);
+  // const transfer_copy = req.file.filename;
+  // console.log(fileNames)
+  // console.log(transfer_copy)
+
+  try {
+    const existingUser = await PiData.findOne({
+      $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
+    });
+
+    if (!existingUser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const accountDetailsResult = await AccountDetail.find();
+    if (!accountDetailsResult || accountDetailsResult.length === 0) {
+      return res.status(400).json({ message: "Account details not found" });
+    }
+
+    const accountDetails = accountDetailsResult[0];
+    // Create a new PaymentForm instance
+    const newBankTransferForm = new CardMachine({
+      bankDetails: {
+        bank_name: accountDetails.bank_name,
+        account_name: accountDetails.account_name,
+        iban_number: accountDetails.iban_number,
+        account_number: accountDetails.account_number,
+        swift_code: accountDetails.swift_code,
+        bank_address: accountDetails.bank_address,
+      },
+      transactionDetails: {
+        amount: existingUser.totalIncludingVAT,
+        quotePaymentId: existingUser.quotePaymentId,
+        partPayment: existingUser.partPayment,
+        // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+        // toCurrency: currency_convertingto,
+        proformaInvoiceNumber: existingUser.invoiceNumber,
+        currencyPaid: "AED",
+        // amountPaid:existingUser.totalIncludingVAT,
+      },
+      customerDetails: {
+        name: existingUser.AccountName,
+        id: existingUser.quoteEmail, // Assuming this is the desired ID
+      },
+      // fileUpload: fileNames, // Assuming this is a string representing the file path or URL
+      status: "AR Review",
+      quoteId: existingUser.quoteId,
+      generalLedgerCode: "1351 - Point of Sale", // Default status
+    });
+
+    await newBankTransferForm.save();
+    console.log(newBankTransferForm.transactionDetails.currencyPaid);
+
+    const requestBody = {
+      qp: {
+        paymentmethod: "Pay via Card Machine",
+        amount_received: newBankTransferForm.transactionDetails.partPayment,
+        bank_name: "Point of Sale",
+        GL_code: newBankTransferForm.generalLedgerCode,
+        Pay_Currency: newBankTransferForm.transactionDetails.currencyPaid,
+        payment_status: newBankTransferForm.status,
+        quotePaymentId: newBankTransferForm.transactionDetails.quotePaymentId,
+      },
+      attachments: [
+        {
+          Body: "",
+          ContentType: "",
+          Name: "",
+        },
+        {
+          Body: "",
+          ContentType: "",
+          Name: "",
+        },
+      ],
+    };
+
+    console.log(requestBody);
+
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json", // Specify the content type as JSON
+    };
+
+    const endpointUrl = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${newBankTransferForm.transactionDetails.quotePaymentId}`;
+
+    axios
+      .put(endpointUrl, requestBody, { headers })
+      .then((response) => {
+        // Handle the response here
+        console.log("Response:", response.data);
+      })
+      .catch((error) => {
+        // Handle errors here
+        console.error("Error:", error);
+      });
+
+    // await sendEmail(existingUser.opportunityOwnerName,newBankTransferForm.customerDetails.id, existingUser.contactName,existingUser.opportunityOwnerEmail);
+    let HtmlBody = `<!DOCTYPE html>
+      <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+      
+      <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]-->
+        <style>
+          * {
+            box-sizing: border-box;
+          }
+      
+          body {
+            margin: 0;
+            padding: 0;
+          }
+      
+          a[x-apple-data-detectors] {
+            color: inherit !important;
+            text-decoration: inherit !important;
+          }
+      
+          #MessageViewBody a {
+            color: inherit;
+            text-decoration: none;
+          }
+      
+          p {
+            line-height: inherit
+          }
+      
+          .desktop_hide,
+          .desktop_hide table {
+            mso-hide: all;
+            display: none;
+            max-height: 0px;
+            overflow: hidden;
+          }
+      
+          .image_block img+div {
+            display: none;
+          }
+      
+          @media (max-width:620px) {
+            .social_block.desktop_hide .social-table {
+              display: inline-block !important;
+            }
+      
+            .mobile_hide {
+              display: none;
+            }
+      
+            .row-content {
+              width: 100% !important;
+            }
+      
+            .stack .column {
+              width: 100%;
+              display: block;
+            }
+      
+            .mobile_hide {
+              min-height: 0;
+              max-height: 0;
+              max-width: 0;
+              overflow: hidden;
+              font-size: 0px;
+            }
+      
+            .desktop_hide,
+            .desktop_hide table {
+              display: table !important;
+              max-height: none !important;
+            }
+          }
+        </style>
+      </head>
+      
+      <body style="background-color: #ffffff; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+        <table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff;">
+          <tbody>
+            <tr>
+              <td>
+                <table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 600px;" width="600">
+                          <tbody>
+                            <tr>
+                              <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                <table class="paragraph_block block-1" width="100%" border="0" cellpadding="5" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                  <tr>
+                                    <td class="pad">
+                                      <div style="color:#000000;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:150%;text-align:left;mso-line-height-alt:21px;">
+                                        <p style="margin: 0; margin-bottom: 16px;">Hello,</p>
+                                        <p style="margin: 0; margin-bottom: 16px;">A customer has chosen to <b>Pay via Card Machine.</b> </p>
+                                        <p style="margin: 0; margin-bottom: 16px;">Reference Quote Number - <b>${existingUser.quotePaymentName}</b> </p>
+                                     
+                                    
+                                     
+                                        <p style="margin: 0;">Thank you!</p>
+                                     
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 600px;" width="600">
+                          <tbody>
+                            <tr>
+                              <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; padding-top: 30px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                <table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                  <tr>
+                                    <td class="pad" style="padding-bottom:20px;width:100%;padding-right:0px;padding-left:0px;">
+                                      <div class="alignment" align="center" style="line-height:10px">
+                                        <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="https://res.cloudinary.com/dvekmmxxx/image/upload/v1718347384/photo_2024-06-14_11-46-14-removebg-preview_bml8en.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                                <table class="social_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                  <tr>
+                                    <td class="pad" style="text-align:center;padding-right:0px;padding-left:0px;">
+                                      <div class="alignment" align="center">
+                                        <table class="social-table" width="276px" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; display: inline-block;">
+                                          <tr>
+                                            <td style="padding:0 7px 0 7px;"><a href="https://www.facebook.com/virtuzone" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/facebook@2x.png" width="32" height="32" alt="Facebook" title="Facebook" style="display: block; height: auto; border: 0;"></a></td>
+                                            <td style="padding:0 7px 0 7px;"><a href="https://twitter.com/Virtuzone_UAE" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/twitter@2x.png" width="32" height="32" alt="Twitter" title="Twitter" style="display: block; height: auto; border: 0;"></a></td>
+                                            <td style="padding:0 7px 0 7px;"><a href="http://www.youtube.com/virtuzoneuae" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/youtube@2x.png" width="32" height="32" alt="YouTube" title="YouTube" style="display: block; height: auto; border: 0;"></a></td>
+                                            <td style="padding:0 7px 0 7px;"><a href="http://www.instagram.com/virtuzone" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/instagram@2x.png" width="32" height="32" alt="Instagram" title="Instagram" style="display: block; height: auto; border: 0;"></a></td>
+                                            <td style="padding:0 7px 0 7px;"><a href="http://www.linkedin.com/company/virtuzone" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/linkedin@2x.png" width="32" height="32" alt="LinkedIn" title="LinkedIn" style="display: block; height: auto; border: 0;"></a></td>
+                                            <td style="padding:0 7px 0 7px;"><a href="https://www.vz.ae/" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/website@2x.png" width="32" height="32" alt="Web Site" title="Web Site" style="display: block; height: auto; border: 0;"></a></td>
+                                          </tr>
+                                        </table>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                                <table class="text_block block-3" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                  <tr>
+                                    <td class="pad" style="padding-left:10px;padding-right:10px;padding-top:10px;">
+                                      <div style="font-family: sans-serif">
+                                        <div class style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; mso-line-height-alt: 18px; color: #000000; line-height: 1.5;">
+                                          <p style="margin: 0; text-align: center; mso-line-height-alt: 18px;"><a href="https://g.page/virtuzone?share" target="_blank" style="text-decoration: underline; color: #000000;" rel="noopener">Office 404, Al Saaha Office, Building B, Souk Al Bahar, Old Town Island,<br>Burj Khalifa District, Dubai - UAE</a></p>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </table>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </tbody>
+        </table><!-- End -->
+      </body>
+      
+      </html>
+      `;
+    let subjectMail = "Customer paying via Card Machine";
+    let toMail = process.env.ToMail;
+
+    // await  ReviewsendEmail(existingUser.opportunityOwnerEmail,toMail,subjectMail,HtmlBody,[])
+
+    return res.status(200).json({
+      message: "Cash Machin ",
+      //   paymentFormDetails: newBankTransferForm,
+
+      Paymentmodes: "Cash Machine",
+      Amountpaid: newBankTransferForm.amount,
+      partPayment: newBankTransferForm.partPayment,
+      Bankstatus: newBankTransferForm.status,
+      Name: newBankTransferForm.customerDetails.name,
+      proformaInvoiceNumber:
+        newBankTransferForm.transactionDetails.proformaInvoiceNumber,
+      receiptfile: newBankTransferForm.fileUpload,
+      Currency: newBankTransferForm.currencyPaid,
+      generalLedgerCode: newBankTransferForm.generalLedgerCode,
+      currencyPaid: newBankTransferForm.transactionDetails.currencyPaid,
+    });
+  } catch (err) {
+    console.error("Error during Bank Transfer processing:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
 
 
 async function payNow(req, res) {
@@ -807,3 +1132,4 @@ exports.payNowByStripe = payNowByStripe;
 exports.payNowByTelr = payNowByTelr;
 exports.payNowByFiserv = payNowByFiserv;
 exports.MagnatiTransactionStatus = MagnatiTransactionStatus;
+exports.AddCashMachin = AddCashMachin;

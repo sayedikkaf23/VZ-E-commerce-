@@ -5,14 +5,20 @@ const {
     payNowByTelr,
     payNowSaleforce,
     payNowByStripe,
-    payNow
+    payNow,
+    AddCashMachin
 } = require("../controllers/paymentController");
  
- 
+const {upload} = require("../middleware/fileUpload");
+
  
 const router = express.Router();
  
- 
+router.post(
+    "/addCashMachin/:quoteId",
+    upload.array("transfer_copy"),
+    AddCashMachin
+  );
 router.post("/payNowSaleforce/:quoteId", payNowSaleforce);
 router.get("/payNowByFiserv/:quoteId", payNowByFiserv);
 router.post("/magnatiTransactionStatus", MagnatiTransactionStatus);

@@ -38,6 +38,8 @@ import { SuccessComponent } from './success/success.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { UserDashboardLayoutComponent } from './user-dashboard-layout/user-dashboard-layout.component';
 import { ServicePageComponent } from './service-page/service-page.component';
+import { CardmachineComponent } from './cardmachine/cardmachine.component';
+
 const routes: Routes = [
 
   {
@@ -192,6 +194,7 @@ const routes: Routes = [
     component: VirtualReceptionist2Component,
    
   },
+  { path: 'cardmachine/:id', component: CardmachineComponent },
  
   {
     path: 'virtual-receptionist-details',

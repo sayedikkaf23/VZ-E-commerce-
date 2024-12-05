@@ -112,6 +112,8 @@ import { ServicePageComponent } from './service-page/service-page.component';
     AppRoutingModule,
     ReactiveFormsModule,
     RouterModule,
+    UserFooterComponent,
+    SidebarComponent,
     FormsModule,            // Add FormsModule to imports
     ToastrModule.forRoot({
       positionClass: 'toast-top-center', // Center the toast notifications at the top

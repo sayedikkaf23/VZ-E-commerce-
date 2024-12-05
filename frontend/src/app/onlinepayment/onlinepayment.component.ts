@@ -312,12 +312,12 @@ export class OnlinepaymentComponent implements OnInit {
       (response) => {
         if ('message' in response) {
           console.log(response);
-          this.router.navigate([`/cardmachine/${this.orderId}`],{ queryParams: { type: this.type}});
+          this.router.navigate([`/cardmachine/${this.orderId}`]);
         }
       },
       (error) => {
         console.error(error);
-        this.router.navigate(['/failure', this.orderId],{ queryParams: { type: this.type}}); // Handle the error
+        this.router.navigate(['/failure', this.orderId]); // Handle the error
       }
     );
   }
