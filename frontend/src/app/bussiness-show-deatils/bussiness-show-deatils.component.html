@@ -22,28 +22,27 @@
                             <h4>Service</h4>
                             <!-- <a [routerLink]="['/step-1']" class="btn-edit">Edit</a> -->
                         </div>
-                        <table class="w-200">
+                        <table class="product-table">
                             <thead>
-                                <tr>
-                                    <th>Product Name</th>
-                                    <th>Quantity</th>
-                                    <th>Unit Price</th>
-                                    <th>Total Price (Including VAT)</th>
-                                </tr>
-                                <tr>
-                                    <th style="border: none;"></th>
-                                </tr>
+                              <tr>
+                                <th>Product Name</th>
+                                <th>Quantity</th>
+                                <th>Unit Price</th>
+                                <th>Total Price (Including VAT)</th>
+                              </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let product of matchScoreResponse?.data?.products">
-                                    <td>{{ product.productName }}</td>
-                                    <td>{{ product.productQuantity }}</td>
-                                    <td class="currency">{{ product.productUnitPrice }}</td>
-                                    <td class="currency">{{ (product.productUnitPrice * product.productQuantity * 1.05)
-                                        }}</td>
-                                </tr>
+                              <tr *ngFor="let product of matchScoreResponse?.data?.products">
+                                <td>{{ product.productName }}</td>
+                                <td>{{ product.productQuantity }}</td>
+                                <td class="currency">{{ product.productUnitPrice }}</td>
+                                <td class="currency">
+                                  {{ (product.productUnitPrice * product.productQuantity * 1.05).toFixed(2) }}
+                                </td>
+                              </tr>
                             </tbody>
-                        </table>
+                          </table>
+                          
                     </div>
                 </div>
 
@@ -54,31 +53,28 @@
                             <h4>Order Summary</h4>
                             <!-- <a [routerLink]="['/step-2']" class="btn-edit">Edit</a> -->
                         </div>
-                        <table class="w-100">
+                        <table class="order-summary-table">
+                            <thead>
+                              <tr>
+                                <th class="column-space">Price</th>
+                                <th class="column-space">VAT</th>
+                                <th class="column-space">Discount Price</th>
+                                <th class="column-space">Total Amount</th>
+                              </tr>
+                            </thead>
                             <tbody>
-                                <tr>
-                                    <th>Price</th>
-                                    <td>AED {{ quoteWithProductDetails?.totalPrice || 0 }} </td>
-                                </tr>
-                                <tr>
-                                    <th>VAT</th>
-                                    <td>AED {{ (quoteWithProductDetails?.totalIncludingVAT || 0) -
-                                        (quoteWithProductDetails?.totalPrice || 0) }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Discount Price</th>
-                                    <td>AED {{ quoteWithProductDetails?.Discount || 0 }}</td>
-                                </tr>
-                                <tr>
-                                    <th>Total Amount</th>
-                                    <td>AED {{ quoteWithProductDetails?.total_including_Vat || 0 }}</td>
-                                </tr>
-                                <tr>
-                                    <th style="border: none;"></th>
-                                    <td style="border: none;"></td>
-                                  </tr>
+                              <tr>
+                                <td>AED {{ quoteWithProductDetails?.totalPrice || 0 }}</td>
+                                <td>
+                                  AED
+                                  {{ (quoteWithProductDetails?.totalIncludingVAT || 0) - (quoteWithProductDetails?.totalPrice || 0) }}
+                                </td>
+                                <td>AED {{ quoteWithProductDetails?.Discount || 0 }}</td>
+                                <td>AED {{ quoteWithProductDetails?.total_including_Vat || 0 }}</td>
+                              </tr>
                             </tbody>
-                        </table>
+                          </table>
+                          
                     </div>
                 </div>
             </div>
