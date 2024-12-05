@@ -81,13 +81,19 @@
               
               
               
-              
               <div class="form-field">
-                <label for="birthday">Date of Birth<span class="required">*</span></label>
-                <input class="form-control" formControlName="birthday"     [max]="maxDate" type="date" id="birthday"                    (focus)="openDatePicker()"
-                (focus)="openDatePicker()"
+                <label for="birthday">Date of Birth <span class="required">*</span></label>
+                <input
+                    class="form-control"
+                    formControlName="birthday"
+                    type="date"
+                    id="birthday"
+                    [max]="maxDate"
+                    (keydown)="preventManualInput($event)"
+                    (click)="openDatePicker($event)"
                 />
               </div>
+              
               <div class="form-submit">
                 <button type="submit" class="btn" id="btn_submit">Next</button>
               </div>

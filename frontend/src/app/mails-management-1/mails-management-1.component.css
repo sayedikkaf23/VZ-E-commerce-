@@ -50,3 +50,8 @@
   color: #333; /* Dark text color */
   font-weight: 600;
 }
+
+input[readonly] {
+  cursor: pointer;
+  background-color: #f9f9f9;
+}

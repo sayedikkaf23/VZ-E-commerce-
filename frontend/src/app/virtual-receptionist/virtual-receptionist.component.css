@@ -43,3 +43,9 @@
     border-top-color: #FF5A5F;
   }
 }
+
+
+input[readonly] {
+  cursor: pointer;
+  background-color: #f9f9f9;
+}
