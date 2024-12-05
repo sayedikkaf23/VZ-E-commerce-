@@ -201,7 +201,7 @@ export class BussinessShowDeatilsComponent {
           localStorage.removeItem('step1Data');
           localStorage.removeItem('mailform');
           localStorage.removeItem('mailform2');
-
+          localStorage.clear();
           const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
 
           if (quotePaymentId) {

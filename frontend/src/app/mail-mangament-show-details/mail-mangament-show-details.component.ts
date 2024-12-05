@@ -246,6 +246,8 @@ export class MailMangamentShowDetailsComponent {
             // Handle errors from the Salesforce API calls
             Swal.fire('Error', 'There was an error processing your request. Please try again.', 'error');
             console.error(error);
+            localStorage.clear();
+            this.router.navigate(['/']); // Replace with your actual route
             this.isLoading = false; // Hide loader in case of error
           }
         );
