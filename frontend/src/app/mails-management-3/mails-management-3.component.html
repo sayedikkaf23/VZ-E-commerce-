@@ -40,6 +40,7 @@
       readonly
       [value]="companyTradeLicenseFile?.[0]?.name || 'No file chosen'"
       placeholder="No file chosen"
+      (click)="triggerFileUpload()"
     />
     <label class="upload-button" for="companyTradeLicenseFile">
       <i class="fa fa-upload"></i> 
@@ -48,6 +49,7 @@
       type="file"
       id="companyTradeLicenseFile"
       (change)="onFileChangeTrade($event)"
+      #fileInput
       style="display: none;"
     />
   </div>
@@ -85,6 +87,7 @@
                       readonly
                       [value]="uploadedFileNames[i]?.[0]?.name || 'No file chosen'"
                       placeholder="No file chosen"
+                      (click)="triggerFileUpload2(i)"
                     />
                     <label class="upload-button" for="files{{ i }}">
                       <i class="fa fa-upload"></i>
@@ -93,6 +96,7 @@
                       type="file"
                       id="files{{ i }}"
                       multiple
+                      #fileInput2
                       (change)="onFileChange($event, i)"
                       style="display: none;"
                     />

@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ViewChild, ElementRef, QueryList, ViewChildren } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -14,6 +14,9 @@ declare var $: any;
   styleUrl: './mails-management-3.component.css'
 })
 export class MailsManagement3Component {
+  @ViewChild('fileInput') fileInput!: ElementRef;
+  @ViewChildren('fileInput2') fileInputs!: QueryList<ElementRef>;
+
   formData: FormGroup;
   shareholdersData: any[] = [];
   uploadedFiles: File[][] = [];
@@ -188,4 +191,20 @@ export class MailsManagement3Component {
       console.log('Please fill all required fields');
     }
   }
+
+
+  triggerFileUpload(): void {
+    this.fileInput.nativeElement.click();
+  }
+
+  triggerFileUpload2(index: number): void {
+    const fileInputArray = this.fileInputs.toArray();
+    const fileInput = fileInputArray[index];
+    if (fileInput) {
+      fileInput.nativeElement.click();
+    } else {
+      console.error(`No file input found for index ${index}`);
+    }
+  }
+
 }
