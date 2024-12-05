@@ -220,9 +220,9 @@ export class MailMangamentShowDetailsComponent {
                 // Prepare payload for MatchScoreProductService
                 const matchScorePayload = {
                   quotePaymentId: quotePayload.quotePaymentId,
-                  // accountId: quotePayload.account_id,
-                  // leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
-                  // matchScore: response.data.matchScore, // Adjust based on response structure
+                  accountId: quotePayload.account_id,
+                  leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
+                  matchScore: response.data.matchScore, // Adjust based on response structure
                 };
   
                 // Call the third API

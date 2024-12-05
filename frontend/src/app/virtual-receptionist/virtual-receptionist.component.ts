@@ -79,61 +79,53 @@ export class VirtualReceptionistComponent {
     const dateInput = document.getElementById('birthday') as HTMLInputElement;
     dateInput.showPicker(); // Only works if supported by the browser
 }
-  onSubmit() {
-    if (this.personalDetailsForm.valid) {
-      const formData = this.personalDetailsForm.value;
-  
+onSubmit() {
+  if (this.personalDetailsForm.valid) {
+    const formData = this.personalDetailsForm.value;
 
-
-      if (this.isBrowser) {
-        if (localStorage.getItem('virtualdata2')) {
-          // Navigate to MailMangamentShowDetails if mailform2 data exists
-          this.router.navigate(['/virtual-receptionist-details']);
-        } else if (localStorage.getItem('step2Data')) {
-          // Navigate to step-2 if step2Data exists
-          this.router.navigate(['/virtual-receptionist-1']);
-        } else {
-          // Otherwise, navigate to account-type
-          this.router.navigate(['/virtual-receptionist-1']);
-        }
-      }
-
-      if (this.isBrowser) {
-        localStorage.setItem('virtualdata', JSON.stringify(formData));
-      }
-
-  
-      // Save form data to localStorage only in the browser environment
-    
-    } else {
-      // Check specifically if mobileNumber is invalid and show toaster for it
-      if (this.personalDetailsForm.get('mobileNumber')?.invalid) {
-        this.toastr.error('Please provide a valid mobile number.', 'Validation Error');
+    if (this.isBrowser) {
+      if (localStorage.getItem('virtualdata2')) {
+        this.router.navigate(['/virtual-receptionist-details']);
+      } else if (localStorage.getItem('step2Data')) {
+        this.router.navigate(['/virtual-receptionist-1']);
       } else {
-        // Show a general validation error if other fields are missing
-        this.showSingleValidationError(this.personalDetailsForm);
+        this.router.navigate(['/virtual-receptionist-1']);
       }
+      localStorage.setItem('virtualdata', JSON.stringify(formData));
     }
+  } else {
+    // Use the updated `showSingleValidationError` method
+    this.showSingleValidationError(this.personalDetailsForm);
   }
+}
+
   
 
   // Show one toaster for all invalid fields
   showSingleValidationError(formGroup: FormGroup) {
-    const missingFields: string[] = []; // Explicitly define the type as string[]
-
+    let hasError = false;
+  
     Object.keys(formGroup.controls).forEach((field) => {
       const control = formGroup.get(field);
-      if (control && control.invalid && control.errors?.['required']) {
-        missingFields.push(this.getFieldName(field));
+      if (control && control.invalid) {
+        hasError = true; // Ensure at least one error is identified
+        if (control.errors?.['required']) {
+          this.toastr.error(`${this.getFieldName(field)} is required.`, 'Validation Error');
+        } else if (control.errors?.['minlength']) {
+          const minLength = control.errors['minlength'].requiredLength;
+          this.toastr.error(`${this.getFieldName(field)} must be at least ${minLength} characters long.`, 'Validation Error');
+        } else if (control.errors?.['email']) {
+          this.toastr.error(`Please provide a valid ${this.getFieldName(field)}.`, 'Validation Error');
+        }
       }
     });
-
-    if (missingFields.length > 0) {
-      const message = `All fields are required`;
-      this.toastr.error(message);
+  
+    // Fallback message if no specific error is detected
+    if (!hasError) {
+      this.toastr.error('Please fill out the form correctly.', 'Validation Error');
     }
   }
-
+  
   getFieldName(field: string): string {
     switch (field) {
       case 'firstName':

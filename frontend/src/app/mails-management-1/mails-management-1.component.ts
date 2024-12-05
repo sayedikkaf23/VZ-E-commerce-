@@ -80,38 +80,22 @@ export class MailsManagement1Component {
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;
   
-
-
       if (this.isBrowser) {
         if (localStorage.getItem('mailform2')) {
-          // If mailform2 data exists, navigate to MailMangamentShowDetails
           this.router.navigate(['/mails-management-details']);
         } else if (localStorage.getItem('mailform')) {
-          // If step2Data exists, navigate to step-2
           this.router.navigate(['/mails-management-2']);
         } else {
-          // Otherwise, navigate to account-type
           this.router.navigate(['/mails-management-2']);
         }
-      }
-
-      if (this.isBrowser) {
         localStorage.setItem('mailform', JSON.stringify(formData));
       }
-
-  
-      // Save form data to localStorage only in the browser environment
-    
     } else {
-      // Check specifically if mobileNumber is invalid and show toaster for it
-      if (this.personalDetailsForm.get('mobileNumber')?.invalid) {
-        this.toastr.error('Please provide a valid mobile number.', 'Validation Error');
-      } else {
-        // Show a general validation error if other fields are missing
-        this.showSingleValidationError(this.personalDetailsForm);
-      }
+      // Use the updated showSingleValidationError method for better feedback
+      this.showSingleValidationError(this.personalDetailsForm);
     }
   }
+  
   
   openDatePicker() {
     const dateInput = document.getElementById('birthday') as HTMLInputElement;
@@ -121,20 +105,22 @@ export class MailsManagement1Component {
   // Show one toaster for all invalid fields
   showSingleValidationError(formGroup: FormGroup) {
     const missingFields: string[] = []; // Explicitly define the type as string[]
-
+  
     Object.keys(formGroup.controls).forEach((field) => {
       const control = formGroup.get(field);
-      if (control && control.invalid && control.errors?.['required']) {
-        missingFields.push(this.getFieldName(field));
+      if (control && control.invalid) {
+        if (control.errors?.['required']) {
+          this.toastr.error(`${this.getFieldName(field)} is required.`, 'Validation Error');
+        } else if (control.errors?.['minlength']) {
+          const minLength = control.errors['minlength'].requiredLength;
+          this.toastr.error(`${this.getFieldName(field)} must be at least ${minLength} characters long.`, 'Validation Error');
+        } else if (control.errors?.['email']) {
+          this.toastr.error(`Please provide a valid ${this.getFieldName(field)}.`, 'Validation Error');
+        }
       }
     });
-
-    if (missingFields.length > 0) {
-      const message = `All fields are required`;
-      this.toastr.error(message);
-    }
   }
-
+  
   getFieldName(field: string): string {
     switch (field) {
       case 'firstName':
