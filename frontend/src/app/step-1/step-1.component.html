@@ -66,7 +66,7 @@
             </div>
             
             
-            <div class="form-field">
+            <!-- <div class="form-field">
               <label for="phone">Phone Number<span class="required">*</span></label>
               <ngx-intl-tel-input
                 class="ngx-tel-input"
@@ -81,7 +81,22 @@
                 formControlName="mobileNumber"
               ></ngx-intl-tel-input>
             </div>
+             -->
             
+             <div class="form-field">
+              <label for="phone">Phone Number<span class="required">*</span></label>
+              <ngx-intl-tel-input
+                class="ngx-tel-input"
+                [preferredCountries]="['ae', 'in']" 
+                [enableAutoCountrySelect]="true"
+                [enablePlaceholder]="true"
+                [searchCountryFlag]="true"
+                [searchCountryField]="[SearchCountryField.Name, SearchCountryField.DialCode]"
+                [selectedCountryISO]="CountryISO.UnitedArabEmirates" 
+                [separateDialCode]="true"
+                formControlName="mobileNumber"
+              ></ngx-intl-tel-input>
+            </div>
             
             
             
