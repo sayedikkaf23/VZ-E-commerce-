@@ -211,14 +211,16 @@ const routes: Routes = [
     component: AdminLoginComponent,
    
   },
-  {
-        path: 'user/dashboard',
-        component: UserDashboardComponent,
+  // {
+  //       path: 'user/dashboard',
+  //       component: UserDashboardComponent,
        
-      },
-      { path: 'services', component: ServicePageComponent },
+  //     },
+  //     { path: 'services', component: ServicePageComponent },
 
-
+  { path: 'user/dashboard', component: UserDashboardComponent },
+  { path: 'services', component: ServicePageComponent },
+  { path: '', redirectTo: 'user/dashboard', pathMatch: 'full' }, // Default route
   {
     path: 'panel',
     component: DashboardLayoutComponent,
