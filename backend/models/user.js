@@ -5,19 +5,11 @@ const schema = mongoose.Schema;
 
 let user = new schema(
   {
-    role_id: { type: schema.Types.ObjectId, ref: "role" },
 
     email: { type: String, default: "" },
 
     password: { type: String, default: "" },
 
-    user_name: { type: String, default: "" },
-
-    contact_number: { type: String, default: "" },
-
-    status: { type: Boolean, default: false },
-
-    is_deleted: { type: Boolean, default: false },
   },
   {
     strict: true,
