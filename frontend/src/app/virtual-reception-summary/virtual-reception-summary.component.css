@@ -1,53 +1,150 @@
+/* Common Table Styles */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures equal column widths */
+}
+
+.table th,
+.table td {
+  padding: 10px 15px; /* Adds consistent spacing */
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  overflow: hidden; /* Prevents content from spilling */
+  text-overflow: ellipsis; /* Adds ellipsis for extremely long text */
+}
+
+.table th {
+  font-weight: bold;
+  text-align: left;
+  white-space: nowrap; /* Prevents wrapping for table headers */
+}
+
+.table thead th {
+  border-bottom: 2px solid #333;
+}
+
+.table tbody tr:hover {
+  background-color: #f9f9f9; /* Highlight row on hover */
+}
+
+/* Currency Alignment */
+.currency {
+  text-align: right; /* Aligns currency values to the right */
+}
+
+.column-space {
+  width: 25%; /* Ensures equal column space for 4 columns */
+  text-align: center; /* Centers text for headings */
+}
+
+.w-100 {
+  width: 100%;
+}
+
+.order-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* Ensures equal column width */
+}
+
+.order-summary-table th,
+.order-summary-table td {
+  padding: 10px 15px; /* Adds consistent spacing */
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: normal; /* Allows text to wrap */
+  overflow: hidden; /* Prevents content from spilling outside */
+  text-overflow: ellipsis; /* Adds ellipsis for extremely long text */
+}
+
+.order-summary-table th {
+  /* font-weight: bold; */
+  text-align: left; /* Aligns headers properly */
+}
+
+/* .order-summary-table thead th {
+  border-bottom: 2px solid #333;
+} */
+
+.order-summary-table tbody tr:hover {
+  background-color: #f9f9f9; /* Highlight row on hover */
+}
+
+.column-space {
+  width: 25%; /* Ensures equal column space for 4 columns */
+  text-align: center; /* Centers text for headings */
+  white-space: normal; /* Allows the text to wrap for full visibility */
+}
+
 .product-table {
   width: 100%;
   border-collapse: collapse;
-  margin-top: 15px; /* Adds space above the table */
-  margin-bottom: 15px; /* Adds space below the table */
+  table-layout: auto; /* Allows columns to adjust to content */
 }
 
 .product-table th,
 .product-table td {
-  padding: 15px; /* Increase padding for better readability */
+  padding: 10px 15px; /* Adds consistent spacing */
   text-align: left;
   border-bottom: 1px solid #ddd;
+  white-space: normal; /* Allows text to wrap if needed */
 }
 
 .product-table th {
-  background-color: #f8f8f8; /* Light background for headers */
+  /* font-weight: bold; */
+  text-align: left; /* Align headers properly */
+  
 }
+
+/* .product-table thead th {
+  border-bottom: 2px solid #333;
+} */
 
 .product-table tbody tr:hover {
   background-color: #f9f9f9; /* Highlight row on hover */
 }
 
 .currency {
-  text-align: right;
-  padding-right: 15px; /* Add extra padding for separation */
+  text-align: right; /* Aligns currency values to the right */
 }
 
-.right-align {
-  text-align: right;
+.w-100 {
+  width: 100%;
+}.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* Allows columns to adjust to content */
 }
 
-.container {
-  margin-top: 30px; /* Adds space around the container */
-  margin-bottom: 30px;
+.product-table th,
+.product-table td {
+  padding: 10px 15px; /* Adds consistent spacing */
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: normal; /* Allows text to wrap if needed */
 }
 
-.box-light {
-  padding: 20px; /* Adds padding inside the box for better alignment */
-  border-radius: 8px; /* Adds rounded corners */
-  background-color: #f9f9f9; /* Light background */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+.product-table th {
+  /* font-weight: bold; */
+  text-align: left; /* Align headers properly */
 }
 
-.no-wrap {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+/* .product-table thead th {
+  border-bottom: 2px solid #333;
+} */
+
+.product-table tbody tr:hover {
+  background-color: #f9f9f9; /* Highlight row on hover */
 }
 
+.currency {
+  text-align: right; /* Aligns currency values to the right */
+}
 
+.w-100 {
+  width: 100%;
+}
 /* Loader Container */
 .loader-container {
   position: fixed; /* Covers the whole viewport */
