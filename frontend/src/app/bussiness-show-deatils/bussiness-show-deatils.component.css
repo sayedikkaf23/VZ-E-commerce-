@@ -198,7 +198,88 @@
   text-transform: uppercase; /* Uppercase for a more modern feel */
   animation: fadeIn 1.5s ease-in-out; /* Fade-in effect for the text */
 }
+/* Table Container with Horizontal Scrolling */
+.product-table-wrapper,
+.order-summary-table-wrapper {
+  overflow-x: auto; /* Enables horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* Improves scrolling experience on iOS */
+  margin-bottom: 20px; /* Adds spacing between tables */
+}
 
+/* Table Adjustments */
+.product-table,
+.order-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto; /* Ensures table columns adjust to content */
+}
+
+/* Styling for Table Cells */
+.product-table th,
+.product-table td,
+.order-summary-table th,
+.order-summary-table td {
+  padding: 10px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  white-space: normal; /* Allows text to wrap */
+}
+
+/* Currency Alignment */
+.currency {
+  text-align: right; /* Aligns currency values to the right */
+}
+
+/* Default Desktop Styles (for Web) */
+@media (min-width: 768px) {
+  .product-table-wrapper,
+  .order-summary-table-wrapper {
+    width: 100%; /* Ensure table wrapper takes full width */
+  }
+}
+
+/* Mobile Adjustments */
+@media (max-width: 767px) {
+  .container {
+    padding: 0 15px; /* Adds padding for better layout on small screens */
+  }
+
+  .box-light {
+    margin-bottom: 20px; /* Adds spacing between sections */
+  }
+
+  .product-table-wrapper,
+  .order-summary-table-wrapper {
+    -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    overflow-x: scroll; /* Allows horizontal scrolling */
+  }
+
+
+}
+/* Default Styles for Desktop (Web) */
+.product-table th,
+.order-summary-table th {
+  white-space: nowrap; /* Prevents text from wrapping in headers */
+  text-align: left; /* Align text to the left */
+}
+
+/* Mobile Styles */
+@media (max-width: 767px) {
+  .product-table th,
+  .order-summary-table th {
+    white-space: normal; /* Allows text to wrap on mobile */
+    word-wrap: break-word; /* Breaks long words to fit the column width */
+  }
+}
+@media (max-width: 767px) {
+  .primary-btn {
+    width: 100% !important;  /* Full width for mobile */
+    max-width: 400px !important; /* Set max-width for mobile */
+    height: 45px !important; /* Adjust height for mobile */
+    padding: 10px 15px !important; /* Adjust padding for mobile */
+    font-size: 16px !important; /* Adjust font size for mobile */
+  }
+}
 /* Fade-In Animation for Text */
 @keyframes fadeIn {
   0% {

@@ -42,6 +42,7 @@
   width: 100%;
 }
 
+/* Order Summary Table */
 .order-summary-table {
   width: 100%;
   border-collapse: collapse;
@@ -59,13 +60,8 @@
 }
 
 .order-summary-table th {
-  /* font-weight: bold; */
   text-align: left; /* Aligns headers properly */
 }
-
-/* .order-summary-table thead th {
-  border-bottom: 2px solid #333;
-} */
 
 .order-summary-table tbody tr:hover {
   background-color: #f9f9f9; /* Highlight row on hover */
@@ -77,6 +73,7 @@
   white-space: normal; /* Allows the text to wrap for full visibility */
 }
 
+/* Product Table */
 .product-table {
   width: 100%;
   border-collapse: collapse;
@@ -92,47 +89,8 @@
 }
 
 .product-table th {
-  /* font-weight: bold; */
-  text-align: left; /* Align headers properly */
-  
-}
-
-/* .product-table thead th {
-  border-bottom: 2px solid #333;
-} */
-
-.product-table tbody tr:hover {
-  background-color: #f9f9f9; /* Highlight row on hover */
-}
-
-.currency {
-  text-align: right; /* Aligns currency values to the right */
-}
-
-.w-100 {
-  width: 100%;
-}.product-table {
-  width: 100%;
-  border-collapse: collapse;
-  table-layout: auto; /* Allows columns to adjust to content */
-}
-
-.product-table th,
-.product-table td {
-  padding: 10px 15px; /* Adds consistent spacing */
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-  white-space: normal; /* Allows text to wrap if needed */
-}
-
-.product-table th {
-  /* font-weight: bold; */
   text-align: left; /* Align headers properly */
 }
-
-/* .product-table thead th {
-  border-bottom: 2px solid #333;
-} */
 
 .product-table tbody tr:hover {
   background-color: #f9f9f9; /* Highlight row on hover */
@@ -145,6 +103,7 @@
 .w-100 {
   width: 100%;
 }
+
 /* Loader Container */
 .loader-container {
   position: fixed; /* Covers the whole viewport */
@@ -206,5 +165,39 @@
   }
   100% {
     opacity: 1;
+  }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 767px) {
+  .table,
+  .order-summary-table,
+  .product-table {
+    overflow-x: auto;
+    display: block; /* Allows horizontal scrolling */
+    width: 100%;
+  }
+
+  .table th,
+  .order-summary-table th,
+  .product-table th {
+    white-space: normal; /* Allow wrapping of headers on mobile */
+    word-wrap: break-word; /* Break words to fit */
+    padding: 8px 10px; /* Adjust padding for smaller screens */
+  }
+
+  .table td,
+  .order-summary-table td,
+  .product-table td {
+    padding: 8px 10px; /* Adjust padding for smaller screens */
+  }
+  @media (max-width: 767px) {
+    .primary-btn {
+      width: 100% !important;  /* Full width for mobile */
+      max-width: 400px !important; /* Set max-width for mobile */
+      height: 45px !important; /* Adjust height for mobile */
+      padding: 10px 15px !important; /* Adjust padding for mobile */
+      font-size: 16px !important; /* Adjust font size for mobile */
+    }
   }
 }

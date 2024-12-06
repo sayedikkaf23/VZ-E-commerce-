@@ -111,22 +111,28 @@ onSubmit() {
   showSingleValidationError(formGroup: FormGroup) {
     let hasError = false;
   
-    Object.keys(formGroup.controls).forEach((field) => {
+    // Iterate through form controls to check for invalid fields
+    for (const field of Object.keys(formGroup.controls)) {
       const control = formGroup.get(field);
       if (control && control.invalid) {
-        hasError = true; // Ensure at least one error is identified
+        hasError = true; // At least one error is detected
+  
+        // Show specific validation errors
         if (control.errors?.['required']) {
           this.toastr.error(`${this.getFieldName(field)} is required.`, 'Validation Error');
+          return; // Stop the loop after showing the first error
         } else if (control.errors?.['minlength']) {
           const minLength = control.errors['minlength'].requiredLength;
           this.toastr.error(`${this.getFieldName(field)} must be at least ${minLength} characters long.`, 'Validation Error');
+          return; // Stop the loop after showing the first error
         } else if (control.errors?.['email']) {
           this.toastr.error(`Please provide a valid ${this.getFieldName(field)}.`, 'Validation Error');
+          return; // Stop the loop after showing the first error
         }
       }
-    });
+    }
   
-    // Fallback message if no specific error is detected
+    // Optionally display a fallback message if no error is found
     if (!hasError) {
       this.toastr.error('Please fill out the form correctly.', 'Validation Error');
     }

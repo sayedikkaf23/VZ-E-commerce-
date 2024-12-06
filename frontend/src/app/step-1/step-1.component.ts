@@ -106,20 +106,24 @@ onSubmit() {
 
   // Show one toaster for all invalid fields
   showFieldValidationErrors(formGroup: FormGroup) {
-    Object.keys(formGroup.controls).forEach((field) => {
+    for (const field of Object.keys(formGroup.controls)) {
       const control = formGroup.get(field);
       if (control && control.invalid) {
         if (control.errors?.['required']) {
           this.toastr.error(`${this.getFieldName(field)} is required.`, 'Validation Error');
+          return; // Show error and return to stop further toasts from appearing
         } else if (control.errors?.['minlength']) {
           const minLength = control.errors['minlength'].requiredLength;
           this.toastr.error(`${this.getFieldName(field)} must be at least ${minLength} characters long.`, 'Validation Error');
+          return; // Show error and return
         } else if (control.errors?.['email']) {
           this.toastr.error(`Please provide a valid ${this.getFieldName(field)}.`, 'Validation Error');
+          return; // Show error and return
         }
       }
-    });
+    }
   }
+  
   
   
 
