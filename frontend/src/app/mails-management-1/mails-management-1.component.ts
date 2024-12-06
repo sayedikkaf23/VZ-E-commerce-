@@ -107,22 +107,25 @@ export class MailsManagement1Component {
   }
   // Show one toaster for all invalid fields
   showSingleValidationError(formGroup: FormGroup) {
-    const missingFields: string[] = []; // Explicitly define the type as string[]
-  
-    Object.keys(formGroup.controls).forEach((field) => {
+    // Iterate over the form controls to check for invalid fields
+    for (const field of Object.keys(formGroup.controls)) {
       const control = formGroup.get(field);
       if (control && control.invalid) {
         if (control.errors?.['required']) {
           this.toastr.error(`${this.getFieldName(field)} is required.`, 'Validation Error');
+          return; // Stop the loop after showing the first error
         } else if (control.errors?.['minlength']) {
           const minLength = control.errors['minlength'].requiredLength;
           this.toastr.error(`${this.getFieldName(field)} must be at least ${minLength} characters long.`, 'Validation Error');
+          return; // Stop the loop after showing the first error
         } else if (control.errors?.['email']) {
           this.toastr.error(`Please provide a valid ${this.getFieldName(field)}.`, 'Validation Error');
+          return; // Stop the loop after showing the first error
         }
       }
-    });
+    }
   }
+  
   
   getFieldName(field: string): string {
     switch (field) {
