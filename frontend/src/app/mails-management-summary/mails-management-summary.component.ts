@@ -44,6 +44,9 @@ export class MailsManagementSummaryComponent {
   }
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
     this.preventBackNavigation(); // Prevent back navigation on this page
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
     // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
