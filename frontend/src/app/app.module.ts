@@ -56,6 +56,7 @@ import { RouterModule } from '@angular/router';
 import { ClientHeaderComponent } from './client-header/client-header.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { ServicePageComponent } from './service-page/service-page.component';
+import { UserNavComponent } from './user-nav/user-nav.component';
 
 @NgModule({
   declarations: [
@@ -104,6 +105,7 @@ import { ServicePageComponent } from './service-page/service-page.component';
     UserDashboardLayoutComponent,
     UserDashboardComponent,
     ClientHeaderComponent,
+    UserNavComponent,
     
   ],
   imports: [
