@@ -749,7 +749,7 @@ async function payNow(req, res) {
             country: "tler", // Country - left empty to avoid display
           },
           // Optionally, leave out the phone field
-          phone: "tler", // Leave empty to avoid displaying the phone number
+          phone: "+911234569898", // Leave empty to avoid displaying the phone number
         },
       },
       {
