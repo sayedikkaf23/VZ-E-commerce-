@@ -45,6 +45,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
   nationalities: string[] = []; // Initialize as an empty array
+  nationalitiesData: string[] = []; // Initialize as an empty array
 
 
   constructor(
@@ -70,6 +71,13 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
       this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     });
+
+
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalitiesData =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
+    });
+
     
     const storedStep2Data = localStorage.getItem('mailform2');
     if (storedStep2Data) {
