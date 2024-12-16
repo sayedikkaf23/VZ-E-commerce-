@@ -1,3 +1,23 @@
+/* Adjust the starting position of the text */
+.custom-file-upload .form-control.rounded-input {
+  text-indent: 15px; /* Moves the text (e.g., 'No file chosen') to the right */
+  border: 1px solid #e0e0e0;
+  border-radius: 25px;
+  background-color: #f5f5f5;
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+  height: 54px; /* Adjust height if needed */
+  text-align: left;
+}
+
+/* Optional: Adjust placeholder spacing */
+.custom-file-upload .form-control.rounded-input::placeholder {
+  text-indent: 15px;
+  color: #aaa;
+}
+
+
 .required {
   color: red;
   font-weight: bold;
@@ -67,6 +87,9 @@ ul li::before {
   color: red;
   font-size: 0.875rem;
   margin-top: 4px;
+}
+.form-field .form-control.rounded-input::placeholder {
+  margin-left: 30px;
 }
 .form-field .form-control.rounded-input {
   border: 1px solid #e0e0e0; /* Subtle border color */

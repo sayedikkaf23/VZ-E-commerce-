@@ -46,7 +46,7 @@
                   (click)="triggerFileUpload()"
                 />
                 <label class="upload-button" for="companyTradeLicenseFile">
-                  <i class="fa fa-upload"></i> 
+                  <i class="fa fa-upload"></i>
                 </label>
                 <input
                   type="file"
@@ -56,10 +56,8 @@
                   style="display: none;"
                 />
               </div>
-              <div *ngIf="formData.get('companyTradeLicenseFileName')?.invalid && formData.get('companyTradeLicenseFileName')?.touched" class="error-message">
-                Please upload the Trade License file.
-              </div>
             </div>
+            
           </div>
           
           
