@@ -103,10 +103,10 @@
                       <td>
                         <ul>
                           <li *ngFor="let file of shareholder.files">
-                            <div *ngIf="isImageFile(file.url)">
+                            <!-- <div *ngIf="isImageFile(file.url)">
                               <img [src]="file.url" alt="{{ file.name }}" width="50" height="50" style="margin-right: 10px;"/>
-                            </div>
-                            <a [href]="file.url" target="_blank" rel="noopener noreferrer">Open</a>
+                            </div> -->
+                            <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
                           </li>
                         </ul>
                       </td>
