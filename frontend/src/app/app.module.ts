@@ -127,6 +127,7 @@ import { UserNavComponent } from './user-nav/user-nav.component';
 
     // HttpClientModule is no longer needed here
   ],
+  
   schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA],
 
   providers: [
