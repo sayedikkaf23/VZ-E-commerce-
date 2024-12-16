@@ -17,16 +17,18 @@
         <form [formGroup]="formData" (ngSubmit)="onSubmit()">
           <div class="item">
             <h3>Company Documents</h3>
+        
+            <!-- Text Input Field for Company Trade License -->
             <div class="form-field">
               <label for="companytradelicense">Enter Company Trade License<span class="required">*</span></label>
               <input class="form-control" type="text" id="companytradelicense" placeholder="Enter Company Trade License"
-                formControlName="companyTradeLicense" />
-                <div *ngIf="formData.get('companyTradeLicense')?.invalid && formData.get('companyTradeLicense')?.touched" class="error-message">
-                  Company Trade License is required.
-                </div>
+                     formControlName="companyTradeLicense" />
+              <div *ngIf="formData.get('companyTradeLicense')?.invalid && formData.get('companyTradeLicense')?.touched" class="error-message">
+                Company Trade License is required.
+              </div>
             </div>
-
-
+        
+            <!-- File Upload Field for Trade License -->
             <div class="form-field">
               <label for="companyTradeLicenseFile">Upload Trade License <span class="required">*</span></label>
               <div class="custom-file-upload">
@@ -36,6 +38,7 @@
                   readonly
                   [value]="companyTradeLicenseFile?.[0]?.name || 'No file chosen'"
                   placeholder="No file chosen"
+                  (click)="triggerFileUpload()"
                 />
                 <label class="upload-button" for="companyTradeLicenseFile">
                   <i class="fa fa-upload"></i> 
@@ -44,26 +47,16 @@
                   type="file"
                   id="companyTradeLicenseFile"
                   (change)="onFileChangeTrade($event)"
+                  #fileInput
                   style="display: none;"
                 />
               </div>
-              <div *ngIf="!companyTradeLicenseFile?.length && formData.get('companyTradeLicenseFile')?.touched" class="error-message">
+              <div *ngIf="formData.get('companyTradeLicenseFile')?.invalid && formData.get('companyTradeLicenseFile')?.touched" class="error-message">
                 Please upload the Trade License file.
               </div>
             </div>
-            
-   
-            <!-- <div class="form-field">
-                      <label for="shareholderid">Enter Shareholder ID's/Passport<span class="required">*</span></label>
-                      <input
-                        class="form-control"
-                        type="text"
-                        id="shareholderid"
-                        placeholder="Enter Shareholder ID's/Passport"
-                        formControlName="shareholderId"
-                      />
-                    </div> -->
           </div>
+        
           <div class="item" formArrayName="shareholders">
             <h3>Shareholder Details</h3>
             <div *ngFor="let shareholder of shareholders.controls; let i = index" [formGroupName]="i" class="shareholder-section">
@@ -76,8 +69,8 @@
                     Passport Number is required.
                   </div>
                 </div>
-          
-                <!-- File Upload Field -->
+        
+                <!-- File Upload Field for Shareholder -->
                 <div class="form-field">
                   <label for="files{{ i }}">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
                   <div class="custom-file-upload">
@@ -87,6 +80,7 @@
                       readonly
                       [value]="uploadedFileNames[i]?.[0]?.name || 'No file chosen'"
                       placeholder="No file chosen"
+                      (click)="triggerFileUpload2(i)"
                     />
                     <label class="upload-button" for="files{{ i }}">
                       <i class="fa fa-upload"></i> 
@@ -96,36 +90,31 @@
                       id="files{{ i }}"
                       multiple
                       (change)="onFileChange($event, i)"
+                      #fileInput2
                       style="display: none;"
                     />
                   </div>
-                
-                  <!-- Display the uploaded file names and "View File" links -->
+        
                   <ul>
                     <li *ngFor="let file of uploadedFileNames[i]">
                       {{ file.name }}
                       <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
                     </li>
                   </ul>
-                
-                  <div *ngIf="!uploadedFiles[i]?.length && shareholder.get('files')?.touched" class="error-message">
+        
+                  <div *ngIf="(!uploadedFileNames[i] || uploadedFileNames[i].length === 0) && shareholder.get('files')?.touched" class="error-message">
                     Please upload at least one file.
                   </div>
                 </div>
-                
-                
               </div>
             </div>
           </div>
-          
-          
-
-
+        
           <div class="form-submit">
             <button type="submit" class="btn" id="btn_submit">Next</button>
           </div>
-
         </form>
+        
       </div>
 
     </div>
