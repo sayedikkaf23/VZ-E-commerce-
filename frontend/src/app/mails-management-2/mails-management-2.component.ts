@@ -44,6 +44,7 @@ export class MailsManagement2Component {
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
   nationalities: string[] = []; // Initialize as an empty array
+  nationalitiesData: string[] = []; // Initialize as an empty array
 
 
   constructor(
@@ -68,6 +69,12 @@ export class MailsManagement2Component {
       // Assuming data is an array of country objects
       this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
       this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    });
+
+
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalitiesData =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
     // this.getnationalityService.getNationality().subscribe((data) => {
     //   this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
