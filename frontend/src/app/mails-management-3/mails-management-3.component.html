@@ -17,50 +17,52 @@
           <!-- Company Documents Section -->
           <div class="item">
             <h3>Company Documents</h3>
-            
+          
             <!-- Company Trade License Text Input -->
             <div class="form-field">
-              <label for="companytradelicense">Enter Company Trade License<span class="required">*</span></label>
-              <input class="form-control" type="text" id="companytradelicense" placeholder="Enter Company Trade License"
-                formControlName="companyTradeLicense" />
-              <div *ngIf="formData.get('companyTradeLicense')?.invalid && formData.get('companyTradeLicense')?.touched" class="error-message">
+              <label for="companyTradeLicenseNumber">Enter Company Trade License <span class="required">*</span></label>
+              <input
+                class="form-control"
+                type="text"
+                id="companyTradeLicenseNumber"
+                placeholder="Enter Company Trade License"
+                formControlName="companyTradeLicenseNumber"
+              />
+              <div *ngIf="formData.get('companyTradeLicenseNumber')?.invalid && formData.get('companyTradeLicenseNumber')?.touched" class="error-message">
                 Company Trade License is required.
               </div>
             </div>
-  
+          
             <!-- Company Trade License File Upload -->
- <!-- Company Trade License File Upload -->
-<!-- Company Trade License File Upload -->
-<div class="form-field">
-  <label for="companyTradeLicenseFile">Upload Trade License <span class="required">*</span></label>
-  <div class="custom-file-upload">
-    <input
-      type="text"
-      class="form-control rounded-input"
-      readonly
-      [value]="companyTradeLicenseFile?.[0]?.name || 'No file chosen'"
-      placeholder="No file chosen"
-      (click)="triggerFileUpload()"
-    />
-    <label class="upload-button" for="companyTradeLicenseFile">
-      <i class="fa fa-upload"></i> 
-    </label>
-    <input
-      type="file"
-      id="companyTradeLicenseFile"
-      (change)="onFileChangeTrade($event)"
-      #fileInput
-      style="display: none;"
-    />
-  </div>
-  <div *ngIf="!companyTradeLicenseFile?.length && formData.get('companyTradeLicenseFile')?.touched" class="error-message">
-    Please upload the Trade License file.
-  </div>
-</div>
-
-
-
+            <div class="form-field">
+              <label for="companyTradeLicenseFile">Upload Trade License <span class="required">*</span></label>
+              <div class="custom-file-upload">
+                <input
+                  type="text"
+                  class="form-control rounded-input"
+                  readonly
+                  [value]="companyTradeLicenseFile?.[0]?.name || 'No file chosen'"
+                  placeholder="No file chosen"
+                  (click)="triggerFileUpload()"
+                />
+                <label class="upload-button" for="companyTradeLicenseFile">
+                  <i class="fa fa-upload"></i> 
+                </label>
+                <input
+                  type="file"
+                  id="companyTradeLicenseFile"
+                  (change)="onFileChangeTrade($event)"
+                  #fileInput
+                  style="display: none;"
+                />
+              </div>
+              <div *ngIf="formData.get('companyTradeLicenseFileName')?.invalid && formData.get('companyTradeLicenseFileName')?.touched" class="error-message">
+                Please upload the Trade License file.
+              </div>
+            </div>
           </div>
+          
+          
   
           <!-- Shareholder Details Section -->
           <div class="item" formArrayName="shareholders">

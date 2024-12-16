@@ -6,14 +6,12 @@ import AOS from 'aos';
 import { UserService } from '../service/user.service';
 import { FileStorageService } from '../service/files.service';
 
-declare var $: any;
-
 @Component({
   selector: 'app-mails-management-3',
   templateUrl: './mails-management-3.component.html',
-  styleUrl: './mails-management-3.component.css'
+  styleUrls: ['./mails-management-3.component.css']
 })
-export class MailsManagement3Component {
+export class MailsManagement3Component implements OnInit {
   @ViewChild('fileInput') fileInput!: ElementRef;
   @ViewChildren('fileInput2') fileInputs!: QueryList<ElementRef>;
 
@@ -21,7 +19,10 @@ export class MailsManagement3Component {
   shareholdersData: any[] = [];
   uploadedFiles: File[][] = [];
   uploadedFileNames: { [key: string]: { name: string; url: string }[] } = {};
-  companyTradeLicenseFile: File[] = []; // Store the uploaded company trade license file
+
+  // Instead of File[], we'll store the trade license file info as { name: string; url: string }[]
+  companyTradeLicenseFile: { name: string; url: string }[] = [];
+
   isLoading = false;
 
   constructor(
@@ -32,50 +33,71 @@ export class MailsManagement3Component {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.formData = this.fb.group({
-      companyTradeLicense: ['', Validators.required],
+      companyTradeLicenseNumber: ['', Validators.required],  // Text input for the license number
+      companyTradeLicenseFileName: ['', Validators.required], // File upload field for the file name
       shareholders: this.fb.array([])
     });
   }
 
   ngOnInit(): void {
-    console.log('ngOnInit executed');
-  
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-  
-    // Retrieve saved data from localStorage
+
     const savedData1 = localStorage.getItem('mailform1');
     const savedData2 = localStorage.getItem('mailform2');
-    const savedData = savedData2 || savedData1;
 
-    if (savedData) {
-      const parsedData = JSON.parse(savedData);
-      this.shareholdersData = parsedData.shareholders || [];
-      this.initializeShareholders();
+    let parsedData1: any = {};
+    let parsedData2: any = {};
 
-      // Repopulate form fields with saved data
-      this.formData.patchValue({
-        companyTradeLicense: parsedData.companyTradeLicense || '',
-        companyTradeLicenseFile: parsedData.companyTradeLicenseFile || null,
-        shareholders: this.shareholdersData
-      });
+    if (savedData1) {
+      parsedData1 = JSON.parse(savedData1);
+    }
 
-      // Restore file URLs for each shareholder
-      this.uploadedFileNames = parsedData.uploadedFileNames || {};
-      this.companyTradeLicenseFile = parsedData.companyTradeLicenseFile || []; // Restore company trade license file
-      console.log("Restored file URLs:", this.uploadedFileNames);
-    } else {
-      console.log("No savedData found in localStorage.");
-      this.initializeShareholders();
+    // Initialize shareholders from mailform1 data
+    this.shareholdersData = parsedData1.shareholders || [];
+    this.initializeShareholders();
+
+    if (savedData2) {
+      parsedData2 = JSON.parse(savedData2);
+
+      // Merge passportNumber if counts match
+      if (parsedData2.shareholders && parsedData2.shareholders.length === this.shareholdersData.length) {
+        this.shareholdersData.forEach((sh, i) => {
+          if (parsedData2.shareholders[i].passportNumber) {
+            sh.passportNumber = parsedData2.shareholders[i].passportNumber;
+          }
+        });
+      }
+      this.initializeShareholders(); // Re-initialize after merging passportNumbers
+
+      // Restore company trade license text input
+      if (parsedData2.companyTradeLicenseNumber) {
+        this.formData.get('companyTradeLicenseNumber')?.setValue(parsedData2.companyTradeLicenseNumber);
+      }
+
+      // Restore trade license file info (now as { name: string; url: string }[])
+      this.companyTradeLicenseFile = parsedData2.companyTradeLicenseFile || [];
+
+      if (this.companyTradeLicenseFile.length > 0) {
+        // Set the form control for file name
+        this.formData.get('companyTradeLicenseFileName')?.setValue(this.companyTradeLicenseFile[0].name);
+      }
+
+      // Restore uploaded file names for shareholders
+      this.uploadedFileNames = parsedData2.uploadedFileNames || {};
     }
   }
-  
+
   get shareholders(): FormArray {
     return this.formData.get('shareholders') as FormArray;
   }
-  
+
   initializeShareholders(): void {
+    while (this.shareholders.length) {
+      this.shareholders.removeAt(0);
+    }
+
     this.shareholdersData.forEach((shareholder, index) => {
       const shareholderGroup = this.fb.group({
         name: [shareholder.name || '', Validators.required],
@@ -87,15 +109,16 @@ export class MailsManagement3Component {
       });
 
       this.shareholders.push(shareholderGroup);
-      this.uploadedFiles.push([]);
+      if (!this.uploadedFiles[index]) {
+        this.uploadedFiles[index] = [];
+      }
     });
   }
 
   onFileChangeTrade(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
       const file: File = event.target.files[0];
-      this.companyTradeLicenseFile = [file]; // Store the uploaded file for company trade license
-      
+
       this.isLoading = true;
       this.userService.getPresignedUrl(file).subscribe(
         (response: any) => {
@@ -105,8 +128,10 @@ export class MailsManagement3Component {
             headers: { 'Content-Type': file.type },
             body: file
           }).then(() => {
-            // Save the file details (name and URL)
-            this.uploadedFileNames['companyTradeLicenseFile'] = [{ name: file.name, url: presignedUrl }];
+            // Store file info as { name, url }
+            this.companyTradeLicenseFile = [{ name: file.name, url: presignedUrl }];
+            // Update the form control for the file name
+            this.formData.get('companyTradeLicenseFileName')?.setValue(file.name);
             this.isLoading = false;
           }).catch((error) => {
             console.error('File upload failed', error);
@@ -129,69 +154,57 @@ export class MailsManagement3Component {
 
       this.isLoading = true;
 
-      filesArray.forEach((file) => {
-        this.userService.getPresignedUrl(file).subscribe(
-          (response: any) => {
-            const presignedUrl = response.url;
+      const uploadPromises = filesArray.map(file =>
+        this.userService.getPresignedUrl(file).toPromise().then((response: any) => {
+          const presignedUrl = response.url;
+          return fetch(presignedUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': file.type },
+            body: file,
+          })
+          .then(() => {
+            this.uploadedFileNames[index].push({ name: file.name, url: presignedUrl });
+          });
+        })
+      );
 
-            fetch(presignedUrl, {
-              method: 'PUT',
-              headers: {
-                'Content-Type': file.type,
-              },
-              body: file,
-            })
-              .then(() => {
-                console.log(`File uploaded successfully: ${file.name}`);
-                this.uploadedFileNames[index].push({ name: file.name, url: presignedUrl });
-                this.isLoading = false;
-              })
-              .catch((error) => {
-                this.isLoading = false;
-
-                console.error(`Error uploading file: ${file.name}`, error);
-              })
-              .finally(() => {
-                this.isLoading = false;
-              });
-          },
-          (error: any) => {
-            this.isLoading = false;
-            console.error('Error getting pre-signed URL', error);
-          }
-        );
-      });
-      console.log(`Files stored for Shareholder ${index + 1}:`, filesArray);
+      Promise.all(uploadPromises)
+        .then(() => {
+          console.log(`All files for Shareholder ${index + 1} uploaded successfully`);
+          this.isLoading = false;
+        })
+        .catch(error => {
+          console.error(`Error uploading files for Shareholder ${index + 1}`, error);
+          this.isLoading = false;
+        });
     }
   }
 
   onSubmit(): void {
     this.formData.markAllAsTouched();
     this.shareholders.controls.forEach(control => control.markAllAsTouched());
-  
+
     if (this.formData.valid) {
       const formValues = this.formData.value;
 
       const dataToSave = {
         ...formValues,
-        companyTradeLicenseFile: this.companyTradeLicenseFile, // Save company trade license file
+        // Store the trade license file info (already as { name, url } object)
+        companyTradeLicenseFile: this.companyTradeLicenseFile,
+        // Map shareholders to include uploaded file info
         shareholders: formValues.shareholders.map((shareholder: any, index: number) => ({
           ...shareholder,
-          passportNumber: this.shareholders.at(index).get('passportNumber')?.value || '',
           files: this.uploadedFileNames[index] || []
         })),
-        uploadedFileNames: this.uploadedFileNames // Persist the uploaded file URLs
+        uploadedFileNames: this.uploadedFileNames
       };
 
       localStorage.setItem('mailform2', JSON.stringify(dataToSave));
-  
-      // Navigate to the next step
       this.router.navigate(['/mails-management-details']);
     } else {
       console.log('Please fill all required fields');
     }
   }
-
 
   triggerFileUpload(): void {
     this.fileInput.nativeElement.click();
@@ -206,5 +219,4 @@ export class MailsManagement3Component {
       console.error(`No file input found for index ${index}`);
     }
   }
-
 }

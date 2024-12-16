@@ -5,47 +5,36 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormDataService } from '../service/form-data.service';
 import { UserService } from '../service/user.service';
-// import { GetnationalityService } from '../service/getnationality.service';
 import AOS from 'aos';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 declare var $: any;
 
-
 @Component({
   selector: 'app-mails-management-2',
   templateUrl: './mails-management-2.component.html',
-  styleUrl: './mails-management-2.component.css'
+  styleUrls: ['./mails-management-2.component.css']
 })
-export class MailsManagement2Component {
+export class MailsManagement2Component implements OnInit, AfterViewInit {
   @ViewChild('dateInput') dateInput!: ElementRef;
 
   formData: any = {
     CompanyName: '',
     CompanyIncorporated: '',
     Website: '',
-    tradelicense:'',
-    shareholdercount:'',
-    Companylicensed:'',
-
+    tradelicense: '',
+    shareholdercount: '',
+    Companylicensed: '',
   };
-  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
 
-  openDatePicker() {
-    if (this.dateInput && this.dateInput.nativeElement) {
-      this.dateInput.nativeElement.focus();  // Ensure the input is focused
-      this.dateInput.nativeElement.click();  // Programmatically click the input to open the date picker
-    }
-  }
-  
-  
+  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }];
+
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
-  step1Data: any = {}; // To store Step 1 data
-  nationalities: string[] = []; // Initialize as an empty array
-  nationalitiesData: string[] = []; // Initialize as an empty array
-
+  step1Data: any = {};
+  nationalities: string[] = [];
+  nationalitiesData: string[] = [];
 
   constructor(
     private formDataService: FormDataService,
@@ -57,60 +46,54 @@ export class MailsManagement2Component {
     private getnationalityService: GetnationalityService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    // Retrieve Step 1 data from the service when Step 2 initializes
     this.step1Data = this.formDataService.getmailformData();
     console.log('Step 1 data:', this.step1Data);
   }
 
   ngOnInit(): void {
-    // Retrieve Step 2 data from localStorage
-
+    // Load nationality data
     this.getnationalityService.getCountries().subscribe((data) => {
-      // Assuming data is an array of country objects
       this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
-      this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+      this.cdRef.detectChanges();
     });
-
 
     this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalitiesData =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
+      this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
+      this.cdRef.detectChanges();
     });
-    // this.getnationalityService.getNationality().subscribe((data) => {
-    //   this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-    //   this.cdRef.detectChanges(); // Trigger change detection to update the view
-    // });
+
+    // Retrieve Step 2 data from localStorage
     const storedStep2Data = localStorage.getItem('mailform1');
     if (storedStep2Data) {
       const parsedData = JSON.parse(storedStep2Data);
-      
-      // Update formData and shareholders separately
+
       this.formData = { 
         CompanyName: parsedData.CompanyName, 
         CompanyIncorporated: parsedData.CompanyIncorporated, 
         Website: parsedData.Website, 
-      
-        tradelicense:parsedData.tradelicense,
+        tradelicense: parsedData.tradelicense,
         shareholdercount: parsedData.shareholdercount,
-        Companylicensed:parsedData.Companylicensed
+        Companylicensed: parsedData.Companylicensed
       };
       
-      // Update shareholders if it exists in the parsed data
       if (parsedData.shareholders) {
         this.shareholders = parsedData.shareholders;
       }
-    
-      // Trigger change detection if necessary
+
+      // Ensure correct number of shareholders
+      this.updateShareholders();
+
       this.cdRef.detectChanges();
     }
   }
 
   ngAfterViewInit() {
     const Tooltip = (window as any).Tooltip;
-    Tooltip.initAll();
+    if (Tooltip && typeof Tooltip.initAll === 'function') {
+      Tooltip.initAll();
+    }
     if (isPlatformBrowser(this.platformId)) {
-      // Ensure DOM-related code runs only in the browser
-      AOS.init(); // Initialize AOS animations
+      AOS.init();
 
       $(window).scroll(() => {
         const height = $(window).scrollTop();
@@ -137,19 +120,24 @@ export class MailsManagement2Component {
         });
       });
     }
-    
   }
+
+  openDatePicker() {
+    if (this.dateInput && this.dateInput.nativeElement) {
+      this.dateInput.nativeElement.focus();
+      this.dateInput.nativeElement.click();
+    }
+  }
+
   addShareholder() {
-    console.log('Add shareholder clicked');
     this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
-    this.cdRef.detectChanges(); // Only if necessary
-}
+    this.cdRef.detectChanges();
+  }
 
-deleteShareholder(index: number) {
-  this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
-}
+  deleteShareholder(index: number) {
+    this.shareholders.splice(index, 1);
+  }
 
-  // Handle file input changes
   onFileChange(event: any, fieldName: string) {
     if (fieldName === 'passport') {
       this.files.passport = event.target.files[0];
@@ -159,14 +147,14 @@ deleteShareholder(index: number) {
   }
 
   updateShareholders() {
-    const count = parseInt(this.formData.shareholdercount, 10); // Convert count to number
+    const count = parseInt(this.formData.shareholdercount, 10);
 
-    // If the selected count is greater than current length, add more shareholder objects
+    // Add shareholders if needed
     while (this.shareholders.length < count) {
       this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
     }
 
-    // If the selected count is smaller, remove extra shareholder objects
+    // Remove extra shareholders if needed
     while (this.shareholders.length > count) {
       this.shareholders.pop();
     }
@@ -174,21 +162,17 @@ deleteShareholder(index: number) {
 
   isFormInvalid(): boolean {
     const shareholderCount = Number(this.formData.shareholdercount);
-  
-    // Ensure that all fields of each shareholder up to the count are filled
+
     for (let i = 0; i < shareholderCount; i++) {
       const shareholder = this.shareholders[i];
       if (!shareholder || !shareholder.name || !shareholder.shareholderPercentage || !shareholder.dob || !shareholder.nationalityshareholder) {
-        return true;  // Form is invalid if any required field is missing
+        return true;
       }
     }
-  
-    return false; // Form is valid if all required fields are filled
+    return false;
   }
-  
-  // Validation and submission logic
-  onSubmit() {
 
+  onSubmit() {
     if (this.isFormInvalid()) {
       this.toastr.error('Please fill out all required fields.', 'Form Incomplete');
     } else {
@@ -197,9 +181,9 @@ deleteShareholder(index: number) {
 
         // Append Step 1 data
         for (const key in this.step1Data) {
-            if (this.step1Data.hasOwnProperty(key)) {
-                formDataToSend.append(key, this.step1Data[key]);
-            }
+          if (this.step1Data.hasOwnProperty(key)) {
+            formDataToSend.append(key, this.step1Data[key]);
+          }
         }
 
         // Append Step 2 data
@@ -209,57 +193,46 @@ deleteShareholder(index: number) {
         formDataToSend.append('Website', this.formData.Website);
         formDataToSend.append('tradelicense', this.formData.tradelicense);
         formDataToSend.append('Companylicensed', this.formData.Companylicensed);
+
         this.shareholders.forEach((shareholder, index) => {
           formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
         });
 
         const combinedFormData = {
-          ...this.formData, // Spread formData properties
-          shareholders: this.shareholders // Add the shareholders array
+          ...this.formData,
+          shareholders: this.shareholders
         };
         
         // Save Step 2 data to localStorage
         localStorage.setItem('mailform1', JSON.stringify(combinedFormData));
 
-
-        if (this.formData.CompanyIncorporated == 'United Arab Emirates') {
-          // Navigate to the route for UAE-specific details
+        if (this.formData.CompanyIncorporated === 'United Arab Emirates') {
           this.router.navigate(['/mails-management-3']);
         } else {
-          // Navigate to the standard route
           this.router.navigate(['/mails-management-details']);
         }
-
+      }
     }
-    }
+  }
 
+  trackByShareholder(index: number, shareholder: any): number {
+    return index;
+  }
 
-   
-}
-
-trackByShareholder(index: number, shareholder: any): number {
-  return index; // Or return a unique identifier if you have one
-}
-
-  // Validate form and show a single toast for missing fields
   validateForm(): boolean {
     let isValid = true;
     const missingFields: string[] = [];
-
-console.log(missingFields)
 
     if (!this.formData.CompanyName) {
       missingFields.push('CompanyName');
       isValid = false;
     }
+
     if (!this.formData.CompanyIncorporated) {
       missingFields.push('CompanyIncorporated');
       isValid = false;
     }
-   
-   
 
-    // Show a single toast for all missing fields if any
     if (missingFields.length > 0) {
       const message = `All fields are required`;
       this.toastr.error(message);
@@ -268,4 +241,3 @@ console.log(missingFields)
     return isValid;
   }
 }
-
