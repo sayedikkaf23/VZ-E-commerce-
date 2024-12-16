@@ -107,25 +107,25 @@
             <div class="form-field" *ngIf="formData.CompanyIncorporated">
               <label for="resident">How many shareholder does your company have?
                 <span class="required">*</span></label>
-
-              <fieldset>
-                <select name="shareholdercount" id="shareholdercount" class="form-select"
-                  [(ngModel)]="formData.shareholdercount">
-                  <option value="" disabled selected>
-                    How many shareholder does your company have?
-                  </option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
-                  <option value="5">5</option>
-                  <option value="6">6</option>
-                  <option value="7">7</option>
-                  <option value="8">8</option>
-                  <option value="9">9</option>
-                  <option value="10+">10+</option>
-                </select>
-              </fieldset>
+                <fieldset>
+                  <select name="shareholdercount" id="shareholdercount" class="form-select"
+                    [(ngModel)]="formData.shareholdercount" (ngModelChange)="updateShareholders()">
+                    <option value="" disabled selected>
+                      How many shareholder does your company have?
+                    </option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10+">10+</option>
+                  </select>
+                </fieldset>
+                
             </div>
           
             <div class="shareholder-row shareholder-section" *ngIf="formData.CompanyIncorporated"> <!-- Apply new class here -->
