@@ -6,16 +6,14 @@ const fs = require("fs");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
 const crypto = require("crypto");
-const User = require('../models/user'); // Assuming the User model is in 'models/user'
-const bcrypt = require('bcrypt');
+const User = require("../models/user"); // Assuming the User model is in 'models/user'
+const bcrypt = require("bcrypt");
 
 require("dotenv").config();
 //  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
 const stripe = require("stripe")(process.env.STRIP_KEY);
 
-
 const saltRounds = 15;
-
 
 // const mailTransporter = nodemailer.createTransport({
 //   service: "gmail",
@@ -59,8 +57,6 @@ const mailTransporter = nodemailer.createTransport({
     pass: "qgwlzriynfzukuwy",
   },
 });
-
-
 
 const AddCashMachin = async (req, res) => {
   // Validation errors check
@@ -389,332 +385,337 @@ const AddCashMachin = async (req, res) => {
   }
 };
 
-
 async function payNow(req, res) {
-    const { quoteId } = req.params;
-  
-    const data = await PiData.findOne({
-        $or: [
-          { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
-          { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
-        ],
-      });
-  
-    console.log("Data received in createTotalpaySession:", data);
-    // Static data
-  
-    order_number = data.quotePaymentWithDetails.QuotePaymentId;
-    acountname = data.quoteWithProductDetails.AccountName;
-    acountemail = data.quoteWithProductDetails.quoteEmail;
-    order_amount = Number(data.salesforceResponseMatchScreening.total_including_Vat).toFixed(2);
-    // const order_number = "order-1234";
-    // const order_amount = "0.19";
-    const order_currency = "AED";
-    const order_description = "gift";
-    const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
-  
-    // Create hash
-    const stringToHash =
-      order_number + order_amount + order_currency + order_description + password;
-    console.log("String to hash:", stringToHash); // log the string to be hashed
-    const md5hash = crypto
-      .createHash("md5")
-      .update(stringToHash.toUpperCase())
-      .digest("hex");
-    console.log(md5hash);
-  
-    const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
-    console.log("SHA-1 Hash:", sha1Hash);
-  
-    // const accountDetailsResult = await AccountDetail.find();
-    // if (!accountDetailsResult || accountDetailsResult.length === 0) {
-    //   return res.status(400).json({ message: "Account details not found" });
-    // }
-  
-    const TokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token`,
-      null,
-      {
-        params: {
-          client_id: process.env.SALESFORCE_CLIENT_ID,
-          client_secret: process.env.SALESFORCE_CLIENT_SECRET,
-          grant_type: "password",
-          username: process.env.SALESFORCE_USERNAME,
-          password: process.env.SALESFORCE_PASSWORD,
-        },
-      }
-    );
-    const accessToken = TokenResponse.data.access_token;
-  
-    // console.log("Access Token:", accessToken);
-  
-    // Create a new PaymentForm instance
-    const newOnlinePayForm = new OnlinePayment({
-        transactionDetails: {
-          amount:data.salesforceResponseMatchScreening.total_including_Vat,
-          quotePaymentId: order_number,
-        //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
-  
-          // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
-          // toCurrency: currency_convertingto,
-          proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
-          currencyPaid: "AED",
-          // amountPaid:existingUser.totalIncludingVAT,
-        },
-        customerDetails: {
-          name: data.quoteWithProductDetails.AccountName,
-          id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
-        },
-  
-        paymentType:  "Online",
-        status: "Paid",
-        quoteId: data.quoteWithProductDetails.oppurtunityId,
-        // Default status
-      });
-  
-    await newOnlinePayForm.save();
-  
-    // Create request body
-    const requestBody = {
-      merchant_key: "38e1fdfc-5b72-11ee-a23d-de864d357ae1",
-      operation: "purchase",
-      methods: ["card"],
-      order: {
-        number: order_number,
-        amount: order_amount,
-        currency: order_currency,
-        description: order_description,
+  const { quoteId } = req.params;
+
+  const data = await PiData.findOne({
+    $or: [
+      { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+      { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+    ],
+  });
+
+  console.log("Data received in createTotalpaySession:", data);
+  // Static data
+
+  order_number = data.quotePaymentWithDetails.QuotePaymentId;
+  acountname = data.quoteWithProductDetails.AccountName;
+  acountemail = data.quoteWithProductDetails.quoteEmail;
+  order_amount = Number(
+    data.salesforceResponseMatchScreening.total_including_Vat
+  ).toFixed(2);
+  // const order_number = "order-1234";
+  // const order_amount = "0.19";
+  const order_currency = "AED";
+  const order_description = "gift";
+  const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
+
+  // Create hash
+  const stringToHash =
+    order_number + order_amount + order_currency + order_description + password;
+  console.log("String to hash:", stringToHash); // log the string to be hashed
+  const md5hash = crypto
+    .createHash("md5")
+    .update(stringToHash.toUpperCase())
+    .digest("hex");
+  console.log(md5hash);
+
+  const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
+  console.log("SHA-1 Hash:", sha1Hash);
+
+  // const accountDetailsResult = await AccountDetail.find();
+  // if (!accountDetailsResult || accountDetailsResult.length === 0) {
+  //   return res.status(400).json({ message: "Account details not found" });
+  // }
+
+  const TokenResponse = await axios.post(
+    `https://test.salesforce.com/services/oauth2/token`,
+    null,
+    {
+      params: {
+        client_id: process.env.SALESFORCE_CLIENT_ID,
+        client_secret: process.env.SALESFORCE_CLIENT_SECRET,
+        grant_type: "password",
+        username: process.env.SALESFORCE_USERNAME,
+        password: process.env.SALESFORCE_PASSWORD,
       },
-      billing_address: {
-        country: "AE",
-        state: "Dubai",
-        district: "Dubai",
-        address: "Dubai",
-        house_number: "1",
-        address: "Moor Building",
-        city: "Dubai",
-        zip: "00000",
-        phone: "+971090450954",
-      },
-      cancel_url: `https://ecommerce.yeepeey.com/failure/${order_number}`,
-      success_url: `https://ecommerce.yeepeey.com/successful/${order_number}`,
-      customer: {
-        // name: acountname,
-        email: acountemail,
-      },
-      recurring_init: "true",
-      hash: sha1Hash,
-    };
-  
-    console.log(sha1Hash, "sha1Hash");
-  
-    try {
-      // Send request to Totalpay
-      console.log("second");
-        const totalpayResponse = await axios.post(
-          "https://checkout.totalpay.global/api/v1/session",
-          requestBody
-        );
-  
-      const totalpayResponseData = totalpayResponse.data;
-  
-      const combinedResponse = {
-        message: "Online Payment",
-        GL_code: "1352 - Payment Gateway",
-        bank_name: "Payment Gateway",
-        Bankstatus: newOnlinePayForm.status,
-        Name: newOnlinePayForm.customerDetails.name,
-        proformaInvoiceNumber:
-          newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
-        // receiptfile: newOnlinePayForm.fileUpload,
-        currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
-        totalpayData: totalpayResponseData, // Include data from the first response here
-      };
-  
-      // console.log(combinedResponse);
-  
-      res.status(200).json(combinedResponse);
-    } catch (error) {
-      console.error("Error message:", error.message);
-  
-      // Log the server's response provided by Axios in the error object
-      if (error.response) {
-        console.error("Error response data:", error.response.data);
-      }
-  
-      // Log the full error stack for debugging purposes
-      console.error("Error stack:", error.stack);
-  
-      res.status(500).json({ message: "Internal Server Error" });
     }
+  );
+  const accessToken = TokenResponse.data.access_token;
+
+  // console.log("Access Token:", accessToken);
+
+  // Create a new PaymentForm instance
+  const newOnlinePayForm = new OnlinePayment({
+    transactionDetails: {
+      amount: data.salesforceResponseMatchScreening.total_including_Vat,
+      quotePaymentId: order_number,
+      //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
+
+      // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+      // toCurrency: currency_convertingto,
+      proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
+      currencyPaid: "AED",
+      // amountPaid:existingUser.totalIncludingVAT,
+    },
+    customerDetails: {
+      name: data.quoteWithProductDetails.AccountName,
+      id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
+    },
+
+    paymentType: "Online",
+    status: "Paid",
+    quoteId: data.quoteWithProductDetails.oppurtunityId,
+    // Default status
+  });
+
+  await newOnlinePayForm.save();
+
+  // Create request body
+  const requestBody = {
+    merchant_key: "38e1fdfc-5b72-11ee-a23d-de864d357ae1",
+    operation: "purchase",
+    methods: ["card"],
+    order: {
+      number: order_number,
+      amount: order_amount,
+      currency: order_currency,
+      description: order_description,
+    },
+    billing_address: {
+      country: "AE",
+      state: "Dubai",
+      district: "Dubai",
+      address: "Dubai",
+      house_number: "1",
+      address: "Moor Building",
+      city: "Dubai",
+      zip: "00000",
+      phone: "+971090450954",
+    },
+    cancel_url: `https://ecommerce.yeepeey.com/failure/${order_number}`,
+    success_url: `https://ecommerce.yeepeey.com/successful/${order_number}`,
+    customer: {
+      // name: acountname,
+      email: acountemail,
+    },
+    recurring_init: "true",
+    hash: sha1Hash,
+  };
+
+  console.log(sha1Hash, "sha1Hash");
+
+  try {
+    // Send request to Totalpay
+    console.log("second");
+    const totalpayResponse = await axios.post(
+      "https://checkout.totalpay.global/api/v1/session",
+      requestBody
+    );
+
+    const totalpayResponseData = totalpayResponse.data;
+
+    const combinedResponse = {
+      message: "Online Payment",
+      GL_code: "1352 - Payment Gateway",
+      bank_name: "Payment Gateway",
+      Bankstatus: newOnlinePayForm.status,
+      Name: newOnlinePayForm.customerDetails.name,
+      proformaInvoiceNumber:
+        newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
+      // receiptfile: newOnlinePayForm.fileUpload,
+      currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
+      totalpayData: totalpayResponseData, // Include data from the first response here
+    };
+
+    // console.log(combinedResponse);
+
+    res.status(200).json(combinedResponse);
+  } catch (error) {
+    console.error("Error message:", error.message);
+
+    // Log the server's response provided by Axios in the error object
+    if (error.response) {
+      console.error("Error response data:", error.response.data);
+    }
+
+    // Log the full error stack for debugging purposes
+    console.error("Error stack:", error.stack);
+
+    res.status(500).json({ message: "Internal Server Error" });
   }
-  
-  async function payNowByStripe(req, res) {
-    const { quoteId } = req.params;
-    let order_number;
-    let acountname;
-    let acountemail;
-    let order_amount;
-    let type = "Online";
-    const data = await PiData.findOne({
-        $or: [
-          { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
-          { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
-        ],
-      });
-  
-    // if (!data) {
-    //   const ManualPiData = await manualPiData.findOne({
-    //     accountId: quoteId,
-    //   });
-  
-    //   data = {
-    //     quotePaymentId: ManualPiData.accountId,
-    //     quoteName: ManualPiData.billTo,
-    //     quoteEmail: ManualPiData.email,
-    //     partPayment: ManualPiData.totalAmount,
-    //     totalIncludingVAT: ManualPiData.totalAmount,
-    //     invoiceNumber: ManualPiData.invoiceNumber,
-    //     quoteId: ManualPiData.invoiceNumber,
-    //     AccountName: ManualPiData.billTo,
-    //   };
-    //   type = "Manual";
-    // }
-  
-    order_number = data.quotePaymentWithDetails.QuotePaymentId;
-    acountname = data.quoteWithProductDetails.AccountName;
-    acountemail = data.quoteWithProductDetails.quoteEmail;
-    order_amount = Number(data.salesforceResponseMatchScreening.total_including_Vat).toFixed(2);
-    // const order_number = "order-1234";
-    // const order_amount = "0.19";
-    const order_currency = "AED";
-    const order_description = "gift";
-    const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
-  
-    // Create hash
-    const stringToHash =
-      order_number + order_amount + order_currency + order_description + password;
-  
-    const md5hash = crypto
-      .createHash("md5")
-      .update(stringToHash.toUpperCase())
-      .digest("hex");
-  
-    const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
-  
-    // const accountDetailsResult = await AccountDetail.find();
-    // if (!accountDetailsResult || accountDetailsResult.length === 0) {
-    //   return res.status(400).json({ message: "Account details not found" });
-    // }
-  
-    try {
+}
+
+async function payNowByStripe(req, res) {
+  const { quoteId } = req.params;
+  let order_number;
+  let acountname;
+  let acountemail;
+  let order_amount;
+  let type = "Online";
+  const data = await PiData.findOne({
+    $or: [
+      { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+      { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+    ],
+  });
+
+  // if (!data) {
+  //   const ManualPiData = await manualPiData.findOne({
+  //     accountId: quoteId,
+  //   });
+
+  //   data = {
+  //     quotePaymentId: ManualPiData.accountId,
+  //     quoteName: ManualPiData.billTo,
+  //     quoteEmail: ManualPiData.email,
+  //     partPayment: ManualPiData.totalAmount,
+  //     totalIncludingVAT: ManualPiData.totalAmount,
+  //     invoiceNumber: ManualPiData.invoiceNumber,
+  //     quoteId: ManualPiData.invoiceNumber,
+  //     AccountName: ManualPiData.billTo,
+  //   };
+  //   type = "Manual";
+  // }
+
+  order_number = data.quotePaymentWithDetails.QuotePaymentId;
+  acountname = data.quoteWithProductDetails.AccountName;
+  acountemail = data.quoteWithProductDetails.quoteEmail;
+  order_amount = Number(
+    data.salesforceResponseMatchScreening.total_including_Vat
+  ).toFixed(2);
+  // const order_number = "order-1234";
+  // const order_amount = "0.19";
+  const order_currency = "AED";
+  const order_description = "gift";
+  const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
+
+  // Create hash
+  const stringToHash =
+    order_number + order_amount + order_currency + order_description + password;
+
+  const md5hash = crypto
+    .createHash("md5")
+    .update(stringToHash.toUpperCase())
+    .digest("hex");
+
+  const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
+
+  // const accountDetailsResult = await AccountDetail.find();
+  // if (!accountDetailsResult || accountDetailsResult.length === 0) {
+  //   return res.status(400).json({ message: "Account details not found" });
+  // }
+
+  try {
     //   const isManual = type === "Manual";
     //   const successType = isManual ? "?type=manual" : "";
     //   const cancelType = isManual ? "?type=manual" : "";
-  
-      const stripeResponse = await stripe.checkout.sessions.create({
-        payment_method_types: ["card"],
-        line_items: [
-          {
-            price_data: {
-              currency: "aed", // Replace with your currency code
-              product_data: {
-                name: acountname, // Replace with your product name
-              },
-              unit_amount: order_amount * 100, // Specify the amount in cents (e.g., $10.00 USD)
+
+    const stripeResponse = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "aed", // Replace with your currency code
+            product_data: {
+              name: acountname, // Replace with your product name
             },
-            quantity: 1,
+            unit_amount: order_amount * 100, // Specify the amount in cents (e.g., $10.00 USD)
           },
-        ],
-        mode: "payment",
-        success_url: `https://ecommerce.yeepeey.com/successful/${data.quotePaymentId}`,
-        cancel_url: `https://ecommerce.yeepeey.com/failure/${data.quotePaymentId}`,
-      });
-  
-      const stripeResponseData = stripeResponse;
-  
-      const newOnlinePayForm = new OnlinePayment({
-        transactionDetails: {
-          amount:data.salesforceResponseMatchScreening.total_including_Vat,
-          quotePaymentId: order_number,
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `https://ecommerce.yeepeey.com/successful/${data.quotePaymentId}`,
+      cancel_url: `https://ecommerce.yeepeey.com/failure/${data.quotePaymentId}`,
+    });
+
+    const stripeResponseData = stripeResponse;
+
+    const newOnlinePayForm = new OnlinePayment({
+      transactionDetails: {
+        amount: data.salesforceResponseMatchScreening.total_including_Vat,
+        quotePaymentId: order_number,
         //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
-  
-          // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
-          // toCurrency: currency_convertingto,
-          proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
-          currencyPaid: "AED",
-          // amountPaid:existingUser.totalIncludingVAT,
-        },
-        customerDetails: {
-          name: data.quoteWithProductDetails.AccountName,
-          id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
-        },
-  
-        paymentType:  "Online",
-        status: "Paid",
-        quoteId: data.quoteWithProductDetails.oppurtunityId,
-        // Default status
-      });
-  
-  
-      await newOnlinePayForm.save();
-  
-      const combinedResponse = {
-        stripeData: stripeResponseData, // Include data from the first response here
-      };
-  
-      res.status(200).json(combinedResponse);
-    } catch (error) {
-      console.error("Error message:", "OnlinePayment Failed");
-      console.error(
-        "Error creating checkout session:",
-        error.response?.data?.error
-      );
-      res.status(500).send("Error creating checkout session");
-    }
+
+        // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+        // toCurrency: currency_convertingto,
+        proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
+        currencyPaid: "AED",
+        // amountPaid:existingUser.totalIncludingVAT,
+      },
+      customerDetails: {
+        name: data.quoteWithProductDetails.AccountName,
+        id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
+      },
+
+      paymentType: "Online",
+      status: "Paid",
+      quoteId: data.quoteWithProductDetails.oppurtunityId,
+      // Default status
+    });
+
+    await newOnlinePayForm.save();
+
+    const combinedResponse = {
+      stripeData: stripeResponseData, // Include data from the first response here
+    };
+
+    res.status(200).json(combinedResponse);
+  } catch (error) {
+    console.error("Error message:", "OnlinePayment Failed");
+    console.error(
+      "Error creating checkout session:",
+      error.response?.data?.error
+    );
+    res.status(500).send("Error creating checkout session");
   }
-  
-  
-  
-  
-  async function payNowByTelr(req, res) {
-    const { quoteId } = req.params;
-    let order_number, acountname, acountemail, order_amount, type = "Online";
-  
-    // Fetch order details
-    const data = await PiData.findOne({
-        $or: [
-          { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
-          { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
-        ],
-      });
-    // if (!data) {
-    // //   const ManualPiData = await manualPiData.findOne({ accountId: quoteId });
-    //   data = {
-    //     quotePaymentId: ManualPiData.accountId,
-    //     quoteName: ManualPiData.billTo,
-    //     quoteEmail: ManualPiData.email,
-    //     partPayment: ManualPiData.totalAmount,
-    //     totalIncludingVAT: ManualPiData.totalAmount,
-    //     invoiceNumber: ManualPiData.invoiceNumber,
-    //     AccountName: ManualPiData.billTo,
-    //   };
-    // //   type = "Manual";
-    // }
-  
-    order_number = data.quotePaymentWithDetails.QuotePaymentId;
-    acountname = data.quoteWithProductDetails.AccountName;
-    acountemail = data.quoteWithProductDetails.quoteEmail;
-    order_amount = Number(data.salesforceResponseMatchScreening.total_including_Vat).toFixed(2);
-    const order_currency = "AED";
-    const order_description = "payment_description";
-  
-    try {
-      // Define success and cancel URLs based on payment type
+}
+
+async function payNowByTelr(req, res) {
+  const { quoteId } = req.params;
+  let order_number,
+    acountname,
+    acountemail,
+    order_amount,
+    type = "Online";
+
+  // Fetch order details
+  const data = await PiData.findOne({
+    $or: [
+      { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+      { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+    ],
+  });
+  // if (!data) {
+  // //   const ManualPiData = await manualPiData.findOne({ accountId: quoteId });
+  //   data = {
+  //     quotePaymentId: ManualPiData.accountId,
+  //     quoteName: ManualPiData.billTo,
+  //     quoteEmail: ManualPiData.email,
+  //     partPayment: ManualPiData.totalAmount,
+  //     totalIncludingVAT: ManualPiData.totalAmount,
+  //     invoiceNumber: ManualPiData.invoiceNumber,
+  //     AccountName: ManualPiData.billTo,
+  //   };
+  // //   type = "Manual";
+  // }
+
+  order_number = data.quotePaymentWithDetails.QuotePaymentId;
+  acountname = data.quoteWithProductDetails.AccountName;
+  acountemail = data.quoteWithProductDetails.quoteEmail;
+  order_amount = Number(
+    data.salesforceResponseMatchScreening.total_including_Vat
+  ).toFixed(2);
+  const order_currency = "AED";
+  const order_description = "payment_description";
+
+  try {
+    // Define success and cancel URLs based on payment type
     //   const isManual = type === "Manual";
     //   const successType = type === "Manual" ? "?type=manual" : "";
     //   const cancelType = type === "Manual" ? "?type=manual" : "";
-   
+
     const telrResponse = await axios.post(
       "https://secure.telr.com/gateway/order.json",
       {
@@ -760,377 +761,372 @@ async function payNow(req, res) {
         },
       }
     );
-    
-  
-      const newOnlinePayForm = new OnlinePayment({
-        transactionDetails: {
-          amount:data.salesforceResponseMatchScreening.total_including_Vat,
-          quotePaymentId: order_number,
-        //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
-  
-          // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
-          // toCurrency: currency_convertingto,
-          proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
-          currencyPaid: "AED",
-          // amountPaid:existingUser.totalIncludingVAT,
-        },
-        customerDetails: {
-          name: data.quoteWithProductDetails.AccountName,
-          id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
-        },
-  
-        paymentType:  "Online",
-        status: "Paid",
-        quoteId: data.quoteWithProductDetails.oppurtunityId,
-        // Default status
-      });
-  
-      await newOnlinePayForm.save();
-  
-   
-  
-  
-      res.status(200).json({ telrData: telrResponse.data });
-    } catch (error) {
-      console.error("Error with Telr API:", error);
-      res.status(500).send("Error creating Telr payment session");
-    }
-  }
-  
-  
-  
-  async function payNowSaleforce(req, res) {
-    const { quoteId } = req.params;
-    console.log("salesforce called");
-  
-    const TokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token`,
-      null,
-      {
-        params: {
-          client_id: process.env.SALESFORCE_CLIENT_ID,
-          client_secret: process.env.SALESFORCE_CLIENT_SECRET,
-          grant_type: "password",
-          username: process.env.SALESFORCE_USERNAME,
-          password: process.env.SALESFORCE_PASSWORD,
-        },
-      }
-    );
-  
-    const accessToken = TokenResponse.data.access_token;
-  
-    try {
-      const paynowdata = await OnlinePayment.findOne({
-        $or: [
-          { quoteId: quoteId },
-          { "transactionDetails.quotePaymentId": quoteId },
-        ],
-      });
-  
-      if (!paynowdata) {
-        // Throw an error if the document is not found
-        throw new Error("Document not found");
-      }
-  
-      const requestBodySalesforce = {
-        qp: {
-          paymentmethod: "Pay Now",
-          amount_received: paynowdata.transactionDetails.amount,
-          bank_name: "Payment Gateway",
-          GL_code: "1301 - VZ ADCB (AED) 10515838124001",
-          payment_status: "Paid",
-          quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
-        },
-        attachments: [
-          {
-            Body: "",
-            ContentType: "",
-            Name: "",
-          },
-          {
-            Body: "",
-            ContentType: "",
-            Name: "",
-          },
-        ],
-      };
-  
-      const headers = {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json", // Specify the content type as JSON
-      };
-  
-      const endpointUrl = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${paynowdata.transactionDetails.quotePaymentId}`;
-      // console.log("url",endpointUrl)
-  
-      axios
-        .put(endpointUrl, requestBodySalesforce, { headers })
-        .then((response) => {
-          // Handle the response here
-          console.log("Response:", response.data);
-        })
-        .catch((error) => {
-          // Handle errors here
-          console.error("Error:", error);
-        });
-  
-      const userEmail = paynowdata.customerDetails.id; // Get the email
-  
-      console.log("User Email:", userEmail);
-  
-      // Step 2: Check if the user already exists in the database
-      const existingUser = await User.findOne({ email: userEmail });
-  
-      if (!existingUser) {
-        // User doesn't exist, create a new user and send email
-        // Create a random password for the new user
-        const randomPassword = Math.random().toString(36).slice(-8); // Simple 8-character random password
-  
-        // Hash the password and save the new user
-        const hashedPassword = await bcrypt.hash(randomPassword, saltRounds);
-  
-        const newUser = new User({
-          email: userEmail, // Use email from the payment data
-          password: hashedPassword,
-        });
-  
-        await newUser.save();
-  
-        // Send the email with login details
-        const mailOptions = {
-          from: "mishalnunu@gmail.com", // Sender address
-          to: userEmail, // Receiver email address (from the OnlinePayment document)
-          subject: 'Your New Account Details',
-          text: `Hello,\n\nYour account has been created successfully. Here are your login details:\n\nEmail: ${userEmail}\nPassword: ${randomPassword}\n\n https://ecommerce.yeepeey.com/login .\n\nThank you!`,
-        };
-  
-        // Send the email
-        mailTransporter.sendMail(mailOptions, (error, info) => {
-          if (error) {
-            console.error("Error sending email:", error);
-          } else {
-            console.log("Email sent:", info.response);
-          }
-        });
-      } else {
-        // If the user already exists, log a message
-        console.log("User already exists, no need to create or send email");
-      }
-  
-      res.json({ message: "Success" });
-    } catch (error) {
-      console.log(error);
-      res.status(500).json({ message: "Internal Server Error", error: error.message });
-    }
-  }
-  
-  
-  async function payNowByFiserv(req, res) {
-    const { quoteId } = req.params;
-  
-    const data = await PiData.findOne({
-      $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
-    });
-  
-    const order_number = data.quotePaymentId;
-    const acountname = data.quoteName;
-    const acountemail = data.quoteEmail;
-    const order_amount = Number(data.partPayment).toFixed(2);
-    // const order_number = "order-1234";
-    // const order_amount = "0.19";
-    const order_currency = "AED";
-    const order_description = "gift";
-    const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
-  
-    // Create hash
-    const stringToHash =
-      order_number + order_amount + order_currency + order_description + password;
-    console.log("String to hash:", stringToHash); // log the string to be hashed
-    const md5hash = crypto
-      .createHash("md5")
-      .update(stringToHash.toUpperCase())
-      .digest("hex");
-    console.log(md5hash);
-  
-    const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
-    console.log("SHA-1 Hash:", sha1Hash);
-  
-    // const accountDetailsResult = await AccountDetail.find();
-    // if (!accountDetailsResult || accountDetailsResult.length === 0) {
-    //   return res.status(400).json({ message: "Account details not found" });
-    // }
-  
-    const TokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token`,
-      null,
-      {
-        params: {
-          client_id: process.env.SALESFORCE_CLIENT_ID,
-          client_secret: process.env.SALESFORCE_CLIENT_SECRET,
-          grant_type: "password",
-          username: process.env.SALESFORCE_USERNAME,
-          password: process.env.SALESFORCE_PASSWORD,
-        },
-      }
-    );
-    const accessToken = TokenResponse.data.access_token;
-  
-    // console.log("Access Token:", accessToken);
-  
-    // Create a new PaymentForm instance
+
     const newOnlinePayForm = new OnlinePayment({
       transactionDetails: {
-        amount: data.totalIncludingVAT,
-        quotePaymentId: data.quotePaymentId,
-        partPayment: data.partPayment,
-  
+        amount: data.salesforceResponseMatchScreening.total_including_Vat,
+        quotePaymentId: order_number,
+        //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
+
         // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
         // toCurrency: currency_convertingto,
-        proformaInvoiceNumber: data.invoiceNumber,
+        proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
         currencyPaid: "AED",
         // amountPaid:existingUser.totalIncludingVAT,
       },
       customerDetails: {
-        name: data.AccountName,
-        id: data.quoteEmail, // Assuming this is the desired ID
+        name: data.quoteWithProductDetails.AccountName,
+        id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
       },
-  
+
+      paymentType: "Online",
       status: "Paid",
-      quoteId: data.quoteId,
+      quoteId: data.quoteWithProductDetails.oppurtunityId,
       // Default status
     });
-  
-    await newOnlinePayForm.save();
-  
-    const postObj = {
-      transactionAmount: {
-        total: data?.totalIncludingVAT,
-        currency: "AED",
-      },
-      orderId: getNextOrderId(), // Generate unique order ID,
-      storeId: process.env.MAGNATI_STORE_ID,
-      transactionType: "SALE",
-      transactionNotificationURL: "https",
-      expiration: "4102358400",
-      authenticateTransaction: true,
-      dynamicMerchantName: "FAB",
-      invoiceNumber: getNextInvoiceNumber(),
-      purchaseOrderNumber: "29062021-031",
-      hostedPaymentPageText: "FAB",
-      billing: {
-        name: data?.AccountName,
-        // birthDate: "1980-01-31",
-        // contact: {
-        //   phone: "1234567890",
-        //   mobilePhone: "1234567890",
-        //   fax: "1234567890",
-        //   email: "Muhammad.Saghir@bankfab.com",
-        // },
-      },
-    };
-  
-    const post = JSON.stringify(postObj);
-    const clientRequestId = uuidv4();
-    const timestamp = Date.now().toString();
-    const apiKey = process.env.MAGNATI_API_KEY;
-    const secretKey = process.env.MAGNATI_SECRET_KEY;
-  
-    const values = apiKey + clientRequestId + timestamp + post;
-  
-    const hmac = crypto.createHmac("sha256", secretKey);
-    hmac.update(values);
-    const messageSignatureBase64 = hmac.digest("base64");
-  
-    const url =
-      "https://prod.emea.api.fiservapps.com/sandbox/ipp/payments-gateway/v2/payment-url";
-  
-    try {
-      const magnatiResponse = await axios.post(url, postObj, {
-        headers: {
-          "Content-type": "application/json; charset=UTF-8",
-          "Api-Key": apiKey,
-          "Client-Request-Id": clientRequestId,
-          Timestamp: timestamp,
-          "Message-Signature": messageSignatureBase64,
-        },
-      });
-  
-      const magnatiResponseData = magnatiResponse.data;
-  
-      const combinedResponse = {
-        message: "Online Payment",
-        GL_code: "1352 - Payment Gateway",
-        bank_name: "Payment Gateway",
-        Bankstatus: newOnlinePayForm.status,
-        Name: newOnlinePayForm.customerDetails.name,
-        proformaInvoiceNumber:
-          newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
-        // receiptfile: newOnlinePayForm.fileUpload,
-        currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
-        magnatiData: magnatiResponseData, // Include data from the first response here
-      };
-  
-      return res.status(200).json(combinedResponse);
-    } catch (error) {
-      res.status(500).json({
-        success: false,
-        message: "Server error",
-        error: error.response?.data || error.message,
-      });
-    }
-  }
 
-  async function MagnatiTransactionStatus(req, res) {
-    console.log(req.body);
-  
-    const status = req.body.status === "APPROVED" ? "successful" : "failure";
-    const reason =
-      req.body.status === "FAILED"
-        ? `?reason=${
-            req.body.fail_rc === "5003"
-              ? "Payment already deducted, please contact administrator."
-              : ""
-          }`
-        : "";
-  
-    try {
-      // Check if `quotePaymentId` exists in the `PiData` collection
-      const piDataRecord = await PiData.findOne({ quotePaymentId: req.body.oid });
-  
-      if (!piDataRecord) {
-        // If `quotePaymentId` does not exist in PiData
-        return res.status(404).json({
-          message: "Quote Payment ID not found in PiData collection",
-          oid: req.body.oid,
-        });
-      }
-  
-      // If transaction is approved, save the payment details
-      if (req.body.status === "APPROVED") {
-        const newOnlinePayForm = new OnlinePayment({
-          transactionDetails: {
-            amount: piDataRecord.totalIncludingVAT,
-            quotePaymentId: req.body.oid,
-            partPayment: req.body.chargetotal,
-            currencyPaid: "AED",
-          },
-          status: "Paid",
-          quoteId: req.body.oid,
-          paymentType: "Online",
-        });
-        await newOnlinePayForm.save();
-      }
-  
-      // Redirect to the appropriate status page
-      res.redirect(
-        `${process.env.REDIRECT_DOMAIN}/${status}/${req.body.oid}${reason}`
-      );
-    } catch (error) {
-      // Handle any errors during the process
-      console.error("Error during MagnatiTransactionStatus:", error);
-      res.status(500).json({ message: "Server error", error: error.message });
-    }
+    await newOnlinePayForm.save();
+
+    res.status(200).json({ telrData: telrResponse.data });
+  } catch (error) {
+    console.error("Error with Telr API:", error);
+    res.status(500).send("Error creating Telr payment session");
   }
+}
+
+async function payNowSaleforce(req, res) {
+  const { quoteId } = req.params;
+  console.log("salesforce called");
+
+  const TokenResponse = await axios.post(
+    `https://test.salesforce.com/services/oauth2/token`,
+    null,
+    {
+      params: {
+        client_id: process.env.SALESFORCE_CLIENT_ID,
+        client_secret: process.env.SALESFORCE_CLIENT_SECRET,
+        grant_type: "password",
+        username: process.env.SALESFORCE_USERNAME,
+        password: process.env.SALESFORCE_PASSWORD,
+      },
+    }
+  );
+
+  const accessToken = TokenResponse.data.access_token;
+
+  try {
+    const paynowdata = await OnlinePayment.findOne({
+      $or: [
+        { quoteId: quoteId },
+        { "transactionDetails.quotePaymentId": quoteId },
+      ],
+    });
+
+    if (!paynowdata) {
+      // Throw an error if the document is not found
+      throw new Error("Document not found");
+    }
+
+    const requestBodySalesforce = {
+      qp: {
+        paymentmethod: "Pay Now",
+        amount_received: paynowdata.transactionDetails.amount,
+        bank_name: "Payment Gateway",
+        GL_code: "1301 - VZ ADCB (AED) 10515838124001",
+        payment_status: "Paid",
+        quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
+      },
+      attachments: [
+        {
+          Body: "",
+          ContentType: "",
+          Name: "",
+        },
+        {
+          Body: "",
+          ContentType: "",
+          Name: "",
+        },
+      ],
+    };
+
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json", // Specify the content type as JSON
+    };
+
+    const endpointUrl = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${paynowdata.transactionDetails.quotePaymentId}`;
+    // console.log("url",endpointUrl)
+
+    axios
+      .put(endpointUrl, requestBodySalesforce, { headers })
+      .then((response) => {
+        // Handle the response here
+        console.log("Response:", response.data);
+      })
+      .catch((error) => {
+        // Handle errors here
+        console.error("Error:", error);
+      });
+
+    const userEmail = paynowdata.customerDetails.id; // Get the email
+
+    console.log("User Email:", userEmail);
+
+    // Step 2: Check if the user already exists in the database
+    const existingUser = await User.findOne({ email: userEmail });
+
+    if (!existingUser) {
+      // User doesn't exist, create a new user and send email
+      // Create a random password for the new user
+      const randomPassword = Math.random().toString(36).slice(-8); // Simple 8-character random password
+
+      // Hash the password and save the new user
+      const hashedPassword = await bcrypt.hash(randomPassword, saltRounds);
+
+      const newUser = new User({
+        email: userEmail, // Use email from the payment data
+        password: hashedPassword,
+      });
+
+      await newUser.save();
+
+      // Send the email with login details
+      const mailOptions = {
+        from: "mishalnunu@gmail.com", // Sender address
+        to: userEmail, // Receiver email address (from the OnlinePayment document)
+        subject: "Your New Account Details",
+        text: `Hello,\n\nYour account has been created successfully. Here are your login details:\n\nEmail: ${userEmail}\nPassword: ${randomPassword}\n\n https://ecommerce.yeepeey.com/login .\n\nThank you!`,
+      };
+
+      // Send the email
+      mailTransporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Error sending email:", error);
+        } else {
+          console.log("Email sent:", info.response);
+        }
+      });
+    } else {
+      // If the user already exists, log a message
+      console.log("User already exists, no need to create or send email");
+    }
+
+    res.json({ message: "Success" });
+  } catch (error) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ message: "Internal Server Error", error: error.message });
+  }
+}
+
+async function payNowByFiserv(req, res) {
+  const { quoteId } = req.params;
+
+  const data = await PiData.findOne({
+    $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
+  });
+
+  const order_number = data.quotePaymentId;
+  const acountname = data.quoteName;
+  const acountemail = data.quoteEmail;
+  const order_amount = Number(data.partPayment).toFixed(2);
+  // const order_number = "order-1234";
+  // const order_amount = "0.19";
+  const order_currency = "AED";
+  const order_description = "gift";
+  const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
+
+  // Create hash
+  const stringToHash =
+    order_number + order_amount + order_currency + order_description + password;
+  console.log("String to hash:", stringToHash); // log the string to be hashed
+  const md5hash = crypto
+    .createHash("md5")
+    .update(stringToHash.toUpperCase())
+    .digest("hex");
+  console.log(md5hash);
+
+  const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
+  console.log("SHA-1 Hash:", sha1Hash);
+
+  // const accountDetailsResult = await AccountDetail.find();
+  // if (!accountDetailsResult || accountDetailsResult.length === 0) {
+  //   return res.status(400).json({ message: "Account details not found" });
+  // }
+
+  const TokenResponse = await axios.post(
+    `https://test.salesforce.com/services/oauth2/token`,
+    null,
+    {
+      params: {
+        client_id: process.env.SALESFORCE_CLIENT_ID,
+        client_secret: process.env.SALESFORCE_CLIENT_SECRET,
+        grant_type: "password",
+        username: process.env.SALESFORCE_USERNAME,
+        password: process.env.SALESFORCE_PASSWORD,
+      },
+    }
+  );
+  const accessToken = TokenResponse.data.access_token;
+
+  // console.log("Access Token:", accessToken);
+
+  // Create a new PaymentForm instance
+  const newOnlinePayForm = new OnlinePayment({
+    transactionDetails: {
+      amount: data.totalIncludingVAT,
+      quotePaymentId: data.quotePaymentId,
+      partPayment: data.partPayment,
+
+      // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+      // toCurrency: currency_convertingto,
+      proformaInvoiceNumber: data.invoiceNumber,
+      currencyPaid: "AED",
+      // amountPaid:existingUser.totalIncludingVAT,
+    },
+    customerDetails: {
+      name: data.AccountName,
+      id: data.quoteEmail, // Assuming this is the desired ID
+    },
+
+    status: "Paid",
+    quoteId: data.quoteId,
+    // Default status
+  });
+
+  await newOnlinePayForm.save();
+
+  const postObj = {
+    transactionAmount: {
+      total: data?.totalIncludingVAT,
+      currency: "AED",
+    },
+    orderId: getNextOrderId(), // Generate unique order ID,
+    storeId: process.env.MAGNATI_STORE_ID,
+    transactionType: "SALE",
+    transactionNotificationURL: "https",
+    expiration: "4102358400",
+    authenticateTransaction: true,
+    dynamicMerchantName: "FAB",
+    invoiceNumber: getNextInvoiceNumber(),
+    purchaseOrderNumber: "29062021-031",
+    hostedPaymentPageText: "FAB",
+    billing: {
+      name: data?.AccountName,
+      // birthDate: "1980-01-31",
+      // contact: {
+      //   phone: "1234567890",
+      //   mobilePhone: "1234567890",
+      //   fax: "1234567890",
+      //   email: "Muhammad.Saghir@bankfab.com",
+      // },
+    },
+  };
+
+  const post = JSON.stringify(postObj);
+  const clientRequestId = uuidv4();
+  const timestamp = Date.now().toString();
+  const apiKey = process.env.MAGNATI_API_KEY;
+  const secretKey = process.env.MAGNATI_SECRET_KEY;
+
+  const values = apiKey + clientRequestId + timestamp + post;
+
+  const hmac = crypto.createHmac("sha256", secretKey);
+  hmac.update(values);
+  const messageSignatureBase64 = hmac.digest("base64");
+
+  const url =
+    "https://prod.emea.api.fiservapps.com/sandbox/ipp/payments-gateway/v2/payment-url";
+
+  try {
+    const magnatiResponse = await axios.post(url, postObj, {
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+        "Api-Key": apiKey,
+        "Client-Request-Id": clientRequestId,
+        Timestamp: timestamp,
+        "Message-Signature": messageSignatureBase64,
+      },
+    });
+
+    const magnatiResponseData = magnatiResponse.data;
+
+    const combinedResponse = {
+      message: "Online Payment",
+      GL_code: "1352 - Payment Gateway",
+      bank_name: "Payment Gateway",
+      Bankstatus: newOnlinePayForm.status,
+      Name: newOnlinePayForm.customerDetails.name,
+      proformaInvoiceNumber:
+        newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
+      // receiptfile: newOnlinePayForm.fileUpload,
+      currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
+      magnatiData: magnatiResponseData, // Include data from the first response here
+    };
+
+    return res.status(200).json(combinedResponse);
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.response?.data || error.message,
+    });
+  }
+}
+
+async function MagnatiTransactionStatus(req, res) {
+  console.log(req.body);
+
+  const status = req.body.status === "APPROVED" ? "successful" : "failure";
+  const reason =
+    req.body.status === "FAILED"
+      ? `?reason=${
+          req.body.fail_rc === "5003"
+            ? "Payment already deducted, please contact administrator."
+            : ""
+        }`
+      : "";
+
+  try {
+    // Check if `quotePaymentId` exists in the `PiData` collection
+    const piDataRecord = await PiData.findOne({ quotePaymentId: req.body.oid });
+
+    if (!piDataRecord) {
+      // If `quotePaymentId` does not exist in PiData
+      return res.status(404).json({
+        message: "Quote Payment ID not found in PiData collection",
+        oid: req.body.oid,
+      });
+    }
+
+    // If transaction is approved, save the payment details
+    if (req.body.status === "APPROVED") {
+      const newOnlinePayForm = new OnlinePayment({
+        transactionDetails: {
+          amount: piDataRecord.totalIncludingVAT,
+          quotePaymentId: req.body.oid,
+          partPayment: req.body.chargetotal,
+          currencyPaid: "AED",
+        },
+        status: "Paid",
+        quoteId: req.body.oid,
+        paymentType: "Online",
+      });
+      await newOnlinePayForm.save();
+    }
+
+    // Redirect to the appropriate status page
+    res.redirect(
+      `${process.env.REDIRECT_DOMAIN}/${status}/${req.body.oid}${reason}`
+    );
+  } catch (error) {
+    // Handle any errors during the process
+    console.error("Error during MagnatiTransactionStatus:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+}
 
 exports.payNow = payNow;
 exports.payNowSaleforce = payNowSaleforce;
