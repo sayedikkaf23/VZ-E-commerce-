@@ -45,7 +45,7 @@ const userDetailsSchema = new mongoose.Schema({
     shareholdercount: { type: String }, // added 'resident' field
     working: { type: String},
     salary: String,
-        companyname: { type: String }, // added 'companyname' field
+    companyname: { type: String }, // added 'companyname' field
     Bank: { type: String }, // added 'Bank' field
     mobileNumber: {
         number: String,
