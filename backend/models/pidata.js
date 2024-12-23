@@ -73,6 +73,10 @@ const pidataSchema = new mongoose.Schema({
     totalPrice: Number
   },
   screeningDetails: screeningDetailsSchema,
+  isPayment: {
+    type: Boolean,
+    default: false // Default value
+  },
   salesforceResponseMatchScreening: responseSchema // Added field for Salesforce response
    // Add screeningDetails as a sub-document
 });

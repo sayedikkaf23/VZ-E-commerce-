@@ -821,6 +821,12 @@ async function payNowSaleforce(req, res) {
         { "transactionDetails.quotePaymentId": quoteId },
       ],
     });
+    const PiDataCheck = await PiData.findOne({
+      $or: [
+        { quoteId: quoteId },
+        { "quoteWithProductDetails.quoteId": quoteId },
+      ],
+    });
 
     if (!paynowdata) {
       // Throw an error if the document is not found
@@ -1075,7 +1081,18 @@ async function payNowSaleforce(req, res) {
       }
   });
   
+  if (PiDataCheck) {
+    // Update the isPayment field to true
+    await PiData.updateOne(
+      { _id: PiDataCheck._id },
+      { $set: { isPayment: true } }
+    );
+    console.log("isPayment updated to true for:", PiDataCheck._id);
+  } else {
+    console.log("No document found for the given quoteId.");
+  }
 
+  
     res.json({ message: "Success" });
   } catch (error) {
     console.log(error);
