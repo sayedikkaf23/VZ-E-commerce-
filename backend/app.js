@@ -18,6 +18,7 @@ const paymentMethodRoutes = require('./routes/paymentMethodRoutes');
 const authRoutes = require('./routes/authRoutes');
 
 var app = express();
+require('./controllers/mailerController');
 
 connectDB();
 

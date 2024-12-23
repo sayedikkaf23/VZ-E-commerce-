@@ -23,21 +23,25 @@ const sendEmail = (email, quoteId,username) => {
    
       
       
-    <p style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: #000;">
-        Hi ${username},<br><br>
-        Welcome to Virtuzone! 🎉 Thank you for signing up.<br><br>
-        As part of Virtuzone, you’ll have access to:<br>
-        <ul>
-            <li><strong>Expert Professional Services:https://ecommerce.yeepeey.com/onlinepayment/${quoteId}
-            <li><strong>Seamless Onboarding Process</strong></li>
-            <li><strong>Dedicated Support Team</strong></li>
-        </ul><br>
-        We’re here to guide you through every step.<br><br>
-        If you need assistance, feel free to reach out.<br><br>
-        Best regards,<br>
-        <strong>The Virtuzone Team</strong><br>
-     
-    </p>
+ <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <p style="font-size: 16px; color: #000;">
+          Hi ${username},<br><br>
+
+          It looks like you reached the payment page but haven’t completed the process yet.<br>
+          We’ve saved your details, and you’re just one step away from activating your professional services with Virtuzone.<br><br>
+
+          <strong>
+            <a href="https://ecommerce.yeepeey.com/onlinepayment/${quoteId}" target="_blank" style="color: #0000EE; text-decoration: underline;">
+              Complete Your Payment
+            </a>
+          </strong><br><br>
+
+          Need assistance? We’re happy to help!<br><br>
+          
+          Cheers,<br>
+          The Virtuzone Team
+        </p>
+      </div>
     
     
 <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
@@ -103,38 +107,45 @@ const sendEmail = (email, quoteId,username) => {
 };
 
 // Cron Job to Check Payments
-cron.schedule("*/5 * * * *", async () => {
+cron.schedule("*/10 * * * * *", async () => {
   console.log("Running cron job to check payment status...");
   try {
-    // Current time minus 20 minutes
+    // (Optional) Current time minus 20 minutes if you want to filter by date
     const twentyMinutesAgo = new Date(Date.now() - 20 * 60 * 1000);
 
-    // Find records where payment is not done and createdAt is older than 20 minutes
+    // Find records where payment is not done
+    // (You can also filter by createdAt <= twentyMinutesAgo if needed)
     const unpaidRecords = await PiData.find({
       isPayment: false,
-      createdAt: { $lte: twentyMinutesAgo },
+      // createdAt: { $lte: twentyMinutesAgo },
     });
 
     if (unpaidRecords.length === 0) {
-      console.log("No pending payments older than 20 minutes.");
+      console.log("No pending payments found.");
       return;
     }
 
     for (const record of unpaidRecords) {
-        const { quoteWithProductDetails, leadWithDetails } = record;
-        
-        const email = quoteWithProductDetails?.quoteEmail;
-        const quoteId = quoteWithProductDetails?.quoteId;
-        const username = `${leadWithDetails?.FirstName} ${leadWithDetails?.LastName}`;  // Combine First and Last name
-        
-        if (email) {
-          await sendEmail(email, quoteId, username);  // Pass email, quoteId, and username
-          console.log(`Reminder email sent to ${email} for Quote ID: ${quoteId}`);
-        } else {
-          console.log(`No email found for Quote ID: ${quoteId}`);
-        }
+      const { quoteWithProductDetails, leadWithDetails } = record;
+
+      const email = quoteWithProductDetails?.quoteEmail;
+      const quoteId = quoteWithProductDetails?.quoteId;
+      const username = `${leadWithDetails?.FirstName} ${leadWithDetails?.LastName}`; // Combine first and last name
+
+      if (email) {
+        // Send the email
+        await sendEmail(email, quoteId, username);
+        console.log(`Reminder email sent to ${email} for Quote ID: ${quoteId}`);
+
+        // Update isPayment to true after sending the email
+        record.isPayment = true;
+        await record.save(); 
+        // OR: await PiData.findByIdAndUpdate(record._id, { isPayment: true }, { new: true });
+
+      } else {
+        console.log(`No email found for Quote ID: ${quoteId}`);
       }
-      
+    }
   } catch (error) {
     console.error("Error while running the cron job:", error);
   }
