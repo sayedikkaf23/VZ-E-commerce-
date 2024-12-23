@@ -1,0 +1,236 @@
+<div class="admin-sidebar" data-simplebar  style="background-image: url('https://res.cloudinary.com/dvekmmxxx/image/upload/v1734931889/sidebar-bg_zg78mh.jpg'); background-size: cover; background-repeat: no-repeat; background-position: center;">
+    <div class="row justify-content-between sidebar-row gx-0">
+        <div class="row justify-content-between gx-0 align-items-center">
+            <div class="col-auto">
+                <div class="logo text-center">
+                    <a href="#">
+                        <img src="assets/images/logo-white.svg" alt="" class="d-block"/>
+                    </a>
+                </div>
+            </div>
+            <div class="col-auto d-lg-none">
+                <div class="navbar-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-auto">
+            <div class="sidebarnav">
+                <ul>
+                    <!-- <li>
+                        <a href="#">
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/1.svg"/></span>Dashboard
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/2.svg"/></span>Customer Management
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/3.svg"/></span>Transactions
+                        </a>
+                    </li> -->
+                    <li class="active">
+                        <a >
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/4.svg"/></span>Card Management
+                        </a>
+                    </li>
+                    <!-- <li>
+                        <a href="#">
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/5.svg"/></span>Payment Gateway
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/6.svg"/></span>User Rights Management
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/7.svg"/></span>Reports
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/8.svg"/></span>User Rights Management
+                        </a>
+                    </li> -->
+                </ul>
+                <ul>
+                    <li>
+                        <a >
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/9.svg"/></span>Setting
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#">
+                            <span class="icon"><img src="assets/images/sidebarnav-icon/10.svg"/></span>Help Center
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-auto">
+            <h2>#BeYour<br/>
+                OwnBoss</h2>
+        </div>
+    </div>
+</div>
+<div class="admin-body-content">
+    <div class="admin-header">
+        <div class="row align-items-center justify-content-between">
+            <div class="col-auto d-lg-none">
+                <div class="navbar-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+            <div class="col-auto d-lg-none">
+                <div class="logo text-center">
+                    <a >
+                        <img src="assets/images/logo.svg" alt="" class="d-block"/>
+                    </a>
+                </div>
+            </div>
+            <div class="col-auto d-none d-md-block">
+                <h3>Card Management</h3>
+            </div>
+            <div class="col-auto">
+                <div class="row align-items-center justify-content-end">
+                    <!-- <div class="col-auto">
+                        <a href="#" class="btn-icon">
+                            <svg width="15" height="17" viewBox="0 0 15 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 5.89328C12 4.64853 11.5365 3.45477 10.7112 2.5746C9.88609 1.69442 8.76695 1.19995 7.6 1.19995C6.43305 1.19995 5.31389 1.69442 4.48873 2.5746C3.66357 3.45477 3.2 4.64853 3.2 5.89328C3.2 11.3689 1 12.9333 1 12.9333H14.2C14.2 12.9333 12 11.3689 12 5.89328Z" stroke="#040404" stroke-width="1.30336" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M8.86839 15.1333C8.73947 15.3556 8.55445 15.5401 8.33173 15.6683C8.10909 15.7965 7.85668 15.8641 7.59972 15.8641C7.34276 15.8641 7.09035 15.7965 6.86771 15.6683C6.64507 15.5401 6.45997 15.3556 6.33105 15.1333" stroke="#040404" stroke-width="1.30336" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span class="notification-reminder"></span>
+                        </a>
+                    </div> -->
+                    <div class="col-auto">
+                        <div class="header-profile-name btn-hover-wrap">
+                            <a  class="btn">
+                                <!-- <span class="icon">
+                                    <img src="assets/images/user-avtar.jpg" class="d-block w-100"/>
+                                </span> -->
+                                <h5>{{ email  }}</h5>
+
+                            </a>
+                            <div class="submenu">
+                                <ul class="inner-submenu">
+                                    <!-- <li>
+                                        <a href="#">My Profile</a>
+                                    </li> -->
+                                    <!-- <li>
+                                        <a href="#">My Transactions</a>
+                                    </li> -->
+                                </ul>
+                                <hr>
+                                <ul class="inner-submenu">
+                                    <li>
+                                        <a style=" cursor: pointer;" (click)="navigateLogout()">Log Out</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="filterbar">
+        <div class="row">
+            <div class="col-12 d-block d-md-none order-1">
+                <h3>Card Management</h3>
+            </div>
+            <div class="col-7 col-md-4 order-3 order-md-2">
+               <button class="btn w-100" (click)="navigateToAddCard()">Add New Card  
+                    <svg class="ms-2 me-0" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 9H9M9 9H16M9 9V2M9 9V16" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="col-md-5 order-2 order-md-3">
+                <!-- <div class="form-field form-field-style-2 mb-md-0 filter-search-field">
+                    <div class="row g-0">
+                        <div class="col">
+                            <div class="field-icon">
+                                <div class="icon">
+                                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12.4585 12.4584L15.6252 15.625" stroke="black" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M1.375 7.70833C1.375 11.2062 4.21053 14.0417 7.70833 14.0417C9.46029 14.0417 11.0461 13.3304 12.1927 12.1807C13.3353 11.0351 14.0417 9.4542 14.0417 7.70833C14.0417 4.21053 11.2062 1.375 7.70833 1.375C4.21053 1.375 1.375 4.21053 1.375 7.70833Z" stroke="black" stroke-opacity="0.3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </div>
+                                <input type="text" class="form-control" placeholder="Search"/>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <button class="btn">Go</button>
+                        </div>
+                    </div>
+                </div> -->
+            </div>
+            <!-- <div class="col-5 col-md-3 order-4 order-md-4">
+                <div class="form-field mb-0 form-field-style-2">
+                    <select class="form-select">
+                        <option>Page Limit</option>
+                        <option>Page Limit 1</option>
+                        <option>Page Limit 2</option>
+                        <option>Page Limit 3</option>
+                    </select>
+                </div>
+            </div> -->
+        </div>
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-list-data table-hover">
+            <thead class="bg-light">
+                <tr>
+                    <th scope="col" class="text-center">Holder Name</th>
+                    <th scope="col">Card Number</th>
+                    <th scope="col" class="text-center">Status</th>
+                    <th scope="col" class="text-center">expiry date</th>
+                    <!-- <th scope="col" class="text-center">Action</th> -->
+                </tr>
+            </thead>
+            <tbody> 
+               
+       
+                <tr *ngFor="let card of customerCards">
+                    <td class="text-center">{{ card.holder_name }}</td>
+                    <td>*******{{ card.last_number }}</td>
+                    <td class="text-center">
+                        <span *ngIf="card.active" class="badge badge-success">Active</span>
+                        <span *ngIf="!card.active" class="badge badge-danger">Inactive</span>
+                      </td>
+                      
+                    <td class="text-center">{{ card.expiry_date }}</td>
+                    <!-- <td class="text-center">
+                        <div class="dropdown">
+                            <button class="btn btn-icon btn-sm btn-light dropdown-toggle arrow-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <svg width="3" height="17" viewBox="0 0 3 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="1.5" cy="1.5" r="1.5" fill="currentColor"/>
+                                    <circle cx="1.5" cy="8.5" r="1.5" fill="currentColor"/>
+                                    <circle cx="1.5" cy="15.5" r="1.5" fill="currentColor"/>
+                                 </svg>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Edit</a></li>
+                                <li><a class="dropdown-item" href="#">View</a></li>
+                                <li><a class="dropdown-item" href="#">Delete</a></li>
+                            </ul>
+                        </div>
+                    </td> -->
+                </tr>
+               
+            </tbody>
+        </table>
+    </div>
+

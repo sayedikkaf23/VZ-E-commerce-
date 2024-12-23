@@ -57,6 +57,7 @@ import { ClientHeaderComponent } from './client-header/client-header.component';
 import { UserDashboardComponent } from './user-dashboard/user-dashboard.component';
 import { ServicePageComponent } from './service-page/service-page.component';
 import { UserNavComponent } from './user-nav/user-nav.component';
+import { CustomerCardmanagementComponent } from './customer-cardmanagement/customer-cardmanagement.component';
 
 @NgModule({
   declarations: [
@@ -106,6 +107,7 @@ import { UserNavComponent } from './user-nav/user-nav.component';
     UserDashboardComponent,
     ClientHeaderComponent,
     UserNavComponent,
+    CustomerCardmanagementComponent,
     
   ],
   imports: [

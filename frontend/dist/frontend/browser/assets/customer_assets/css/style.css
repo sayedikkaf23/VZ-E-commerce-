@@ -1724,7 +1724,7 @@ html .form-check.savecard-check label {
     top:0;
     left:0;
     height:250px;
-    background-image: url("../images/edtprofile-bg.jpg");
+    /* background-image: url("../images/edtprofile-bg.jpg"); */
     background-repeat: no-repeat;
     background-position: right 0;
     background-size: auto 100%; 

@@ -3,7 +3,7 @@ const schema = mongoose.Schema;
 
 const userSchema = new schema(
   {
-    email: { type: String, unique: true, required: true }, // Ensure email is unique
+    email: { type: String }, // Ensure email is unique
     password: { type: String, required: true },
   },
   {

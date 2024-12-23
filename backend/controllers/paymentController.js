@@ -909,7 +909,7 @@ async function payNowSaleforce(req, res) {
                       Hi ${username},<br><br>
                       Your payment has been successfully processed, and you’re officially part of Virtuzone! 🎉<br><br>
                       Here are your service details:<br>
-                      <strong>Service Plan:</strong> ${planName}<br>
+                      // <strong>Service Plan:</strong> ${planName}<br>
                       <strong>Amount:</strong> ${Amount}<br>
                       // <strong>Services:</strong> ${servicesList}<br><br>
                       You can access your Customer Portal here:<br>
@@ -1001,7 +1001,7 @@ async function payNowSaleforce(req, res) {
         Welcome to Virtuzone! 🎉 Thank you for signing up.<br><br>
         As part of Virtuzone, you’ll have access to:<br>
         <ul>
-            <li><strong>Expert Professional Services:https://ecommerce.yeepeey.com/
+            <li><strong>Expert Professional Services: https://ecommerce.yeepeey.com/
             <li><strong>Seamless Onboarding Process</strong></li>
             <li><strong>Dedicated Support Team</strong></li>
         </ul><br>
@@ -1081,18 +1081,16 @@ async function payNowSaleforce(req, res) {
       }
   });
   
-  if (PiDataCheck) {
-    // Update the isPayment field to true
-    await PiData.updateOne(
-      { _id: PiDataCheck._id },
-      { $set: { isPayment: true } }
-    );
-    console.log("isPayment updated to true for:", PiDataCheck._id);
-  } else {
-    console.log("No document found for the given quoteId.");
-  }
-
-  
+if (PiDataCheck) {
+  // Update the isPayment field to true
+  await PiData.updateOne(
+    { _id: PiDataCheck._id },
+    { $set: { isPayment: true } }
+  );
+  console.log("isPayment updated to true for:", PiDataCheck._id);
+} else {
+  console.log("No document found for the given quoteId.");
+}
     res.json({ message: "Success" });
   } catch (error) {
     console.log(error);

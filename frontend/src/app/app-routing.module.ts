@@ -39,6 +39,8 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
 import { UserDashboardLayoutComponent } from './user-dashboard-layout/user-dashboard-layout.component';
 import { ServicePageComponent } from './service-page/service-page.component';
 import { CardmachineComponent } from './cardmachine/cardmachine.component';
+import { CustomerCardmanagementComponent } from './customer-cardmanagement/customer-cardmanagement.component';
+
 
 const routes: Routes = [
 
@@ -81,6 +83,11 @@ const routes: Routes = [
   {
     path: 'mail-management-show-details',
     component: MailsManagementShowDetailsComponent,
+   
+  },
+  {
+    path: 'user-home',
+    component: CustomerCardmanagementComponent,
    
   },
   //new payment
