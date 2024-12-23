@@ -870,6 +870,8 @@ async function payNowSaleforce(req, res) {
       });
 
     const userEmail = paynowdata.customerDetails.id; // Get the email
+    const username = paynowdata.customerDetails.name; // Get the email
+    const Amount = paynowdata.transactionDetails.amount; // Get the email
 
     console.log("User Email:", userEmail);
 
@@ -895,8 +897,76 @@ async function payNowSaleforce(req, res) {
       const mailOptions = {
         from: "mishalnunu@gmail.com", // Sender address
         to: userEmail, // Receiver email address (from the OnlinePayment document)
-        subject: "Your New Account Details",
-        text: `Hello,\n\nYour account has been created successfully. Here are your login details:\n\nEmail: ${userEmail}\nPassword: ${randomPassword}\n\n https://ecommerce.yeepeey.com/login .\n\nThank you!`,
+        subject: "Payment Received – Welcome to Virtuzone!",
+        html: `
+<div> <p style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: #000;">
+                      Hi ${username},<br><br>
+                      Your payment has been successfully processed, and you’re officially part of Virtuzone! 🎉<br><br>
+                      Here are your service details:<br>
+                      <strong>Service Plan:</strong> ${planName}<br>
+                      <strong>Amount:</strong> ${Amount}<br>
+                      // <strong>Services:</strong> ${servicesList}<br><br>
+                      You can access your Customer Portal here:<br>
+                      <a href="https://ecommerce.yeepeey.com/login" style="color: #007bff; text-decoration: underline;">Customer Portal</a><br>
+                      Your temporary password: <strong>${randomPassword}</strong> (You can change it once logged in).<br><br>
+                      Feel free to reach out if you have any questions.<br><br>
+                      Thanks for choosing Virtuzone!<br>
+                      <strong>The Virtuzone Team</strong>
+                    </p><table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+      <tbody>
+        <tr>
+          <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="color: #000000; width: 600px;" width="600">
+              <tbody>
+                <tr>
+                  <td class="column column-1" width="100%" style="text-align: left; padding: 30px 20px; vertical-align: top;">
+                    <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                      <tr>
+                        <td style="padding-bottom: 20px; text-align: center;">
+                          <img src="https://res.cloudinary.com/dvekmmxxx/image/upload/v1718347384/photo_2024-06-14_11-46-14-removebg-preview_bml8en.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
+                        </td>
+                      </tr>
+                    </table>
+                   
+                    <table class="social_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                      <tr>
+                        <td style="text-align: center;">
+                          <a href="https://www.facebook.com/virtuzone" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/facebook@2x.png" width="32" alt="Facebook">
+                          </a>
+                          <a href="https://twitter.com/Virtuzone_UAE" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/twitter@2x.png" width="32" alt="Twitter">
+                          </a>
+                          <a href="http://www.youtube.com/virtuzoneuae" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/youtube@2x.png" width="32" alt="YouTube">
+                          </a>
+                          <a href="http://www.instagram.com/virtuzone" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/instagram@2x.png" width="32" alt="Instagram">
+                          </a>
+                          <a href="http://www.linkedin.com/company/virtuzone" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/linkedin@2x.png" width="32" alt="LinkedIn">
+                          </a>
+                          <a href="https://www.vz.ae/" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/website@2x.png" width="32" alt="Website">
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #000;">
+                      <a href="https://g.page/virtuzone?share" style="color: #000; text-decoration: underline;" target="_blank">
+                        Office 404, Al Saaha Office, Building B, Souk Al Bahar, Old Town Island,<br>Burj Khalifa District, Dubai - UAE
+                      </a>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table></div>
+
+`,
       };
 
       // Send the email
@@ -911,6 +981,100 @@ async function payNowSaleforce(req, res) {
       // If the user already exists, log a message
       console.log("User already exists, no need to create or send email");
     }
+
+
+
+    const verifyMailOptions = {
+      from: "mishalnunu@gmail.com", // Sender address
+      to: userEmail, // Receiver email address
+      subject: "Welcome to Virtuzone! Let’s Get Started",
+      html: `
+  <div>
+    <p style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: #000;">
+        Hi ${username},<br><br>
+        Welcome to Virtuzone! 🎉 Thank you for signing up.<br><br>
+        As part of Virtuzone, you’ll have access to:<br>
+        <ul>
+            <li><strong>Expert Professional Services:https://ecommerce.yeepeey.com/
+            <li><strong>Seamless Onboarding Process</strong></li>
+            <li><strong>Dedicated Support Team</strong></li>
+        </ul><br>
+        We’re here to guide you through every step.<br><br>
+        If you need assistance, feel free to reach out.<br><br>
+        Best regards,<br>
+        <strong>The Virtuzone Team</strong><br>
+     
+    </p>
+    
+    
+<table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+      <tbody>
+        <tr>
+          <td>
+            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="color: #000000; width: 600px;" width="600">
+              <tbody>
+                <tr>
+                  <td class="column column-1" width="100%" style="text-align: left; padding: 30px 20px; vertical-align: top;">
+                    <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                      <tr>
+                        <td style="padding-bottom: 20px; text-align: center;">
+                          <img src="https://res.cloudinary.com/dvekmmxxx/image/upload/v1718347384/photo_2024-06-14_11-46-14-removebg-preview_bml8en.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
+                        </td>
+                      </tr>
+                    </table>
+                   
+                    <table class="social_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
+                      <tr>
+                        <td style="text-align: center;">
+                          <a href="https://www.facebook.com/virtuzone" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/facebook@2x.png" width="32" alt="Facebook">
+                          </a>
+                          <a href="https://twitter.com/Virtuzone_UAE" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/twitter@2x.png" width="32" alt="Twitter">
+                          </a>
+                          <a href="http://www.youtube.com/virtuzoneuae" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/youtube@2x.png" width="32" alt="YouTube">
+                          </a>
+                          <a href="http://www.instagram.com/virtuzone" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/instagram@2x.png" width="32" alt="Instagram">
+                          </a>
+                          <a href="http://www.linkedin.com/company/virtuzone" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/linkedin@2x.png" width="32" alt="LinkedIn">
+                          </a>
+                          <a href="https://www.vz.ae/" target="_blank">
+                            <img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/website@2x.png" width="32" alt="Website">
+                          </a>
+                        </td>
+                      </tr>
+                    </table>
+                    <p style="text-align: center; font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #000;">
+                      <a href="https://g.page/virtuzone?share" style="color: #000; text-decoration: underline;" target="_blank">
+                        Office 404, Al Saaha Office, Building B, Souk Al Bahar, Old Town Island,<br>Burj Khalifa District, Dubai - UAE
+                      </a>
+                    </p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+
+</div>
+      `,
+  };
+  
+  // Send the verification email
+  mailTransporter.sendMail(verifyMailOptions, (error, info) => {
+      if (error) {
+          console.error("Error sending verification email:", error);
+      } else {
+          console.log("Verification email sent:", info.response);
+      }
+  });
+  
 
     res.json({ message: "Success" });
   } catch (error) {
