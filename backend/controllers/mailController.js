@@ -268,14 +268,14 @@ console.log(`${process.env.EXTERNAL_API_SCREENING_URL}`)
     console.log('Screening Response:', screeningResponse.data);
     
     const { matchScore } = screeningResponse.data;
-
+    // const newEmail = req.body.email.toLowerCase();
     // Step 5: Create a new Pidata document
     const newPidata = new Pidata({
       leadWithDetails: {
         Nationality: responseData.leadWithDetails.Nationality,
         Phone: responseData.leadWithDetails.Phone,
         Origin__c: responseData.leadWithDetails.Origin__c,
-        Email: responseData.leadWithDetails.Email,
+        Email: responseData.leadWithDetails.Email.toLowerCase(),
         LeadSource: responseData.leadWithDetails.LeadSource,
         Status: responseData.leadWithDetails.Status,
         Company: responseData.leadWithDetails.Comapny,
@@ -319,7 +319,7 @@ console.log(`${process.env.EXTERNAL_API_SCREENING_URL}`)
       screeningDetails: { // Add screening details to the document
         matchScore: matchScore,
       },
-      isProfile: isProfile || 'N/A',
+      isProfile: isProfile ,
       planname: planname ,
     });
 

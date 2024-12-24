@@ -878,7 +878,7 @@ async function payNowSaleforce(req, res) {
     const userEmail = paynowdata.customerDetails.id; // Get the email
     const username = paynowdata.customerDetails.name; // Get the email
     const Amount = paynowdata.transactionDetails.amount; // Get the email
-    const planName = paynowdata.planname; // Get the email
+    const planName = PiDataCheck.planname; // Get the email
 
     console.log("User Email:", userEmail);
 
@@ -910,7 +910,7 @@ async function payNowSaleforce(req, res) {
                       Hi ${username},<br><br>
                       Your payment has been successfully processed, and you’re officially part of Virtuzone! 🎉<br><br>
                       Here are your service details:<br>
-                      // <strong>Service Plan:</strong> ${planName}<br>
+                       <strong>Service Plan:</strong> ${planName}<br>
                       <strong>Amount:</strong> ${Amount}<br>
                     
                       You can access your Customer Portal here:<br>

@@ -273,7 +273,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
         Nationality: responseData.leadWithDetails.Nationality,
         Phone: responseData.leadWithDetails.Phone,
         Origin__c: responseData.leadWithDetails.Origin__c,
-        Email: responseData.leadWithDetails.Email,
+        Email: responseData.leadWithDetails.Email.toLowerCase(),
         LeadSource: responseData.leadWithDetails.LeadSource,
         Status: responseData.leadWithDetails.Status,
         Company: responseData.leadWithDetails.Comapny,
@@ -317,7 +317,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
       screeningDetails: { // Add screening details to the document
         matchScore: matchScore,
       },
-      isProfile: isProfile || 'N/A',
+      isProfile: isProfile ,
       planname: planname ,
     });
 

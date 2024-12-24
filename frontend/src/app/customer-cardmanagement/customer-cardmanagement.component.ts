@@ -1,73 +1,60 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../service/user.service';
+import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
-import { AddcardService } from '../service/addcard.service';
 
-
+interface Service {
+  name: string;
+  description: string;
+  status: string;
+}
 @Component({
   selector: 'app-customer-cardmanagement',
   templateUrl: './customer-cardmanagement.component.html',
   styleUrl: './customer-cardmanagement.component.css'
 })
 export class CustomerCardmanagementComponent {
-  customerCards: any[] = [];
-  customerName: string = ''; // Initialize to an empty string
-  email: string = ''; // Initialize to an empty string
-
-  customerId = "213";
-  accountId = "2313";
-
-  constructor(
-    private router: Router,
-    private addcardService: AddcardService
-  ) {}
-
-  ngOnInit() {
-    this.loadCustomerCards();
-    this.loadUserProfile();
-  }
-
-  loadCustomerCards() {
-    this.addcardService.getCustomerCards(this.customerId,this.accountId).subscribe({
-      next: (response: { data: any[]; }) => {
-        console.log(response)
-        this.customerCards = response.data;
-     
-      },
-      error: (error: any) => {
-        console.error('Error fetching customer cards', error);
-        // Handle the error
-      }
-    });
-  }
-
-  loadUserProfile() {
-    this.addcardService.getUserProfile(this.customerId).subscribe({
-      next: (response: { data: string; }) => {
-        // console.log(response);
-        this.customerName = response.data;
-        // console.log(this.customerName); // Add this line for debugging // Assuming 'name' is the property in the user profile
-        this.email = response.data; // Assuming this is the email address
-        // Extract the part before "@" from the email
-        if (this.email.includes('@')) {
-          const parts = this.email.split('@');
-          if (parts.length === 2) {
-            this.email = parts[0];
-          }
-        }
-        // Handle the response and update UI
-      },
-      error: (error: any) => {
-        console.error('Error fetching user profile', error);
-        // Handle the error
-      }
-    });
-  }
-
-  navigateToAddCard() {
-    this.router.navigate(['/customer/addcard']);
-  }
+  services: Service[] = []; // Initialize an empty array for services
+  records: any[] = [];
+   constructor(private userService: UserService,private route: ActivatedRoute,private router: Router) {}
+ 
+   ngOnInit(): void {
+     console.log("rouerttyy",this.route.snapshot.url); // Check the current URL
+ 
+     // Retrieve the email from localStorage
+     const email = localStorage.getItem('userEmail');
+     if (email) {
+       // Call the API with the email
+       this.fetchUserServices(email);
+     } else {
+       console.error('No email found in localStorage.');
+     }
+   }
+   isActive(route: string): boolean {
+     return this.router.url === route;
+   }
+   fetchUserServices(email: string): void {
+     const payload = { email };
+ 
+     this.userService.fetchUserServices(payload).subscribe(
+       (response) => {
+         if (response && response.data) {
+           console.log('Response Data:', response.data);
+           this.records = response.data; 
+          //  this.services = response.data.map((item: any) => ({
+          //    name: item.leadWithDetails?.Company || 'No company name provided',
+          //    description: item.quoteWithProductDetails?.product[0]?.productName || 'No description available',
+          //    status: item.leadWithDetails?.Status || 'Unknown'
+          //  }));
+         }
+       },
+       (error) => {
+         console.error('Error fetching user services:', error);
+       }
+     );
+   }
 
   navigateLogout() {
-    this.router.navigate([`/customerportal/signin/${this.accountId}`]);
+    this.router.navigate([`/login`]);
   }
 }

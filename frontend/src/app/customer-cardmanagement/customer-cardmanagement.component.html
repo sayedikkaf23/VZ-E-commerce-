@@ -180,43 +180,52 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let card of customerCards">
-                  <td style="text-align: center; padding: 6px;">{{ card.holder_name }}</td>
-                  <td style="text-align: center; padding: 6px;">*******{{ card.last_number }}</td>
+                <!-- Loop over each record in the array -->
+                <tr *ngFor="let item of records">
+                  <!-- planname as "Services Name" -->
                   <td style="text-align: center; padding: 6px;">
-                    <span
-                      *ngIf="card.active"
-                      style="
-                        display: inline-block;
-                        background-color: #28a745;
-                        color: white;
-                        font-size: 12px;
-                        padding: 3px 8px;
-                        border-radius: 3px;
-                      "
-                    >
-                      Active
-                    </span>
-                    <span
-                      *ngIf="!card.active"
-                      style="
-                        display: inline-block;
-                        background-color: #dc3545;
-                        color: white;
-                        font-size: 12px;
-                        padding: 3px 8px;
-                        border-radius: 3px;
-                      "
-                    >
-                      Inactive
-                    </span>
+                    {{ item.planname }}
                   </td>
-                  <td style="text-align: center; padding: 6px;">{{ card.expiry_date }}</td>
-                  <td style="text-align: center; padding: 6px;">{{ card.expiry_date }}</td>
-                  <td style="text-align: center; padding: 6px;">{{ card.expiry_date }}</td>
+            
+                  <!-- AccountName -->
+                  <td style="text-align: center; padding: 6px;">
+                    {{ item.quoteWithProductDetails?.AccountName }}
+                  </td>
+            
+                  <!-- Tax Invoice Number (can be null, so handle carefully) -->
+                  <td style="text-align: center; padding: 6px;">
+                    {{ item.quoteWithProductDetails?.quoteId || '—' }}
+                  </td>
+            
+                  <!-- Tax Invoice Date -->
+                  <td style="text-align: center; padding: 6px;">
+                    {{ item.quoteWithProductDetails?.invoiceDate }}
+                  </td>
+            
+                  <!-- Amount (subTotal or totalPrice, depending on your needs) -->
+                  <td style="text-align: center; padding: 6px;">
+                    {{ item.quoteWithProductDetails?.subTotal }}
+                  </td>
+            
+                  <!-- Products List -->
+                 <td style="text-align: center; padding: 6px;">
+                    <!-- If you want to display multiple products, we can nest another *ngFor -->
+                    <div *ngIf="item.quoteWithProductDetails?.product?.length > 0; else noProduct">
+                      <ul style="list-style-type: none; padding-left: 0;">
+                        <li *ngFor="let prod of item.quoteWithProductDetails.product">
+                          {{ prod.productName }} (Qty: {{ prod.productQunatity }} , AED{{ prod.productUnitPrice }})
+                        </li>
+                      </ul>
+                    </div>
+                    <ng-template #noProduct>
+                      No products
+                    </ng-template>
+                  </td>  
                 </tr>
-                <tr *ngIf="customerCards.length === 0">
-                  <td colspan="4" style="text-align: center; padding: 6px; color: #888;">
+            
+                <!-- Show a fallback if no records exist -->
+                <tr *ngIf="records.length === 0">
+                  <td colspan="6" style="text-align: center; padding: 6px; color: #888;">
                     No records available.
                   </td>
                 </tr>
