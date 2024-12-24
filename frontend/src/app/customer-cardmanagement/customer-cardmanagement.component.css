@@ -2449,7 +2449,23 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 }
 
 
-
+.container-fluid {
+    height: 100vh;
+  }
+  
+  .admin-sidebar {
+    width: 309px;
+    background-color: #f8f9fa;
+    overflow-y: auto;
+  }
+  
+  .table-responsive {
+    margin: 0;
+    padding: 0;
+    overflow-x: auto;
+    background: white;
+  }
+  
 
 .table-responsive {
     margin: 0; padding: 0; overflow-x: auto; background: white; margin-left: 309px;
