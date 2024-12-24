@@ -1,194 +1,221 @@
-<div class="d-flex" style="display: flex; height: 100vh;">
-    <!-- Sidebar -->
-    <div
-      class="admin-sidebar"
-      data-simplebar
-      style="
-        width: 250px;
-        min-height: 100%;
-        background-image: url('https://res.cloudinary.com/dvekmmxxx/image/upload/v1734931889/sidebar-bg_zg78mh.jpg');
-        background-size: cover;
-        background-repeat: no-repeat;
-        background-position: center;
-        flex: 0 0 250px;
-        color: white;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 1rem;
-      "
-    >
-      <div class="row justify-content-between sidebar-row gx-0">
-        <div class="row justify-content-between gx-0 align-items-center">
-          <div class="col-auto">
-            <div class="logo text-center">
-              <a href="#">
-                <img src="assets/images/logo-white.svg" alt="" class="d-block" />
-              </a>
-            </div>
-          </div>
-          <div class="col-auto d-lg-none">
-            <div class="navbar-toggle">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-        </div>
-        <div class="col-auto">
-          <div class="sidebarnav">
-            <ul>
-              <li class="active">
-                <a>
-                  <span class="icon"
-                    ><img src="assets/images/sidebarnav-icon/4.svg"
-                  /></span>
-                  Service
-                </a>
-              </li>
-            </ul>
-            <ul>
-              <li>
-                <a>
-                  <span class="icon"
-                    ><img src="assets/images/sidebarnav-icon/9.svg"
-                  /></span>
-                  Setting
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <span class="icon"
-                    ><img src="assets/images/sidebarnav-icon/10.svg"
-                  /></span>
-                  Help Center
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-auto">
-          <h2>#BeYour<br />OwnBoss</h2>
-        </div>
-      </div>
-    </div>
-  
-    <!-- Main Content -->
-    <div
-      class="admin-body-content"
-      style="
-        flex: 1;
-        padding: 1rem;
-        background-color: #f8f9fa;
-        overflow: auto;
-        margin-left: 0; /* Reset margin to avoid overlapping */
-      "
-    >
-      <div class="admin-header">
-        <div class="row align-items-center justify-content-between">
-          <div class="col-auto d-lg-none">
-            <div class="navbar-toggle">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-          </div>
-          <div class="col-auto d-lg-none">
-            <div class="logo text-center">
-              <a>
-                <img src="assets/images/logo.svg" alt="" class="d-block" />
-              </a>
-            </div>
-          </div>
-          <div class="col-auto d-none d-md-block">
-            <h3>Services</h3>
-          </div>
-          <div class="col-auto">
-            <div class="row align-items-center justify-content-end">
+<!-- Container-fluid for full-width layout -->
+<div class="container-fluid p-0">
+    <div class="row g-0"><!-- g-0 removes default column gutters -->
+      
+      <!-- Sidebar Column -->
+      <div class="col-auto">
+        <div class="admin-sidebar" data-simplebar
+          style="
+            background-image: url('https://res.cloudinary.com/dvekmmxxx/image/upload/v1734931889/sidebar-bg_zg78mh.jpg');
+          "
+        >
+          <div class="row justify-content-between sidebar-row gx-0">
+            <div class="row justify-content-between gx-0 align-items-center">
               <div class="col-auto">
-                <div class="header-profile-name btn-hover-wrap">
-                  <a class="btn">
-                    <h5>{{ email }}</h5>
+                <div class="logo text-center">
+                  <a href="#">
+                    <img src="assets/images/logo-white.svg" alt="" class="d-block" />
                   </a>
-                  <div class="submenu">
-                    <hr />
-                    <ul class="inner-submenu">
-                      <li>
-                        <a style="cursor: pointer;" (click)="navigateLogout()"
-                          >Log Out</a
-                        >
-                      </li>
-                    </ul>
-                  </div>
+                </div>
+              </div>
+              <div class="col-auto d-lg-none">
+                <div class="navbar-toggle">
+                  <span></span><span></span><span></span>
                 </div>
               </div>
             </div>
+            <div class="col-auto">
+              <div class="sidebarnav">
+                <ul>
+                  <li class="active">
+                    <a>
+                      <span class="icon">
+                        <img src="assets/images/sidebarnav-icon/4.svg" />
+                      </span>
+                      Service
+                    </a>
+                  </li>
+                </ul>
+                <ul>
+                  <li>
+                    <a>
+                      <span class="icon">
+                        <img src="assets/images/sidebarnav-icon/9.svg" />
+                      </span>
+                      Setting
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <span class="icon">
+                        <img src="assets/images/sidebarnav-icon/10.svg" />
+                      </span>
+                      Help Center
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-auto">
+              <h2>#BeYour<br>OwnBoss</h2>
+            </div>
           </div>
         </div>
       </div>
-  
-      <!-- Table Section -->
-      <div
-        class="table-responsive"
       
-      >
-        <table
-          class="table table-bordered table-striped table-hover w-100"
-          style="width: 100%; margin: 0 auto; border-collapse: collapse;"
+      <!-- Main Content Column -->
+      <div class="col" style="background-color: #f8f9fa;">
+        <div
+          class="admin-body-content"
+          style="
+            padding: 1rem;
+            overflow: auto;
+            margin-left: 0; /* Reset margin if needed */
+          "
         >
-          <thead class="bg-light">
-            <tr>
-              <th
-                scope="col"
-                class="text-center"
-                style="background-color: #e9ecef; text-align: center;"
-              >
-                Holder Name
-              </th>
-              <th scope="col" style="background-color: #e9ecef;">Card Number</th>
-              <th
-                scope="col"
-                class="text-center"
-                style="background-color: #e9ecef; text-align: center;"
-              >
-                Status
-              </th>
-              <th
-                scope="col"
-                class="text-center"
-                style="background-color: #e9ecef; text-align: center;"
-              >
-                Expiry Date
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let card of customerCards">
-              <td class="text-center" style="text-align: center;">
-                {{ card.holder_name }}
-              </td>
-              <td>*******{{ card.last_number }}</td>
-              <td class="text-center" style="text-align: center;">
-                <span
-                  *ngIf="card.active"
-                  class="badge badge-success"
-                  style="background-color: #28a745; color: white; padding: 5px 10px;"
-                  >Active</span
-                >
-                <span
-                  *ngIf="!card.active"
-                  class="badge badge-danger"
-                  style="background-color: #dc3545; color: white; padding: 5px 10px;"
-                  >Inactive</span
-                >
-              </td>
-              <td class="text-center" style="text-align: center;">
-                {{ card.expiry_date }}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
+          <!-- Header -->
+          <div class="admin-header"
+               style="background-color: #f8f9fa; padding: 0.5rem 1rem; border-bottom: 1px solid #ddd;">
+            <div class="row align-items-center justify-content-between">
+              <!-- Mobile Toggle for Smaller Screens -->
+              <div class="col-auto d-lg-none">
+                <div class="navbar-toggle" style="cursor: pointer;">
+                  <span style="display: block; width: 25px; height: 3px; background: #333; margin: 4px 0;"></span>
+                  <span style="display: block; width: 25px; height: 3px; background: #333; margin: 4px 0;"></span>
+                  <span style="display: block; width: 25px; height: 3px; background: #333; margin: 4px 0;"></span>
+                </div>
+              </div>
+  
+              <!-- Logo for Smaller Screens -->
+              <div class="col-auto d-lg-none">
+                <div class="logo text-center">
+                  <a>
+                    <img
+                      src="assets/images/logo.svg"
+                      alt="Logo"
+                      class="d-block"
+                      style="height: 30px;"
+                    />
+                  </a>
+                </div>
+              </div>
+  
+              <!-- Title for Larger Screens -->
+              <div class="col-auto d-none d-md-block">
+                <h3 style="margin: 0; font-size: 18px; font-weight: bold;">Services</h3>
+              </div>
+  
+              <!-- Profile Section -->
+              <div class="col-auto">
+                <div class="row align-items-center justify-content-end">
+                  <div class="col-auto">
+                    <div class="header-profile-name btn-hover-wrap">
+                      <a class="btn" style="padding: 0; text-decoration: none; cursor: pointer;">
+                        test
+                      </a>
+                      <div class="submenu" style="position: absolute; top: 40px; right: 0; display: none;">
+                        <hr />
+                        <ul class="inner-submenu" style="list-style: none; margin: 0; padding: 0;">
+                          <li style="margin: 0; padding: 8px;">
+                            <a
+                              style="cursor: pointer; color: #333; text-decoration: none;"
+                              (click)="navigateLogout()"
+                            >
+                              Log Out
+                            </a>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div><!-- end col -->
+                </div><!-- end row -->
+              </div><!-- end col -->
+            </div>
+          </div><!-- end admin-header -->
+  
+          <!-- Table Section -->
+          <div
+            class="table-responsive"
+            style="
+              background: white;
+              border-radius: 5px;
+              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+              overflow-x: auto;
+              padding: 0.5rem;
+            "
+          >
+            <table
+              class="table table-bordered table-hover"
+              style="
+                width: 100%;
+                margin: 0;
+                border-collapse: collapse;
+                table-layout: fixed;
+                font-size: 14px;
+              "
+            >
+              <thead style="background-color: #f1f1f1;">
+                <tr>
+                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                    Services Name
+                  </th>
+                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                    Card Number
+                  </th>
+                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                    Status
+                  </th>
+                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                    Expiry Date
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let card of customerCards">
+                  <td style="text-align: center; padding: 6px;">{{ card.holder_name }}</td>
+                  <td style="text-align: center; padding: 6px;">*******{{ card.last_number }}</td>
+                  <td style="text-align: center; padding: 6px;">
+                    <span
+                      *ngIf="card.active"
+                      style="
+                        display: inline-block;
+                        background-color: #28a745;
+                        color: white;
+                        font-size: 12px;
+                        padding: 3px 8px;
+                        border-radius: 3px;
+                      "
+                    >
+                      Active
+                    </span>
+                    <span
+                      *ngIf="!card.active"
+                      style="
+                        display: inline-block;
+                        background-color: #dc3545;
+                        color: white;
+                        font-size: 12px;
+                        padding: 3px 8px;
+                        border-radius: 3px;
+                      "
+                    >
+                      Inactive
+                    </span>
+                  </td>
+                  <td style="text-align: center; padding: 6px;">{{ card.expiry_date }}</td>
+                </tr>
+                <tr *ngIf="customerCards.length === 0">
+                  <td colspan="4" style="text-align: center; padding: 6px; color: #888;">
+                    No records available.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div><!-- end .table-responsive -->
+          
+        </div><!-- end .admin-body-content -->
+      </div><!-- end .col (main content) -->
+      
+    </div><!-- end .row -->
+  </div><!-- end .container-fluid -->
   

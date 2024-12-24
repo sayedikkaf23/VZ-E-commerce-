@@ -66,12 +66,21 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private loadAssets(): void {
     if (isPlatformBrowser(this.platformId)) {
+
+      // if (this.currentRoute.startsWith('/user/dashboard')) {
+      //   // Remove assets if they were previously loaded.
+      //   this.removeAssets();
+      //   return;  // Stop here so we don't load anything
+      // }
+
       // Check if the current route matches one of the special routes
       const isSpecialRoute = this.specialRoutes.some(route => this.currentRoute.startsWith(route));
       
       if (!isSpecialRoute) {
         return;
       }
+
+  
 
       this.dynamicScripts.forEach((src) => this.loadScript(src));
       this.dynamicStyles.forEach((href) => this.loadStyle(href));
