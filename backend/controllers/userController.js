@@ -292,7 +292,7 @@ console.log(LeadId,"LeadId")
 
 exports.callSalesforceEndpoint = async (req, res) => {
   // Destructure fields from the request body
-  const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders } = req.body;
+  const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders ,isProfile,planname} = req.body;
   const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
 
   // Construct the JSON body to send to Salesforce
@@ -476,6 +476,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
         LastName: responseData.leadWithDetails.LastName,
         FirstName: responseData.leadWithDetails.FirstName,
         LeadId: responseData.leadWithDetails.LeadId || 'N/A',
+        
       },
       quotePaymentWithDetails: {
         Currency: responseData.quotePaymentWithDetails.Currency || null,
@@ -513,6 +514,8 @@ exports.callSalesforceEndpoint = async (req, res) => {
       screeningDetails: { // Add screening details to the document
         matchScore: matchScore,
       },
+      isProfile: isProfile || 'N/A',
+      planname: planname ,
     });
 
     // Step 6: Save the document to MongoDB
@@ -916,6 +919,7 @@ console.log(req.body)
 
   
 }
+
 exports.deleteService = async (req, res) => {
   const { serviceId } = req.params; // Get the service ID from the request parameters
 
@@ -932,6 +936,8 @@ exports.deleteService = async (req, res) => {
   }
 
 };
+
+
 exports.getMenuItems = async (req, res) => {
   try {
     const menuItems = await MenuItem.find();
@@ -940,6 +946,8 @@ exports.getMenuItems = async (req, res) => {
     res.status(500).json({ error: 'Error fetching menu items' });
   }
 };
+
+
 exports.addMenuItems = async (req, res) => {
   const menuItems = req.body; // Expecting an array of menu items
 

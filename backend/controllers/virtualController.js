@@ -97,7 +97,7 @@ exports.submitVirtualDetails = async (req, res) => {
 
 exports.callSalesforceEndpoint = async (req, res) => {
   // Destructure fields from the request body
-  const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders } = req.body;
+  const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders ,isProfile,planname} = req.body;
   const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
 
   // Construct the JSON body to send to Salesforce
@@ -317,6 +317,8 @@ exports.callSalesforceEndpoint = async (req, res) => {
       screeningDetails: { // Add screening details to the document
         matchScore: matchScore,
       },
+      isProfile: isProfile || 'N/A',
+      planname: planname ,
     });
 
     // Step 6: Save the document to MongoDB

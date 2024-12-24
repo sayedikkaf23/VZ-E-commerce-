@@ -86,7 +86,7 @@ const routes: Routes = [
    
   },
   {
-    path: 'user-home',
+    path: 'user/dashboard',
     component: CustomerCardmanagementComponent,
    
   },
@@ -225,9 +225,9 @@ const routes: Routes = [
   //     },
   //     { path: 'services', component: ServicePageComponent },
 
-  { path: 'user/dashboard', component: UserDashboardComponent },
+  // { path: 'user/dashboard', component: UserDashboardComponent },
   { path: 'services', component: ServicePageComponent },
-  { path: '', redirectTo: 'user/dashboard', pathMatch: 'full' }, // Default route
+  // { path: '', redirectTo: 'user/dashboard', pathMatch: 'full' }, // Default route
   {
     path: 'panel',
     component: DashboardLayoutComponent,

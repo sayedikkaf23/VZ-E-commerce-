@@ -107,33 +107,39 @@ const getPaymentModesHome = async (req, res) => {
 
 
   async function getPiDataBySfId(req, res) {
-    const { quoteId } = req.params; // Assuming sf_id is passed as a URL parameter
+    const { quoteId } = req.params;
     console.log(quoteId);
   
     try {
-      // Search in PiData collection
+      // Search in PiData without 'isProfile: false'
       const data = await PiData.findOne({
         $or: [
-          { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
-          { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+          { "quoteWithProductDetails.quoteId": quoteId },
+          { "quotePaymentWithDetails.QuotePaymentId": quoteId },
         ],
       });
   
-      if (data) {
-        // Data found in PiData
-        return res.status(200).json(data);
-      } else {
-        // No data found
+      if (!data) {
         return res
           .status(404)
-          .json({ message: "Data not found for the provided sf_id" });
+          .json({ message: "Data not found for the provided quoteId" });
       }
+  
+      // If isProfile is false, update it to true
+      if (data.isProfile === false) {
+        data.isProfile = true;
+        await data.save();
+        console.log(`Updated isProfile to true for quoteId: ${quoteId}`);
+      }
+  
+      // Return the (possibly updated) document
+      return res.status(200).json(data);
     } catch (error) {
-      // Handle errors
       console.error("Error:", error);
-      res.status(500).json({ message: "Internal Server Error" });
+      return res.status(500).json({ message: "Internal Server Error" });
     }
   }
+  
 
   
   async function payNow(req, res) {

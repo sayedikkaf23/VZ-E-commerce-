@@ -250,6 +250,8 @@ submitData() {
         service: "virtual_reception",
         CustomerType:'C',
         shareholders:   this.displayShareholders,
+        planname:  "virtual_reception",
+        isProfile:  false,
       };
 
       this.isLoading = true; // Show loading indicator if necessary

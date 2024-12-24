@@ -37,7 +37,8 @@ const pidataSchema = new mongoose.Schema({
     Company: String,
     LastName: String,
     FirstName: String,
-    LeadId: String
+    LeadId: String,
+ 
   },
   quotePaymentWithDetails: {
     Currency: String,
@@ -77,6 +78,11 @@ const pidataSchema = new mongoose.Schema({
     type: Boolean,
     default: false // Default value
   },
+  isProfile:{
+    type: Boolean,
+    default: false // Default value
+  },
+  planname: { type: String },
   salesforceResponseMatchScreening: responseSchema // Added field for Salesforce response
    // Add screeningDetails as a sub-document
 });

@@ -195,6 +195,8 @@ export class MailMangamentShowDetailsComponent {
           service: "Bank_opening",
           CustomerType:  finalData.CustomerType,
           shareholders:  this.shareholders,
+          planname:  "Bank_opening",
+          isProfile:  false,
         };
   
         this.isLoading = true; // Show loading indicator if necessary

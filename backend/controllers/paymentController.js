@@ -878,6 +878,7 @@ async function payNowSaleforce(req, res) {
     const userEmail = paynowdata.customerDetails.id; // Get the email
     const username = paynowdata.customerDetails.name; // Get the email
     const Amount = paynowdata.transactionDetails.amount; // Get the email
+    const planName = paynowdata.planname; // Get the email
 
     console.log("User Email:", userEmail);
 
@@ -911,7 +912,7 @@ async function payNowSaleforce(req, res) {
                       Here are your service details:<br>
                       // <strong>Service Plan:</strong> ${planName}<br>
                       <strong>Amount:</strong> ${Amount}<br>
-                      // <strong>Services:</strong> ${servicesList}<br><br>
+                    
                       You can access your Customer Portal here:<br>
                       <a href="https://ecommerce.yeepeey.com/login" style="color: #007bff; text-decoration: underline;">Customer Portal</a><br>
                       Your temporary password: <strong>${randomPassword}</strong> (You can change it once logged in).<br><br>
