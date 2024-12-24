@@ -2448,7 +2448,103 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 
 }
 
-
+/* Modal Styling */
+.modal-content {
+    border-radius: 8px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #ddd;
+    padding: 1rem 1.5rem;
+  }
+  
+  .modal-body {
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 1.5rem 1rem;
+  }
+  
+  .modal-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #ddd;
+    padding: 0.75rem;
+  }
+  
+  /* Table Styling */
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table-bordered th,
+  .table-bordered td {
+    text-align: center;
+    vertical-align: middle;
+  }
+  
+  .table thead th {
+    background-color: #f1f1f1;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+  }
+  
+  /* Summary Section */
+  .modal-summary .row {
+    margin-bottom: 4px; /* Reduce spacing */
+  }
+  
+  .modal-summary .text-danger {
+    color: #ff0000; /* Adjust red color for Total */
+    font-weight: 400; /* Remove boldness */
+  }
+  
+  .modal-summary div {
+    margin-bottom: 0; /* Remove extra spacing between rows */
+  }
+  
+  /* Close Button */
+  .modal-footer .btn {
+    border-radius: 5px;
+    background-color: transparent;
+    border: none;
+    padding: 6px 16px;
+    font-size: 14px;
+  }
+  
+  .modal-footer .btn:hover {
+    background-color: #e9ecef;
+    color: red;
+  }
+  
+  .cool-button {
+    background-color: red; /* Darker Blue on hover */
+    color: #fff; /* White text */
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    cursor: pointer;
+    transition: all 0.3s ease-in-out; /* Smooth transition for hover */
+  }
+  
+  .cool-button:hover {
+    background-color: red; /* Darker Blue on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+    box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2); /* Enhanced shadow on hover */
+  }
+  
+  .cool-button:active {
+    transform: translateY(0); /* Reset lift effect */
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Reset shadow */
+  }
+  
+  .cool-button:focus {
+    outline: none; /* Remove focus outline */
+    box-shadow: 0px 0px 5px 2px rgba(0, 123, 255, 0.6); /* Focus ring */
+  }
+  
 .container-fluid {
     height: 100vh;
   }
@@ -2459,13 +2555,7 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
     overflow-y: auto;
   }
   
-  .table-responsive {
-    margin: 0;
-    padding: 0;
-    overflow-x: auto;
-    background: white;
-  }
-  
+ 
 
 .table-responsive {
     margin: 0; padding: 0; overflow-x: auto; background: white; margin-left: 309px;

@@ -8,53 +8,67 @@ interface Service {
   description: string;
   status: string;
 }
+
 @Component({
   selector: 'app-customer-cardmanagement',
   templateUrl: './customer-cardmanagement.component.html',
-  styleUrl: './customer-cardmanagement.component.css'
+  styleUrls: ['./customer-cardmanagement.component.css'], // Fix the styleUrls property
 })
-export class CustomerCardmanagementComponent {
+export class CustomerCardmanagementComponent implements OnInit {
   services: Service[] = []; // Initialize an empty array for services
   records: any[] = [];
-   constructor(private userService: UserService,private route: ActivatedRoute,private router: Router) {}
- 
-   ngOnInit(): void {
-     console.log("rouerttyy",this.route.snapshot.url); // Check the current URL
- 
-     // Retrieve the email from localStorage
-     const email = localStorage.getItem('userEmail');
-     if (email) {
-       // Call the API with the email
-       this.fetchUserServices(email);
-     } else {
-       console.error('No email found in localStorage.');
-     }
-   }
-   isActive(route: string): boolean {
-     return this.router.url === route;
-   }
-   fetchUserServices(email: string): void {
-     const payload = { email };
- 
-     this.userService.fetchUserServices(payload).subscribe(
-       (response) => {
-         if (response && response.data) {
-           console.log('Response Data:', response.data);
-           this.records = response.data; 
-          //  this.services = response.data.map((item: any) => ({
-          //    name: item.leadWithDetails?.Company || 'No company name provided',
-          //    description: item.quoteWithProductDetails?.product[0]?.productName || 'No description available',
-          //    status: item.leadWithDetails?.Status || 'Unknown'
-          //  }));
-         }
-       },
-       (error) => {
-         console.error('Error fetching user services:', error);
-       }
-     );
-   }
+  selectedRecord: any = null; // Initialize to null
 
-  navigateLogout() {
-    this.router.navigate([`/login`]);
+  constructor(
+    private userService: UserService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    console.log('Current Route:', this.route.snapshot.url); // Check the current URL
+
+    // Retrieve the email from localStorage
+    const email = localStorage.getItem('userEmail');
+    if (email) {
+      // Call the API with the email
+      this.fetchUserServices(email);
+    } else {
+      console.error('No email found in localStorage.');
+    }
+  }
+
+  isActive(route: string): boolean {
+    return this.router.url === route;
+  }
+
+  fetchUserServices(email: string): void {
+    const payload = { email };
+
+    this.userService.fetchUserServices(payload).subscribe(
+      (response) => {
+        if (response && response.data) {
+          console.log('Response Data:', response.data);
+          this.records = response.data;
+        }
+      },
+      (error) => {
+        console.error('Error fetching user services:', error);
+      }
+    );
+  }
+
+  viewDetails(record: any): void {
+    this.selectedRecord = record; // Set the selected record
+    const modalElement = document.getElementById('detailsModal');
+    if (modalElement) {
+      // Use the Bootstrap modal
+      const modal = new (window as any).bootstrap.Modal(modalElement);
+      modal.show();
+    }
+  }
+
+  navigateLogout(): void {
+    this.router.navigate(['/login']); // Navigate to login
   }
 }
