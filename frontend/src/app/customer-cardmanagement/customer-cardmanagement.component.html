@@ -4,7 +4,9 @@
       
       <!-- Sidebar Column -->
       <div class="col-auto">
-        <div class="admin-sidebar" data-simplebar
+        <div
+          class="admin-sidebar"
+          data-simplebar
           style="
             background-image: url('https://res.cloudinary.com/dvekmmxxx/image/upload/v1734931889/sidebar-bg_zg78mh.jpg');
           "
@@ -20,7 +22,9 @@
               </div>
               <div class="col-auto d-lg-none">
                 <div class="navbar-toggle">
-                  <span></span><span></span><span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
                 </div>
               </div>
             </div>
@@ -62,16 +66,15 @@
           </div>
         </div>
       </div>
+      <!-- END SIDEBAR COLUMN -->
       
+    
+
       <!-- Main Content Column -->
       <div class="col" style="background-color: #f8f9fa;">
         <div
           class="admin-body-content"
-          style="
-            padding: 1rem;
-            overflow: auto;
-            margin-left: 0; /* Reset margin if needed */
-          "
+         
         >
           <!-- Header -->
           <div class="admin-header"
@@ -160,13 +163,19 @@
                     Services Name
                   </th>
                   <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Card Number
+                    Account Name
                   </th>
                   <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Status
+                    Tax Invoice
                   </th>
                   <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Expiry Date
+                    Tax Invoice Date
+                  </th>
+                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                    Amount
+                  </th>
+                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                    Product
                   </th>
                 </tr>
               </thead>
@@ -202,6 +211,8 @@
                       Inactive
                     </span>
                   </td>
+                  <td style="text-align: center; padding: 6px;">{{ card.expiry_date }}</td>
+                  <td style="text-align: center; padding: 6px;">{{ card.expiry_date }}</td>
                   <td style="text-align: center; padding: 6px;">{{ card.expiry_date }}</td>
                 </tr>
                 <tr *ngIf="customerCards.length === 0">

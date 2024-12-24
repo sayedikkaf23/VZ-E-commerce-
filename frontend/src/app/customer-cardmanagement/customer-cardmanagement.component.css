@@ -1237,7 +1237,8 @@ ul.inner-submenu > li > a:hover {
     position: relative;
 }
 .admin-body-content {
-    padding: 30px;
+    /* padding: 30px; */
+   margin: 0 2rem;
 }
 .admin-header {
     border-bottom: 1px solid var(--primary);
