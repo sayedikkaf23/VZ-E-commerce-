@@ -177,6 +177,9 @@
                   <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
                     Product
                   </th>
+                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                    Action
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -201,7 +204,7 @@
                   <td style="text-align: center; padding: 6px;">
                     {{ item.quoteWithProductDetails?.invoiceDate }}
                   </td>
-            
+                  
                   <!-- Amount (subTotal or totalPrice, depending on your needs) -->
                   <td style="text-align: center; padding: 6px;">
                     {{ item.quoteWithProductDetails?.subTotal }}
@@ -216,11 +219,18 @@
                           {{ prod.productName }} (Qty: {{ prod.productQunatity }} , AED{{ prod.productUnitPrice }})
                         </li>
                       </ul>
+                      
                     </div>
                     <ng-template #noProduct>
                       No products
                     </ng-template>
                   </td>  
+                  <td style="text-align: center; padding: 6px;">
+                    <button class="cool-button" (click)="viewDetails(item)">
+                      View Details
+                    </button>
+                  </td>
+                  
                 </tr>
             
                 <!-- Show a fallback if no records exist -->
@@ -238,4 +248,75 @@
       
     </div><!-- end .row -->
   </div><!-- end .container-fluid -->
+  <!-- modla -->
+  <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel"> Service Details</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Table Section -->
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+              <th>Taxable Amount</th>
+              <th>VAT</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of selectedRecord?.quoteWithProductDetails?.product">
+              <td>{{ product.productName }}</td>
+              <td>{{ product.productQunatity }}</td>
+              <td>AED {{ product.productUnitPrice }}</td>
+              <td>AED {{ product.taxableAmount }}</td>
+              <td>AED {{ product.vat }}</td>
+              <td>AED {{ product.total }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Summary Section -->
+        <div class="modal-summary mt-3">
+          <div class="row align-items-center">
+            <div class="col-8 text-end">Grand Total Without VAT:</div>
+            <div class="col-4 text-end">AED {{ selectedRecord?.quoteWithProductDetails?.subTotal }}</div>
+          </div>
+          <div class="row align-items-center">
+            <div class="col-8 text-end">VAT:</div>
+            <div class="col-4 text-end">AED {{ selectedRecord?.quoteWithProductDetails?.vat }}</div>
+          </div>
+          <div class="row align-items-center">
+            <div class="col-8 text-end">Total Including VAT:</div>
+            <div class="col-4 text-end text-danger fw-normal">AED {{ selectedRecord?.quoteWithProductDetails?.total }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <!-- <button type="button" class="btn btn-secondary text-dark" data-bs-dismiss="modal">
+          Close
+        </button> -->
+      </div>
+    </div>
+  </div>
+</div>
+
+  
+  
+  
   
