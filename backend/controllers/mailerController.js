@@ -129,7 +129,7 @@ cron.schedule("*/10 * * * * *", async () => {
       const { quoteWithProductDetails, leadWithDetails } = record;
 
       const email = quoteWithProductDetails?.quoteEmail;
-      const quoteId = quoteWithProductDetails?.quoteId;
+      const quoteId = quotePaymentWithDetails?.QuotePaymentId;
       const username = `${leadWithDetails?.FirstName} ${leadWithDetails?.LastName}`; // Combine first and last name
 
       if (email) {

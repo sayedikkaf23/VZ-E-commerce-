@@ -326,7 +326,7 @@ console.log(`${process.env.EXTERNAL_API_SCREENING_URL}`)
     // Step 6: Save the document to MongoDB
     await newPidata.save();
 
-    // Send a success response
+    // Send a success MatchScoreProductService
     res.status(200).json({ message: 'Data saved successfully', data: responseData ,screeningmatchScore:screeningResponse.data});
   } catch (error) {
     console.error('Error calling Salesforce endpoint:', error);
