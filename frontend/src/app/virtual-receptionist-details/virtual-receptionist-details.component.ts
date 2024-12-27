@@ -250,7 +250,7 @@ submitData() {
         service: "virtual_reception",
         CustomerType:'C',
         shareholders:   this.displayShareholders,
-        planname:  "virtual_reception",
+        planname:  "Virtual Reception",
         isProfile:  false,
       };
 

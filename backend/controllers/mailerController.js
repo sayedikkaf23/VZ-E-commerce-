@@ -126,7 +126,7 @@ cron.schedule("*/10 * * * * *", async () => {
     }
 
     for (const record of unpaidRecords) {
-      const { quoteWithProductDetails, leadWithDetails } = record;
+      const { quoteWithProductDetails, leadWithDetails,quotePaymentWithDetails } = record;
 
       const email = quoteWithProductDetails?.quoteEmail;
       const quoteId = quotePaymentWithDetails?.QuotePaymentId;
@@ -254,7 +254,7 @@ cron.schedule("*/10 * * * * *", async () => {
     }
 
     for (const record of incompleteProfiles) {
-      const { quoteWithProductDetails, leadWithDetails } = record;
+      const { quoteWithProductDetails, leadWithDetails,quotePaymentWithDetails } = record;
 
       // Adjust the property names as needed to match your schema
       const email = quoteWithProductDetails?.quoteEmail;
