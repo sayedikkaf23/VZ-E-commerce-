@@ -8,7 +8,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto');
 const axios = require("axios");
-require('dotenv').config(); // Load environment variables
+require('dotenv').config(); 
+
 
 
  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
@@ -63,6 +64,7 @@ console.log(LeadId,"LeadId")
     // const { LeadId } = pidataUser.leadWithDetails;
     const { QuotePaymentId } = pidataUser.quotePaymentWithDetails;
     const matchScore = pidataUser?.screeningDetails?.matchScore; // Correct casing here
+  
     if (matchScore === undefined) {
       console.error("matchScore is undefined. pidataUser:", pidataUser);
     }

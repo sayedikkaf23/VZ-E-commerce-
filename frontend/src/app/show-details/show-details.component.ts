@@ -190,7 +190,7 @@ export class ShowDetailsComponent implements AfterViewInit {
           dob: finalData.birthday,
           service: "Bank_opening",
           CustomerType: finalData.CustomerType || '',
-          planname:  "Bank_opening",
+          planname:  "Bank Opening",
           isProfile:  false,
         };
   

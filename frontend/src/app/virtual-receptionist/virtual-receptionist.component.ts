@@ -100,6 +100,12 @@ onSubmit() {
       localStorage.setItem('virtualdata', JSON.stringify(formData));
     }
   } else {
+
+    const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
+    if (mobileNumberControl?.errors?.['validatePhoneNumber']) { // Correct key here
+      this.toastr.error('enter a valid mobile number for the selected country.', 'Validation Error');
+    }
+
     // Use the updated `showSingleValidationError` method
     this.showSingleValidationError(this.personalDetailsForm);
   }

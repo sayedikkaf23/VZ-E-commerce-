@@ -89,9 +89,12 @@ export class Step1Component implements OnInit {
   }
 
 onSubmit() {
+
+
   if (this.personalDetailsForm.valid) {
     const formData = this.personalDetailsForm.value;
 
+ 
     // Save form data to localStorage only in the browser environment
     if (this.isBrowser) {
       localStorage.setItem('step1Data', JSON.stringify(formData));
@@ -99,6 +102,13 @@ onSubmit() {
 
     this.router.navigate(['/account-type']);
   } else {
+
+
+    const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
+    if (mobileNumberControl?.errors?.['validatePhoneNumber']) { // Correct key here
+      this.toastr.error('enter a valid mobile number for the selected country.', 'Validation Error');
+    }
+
     // Display validation errors for invalid fields
     this.showFieldValidationErrors(this.personalDetailsForm);
   }

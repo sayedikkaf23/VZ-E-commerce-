@@ -160,7 +160,7 @@
               <thead style="background-color: #f1f1f1;">
                 <tr>
                   <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Services Name
+                    Services Names
                   </th>
                   <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
                     Account Name
@@ -174,9 +174,7 @@
                   <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
                     Amount
                   </th>
-                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Product
-                  </th>
+                  
                   <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
                     Action
                   </th>
@@ -211,20 +209,7 @@
                   </td>
             
                   <!-- Products List -->
-                 <td style="text-align: center; padding: 6px;">
-                    <!-- If you want to display multiple products, we can nest another *ngFor -->
-                    <div *ngIf="item.quoteWithProductDetails?.product?.length > 0; else noProduct">
-                      <ul style="list-style-type: none; padding-left: 0;">
-                        <li *ngFor="let prod of item.quoteWithProductDetails.product">
-                          {{ prod.productName }} (Qty: {{ prod.productQunatity }} , AED{{ prod.productUnitPrice }})
-                        </li>
-                      </ul>
-                      
-                    </div>
-                    <ng-template #noProduct>
-                      No products
-                    </ng-template>
-                  </td>  
+              
                   <td style="text-align: center; padding: 6px;">
                     <button class="cool-button" (click)="viewDetails(item)">
                       View Details
