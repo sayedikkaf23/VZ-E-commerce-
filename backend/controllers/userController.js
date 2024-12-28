@@ -552,7 +552,7 @@ exports.callSalesforceQuoteService = async (req, res) => {
       account_id: document.quotePaymentWithDetails.AccountId,
       payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${document.quotePaymentWithDetails.QuotePaymentId}`
     };
-    console.log("Request to Salesforce:", requestBody);
+    // console.log("Request to Salesforce:", requestBody);
 
     // Step 3: Get an access token from Salesforce
     const tokenResponse = await axios.post(
@@ -575,7 +575,7 @@ exports.callSalesforceQuoteService = async (req, res) => {
     );
 
     const responseData = salesforceResponse.data;
-    console.log("Salesforce Response:", responseData);
+    // console.log("Salesforce Response:", responseData);
 
     // Optional Step 5: Update the database document with the Salesforce response data (if needed)
     document.salesforceResponseData = responseData; // Assuming a field to store response data exists
@@ -612,7 +612,7 @@ exports.MatchScoreProductService = async (req, res) => {
       // matchScore: "70",
 
     });
-    console.log("Request to Salesforce:", requestBody);
+    console.log("Request to Salesforce8:", requestBody);
 
     // Step 3: Get an access token from Salesforce
     const tokenResponse = await axios.post(
