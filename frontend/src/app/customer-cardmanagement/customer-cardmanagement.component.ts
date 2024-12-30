@@ -18,6 +18,8 @@ export class CustomerCardmanagementComponent implements OnInit {
   services: Service[] = []; // Initialize an empty array for services
   records: any[] = [];
   selectedRecord: any = null; // Initialize to null
+  isSidebarActive = false;
+
 
   constructor(
     private userService: UserService,
@@ -37,6 +39,7 @@ export class CustomerCardmanagementComponent implements OnInit {
       console.error('No email found in localStorage.');
     }
   }
+  
 
   isActive(route: string): boolean {
     return this.router.url === route;
@@ -56,6 +59,14 @@ export class CustomerCardmanagementComponent implements OnInit {
         console.error('Error fetching user services:', error);
       }
     );
+  }
+
+  toggleSidebar(): void {
+    this.isSidebarActive = !this.isSidebarActive;
+  }
+
+  closeSidebar() {
+    this.isSidebarActive = false;
   }
 
   viewDetails(record: any): void {

@@ -1,307 +1,361 @@
-<!-- Container-fluid for full-width layout -->
-<div class="container-fluid p-0">
-    <div class="row g-0"><!-- g-0 removes default column gutters -->
-      
-      <!-- Sidebar Column -->
-      <div class="col-auto">
-        <div
-          class="admin-sidebar"
-          data-simplebar
-          style="
-            background-image: url('https://res.cloudinary.com/dvekmmxxx/image/upload/v1734931889/sidebar-bg_zg78mh.jpg');
-          "
-        >
-          <div class="row justify-content-between sidebar-row gx-0">
-            <div class="row justify-content-between gx-0 align-items-center">
-              <div class="col-auto">
-                <div class="logo text-center">
-                  <a href="#">
-                    <img src="assets/images/logo-white.svg" alt="" class="d-block" />
-                  </a>
-                </div>
-              </div>
-              <div class="col-auto d-lg-none">
-                <div class="navbar-toggle">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                </div>
-              </div>
-            </div>
-            <div class="col-auto">
-              <div class="sidebarnav">
-                <ul>
-                  <li class="active">
-                    <a>
-                      <span class="icon">
-                        <img src="assets/images/sidebarnav-icon/4.svg" />
-                      </span>
-                      Service
-                    </a>
-                  </li>
-                </ul>
-                <ul>
-                  <li>
-                    <a>
-                      <span class="icon">
-                        <img src="assets/images/sidebarnav-icon/9.svg" />
-                      </span>
-                      Setting
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <span class="icon">
-                        <img src="assets/images/sidebarnav-icon/10.svg" />
-                      </span>
-                      Help Center
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-auto">
-              <h2>#BeYour<br>OwnBoss</h2>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- END SIDEBAR COLUMN -->
-      
-    
 
-      <!-- Main Content Column -->
-      <div class="col" style="background-color: #f8f9fa;">
-        <div
-          class="admin-body-content"
-         
-        >
-          <!-- Header -->
-          <div class="admin-header"
-               style="background-color: #f8f9fa; padding: 0.5rem 1rem; border-bottom: 1px solid #ddd;">
-            <div class="row align-items-center justify-content-between">
-              <!-- Mobile Toggle for Smaller Screens -->
-              <div class="col-auto d-lg-none">
-                <div class="navbar-toggle" style="cursor: pointer;">
-                  <span style="display: block; width: 25px; height: 3px; background: #333; margin: 4px 0;"></span>
-                  <span style="display: block; width: 25px; height: 3px; background: #333; margin: 4px 0;"></span>
-                  <span style="display: block; width: 25px; height: 3px; background: #333; margin: 4px 0;"></span>
-                </div>
-              </div>
-  
-              <!-- Logo for Smaller Screens -->
-              <div class="col-auto d-lg-none">
-                <div class="logo text-center">
-                  <a>
-                    <img
-                      src="assets/images/logo.svg"
-                      alt="Logo"
-                      class="d-block"
-                      style="height: 30px;"
-                    />
-                  </a>
-                </div>
-              </div>
-  
-              <!-- Title for Larger Screens -->
-              <div class="col-auto d-none d-md-block">
-                <h3 style="margin: 0; font-size: 18px; font-weight: bold;">Services</h3>
-              </div>
-  
-              <!-- Profile Section -->
-              <div class="col-auto">
-                <div class="row align-items-center justify-content-end">
-                  <div class="col-auto">
-                    <div class="header-profile-name btn-hover-wrap">
-                      <a class="btn" style="padding: 0; text-decoration: none; cursor: pointer;">
-                        test
-                      </a>
-                      <div class="submenu" style="position: absolute; top: 40px; right: 0; display: none;">
-                        <hr />
-                        <ul class="inner-submenu" style="list-style: none; margin: 0; padding: 0;">
-                          <li style="margin: 0; padding: 8px;">
-                            <a
-                              style="cursor: pointer; color: #333; text-decoration: none;"
-                              (click)="navigateLogout()"
-                            >
-                              Log Out
-                            </a>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div><!-- end col -->
-                </div><!-- end row -->
-              </div><!-- end col -->
-            </div>
-          </div><!-- end admin-header -->
-  
-          <!-- Table Section -->
+<body style="padding-top: 0px;">
+  <!-- Container-fluid for full-width layout -->
+  <div class="container-fluid p-0">
+      <div class="row g-0"><!-- g-0 removes default column gutters -->
+        
+        <!-- Sidebar Column -->
+        <div class="col-auto">
+          
           <div
-            class="table-responsive"
+            class="admin-sidebar"
+            data-simplebar
             style="
-              background: white;
-              border-radius: 5px;
-              box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-              overflow-x: auto;
-              padding: 0.5rem;
+              background-image: url('https://res.cloudinary.com/dvekmmxxx/image/upload/v1734931889/sidebar-bg_zg78mh.jpg');
             "
           >
-            <table
-              class="table table-bordered table-hover"
-              style="
-                width: 100%;
-                margin: 0;
-                border-collapse: collapse;
-                table-layout: fixed;
-                font-size: 14px;
-              "
-            >
-              <thead style="background-color: #f1f1f1;">
-                <tr>
-                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Services Names
-                  </th>
-                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Account Name
-                  </th>
-                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Tax Invoice
-                  </th>
-                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Tax Invoice Date
-                  </th>
-                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Amount
-                  </th>
-                  
-                  <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                <!-- Loop over each record in the array -->
-                <tr *ngFor="let item of records">
-                  <!-- planname as "Services Name" -->
-                  <td style="text-align: center; padding: 6px;">
-                    {{ item.planname }}
-                  </td>
-            
-                  <!-- AccountName -->
-                  <td style="text-align: center; padding: 6px;">
-                    {{ item.quoteWithProductDetails?.AccountName }}
-                  </td>
-            
-                  <!-- Tax Invoice Number (can be null, so handle carefully) -->
-                  <td style="text-align: center; padding: 6px;">
-                    {{ item.quoteWithProductDetails?.quoteId || '—' }}
-                  </td>
-            
-                  <!-- Tax Invoice Date -->
-                  <td style="text-align: center; padding: 6px;">
-                    {{ item.quoteWithProductDetails?.invoiceDate }}
-                  </td>
-                  
-                  <!-- Amount (subTotal or totalPrice, depending on your needs) -->
-                  <td style="text-align: center; padding: 6px;">
-                    {{ item.quoteWithProductDetails?.subTotal }}
-                  </td>
-            
-                  <!-- Products List -->
-              
-                  <td style="text-align: center; padding: 6px;">
-                    <button class="cool-button" (click)="viewDetails(item)">
-                      View Details
-                    </button>
-                  </td>
-                  
-                </tr>
-            
-                <!-- Show a fallback if no records exist -->
-                <tr *ngIf="records.length === 0">
-                  <td colspan="6" style="text-align: center; padding: 6px; color: #888;">
-                    No records available.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div><!-- end .table-responsive -->
-          
-        </div><!-- end .admin-body-content -->
-      </div><!-- end .col (main content) -->
-      
-    </div><!-- end .row -->
-  </div><!-- end .container-fluid -->
-  <!-- modla -->
-  <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h5 class="modal-title" id="detailsModalLabel"> Service Details</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
-      </div>
-
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <!-- Table Section -->
-        <table class="table table-bordered align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>Product</th>
-              <th>Quantity</th>
-              <th>Unit Price</th>
-              <th>Taxable Amount</th>
-              <th>VAT</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let product of selectedRecord?.quoteWithProductDetails?.product">
-              <td>{{ product.productName }}</td>
-              <td>{{ product.productQunatity }}</td>
-              <td>AED {{ product.productUnitPrice }}</td>
-              <td>AED {{ product.taxableAmount }}</td>
-              <td>AED {{ product.vat }}</td>
-              <td>AED {{ product.total }}</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <!-- Summary Section -->
-        <div class="modal-summary mt-3">
-          <div class="row align-items-center">
-            <div class="col-8 text-end">Grand Total Without VAT:</div>
-            <div class="col-4 text-end">AED {{ selectedRecord?.quoteWithProductDetails?.subTotal }}</div>
+            <div class="row justify-content-between sidebar-row gx-0">
+              <div class="row justify-content-between gx-0 align-items-center">
+                <div class="col-auto">
+                  <div class="logo text-center">
+                    <a href="#">
+                      <img src="assets/images/logo-white.svg" alt="" class="d-block" />
+                    </a>
+                  </div>
+                </div>
+                <div class="col-auto d-lg-none">
+                  <div class="navbar-toggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-auto">
+                <div class="sidebarnav">
+                  <ul>
+                    <li class="active">
+                      <a>
+                        <span class="icon">
+                          <img src="assets/images/sidebarnav-icon/4.svg" />
+                        </span>
+                        Service
+                      </a>
+                    </li>
+                  </ul>
+                  <ul>
+                    <li>
+                      <a>
+                        <span class="icon">
+                          <img src="assets/images/sidebarnav-icon/9.svg" />
+                        </span>
+                        Setting
+                      </a>
+                    </li>
+                    <li>
+                      <a href="#">
+                        <span class="icon">
+                          <img src="assets/images/sidebarnav-icon/10.svg" />
+                        </span>
+                        Help Center
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-auto">
+                <h2>#BeYour<br>OwnBoss</h2>
+              </div>
+            </div>
           </div>
-          <div class="row align-items-center">
-            <div class="col-8 text-end">VAT:</div>
-            <div class="col-4 text-end">AED {{ selectedRecord?.quoteWithProductDetails?.vat }}</div>
-          </div>
-          <div class="row align-items-center">
-            <div class="col-8 text-end">Total Including VAT:</div>
-            <div class="col-4 text-end text-danger fw-normal">AED {{ selectedRecord?.quoteWithProductDetails?.total }}</div>
+         
+        </div>
+        <!-- END SIDEBAR COLUMN -->
+  
+        <!-- sidebar for mobile -->
+        <div class="admin-sidebar-container" [class.active]="isSidebarActive">
+          <div class="sidebarnav">
+            <ul>
+              <li class="active">
+                <a>
+                  <span class="icon">
+                    <img src="assets/images/sidebarnav-icon/4.svg" />
+                  </span>
+                  Service
+                </a>
+              </li>
+            </ul>
+            <ul>
+              <li>
+                <a>
+                  <span class="icon">
+                    <img src="assets/images/sidebarnav-icon/9.svg" />
+                  </span>
+                  Setting
+                </a>
+              </li>
+              <li>
+                <a href="#">
+                  <span class="icon">
+                    <img src="assets/images/sidebarnav-icon/10.svg" />
+                  </span>
+                  Help Center
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
-      </div>
-
-      <!-- Modal Footer -->
-      <div class="modal-footer">
-        <!-- <button type="button" class="btn btn-secondary text-dark" data-bs-dismiss="modal">
-          Close
-        </button> -->
+        
+        <div class="sidebar-overlay" [class.active]="isSidebarActive" (click)="closeSidebar()"></div>
+  
+  
+        <!-- Main Content Column -->
+        <div class="col" style="background-color: #f8f9fa;">
+          <div
+            class="admin-body-content"
+           
+          >
+            <!-- Header -->
+            <div class="admin-header"
+                 style="background-color: #f8f9fa; padding: 0.5rem 1rem; border-bottom: 1px solid #ddd;">
+              <div class="row align-items-center justify-content-between">
+                <!-- Mobile Toggle for Smaller Screens -->
+                <div class="col-auto d-lg-none">
+                  <div class="navbar-toggle" (click)="toggleSidebar()" style="cursor: pointer;">
+                    <span style="display: block; width: 25px; height: 3px; background: #333; margin: 2px 0;"></span>
+                    <span style="display: block; width: 25px; height: 3px; background: #333; margin: 2px 0;"></span>
+                    <span style="display: block; width: 25px; height: 3px; background: #333; margin: 2px 0;"></span>
+                  </div>
+                </div>
+    
+                <!-- Logo for Smaller Screens -->
+                <div class="col-auto d-lg-none">
+                  <div class="logo text-center">
+                    <a>
+                      <img
+                        src="assets/images/logo.svg"
+                        alt="Logo"
+                        class="d-block"
+                        style="height: 30px;"
+                      />
+                    </a>
+                  </div>
+                </div>
+    
+                <!-- Title for Larger Screens -->
+                <div class="col-auto d-none d-md-block">
+                  <h3 style="margin: 0; font-size: 18px; font-weight: bold;">Services</h3>
+                </div>
+    
+                <!-- Profile Section -->
+                <div class="col-auto">
+                  <div class="row align-items-center justify-content-end" >
+                    <div class="col-auto">
+                      <div class="header-profile-name btn-hover-wrap">
+                        <a class="btn" style="padding: 0; text-decoration: none; cursor: pointer;">
+                          test
+                        </a>
+                        <div class="submenu" style="position: absolute; top: 40px; right: 0; display: none;">
+                          <hr />
+                          <ul class="inner-submenu" style="list-style: none; margin: 0; padding: 0;">
+                            <li style="margin: 0; padding: 8px;">
+                              <a
+                                style="cursor: pointer; color: #333; text-decoration: none;"
+                                (click)="navigateLogout()"
+                              >
+                                Log Out
+                              </a>
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div><!-- end col -->
+                  </div><!-- end row -->
+                </div><!-- end col -->
+              </div>
+            </div><!-- end admin-header -->
+    
+            <!-- Table Section -->
+            <div
+              class="table-responsive"
+              style="
+                background: white;
+                border-radius: 5px;
+                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                overflow-x: auto;
+                padding: 0.5rem;
+              "
+            >
+              <table
+                class="table table-bordered table-hover"
+                style="
+                  width: 100%;
+                  margin: 0;
+                  border-collapse: collapse;
+                  table-layout: fixed;
+                  font-size: 14px;
+                "
+              >
+                <thead style="background-color: #f1f1f1;">
+                  <tr>
+                    <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                      Services Name
+                    </th>
+                    <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                      Account Name
+                    </th>
+                    <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                      Tax Invoice
+                    </th>
+                    <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                      Tax Invoice Date
+                    </th>
+                    <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                      Amount
+                    </th>
+                    <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                      Product
+                    </th>
+                    <th scope="col" style="text-align: center; padding: 8px; font-weight: bold;">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Loop over each record in the array -->
+                  <tr *ngFor="let item of records">
+                    <!-- planname as "Services Name" -->
+                    <td style="text-align: center; padding: 6px;">
+                      {{ item.planname }}
+                    </td>
+              
+                    <!-- AccountName -->
+                    <td style="text-align: center; padding: 6px;">
+                      {{ item.quoteWithProductDetails?.AccountName }}
+                    </td>
+              
+                    <!-- Tax Invoice Number (can be null, so handle carefully) -->
+                    <td style="text-align: center; padding: 6px;">
+                      {{ item.quoteWithProductDetails?.quoteId || '—' }}
+                    </td>
+              
+                    <!-- Tax Invoice Date -->
+                    <td style="text-align: center; padding: 6px;">
+                      {{ item.quoteWithProductDetails?.invoiceDate }}
+                    </td>
+                    
+                    <!-- Amount (subTotal or totalPrice, depending on your needs) -->
+                    <td style="text-align: center; padding: 6px;">
+                      {{ item.quoteWithProductDetails?.subTotal }}
+                    </td>
+              
+                    <!-- Products List -->
+                   <td style="text-align: center; padding: 6px;">
+                      <!-- If you want to display multiple products, we can nest another *ngFor -->
+                      <div *ngIf="item.quoteWithProductDetails?.product?.length > 0; else noProduct">
+                        <ul style="list-style-type: none; padding-left: 0;">
+                          <li *ngFor="let prod of item.quoteWithProductDetails.product">
+                            {{ prod.productName }} (Qty: {{ prod.productQunatity }} , AED{{ prod.productUnitPrice }})
+                          </li>
+                        </ul>
+                        
+                      </div>
+                      <ng-template #noProduct>
+                        No products
+                      </ng-template>
+                    </td>  
+                    <td style="text-align: center; padding: 6px;">
+                      <button class="cool-button" (click)="viewDetails(item)">
+                        View Details
+                      </button>
+                    </td>
+                    
+                  </tr>
+              
+                  <!-- Show a fallback if no records exist -->
+                  <tr *ngIf="records.length === 0">
+                    <td colspan="6" style="text-align: center; padding: 6px; color: #888;">
+                      No records available.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div><!-- end .table-responsive -->
+            
+          </div><!-- end .admin-body-content -->
+        </div><!-- end .col (main content) -->
+        
+      </div><!-- end .row -->
+    </div><!-- end .container-fluid -->
+    <!-- modla -->
+    <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailsModalLabel"> Service Details</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+  
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <!-- Table Section -->
+          <table class="table table-bordered align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Taxable Amount</th>
+                <th>VAT</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let product of selectedRecord?.quoteWithProductDetails?.product">
+                <td>{{ product.productName }}</td>
+                <td>{{ product.productQunatity }}</td>
+                <td>AED {{ product.productUnitPrice }}</td>
+                <td>AED {{ product.taxableAmount }}</td>
+                <td>AED {{ product.vat }}</td>
+                <td>AED {{ product.total }}</td>
+              </tr>
+            </tbody>
+          </table>
+  
+          <!-- Summary Section -->
+          <div class="modal-summary mt-3">
+            <div class="row align-items-center">
+              <div class="col-8 text-end">Grand Total Without VAT:</div>
+              <div class="col-4 text-end">AED {{ selectedRecord?.quoteWithProductDetails?.subTotal }}</div>
+            </div>
+            <div class="row align-items-center">
+              <div class="col-8 text-end">VAT:</div>
+              <div class="col-4 text-end">AED {{ selectedRecord?.quoteWithProductDetails?.vat }}</div>
+            </div>
+            <div class="row align-items-center">
+              <div class="col-8 text-end">Total Including VAT:</div>
+              <div class="col-4 text-end text-danger fw-normal">AED {{ selectedRecord?.quoteWithProductDetails?.total }}</div>
+            </div>
+          </div>
+        </div>
+  
+        <!-- Modal Footer -->
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-secondary text-dark" data-bs-dismiss="modal">
+            Close
+          </button> -->
+        </div>
       </div>
     </div>
   </div>
-</div>
-
   
-  
-  
-  
+  </body>
+    
+    
+    
