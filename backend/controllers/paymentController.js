@@ -875,6 +875,54 @@ async function payNowSaleforce(req, res) {
         console.error("Error:", error);
       });
 
+
+
+      const requestBodySalesforce2 = {
+        qp: {
+          paymentmethod: "Pay via Card Machine",
+          amount_received: 55471.5,
+          bank_name: "Point of Sale",
+          GL_code: "1351 - Point of Sale",
+          Pay_Currency: "AED",
+          payment_status: "AR Review",
+          quotePaymentId: "aAWdu0000000njtGAA",
+        },
+        attachments: [
+          {
+            Body: "",
+            ContentType: "",
+            Name: "",
+          },
+          {
+            Body: "",
+            ContentType: "",
+            Name: "",
+          },
+        ],
+      };
+  
+      // Endpoint URL for the second API call
+      const endpointUrl2 = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/aAWdu0000000njtGAA`;
+  
+      // Making the second API call
+       axios.put(endpointUrl2, requestBodySalesforce2, { headers })
+      .then((response2) => {
+        console.log("Second API Response:", response2.data);
+      })
+      .catch((error) => {
+        // Handle errors from both API calls
+        if (error.response) {
+          console.error("Error Response:", error.response.data); // API response error data
+          console.error("Status Code:", error.response.status); // HTTP status code
+        } else if (error.request) {
+          console.error("No Response Received:", error.request); // No response received
+        } else {
+          console.error("Error Message:", error.message); // Other errors
+        }
+        console.error("Full Error Object:", error); // Complete error object
+      });
+    
+
     const userEmail = paynowdata.customerDetails.id; // Get the email
     const username = paynowdata.customerDetails.name; // Get the email
     const Amount = paynowdata.transactionDetails.amount; // Get the email
