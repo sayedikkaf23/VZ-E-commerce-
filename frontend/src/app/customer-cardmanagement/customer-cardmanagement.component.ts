@@ -40,6 +40,10 @@ export class CustomerCardmanagementComponent implements OnInit {
     }
   }
   
+  ngAfterViewInit() {
+    document.body.style.paddingTop = '0px';
+    document.documentElement.style.paddingTop = '0px';
+  }
 
   isActive(route: string): boolean {
     return this.router.url === route;
