@@ -796,7 +796,7 @@ async function payNowByTelr(req, res) {
 
 async function payNowSaleforce(req, res) {
   const { quoteId } = req.params;
-  console.log("salesforce called");
+  console.log("salesforce called.............");
 
   const TokenResponse = await axios.post(
     `https://test.salesforce.com/services/oauth2/token`,
@@ -824,7 +824,7 @@ async function payNowSaleforce(req, res) {
     const PiDataCheck = await PiData.findOne({
       $or: [
         { quoteId: quoteId },
-        { "quoteWithProductDetails.quoteId": quoteId },
+        { "quotePaymentWithDetails.QuotePaymentId": quoteId },
       ],
     });
 
@@ -878,7 +878,10 @@ async function payNowSaleforce(req, res) {
     const userEmail = paynowdata.customerDetails.id; // Get the email
     const username = paynowdata.customerDetails.name; // Get the email
     const Amount = paynowdata.transactionDetails.amount; // Get the email
-    const planName = PiDataCheck.planname; // Get the email
+    const planName = PiDataCheck ? PiDataCheck.planname || "" : "";
+
+
+    console.log(planName,"planName................",PiDataCheck)
 
     console.log("User Email:", userEmail);
 
