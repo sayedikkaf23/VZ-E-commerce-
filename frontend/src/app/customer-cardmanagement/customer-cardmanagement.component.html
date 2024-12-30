@@ -149,29 +149,24 @@
     
                 <!-- Profile Section -->
                 <div class="col-auto">
-                  <div class="row align-items-center justify-content-end" >
+                  <div class="row align-items-center justify-content-end">
                     <div class="col-auto">
                       <div class="header-profile-name btn-hover-wrap">
-                        <a class="btn" style="padding: 0; text-decoration: none; cursor: pointer;">
+                        <a class="btn profile-btn" style="padding: 0; text-decoration: none; cursor: pointer;">
                           test
                         </a>
-                        <div class="submenu" style="position: absolute; top: 40px; right: 0; display: none;">
+                        <div class="submenu">
                           <hr />
-                          <ul class="inner-submenu" style="list-style: none; margin: 0; padding: 0;">
-                            <li style="margin: 0; padding: 8px;">
-                              <a
-                                style="cursor: pointer; color: #333; text-decoration: none;"
-                                (click)="navigateLogout()"
-                              >
-                                Log Out
-                              </a>
+                          <ul class="inner-submenu">
+                            <li>
+                              <a (click)="navigateLogout()" class="submenu-item">Log Out</a>
                             </li>
                           </ul>
                         </div>
                       </div>
-                    </div><!-- end col -->
-                  </div><!-- end row -->
-                </div><!-- end col -->
+                    </div>
+                  </div>
+                </div>
               </div>
             </div><!-- end admin-header -->
     
