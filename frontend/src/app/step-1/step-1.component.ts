@@ -64,11 +64,11 @@ export class Step1Component implements OnInit {
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
 
-    this.getnationalityService.getNationality().subscribe((data) => {
-      // Extract and sort the nationalities
+    this.getnationalityService.getCountries().subscribe((data) => {
+      // Map and trim whitespace, sort case-insensitively
       this.nationalities = data
-        .map((country: { name: { common: any; }; }) => country.name.common) // Extract the common name
-        .sort((a: string, b: string) => a.localeCompare(b)); // Sort alphabetically
+        .map((country: { name: { common: string } }) => country.name.common.trim())
+        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
     
       // Trigger change detection to update the view
       this.cdRef.detectChanges();
