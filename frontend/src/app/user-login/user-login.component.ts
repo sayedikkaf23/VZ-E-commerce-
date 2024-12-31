@@ -38,6 +38,7 @@ export class UserLoginComponent {
             localStorage.setItem('userEmail', response.email);
           }
   
+
           this.toastr.success('Login successful!', 'Success'); // Show success notification
           this.router.navigate(['/user/dashboard']); 
         },

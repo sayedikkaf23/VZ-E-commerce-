@@ -33,12 +33,12 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   };
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
 
-  openDatePicker() {
-    if (this.dateInput && this.dateInput.nativeElement) {
-      this.dateInput.nativeElement.focus();  // Ensure the input is focused
-      this.dateInput.nativeElement.click();  // Programmatically click the input to open the date picker
-    }
-  }
+  // openDatePicker() {
+  //   if (this.dateInput && this.dateInput.nativeElement) {
+  //     this.dateInput.nativeElement.focus();  // Ensure the input is focused
+  //     this.dateInput.nativeElement.click();  // Programmatically click the input to open the date picker
+  //   }
+  // }
   
   
   isValidSalary = true;
@@ -101,6 +101,16 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges();
     }
   }
+
+  preventManualInput(event: KeyboardEvent): void {
+    event.preventDefault(); // Prevent manual input via keyboard
+  }
+  
+  openDatePicker(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.showPicker(); // Explicitly trigger the date picker
+  }
+
 
   ngAfterViewInit() {
     const Tooltip = (window as any).Tooltip;

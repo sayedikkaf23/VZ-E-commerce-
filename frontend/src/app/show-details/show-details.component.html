@@ -76,9 +76,13 @@
                   <th>Are you Salaried or Self Employed? :</th>
                   <td>{{ bankInfo.working }}</td>
                 </tr>
-                <tr>
+                <tr *ngIf="bankInfo.working === 'Salaried'">
                   <th>Salary :</th>
                   <td>{{ bankInfo.salary }}</td>
+                </tr>
+                <tr *ngIf="bankInfo.working === 'Self Employed'">
+                  <th>Company Name :</th>
+                  <td>{{ bankInfo.companyname }}</td>
                 </tr>
                 <tr>
                   <th >Do you wish to apply for? :</th>

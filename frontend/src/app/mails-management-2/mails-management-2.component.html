@@ -151,7 +151,8 @@
                     <label class="shareholder-label">Date of Birth <span class="required">*</span></label>
                     <!-- Apply new class here -->
                     <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required
-                      style="padding: 25px" />
+                      style="padding: 25px"  (keydown)="preventManualInput($event)"
+                      (click)="openDatePicker($event)" />
                   </div>
                   <div class="form-field">
                     <label class="shareholder-label">Nationality <span class="required">*</span></label>

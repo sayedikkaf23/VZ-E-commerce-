@@ -19,6 +19,7 @@ export class CustomerCardmanagementComponent implements OnInit {
   records: any[] = [];
   selectedRecord: any = null; // Initialize to null
   isSidebarActive = false;
+  userName: string = ''; // Property to store the user's name
 
 
   constructor(
@@ -35,11 +36,14 @@ export class CustomerCardmanagementComponent implements OnInit {
     if (email) {
       // Call the API with the email
       this.fetchUserServices(email);
+      this.userName = this.extractNameFromEmail(email);
     } else {
       console.error('No email found in localStorage.');
     }
   }
-  
+  extractNameFromEmail(email: string): string {
+    return email.split('@')[0]; // Get the part before the '@' symbol
+  }
   ngAfterViewInit() {
     document.body.style.paddingTop = '0px';
     document.documentElement.style.paddingTop = '0px';
