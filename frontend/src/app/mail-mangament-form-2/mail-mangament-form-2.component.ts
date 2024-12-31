@@ -72,21 +72,17 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
 
-    this.getnationalityService.getNationality().subscribe((data) => {
-      // Extract and sort the nationalities
-      this.nationalitiesData = data
-        .map((country: { name: { common: any; }; }) => country.name.common) // Extract the common name
-        .sort((a: string, b: string) => a.localeCompare(b)); // Sort alphabetically
+    this.getnationalityService.getCountries().subscribe((data) => {
+      // Map and trim whitespace, sort case-insensitively
+      this.nationalities = data
+        .map((country: { name: { common: string } }) => country.name.common.trim())
+        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
     
       // Trigger change detection to update the view
       this.cdRef.detectChanges();
     });
 
 
-    // this.getnationalityService.getNationality().subscribe((data) => {
-    //   this.nationalitiesData =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-    //   this.cdRef.detectChanges(); // Trigger change detection to update the view
-    // });
 
     // Retrieve Step 2 data from localStorage
     const storedStep2Data = localStorage.getItem('mailform2');
