@@ -63,8 +63,13 @@ export class MailsManagement1Component {
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
     this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
+      // Extract and sort the nationalities
+      this.nationalities = data
+        .map((country: { name: { common: any; }; }) => country.name.common) // Extract the common name
+        .sort((a: string, b: string) => a.localeCompare(b)); // Sort alphabetically
+    
+      // Trigger change detection to update the view
+      this.cdRef.detectChanges();
     });
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
