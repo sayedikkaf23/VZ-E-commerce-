@@ -64,10 +64,16 @@ export class Step1Component implements OnInit {
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
 
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
+    this.getnationalityService.getCountries().subscribe((data) => {
+      // Map and trim whitespace, sort case-insensitively
+      this.nationalities = data
+        .map((country: { name: { common: string } }) => country.name.common.trim())
+        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    
+      // Trigger change detection to update the view
+      this.cdRef.detectChanges();
     });
+    
 
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
@@ -90,6 +96,25 @@ export class Step1Component implements OnInit {
 
 onSubmit() {
 
+    // Check if step-1 and step-2 data exist in localStorage
+    if (this.isBrowser) {
+      const step1Data = localStorage.getItem('step1Data');
+      const step2Data = localStorage.getItem('step2Data');
+  
+      if (step1Data && step2Data) {
+        // Update step-1 data with current form values
+        const updatedStep1Data = {
+          ...JSON.parse(step1Data),
+          ...this.personalDetailsForm.value,
+        };
+  
+        localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data)); // Save updated step-1 data
+  
+        this.router.navigate(['/ShowDetails']);
+        return; // Exit early to avoid further execution
+      }
+    }
+
 
   if (this.personalDetailsForm.valid) {
     const formData = this.personalDetailsForm.value;
@@ -106,7 +131,7 @@ onSubmit() {
 
     const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
     if (mobileNumberControl?.errors?.['validatePhoneNumber']) { // Correct key here
-      this.toastr.error('enter a valid mobile number for the selected country.', 'Validation Error');
+      this.toastr.error('Enter a valid mobile number for the selected country.', 'Validation Error');
     }
 
     // Display validation errors for invalid fields

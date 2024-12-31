@@ -70,14 +70,19 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // Retrieve countries and nationalities
     this.getnationalityService.getCountries().subscribe((data) => {
-      this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
+      // Map and trim whitespace, sort case-insensitively
+      this.nationalities = data
+        .map((country: { name: { common: string } }) => country.name.common.trim())
+        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    
+      // Trigger change detection to update the view
       this.cdRef.detectChanges();
     });
 
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
-      this.cdRef.detectChanges();
-    });
+    // this.getnationalityService.getNationality().subscribe((data) => {
+    //   this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
+    //   this.cdRef.detectChanges();
+    // });
 
     // Retrieve saved data from localStorage
     const storedStep2Data = localStorage.getItem('virtualdata1');

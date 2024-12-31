@@ -64,21 +64,27 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // Retrieve Step 2 data from localStorage
+    
+
+    // this.getnationalityService.getCountries().subscribe((data) => {
+    //   // Assuming data is an array of country objects
+    //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
+    //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    // });
 
     this.getnationalityService.getCountries().subscribe((data) => {
-      // Assuming data is an array of country objects
-      this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
-      this.cdRef.detectChanges(); // Manually trigger change detection to update the view
-    });
-
-
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalitiesData =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
-    });
-
+      // Map and trim whitespace, sort case-insensitively
+      this.nationalities = data
+        .map((country: { name: { common: string } }) => country.name.common.trim())
+        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
     
+      // Trigger change detection to update the view
+      this.cdRef.detectChanges();
+    });
+
+
+
+    // Retrieve Step 2 data from localStorage
     const storedStep2Data = localStorage.getItem('mailform2');
     if (storedStep2Data) {
       const parsedData = JSON.parse(storedStep2Data);

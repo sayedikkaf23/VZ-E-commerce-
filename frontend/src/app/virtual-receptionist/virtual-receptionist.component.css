@@ -4,6 +4,13 @@
     margin-left: 5px;
   }
 
+
+  /* Search Country left alignment */
+  ::ng-deep #country-search-box {
+    padding-left: 18px !important;
+    
+  }
+
   
    /* Loader Container */
 .loader-container {
