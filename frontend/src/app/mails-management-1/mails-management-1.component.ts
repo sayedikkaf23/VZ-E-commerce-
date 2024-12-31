@@ -82,6 +82,29 @@ export class MailsManagement1Component {
   }
 
   onSubmit() {
+
+   // Check if 'mailform', 'mailform1', and 'mailform2' exist in localStorage
+  if (this.isBrowser) {
+    const mailform = localStorage.getItem('mailform');
+    
+    const mailform1 = localStorage.getItem('mailform1');
+
+    if (mailform && mailform1) {
+      // Update 'mailform' with current form values
+      const updatedMailForm = {
+        ...JSON.parse(mailform),
+        ...this.personalDetailsForm.value,
+      };
+
+      localStorage.setItem('mailform', JSON.stringify(updatedMailForm)); // Save updated 'mailform'
+
+      this.router.navigate(['/mails-management-details']);
+      return; // Exit early to avoid further execution
+    }
+  }
+
+
+
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;
   

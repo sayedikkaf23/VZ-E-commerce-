@@ -96,6 +96,25 @@ export class Step1Component implements OnInit {
 
 onSubmit() {
 
+    // Check if step-1 and step-2 data exist in localStorage
+    if (this.isBrowser) {
+      const step1Data = localStorage.getItem('step1Data');
+      const step2Data = localStorage.getItem('step2Data');
+  
+      if (step1Data && step2Data) {
+        // Update step-1 data with current form values
+        const updatedStep1Data = {
+          ...JSON.parse(step1Data),
+          ...this.personalDetailsForm.value,
+        };
+  
+        localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data)); // Save updated step-1 data
+  
+        this.router.navigate(['/ShowDetails']);
+        return; // Exit early to avoid further execution
+      }
+    }
+
 
   if (this.personalDetailsForm.valid) {
     const formData = this.personalDetailsForm.value;

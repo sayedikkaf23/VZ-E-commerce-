@@ -91,6 +91,29 @@ export class VirtualReceptionistComponent {
 
 
 onSubmit() {
+  
+
+   // Check if 'virtualdata', 'virtualdata1', exist in localStorage
+   if (this.isBrowser) {
+    const virtualdata = localStorage.getItem('virtualdata');
+    
+    const virtualdata1 = localStorage.getItem('virtualdata1');
+
+    if (virtualdata && virtualdata1) {
+      // Update 'virtualdata' with current form values
+      const updatedVirtualForm = {
+        ...JSON.parse(virtualdata),
+        ...this.personalDetailsForm.value,
+      };
+
+      localStorage.setItem('virtualdata', JSON.stringify(updatedVirtualForm)); // Save updated 'mailform'
+
+      this.router.navigate(['/virtual-receptionist-details']);
+      return; // Exit early to avoid further execution
+    }
+  }
+
+
   if (this.personalDetailsForm.valid) {
     const formData = this.personalDetailsForm.value;
 
