@@ -79,6 +79,30 @@ export class CustomerCardmanagementComponent implements OnInit {
 
   viewDetails(record: any): void {
     this.selectedRecord = record; // Set the selected record
+  
+    // Combine product arrays
+    this.selectedRecord.combinedProducts = [
+      ...(record.quoteWithProductDetails?.product || []),
+      ...(record.salesforceResponseMatchScreening?.products || [])
+    ];
+  
+    // Calculate totals
+    const subTotal = this.selectedRecord.combinedProducts.reduce((sum: number, product: any) => {
+      const quantity = product.productQuantity || product.productQunatity || 0;
+      const unitPrice = product.productUnitPrice || 0;
+      return sum + quantity * unitPrice;
+    }, 0);
+  
+    const vat = subTotal * 0.05; // Assuming VAT is 5%
+    const totalIncludingVAT = subTotal + vat;
+  
+    // Set calculated values
+    this.selectedRecord.calculatedSubTotal = subTotal;
+    this.selectedRecord.calculatedVAT = vat;
+    this.selectedRecord.calculatedTotalIncludingVAT = totalIncludingVAT;
+  
+    console.log(this.selectedRecord);
+  
     const modalElement = document.getElementById('detailsModal');
     if (modalElement) {
       // Use the Bootstrap modal
@@ -86,6 +110,8 @@ export class CustomerCardmanagementComponent implements OnInit {
       modal.show();
     }
   }
+  
+  
 
   navigateLogout(): void {
     this.router.navigate(['/login']); // Navigate to login
