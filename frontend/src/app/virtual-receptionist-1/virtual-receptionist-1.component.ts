@@ -142,12 +142,12 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
     }
   }
 
-  openDatePicker() {
-    if (this.dateInput && this.dateInput.nativeElement) {
-      this.dateInput.nativeElement.focus();
-      this.dateInput.nativeElement.click();
-    }
-  }
+  // openDatePicker() {
+  //   if (this.dateInput && this.dateInput.nativeElement) {
+  //     this.dateInput.nativeElement.focus();
+  //     this.dateInput.nativeElement.click();
+  //   }
+  // }
 
   addShareholder() {
     this.shareholders.push({
@@ -157,6 +157,16 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       nationalityshareholder: '',
     });
     this.cdRef.detectChanges();
+  }
+
+
+  preventManualInput(event: KeyboardEvent): void {
+    event.preventDefault(); // Prevent manual input via keyboard
+  }
+  
+  openDatePicker(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.showPicker(); // Explicitly trigger the date picker
   }
 
   deleteShareholder(index: number) {

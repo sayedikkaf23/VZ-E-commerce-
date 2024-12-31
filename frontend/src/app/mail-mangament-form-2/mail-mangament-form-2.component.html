@@ -24,8 +24,8 @@
                 <fieldset>
                   <select name="resident" id="resident" class="form-select" [(ngModel)]="formData.companylocation">
                     <option value="" disabled selected>Is your company located in UAE?</option>
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
                   </select>
                 </fieldset>
               </div>
@@ -117,7 +117,8 @@
                     <label class="shareholder-label">Date of Birth <span class="required">*</span></label>
                     <!-- Apply new class here -->
                     <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required
-                      style="padding: 25px" />
+                      style="padding: 25px"  (keydown)="preventManualInput($event)"
+                      (click)="openDatePicker($event)" />
                   </div>
                   <div class="form-field">
                     <label class="shareholder-label">Nationality <span class="required">*</span></label>

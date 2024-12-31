@@ -160,7 +160,7 @@ export class MailsManagementSummaryComponent {
     this.userService.mailform(mergedData).subscribe(
       response => {
         console.log('Data submitted successfully:', response);
-        this.toastr.success('Data submitted successfully', 'Success');
+        // this.toastr.success('Data submitted successfully', 'Success');
   
         // Retrieve quotePaymentId from the response instead of salesforceResponse
         const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
