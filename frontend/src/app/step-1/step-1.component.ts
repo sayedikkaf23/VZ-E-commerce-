@@ -106,7 +106,7 @@ onSubmit() {
 
     const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
     if (mobileNumberControl?.errors?.['validatePhoneNumber']) { // Correct key here
-      this.toastr.error('enter a valid mobile number for the selected country.', 'Validation Error');
+      this.toastr.error('Enter a valid mobile number for the selected country.', 'Validation Error');
     }
 
     // Display validation errors for invalid fields
