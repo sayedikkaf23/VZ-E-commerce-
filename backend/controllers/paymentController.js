@@ -8,7 +8,8 @@ const axios = require("axios");
 const crypto = require("crypto");
 const User = require("../models/user"); // Assuming the User model is in 'models/user'
 const bcrypt = require("bcrypt");
-
+const MailDetails = require('../models/mailManagement'); // Import the model
+const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
 require("dotenv").config();
 //  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
 const stripe = require("stripe")(process.env.STRIP_KEY);
@@ -828,6 +829,56 @@ async function payNowSaleforce(req, res) {
       ],
     });
 
+
+    const virtualDetails = await VirtualDetails.findOne({ "QuotePaymentId": quoteId });
+    const mailDetails = await MailDetails.findOne({ "QuotePaymentId": quoteId });
+    
+    if (virtualDetails || mailDetails) {
+        // Prepare the updated fields from virtualDetails or mailDetails
+        const updatedShareholders = [];
+        
+        // Example logic: Check if there are any shareholders in virtualDetails or mailDetails
+        if (virtualDetails && virtualDetails.shareholders) {
+            virtualDetails.shareholders.forEach(shareholder => {
+                updatedShareholders.push({
+                    name: shareholder.name,
+                    shareholderPercentage: shareholder.shareholderPercentage,
+                    dob: shareholder.dob,
+                    nationalityshareholder: shareholder.nationalityshareholder,
+                    passportNumber: shareholder.passportNumber,
+                    files: shareholder.files,  // Assuming `files` contain URLs or other file data
+                });
+            });
+        }
+    
+        if (mailDetails && mailDetails.shareholders) {
+            mailDetails.shareholders.forEach(shareholder => {
+                updatedShareholders.push({
+                    name: shareholder.name,
+                    shareholderPercentage: shareholder.shareholderPercentage,
+                    dob: shareholder.dob,
+                    nationalityshareholder: shareholder.nationalityshareholder,
+                    passportNumber: shareholder.passportNumber,
+                    files: shareholder.files,  // Assuming `files` contain URLs or other file data
+                });
+            });
+        }
+    
+        // Update PiData with new or modified shareholders
+        const updateFile = await PiData.updateOne(
+            { _id: PiDataCheck._id },  // Match by the PiData document's ID
+            {
+                $set: {
+                 
+                    shareholders: updatedShareholders || '',  // Update shareholders field
+                },
+            }
+        );
+    
+        console.log("PiData updated successfully:", updateFile);
+    }
+    
+
     if (!paynowdata) {
       // Throw an error if the document is not found
       throw new Error("Document not found");
@@ -906,8 +957,19 @@ async function payNowSaleforce(req, res) {
   
       // Making the second API call
        axios.put(endpointUrl2, requestBodySalesforce2, { headers })
-      .then((response2) => {
+      .then(async (response2) => {
         console.log("Second API Response:", response2.data);
+        const { invoiceDate, invoiceNumber } = response2.data;
+
+        const updatedDocument = await PiData.updateOne(
+          { _id: PiDataCheck._id }, // Match by the found document's ID
+          {
+            $set: {
+              invoiceDate: invoiceDate, // Extracted from the response
+              invoiceNumber: invoiceNumber, // Extracted from the response
+            },
+          }
+        );
       })
       .catch((error) => {
         // Handle errors from both API calls

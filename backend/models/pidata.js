@@ -9,6 +9,21 @@ const screeningDetailsSchema = new mongoose.Schema({
 });
 
 
+const shareholderSchema = new mongoose.Schema({
+  name: { type: String },
+  shareholderPercentage: { type: Number },
+  dob: { type: Date },
+  nationalityshareholder: { type: String },
+  passportNumber: { type: String },
+  files: [
+    {
+      name: { type: String },
+      url: { type: String },
+      _id: mongoose.Schema.Types.ObjectId
+    }
+  ]
+});
+
 const responseSchema = new mongoose.Schema({
   products: [
     {
@@ -83,7 +98,10 @@ const pidataSchema = new mongoose.Schema({
     default: false // Default value
   },
   planname: { type: String },
-  salesforceResponseMatchScreening: responseSchema // Added field for Salesforce response
+  salesforceResponseMatchScreening: responseSchema, // Added field for Salesforce response
+  invoiceDate: { type: String },
+  invoiceNumber: { type: String },
+  shareholders: [shareholderSchema], // Added shareholders field
    // Add screeningDetails as a sub-document
 });
 

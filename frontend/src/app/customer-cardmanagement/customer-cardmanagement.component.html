@@ -267,8 +267,8 @@
                         View Details
                       </button>
                     </td>
-                    <td style="text-align: center; padding: 6px;">
-                      <button class="cool-button" >
+                    <td style="text-align: center; padding: 6px;" *ngIf="item.shareholders && item.shareholders.length > 0">
+                      <button class="cool-button">
                         View File
                       </button>
                     </td>

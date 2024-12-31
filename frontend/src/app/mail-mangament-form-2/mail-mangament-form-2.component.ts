@@ -96,7 +96,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       if (parsedData.shareholders) {
         this.shareholders = parsedData.shareholders;
       }
-    
+      this.updateShareholders();
       // Trigger change detection if necessary
       this.cdRef.detectChanges();
     }
@@ -166,18 +166,35 @@ deleteShareholder(index: number) {
   }
 
   updateShareholders() {
-    const count = parseInt(this.formData.shareholdercount, 10); // Convert count to number
+    const count = parseInt(this.formData.shareholdercount, 10) || 0;
 
-    // If the selected count is greater than current length, add more shareholder objects
     while (this.shareholders.length < count) {
-      this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+      this.shareholders.push({
+        name: '',
+        shareholderPercentage: '',
+        dob: '',
+        nationalityshareholder: '',
+      });
     }
 
-    // If the selected count is smaller, remove extra shareholder objects
     while (this.shareholders.length > count) {
       this.shareholders.pop();
     }
   }
+
+  // updateShareholders() {
+  //   const count = parseInt(this.formData.shareholdercount, 10); // Convert count to number
+
+  //   // If the selected count is greater than current length, add more shareholder objects
+  //   while (this.shareholders.length < count) {
+  //     this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+  //   }
+
+  //   // If the selected count is smaller, remove extra shareholder objects
+  //   while (this.shareholders.length > count) {
+  //     this.shareholders.pop();
+  //   }
+  // }
 
   isFormInvalid(): boolean {
     const shareholderCount = Number(this.formData.shareholdercount);

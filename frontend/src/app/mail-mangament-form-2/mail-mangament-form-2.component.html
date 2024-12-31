@@ -62,7 +62,7 @@
 
               <fieldset>
                 <select name="shareholdercount" id="shareholdercount" class="form-select"
-                  [(ngModel)]="formData.shareholdercount">
+                  [(ngModel)]="formData.shareholdercount" (ngModelChange)="updateShareholders()">
                   <option value="" disabled selected>
                     How many shareholder does your company have?
                   </option>
