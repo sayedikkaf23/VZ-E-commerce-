@@ -153,7 +153,7 @@
                     <div class="col-auto">
                       <div class="header-profile-name btn-hover-wrap">
                         <a class="btn profile-btn" style="padding: 0; text-decoration: none; cursor: pointer;">
-                          test
+                          {{ userName }}
                         </a>
                         <div class="submenu">
                           <hr />
@@ -234,12 +234,12 @@
               
                     <!-- Tax Invoice Number (can be null, so handle carefully) -->
                     <td style="text-align: center; padding: 6px;">
-                      {{ item.quoteWithProductDetails?.quoteId || '—' }}
+                      {{ item.invoiceNumber || '—' }}
                     </td>
               
                     <!-- Tax Invoice Date -->
                     <td style="text-align: center; padding: 6px;">
-                      {{ item.quoteWithProductDetails?.invoiceDate }}
+                      {{ item.invoiceDate }}
                     </td>
                     
                     <!-- Amount (subTotal or totalPrice, depending on your needs) -->
@@ -267,8 +267,8 @@
                         View Details
                       </button>
                     </td>
-                    <td style="text-align: center; padding: 6px;">
-                      <button class="cool-button" >
+                    <td style="text-align: center; padding: 6px;" *ngIf="item.shareholders && item.shareholders.length > 0">
+                      <button class="cool-button">
                         View File
                       </button>
                     </td>
@@ -320,32 +320,34 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let product of selectedRecord?.quoteWithProductDetails?.product">
+              <tr *ngFor="let product of selectedRecord?.combinedProducts">
                 <td>{{ product.productName }}</td>
-                <td>{{ product.productQunatity }}</td>
+                <td>{{ product.productQuantity || product.productQunatity }}</td>
                 <td>AED {{ product.productUnitPrice }}</td>
-                <td>AED {{ product.taxableAmount }}</td>
-                <td>AED {{ product.vat }}</td>
-                <td>AED {{ product.total }}</td>
+                <td>AED {{ product.taxableAmount || 0 }}</td>
+                <td>AED {{ product.vat || 0 }}</td>
+                <td>AED {{ product.total || (product.productUnitPrice * (product.productQuantity || product.productQunatity)) }}</td>
               </tr>
             </tbody>
+            
           </table>
   
           <!-- Summary Section -->
           <div class="modal-summary mt-3">
             <div class="row align-items-center">
               <div class="col-8 text-end">Grand Total Without VAT:</div>
-              <div class="col-4 text-end">AED {{ selectedRecord?.quoteWithProductDetails?.subTotal }}</div>
+              <div class="col-4 text-end">AED {{ selectedRecord?.calculatedSubTotal | number: '1.2-2' }}</div>
             </div>
             <div class="row align-items-center">
               <div class="col-8 text-end">VAT:</div>
-              <div class="col-4 text-end">AED {{ selectedRecord?.quoteWithProductDetails?.vat }}</div>
+              <div class="col-4 text-end">AED {{ selectedRecord?.calculatedVAT | number: '1.2-2' }}</div>
             </div>
             <div class="row align-items-center">
               <div class="col-8 text-end">Total Including VAT:</div>
-              <div class="col-4 text-end text-danger fw-normal">AED {{ selectedRecord?.quoteWithProductDetails?.total }}</div>
+              <div class="col-4 text-end text-danger fw-normal">AED {{ selectedRecord?.calculatedTotalIncludingVAT | number: '1.2-2' }}</div>
             </div>
           </div>
+          
         </div>
   
         <!-- Modal Footer -->

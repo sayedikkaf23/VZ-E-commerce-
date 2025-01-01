@@ -28,6 +28,8 @@ exports.submitMailDetails = async (req, res) => {
       LeadId
     } = req.body;
 
+console.log(req.body)
+
     // Check if Company is incorporated in UAE and shareholders is not empty
     const shareholdersWithFiles = CompanyIncorporated == 'United Arab Emirates' && shareholders.length > 0 
       ? shareholders.map((shareholder, index) => {
@@ -68,6 +70,7 @@ exports.submitMailDetails = async (req, res) => {
       tradelicense,
       shareholdercount,
       Companylicensed,
+      passportfile,
       shareholders: shareholdersWithFiles,
       companyTradeLicense,
       LeadId,

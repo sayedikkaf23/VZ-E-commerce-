@@ -10,6 +10,17 @@
     transform: translateX(-50%);
     z-index: 9999;
   }
+
+  
+/* Search Country left alignment */
+  ::ng-deep #country-search-box {
+    padding-left: 18px !important;
+    
+  }
+  
+
+  
+
   
   /* Loader Container */
 .loader-container {
@@ -55,3 +66,4 @@ input[readonly] {
   cursor: pointer;
   background-color: #f9f9f9;
 }
+

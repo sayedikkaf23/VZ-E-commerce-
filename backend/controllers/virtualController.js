@@ -1,6 +1,8 @@
 const fileUpload = require('../middleware/fileUpload'); // Import the multer middleware
 const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
-const Pidata = require('../models/pidata');
+const PiData = require("../models/pidata");
+const MailDetails = require('../models/mailManagement');
+
 const axios = require("axios");
 require('dotenv').config();
 

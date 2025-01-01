@@ -138,3 +138,24 @@ ul li::before {
   font-size: 1rem;
 }
 
+
+/* File input placeholder */
+
+.rounded-input{
+  background-color: rgba(217, 217, 217, 0.23) !important;
+    border: 1px solid #CDC9C9 !important;
+    border-radius: 61px !important;
+    padding: 0 20px 0 51px !important;
+    height: 54px !important;
+    display: inline-block !important;
+    font-weight: 500 !important;
+    font-size: 20px !important;
+    color: rgba(0, 0, 0, 0.507) !important;
+    width: 99% !important;
+    border-color: transparent !important;
+    transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out !important;
+    appearance: none !important; 
+    margin: 0 !important;
+    font-family: inherit !important;
+}
+

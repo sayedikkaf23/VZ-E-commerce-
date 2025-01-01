@@ -70,14 +70,19 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
   ngOnInit(): void {
     // Retrieve countries and nationalities
     this.getnationalityService.getCountries().subscribe((data) => {
-      this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
+      // Map and trim whitespace, sort case-insensitively
+      this.nationalities = data
+        .map((country: { name: { common: string } }) => country.name.common.trim())
+        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    
+      // Trigger change detection to update the view
       this.cdRef.detectChanges();
     });
 
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
-      this.cdRef.detectChanges();
-    });
+    // this.getnationalityService.getNationality().subscribe((data) => {
+    //   this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
+    //   this.cdRef.detectChanges();
+    // });
 
     // Retrieve saved data from localStorage
     const storedStep2Data = localStorage.getItem('virtualdata1');
@@ -137,12 +142,12 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
     }
   }
 
-  openDatePicker() {
-    if (this.dateInput && this.dateInput.nativeElement) {
-      this.dateInput.nativeElement.focus();
-      this.dateInput.nativeElement.click();
-    }
-  }
+  // openDatePicker() {
+  //   if (this.dateInput && this.dateInput.nativeElement) {
+  //     this.dateInput.nativeElement.focus();
+  //     this.dateInput.nativeElement.click();
+  //   }
+  // }
 
   addShareholder() {
     this.shareholders.push({
@@ -152,6 +157,16 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       nationalityshareholder: '',
     });
     this.cdRef.detectChanges();
+  }
+
+
+  preventManualInput(event: KeyboardEvent): void {
+    event.preventDefault(); // Prevent manual input via keyboard
+  }
+  
+  openDatePicker(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.showPicker(); // Explicitly trigger the date picker
   }
 
   deleteShareholder(index: number) {

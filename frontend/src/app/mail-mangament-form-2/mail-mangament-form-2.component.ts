@@ -33,12 +33,12 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   };
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
 
-  openDatePicker() {
-    if (this.dateInput && this.dateInput.nativeElement) {
-      this.dateInput.nativeElement.focus();  // Ensure the input is focused
-      this.dateInput.nativeElement.click();  // Programmatically click the input to open the date picker
-    }
-  }
+  // openDatePicker() {
+  //   if (this.dateInput && this.dateInput.nativeElement) {
+  //     this.dateInput.nativeElement.focus();  // Ensure the input is focused
+  //     this.dateInput.nativeElement.click();  // Programmatically click the input to open the date picker
+  //   }
+  // }
   
   
   isValidSalary = true;
@@ -64,7 +64,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    // Retrieve Step 2 data from localStorage
+    
 
     this.getnationalityService.getCountries().subscribe((data) => {
       // Assuming data is an array of country objects
@@ -72,13 +72,19 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     });
 
-
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalitiesData =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
-    });
-
+    // this.getnationalityService.getCountries().subscribe((data) => {
+    //   // Map and trim whitespace, sort case-insensitively
+    //   this.nationalities = data
+    //     .map((country: { name: { common: string } }) => country.name.common.trim())
+    //     .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
     
+    //   // Trigger change detection to update the view
+    //   this.cdRef.detectChanges();
+    // });
+
+
+
+    // Retrieve Step 2 data from localStorage
     const storedStep2Data = localStorage.getItem('mailform2');
     if (storedStep2Data) {
       const parsedData = JSON.parse(storedStep2Data);
@@ -96,11 +102,21 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       if (parsedData.shareholders) {
         this.shareholders = parsedData.shareholders;
       }
-    
+      this.updateShareholders();
       // Trigger change detection if necessary
       this.cdRef.detectChanges();
     }
   }
+
+  preventManualInput(event: KeyboardEvent): void {
+    event.preventDefault(); // Prevent manual input via keyboard
+  }
+  
+  openDatePicker(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    input.showPicker(); // Explicitly trigger the date picker
+  }
+
 
   ngAfterViewInit() {
     const Tooltip = (window as any).Tooltip;
@@ -156,18 +172,35 @@ deleteShareholder(index: number) {
   }
 
   updateShareholders() {
-    const count = parseInt(this.formData.shareholdercount, 10); // Convert count to number
+    const count = parseInt(this.formData.shareholdercount, 10) || 0;
 
-    // If the selected count is greater than current length, add more shareholder objects
     while (this.shareholders.length < count) {
-      this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+      this.shareholders.push({
+        name: '',
+        shareholderPercentage: '',
+        dob: '',
+        nationalityshareholder: '',
+      });
     }
 
-    // If the selected count is smaller, remove extra shareholder objects
     while (this.shareholders.length > count) {
       this.shareholders.pop();
     }
   }
+
+  // updateShareholders() {
+  //   const count = parseInt(this.formData.shareholdercount, 10); // Convert count to number
+
+  //   // If the selected count is greater than current length, add more shareholder objects
+  //   while (this.shareholders.length < count) {
+  //     this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+  //   }
+
+  //   // If the selected count is smaller, remove extra shareholder objects
+  //   while (this.shareholders.length > count) {
+  //     this.shareholders.pop();
+  //   }
+  // }
 
   isFormInvalid(): boolean {
     const shareholderCount = Number(this.formData.shareholdercount);

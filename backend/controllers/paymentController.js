@@ -8,7 +8,8 @@ const axios = require("axios");
 const crypto = require("crypto");
 const User = require("../models/user"); // Assuming the User model is in 'models/user'
 const bcrypt = require("bcrypt");
-
+const MailDetails = require('../models/mailManagement'); // Import the model
+const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
 require("dotenv").config();
 //  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
 const stripe = require("stripe")(process.env.STRIP_KEY);
@@ -828,6 +829,56 @@ async function payNowSaleforce(req, res) {
       ],
     });
 
+
+    const virtualDetails = await VirtualDetails.findOne({ "QuotePaymentId": quoteId });
+    const mailDetails = await MailDetails.findOne({ "QuotePaymentId": quoteId });
+    
+    if (virtualDetails || mailDetails) {
+        // Prepare the updated fields from virtualDetails or mailDetails
+        const updatedShareholders = [];
+        
+        // Example logic: Check if there are any shareholders in virtualDetails or mailDetails
+        if (virtualDetails && virtualDetails.shareholders) {
+            virtualDetails.shareholders.forEach(shareholder => {
+                updatedShareholders.push({
+                    name: shareholder.name,
+                    shareholderPercentage: shareholder.shareholderPercentage,
+                    dob: shareholder.dob,
+                    nationalityshareholder: shareholder.nationalityshareholder,
+                    passportNumber: shareholder.passportNumber,
+                    files: shareholder.files,  // Assuming `files` contain URLs or other file data
+                });
+            });
+        }
+    
+        if (mailDetails && mailDetails.shareholders) {
+            mailDetails.shareholders.forEach(shareholder => {
+                updatedShareholders.push({
+                    name: shareholder.name,
+                    shareholderPercentage: shareholder.shareholderPercentage,
+                    dob: shareholder.dob,
+                    nationalityshareholder: shareholder.nationalityshareholder,
+                    passportNumber: shareholder.passportNumber,
+                    files: shareholder.files,  // Assuming `files` contain URLs or other file data
+                });
+            });
+        }
+    
+        // Update PiData with new or modified shareholders
+        const updateFile = await PiData.updateOne(
+            { _id: PiDataCheck._id },  // Match by the PiData document's ID
+            {
+                $set: {
+                 
+                    shareholders: updatedShareholders || '',  // Update shareholders field
+                },
+            }
+        );
+    
+        console.log("PiData updated successfully:", updateFile);
+    }
+    
+
     if (!paynowdata) {
       // Throw an error if the document is not found
       throw new Error("Document not found");
@@ -875,6 +926,65 @@ async function payNowSaleforce(req, res) {
         console.error("Error:", error);
       });
 
+
+
+      const requestBodySalesforce2 = {
+        qp: {
+          paymentmethod: "Pay via Card Machine",
+          amount_received: 55471.5,
+          bank_name: "Point of Sale",
+          GL_code: "1351 - Point of Sale",
+          Pay_Currency: "AED",
+          payment_status: "AR Review",
+          quotePaymentId: "aAWdu0000000njtGAA",
+        },
+        attachments: [
+          {
+            Body: "",
+            ContentType: "",
+            Name: "",
+          },
+          {
+            Body: "",
+            ContentType: "",
+            Name: "",
+          },
+        ],
+      };
+  
+      // Endpoint URL for the second API call
+      const endpointUrl2 = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/aAWdu0000000njtGAA`;
+  
+      // Making the second API call
+       axios.put(endpointUrl2, requestBodySalesforce2, { headers })
+      .then(async (response2) => {
+        console.log("Second API Response:", response2.data);
+        const { invoiceDate, invoiceNumber } = response2.data;
+
+        const updatedDocument = await PiData.updateOne(
+          { _id: PiDataCheck._id }, // Match by the found document's ID
+          {
+            $set: {
+              invoiceDate: invoiceDate, // Extracted from the response
+              invoiceNumber: invoiceNumber, // Extracted from the response
+            },
+          }
+        );
+      })
+      .catch((error) => {
+        // Handle errors from both API calls
+        if (error.response) {
+          console.error("Error Response:", error.response.data); // API response error data
+          console.error("Status Code:", error.response.status); // HTTP status code
+        } else if (error.request) {
+          console.error("No Response Received:", error.request); // No response received
+        } else {
+          console.error("Error Message:", error.message); // Other errors
+        }
+        console.error("Full Error Object:", error); // Complete error object
+      });
+    
+
     const userEmail = paynowdata.customerDetails.id; // Get the email
     const username = paynowdata.customerDetails.name; // Get the email
     const Amount = paynowdata.transactionDetails.amount; // Get the email
@@ -918,6 +1028,7 @@ async function payNowSaleforce(req, res) {
                     
                       You can access your Customer Portal here:<br>
                       <a href="https://ecommerce.yeepeey.com/login" style="color: #007bff; text-decoration: underline;">Customer Portal</a><br>
+                      Your Email: <strong>${userEmail}</strong><br><br>
                       Your temporary password: <strong>${randomPassword}</strong> (You can change it once logged in).<br><br>
                       Feel free to reach out if you have any questions.<br><br>
                       Thanks for choosing Virtuzone!<br>
