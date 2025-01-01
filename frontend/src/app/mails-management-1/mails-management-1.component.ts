@@ -62,20 +62,20 @@ export class MailsManagement1Component {
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
-    // this.getnationalityService.getCountries().subscribe((data) => {
-    //   // Map and trim whitespace, sort case-insensitively
-    //   this.nationalities = data
-    //     .map((country: { name: { common: string } }) => country.name.common.trim())
-    //     .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
-    
-    //   // Trigger change detection to update the view
-    //   this.cdRef.detectChanges();
-    // });
     this.getnationalityService.getCountries().subscribe((data) => {
-      // Assuming data is an array of country objects
-      this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
-      this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+      // Map and trim whitespace, sort case-insensitively
+      this.nationalities = data
+        .map((country: { name: { common: string } }) => country.name.common.trim())
+        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    
+      // Trigger change detection to update the view
+      this.cdRef.detectChanges();
     });
+    // this.getnationalityService.getCountries().subscribe((data) => {
+    //   // Assuming data is an array of country objects
+    //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
+    //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    // });
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
       const storedData = localStorage.getItem('mailform');
