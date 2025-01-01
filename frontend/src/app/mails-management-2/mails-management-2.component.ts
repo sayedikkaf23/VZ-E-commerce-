@@ -63,10 +63,10 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
     });
     
 
-    // this.getnationalityService.getNationality().subscribe((data) => {
-    //   this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
-    //   this.cdRef.detectChanges();
-    // });
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
+      this.cdRef.detectChanges();
+    });
 
    
 

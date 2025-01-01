@@ -98,6 +98,7 @@ const pidataSchema = new mongoose.Schema({
     default: false // Default value
   },
   planname: { type: String },
+  tradeLicenseFileUrl: { type: String },
   salesforceResponseMatchScreening: responseSchema, // Added field for Salesforce response
   invoiceDate: { type: String },
   invoiceNumber: { type: String },

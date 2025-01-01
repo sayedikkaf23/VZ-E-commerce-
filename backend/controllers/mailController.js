@@ -70,7 +70,7 @@ console.log(req.body)
       tradelicense,
       shareholdercount,
       Companylicensed,
-      passportfile,
+      // passportfile,
       shareholders: shareholdersWithFiles,
       companyTradeLicense,
       LeadId,
@@ -100,7 +100,7 @@ console.log(req.body)
 
 exports.callSalesforceEndpoint = async (req, res) => {
   // Destructure fields from the request body
-  const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders ,isProfile,planname} = req.body;
+  const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders ,isProfile,planname,tradeLicenseFileUrl} = req.body;
   const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
 
   // Construct the JSON body to send to Salesforce
@@ -324,6 +324,7 @@ console.log(`${process.env.EXTERNAL_API_SCREENING_URL}`)
       },
       isProfile: isProfile ,
       planname: planname ,
+      tradeLicenseFileUrl: tradeLicenseFileUrl ,
     });
 
     // Step 6: Save the document to MongoDB

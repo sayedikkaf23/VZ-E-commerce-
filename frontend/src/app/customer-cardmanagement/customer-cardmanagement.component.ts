@@ -111,6 +111,11 @@ export class CustomerCardmanagementComponent implements OnInit {
     }
   }
   
+  openFileInNewTab(fileUrl: string): void {
+    if (fileUrl) {
+      window.open(fileUrl, '_blank');
+    }
+  }
   
 
   navigateLogout(): void {

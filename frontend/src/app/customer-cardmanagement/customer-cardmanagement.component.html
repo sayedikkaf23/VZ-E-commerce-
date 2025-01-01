@@ -267,11 +267,14 @@
                         View Details
                       </button>
                     </td>
-                    <td style="text-align: center; padding: 6px;" *ngIf="item.shareholders && item.shareholders.length > 0">
-                      <button class="cool-button">
+                    <td style="text-align: center; padding: 6px;" *ngIf="item.tradeLicenseFileUrl">
+                      <button 
+                        class="cool-button" 
+                        (click)="openFileInNewTab(item.tradeLicenseFileUrl)">
                         View File
                       </button>
                     </td>
+                    
                     
                   </tr>
               

@@ -79,10 +79,10 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges();
     });
 
-    // this.getnationalityService.getNationality().subscribe((data) => {
-    //   this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
-    //   this.cdRef.detectChanges();
-    // });
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
+      this.cdRef.detectChanges();
+    });
 
     // Retrieve saved data from localStorage
     const storedStep2Data = localStorage.getItem('virtualdata1');

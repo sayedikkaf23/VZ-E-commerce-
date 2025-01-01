@@ -31,6 +31,7 @@ export class VirtualReceptionistDetailsComponent {
  shareholders :any= [];
  uploadedFiles: File[][] = []; // Initialize as an empty array
 i: any;
+  tradeLicenseFileurl: any;
  constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
@@ -79,7 +80,7 @@ i: any;
   
       // Store merged data in localStorage for the final step
       localStorage.setItem('mergedData', JSON.stringify(mergedData));
-  
+      this.tradeLicenseFileurl  = additionalShareholderInfo.companyTradeLicenseFile[0].url;
       // Assign displayShareholders
       this.displayShareholders = Array.isArray(mergedData.shareholders)
         ? mergedData.shareholders
@@ -252,6 +253,7 @@ submitData() {
         shareholders:   this.displayShareholders,
         planname:  "Virtual Reception",
         isProfile:  false,
+        tradeLicenseFileUrl: this.tradeLicenseFileurl,
       };
 
       this.isLoading = true; // Show loading indicator if necessary

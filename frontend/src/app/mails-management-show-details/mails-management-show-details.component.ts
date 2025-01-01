@@ -30,9 +30,12 @@ export class MailsManagementShowDetailsComponent {
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
  companyInfo: any = {}; // To store bank service information (Step 2 data)
+ tradeLicenseFile: any = {}; // To store bank service information (Step 2 data)
  shareholders :any= [];
  uploadedFiles: File[][] = []; // Initialize as an empty array
 i: any;
+
+  tradeLicenseFileurl: any;
  constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
@@ -51,9 +54,9 @@ i: any;
   ngOnInit(): void {
     const mailform = localStorage.getItem('mailform');
     const mailform2 = localStorage.getItem('mailform1');
-    const mailform3 = localStorage.getItem('mailform2');
-  
-  
+    const mailform3 = localStorage.getItem('mailform2') ;
+
+
     // Redirect if either mailform or mailform2 is missing
     if (!mailform || !mailform2) {
       this.router.navigate(['/home']);
@@ -61,13 +64,15 @@ i: any;
       // Parse data from localStorage
       this.personalInfo = JSON.parse(mailform);
       this.companyInfo = JSON.parse(mailform2);
+      // this.tradeLicenseFile = JSON.parse(mailform3);
+  
   
       // Extract shareholders from mailform2 in case mailform3 is missing
       let shareholdersFromMailform2 = this.companyInfo.shareholders || [];
   
       // Parse mailform3 only if it exists
       const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
-  
+  console.log(additionalShareholderInfo,"additionalShareholderInfo")
       // Use shareholders from mailform3 if available, otherwise fallback to mailform2
       const mergedShareholders = additionalShareholderInfo.shareholders.length > 0 
         ? additionalShareholderInfo.shareholders 
@@ -90,6 +95,22 @@ i: any;
         : Object.values(mergedData.shareholders || []);
   
       console.log("Merged Data:", mergedData, this.displayShareholders);
+
+
+      //  const tradeLicenseFile = this.companyInfo.companyTradeLicenseFile || [];
+       this.tradeLicenseFileurl  = additionalShareholderInfo.companyTradeLicenseFile[0].url;
+  
+    // if (tradeLicenseFile.length > 0) {
+    //   // Assuming you need the first file
+    //   const tradeLicenseFileDetails = tradeLicenseFile[0];
+    //   console.log("Trade License File Details:", tradeLicenseFileDetails);
+
+    //   // Example usage: assigning to a variable
+    //   this.tradeLicenseFileName = tradeLicenseFileDetails.name;
+    //   this.tradeLicenseFileurl = tradeLicenseFileDetails.url;
+    // }
+
+   
     }
   
     console.log(this.displayShareholders, "sas");
@@ -246,6 +267,8 @@ submitData() {
         shareholders:   this.displayShareholders,
         planname:  "Mail Management",
         isProfile:  false,
+        // tradeLicenseFileName: this.tradeLicenseFileName,
+        tradeLicenseFileUrl: this.tradeLicenseFileurl,
       };
 
       this.isLoading = true; // Show loading indicator if necessary

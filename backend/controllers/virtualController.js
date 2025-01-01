@@ -1,6 +1,6 @@
 const fileUpload = require('../middleware/fileUpload'); // Import the multer middleware
 const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
-const PiData = require("../models/pidata");
+const Pidata = require("../models/pidata");
 const MailDetails = require('../models/mailManagement');
 
 const axios = require("axios");
@@ -99,7 +99,7 @@ exports.submitVirtualDetails = async (req, res) => {
 
 exports.callSalesforceEndpoint = async (req, res) => {
   // Destructure fields from the request body
-  const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders ,isProfile,planname} = req.body;
+  const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders ,isProfile,planname,tradeLicenseFileUrl} = req.body;
   const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
 
   // Construct the JSON body to send to Salesforce
@@ -321,6 +321,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
       },
       isProfile: isProfile ,
       planname: planname ,
+      tradeLicenseFileUrl: tradeLicenseFileUrl ,
     });
 
     // Step 6: Save the document to MongoDB

@@ -61,14 +61,9 @@ export class VirtualReceptionistComponent {
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
-    this.getnationalityService.getCountries().subscribe((data) => {
-      // Map and trim whitespace, sort case-insensitively
-      this.nationalities = data
-        .map((country: { name: { common: string } }) => country.name.common.trim())
-        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
-    
-      // Trigger change detection to update the view
-      this.cdRef.detectChanges();
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects
@@ -136,7 +131,7 @@ onSubmit() {
 
     const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
     if (mobileNumberControl?.errors?.['validatePhoneNumber']) { // Correct key here
-      this.toastr.error('enter a valid mobile number for the selected country.', 'Validation Error');
+      this.toastr.error('Enter a valid mobile number for the selected country.', 'Validation Error');
     }
 
     // Use the updated `showSingleValidationError` method
