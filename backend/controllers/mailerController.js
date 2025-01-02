@@ -116,11 +116,13 @@ cron.schedule("*/55 * * * * *", async () => {
     // Find records where payment is not done
     // (You can also filter by createdAt <= twentyMinutesAgo if needed)
     const unpaidRecords = await PiData.find({
-      isPayment: false,
-      isPaymentEmailSent:false,
-      createdAt: { $gt: oneMinuteAgo },
+      $and: [
+        { isPayment: false },
+        { isPaymentEmailSent: false },
+        { createdAt: { $gt: oneMinuteAgo } },
+      ],
     });
-
+    
     if (unpaidRecords.length === 0) {
       console.log("No pending payments found.");
       return;
@@ -246,9 +248,11 @@ cron.schedule("*/30 * * * * *", async () => {
     // (Add createdAt <= twentyMinutesAgo if you only want to send 
     // after a certain elapsed time)
     const incompleteProfiles = await PiData.find({
-      isProfile: false,
-      isProfileEmailSent: false,
-      createdAt: {  $gt: oneMinuteAgo },
+      $and: [
+        { isProfile: false },
+        { isProfileEmailSent: false },
+        { createdAt: { $gt: oneMinuteAgo } },
+      ],
     });
 
     if (incompleteProfiles.length === 0) {
