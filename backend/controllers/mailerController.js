@@ -119,10 +119,10 @@ cron.schedule("*/55 * * * * *", async () => {
       $and: [
         { isPayment: false },
         { isPaymentEmailSent: false },
-        { createdAt: { $gt: oneMinuteAgo } },
+        { createdAt: {  $lte: oneMinuteAgo } },
       ],
     });
-    
+
     if (unpaidRecords.length === 0) {
       console.log("No pending payments found.");
       return;
@@ -251,7 +251,7 @@ cron.schedule("*/30 * * * * *", async () => {
       $and: [
         { isProfile: false },
         { isProfileEmailSent: false },
-        { createdAt: { $gt: oneMinuteAgo } },
+        { createdAt: { $lte: oneMinuteAgo } },
       ],
     });
 
