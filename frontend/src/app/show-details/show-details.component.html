@@ -43,9 +43,10 @@
                   <td>{{ personalInfo.nationality }}</td>
                 </tr>
                 <tr>
-                  <th>Date of Birth :</th>
-                  <td>{{ personalInfo.birthday }}</td>
+                  <th>Date of Birth:</th>
+                  <td>{{ personalInfo.birthday | date:'dd-MM-yyyy' }}</td>
                 </tr>
+                
                 <tr>
                   <th>Phone No :</th>
                   <td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td>

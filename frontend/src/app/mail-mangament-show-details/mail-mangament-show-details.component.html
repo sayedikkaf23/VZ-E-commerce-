@@ -45,7 +45,7 @@
                 </tr>
                 <tr>
                   <th>Date of Birth :</th>
-                  <td>{{ personalInfo.birthday }}</td>
+                  <td>{{ personalInfo.birthday  | date:'dd-MM-yyyy' }}</td>
                 </tr>
                 <tr>
                   <th>Phone No :</th>
@@ -83,7 +83,7 @@
                   <tr>
                     <td>{{ shareholder.name }}</td>
                     <td>{{ shareholder.shareholderPercentage }}%</td>
-                    <td>{{ shareholder.dob }}</td>
+                    <td>{{ shareholder.dob  | date:'dd-MM-yyyy' }}</td>
                     <td>{{ shareholder.nationalityshareholder }}</td>
                   </tr>
                 </ng-container>

@@ -32,7 +32,7 @@
                   <tr><th>Last Name:</th><td>{{ personalInfo.lastName }}</td></tr>
                   <tr><th>Email ID:</th><td>{{ personalInfo.email }}</td></tr>
                   <tr><th>Nationality:</th><td>{{ personalInfo.nationality }}</td></tr>
-                  <tr><th>Date of Birth:</th><td>{{ personalInfo.birthday }}</td></tr>
+                  <tr><th>Date of Birth:</th><td>{{ personalInfo.birthday  | date:'dd-MM-yyyy' }}</td></tr>
                   <tr><th>Phone Number:</th><td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td></tr>
                 </tbody>
               </table>
@@ -77,7 +77,7 @@
                     <tr>
                       <td>{{ shareholder.name }}</td>
                       <td>{{ shareholder.shareholderPercentage }}%</td>
-                      <td>{{ shareholder.dob }}</td>
+                      <td>{{ shareholder.dob  | date:'dd-MM-yyyy' }}</td>
                       <td>{{ shareholder.nationalityshareholder }}</td>
                     </tr>
                   </ng-container>
