@@ -41,77 +41,81 @@ const responseSchema = new mongoose.Schema({
 });
 
 
-const pidataSchema = new mongoose.Schema({
-  leadWithDetails: {
-    Nationality: String,
-    Phone: String,
-    Origin__c: String,
-    Email: String,
-    LeadSource: String,
-    Status: String,
-    Company: String,
-    LastName: String,
-    FirstName: String,
-    LeadId: String,
- 
-  },
-  quotePaymentWithDetails: {
-    Currency: String,
-    QuotePaymentId: String,
-    AccountId: String
-  },
-  quoteWithProductDetails: {
-    AccountName: String,
-    Discount: Number,
-    invoiceCurrency: String,
-    invoiceDate: String,
-    invoiceNumber: String,
-    mobile: String,
-    oppurtunityId: String,
-    ownerId: String,
-    partPayment: String,
-    paymentLink: String,
-    paymentMethod: String,
-    product: Array, // Use Array for product objects
-    quoteEmail: String,
-    quoteId: String,
-    quoteName: String,
-    quotePaymentId: String,
-    quotePdf: {
-      ContentType: String,
-      name: String,
-      pdfContent: String
+const pidataSchema = new mongoose.Schema(
+  {
+    leadWithDetails: {
+      Nationality: String,
+      Phone: String,
+      Origin__c: String,
+      Email: String,
+      LeadSource: String,
+      Status: String,
+      Company: String,
+      LastName: String,
+      FirstName: String,
+      LeadId: String,
     },
-    sendToPaymentGateway: Boolean,
-    status: String,
-    subTotal: Number,
-    totalIncludingVAT: Number,
-    totalPrice: Number
+    quotePaymentWithDetails: {
+      Currency: String,
+      QuotePaymentId: String,
+      AccountId: String,
+    },
+    quoteWithProductDetails: {
+      AccountName: String,
+      Discount: Number,
+      invoiceCurrency: String,
+      invoiceDate: String,
+      invoiceNumber: String,
+      mobile: String,
+      oppurtunityId: String,
+      ownerId: String,
+      partPayment: String,
+      paymentLink: String,
+      paymentMethod: String,
+      product: Array, // Use Array for product objects
+      quoteEmail: String,
+      quoteId: String,
+      quoteName: String,
+      quotePaymentId: String,
+      quotePdf: {
+        ContentType: String,
+        name: String,
+        pdfContent: String,
+      },
+      sendToPaymentGateway: Boolean,
+      status: String,
+      subTotal: Number,
+      totalIncludingVAT: Number,
+      totalPrice: Number,
+    },
+    screeningDetails: screeningDetailsSchema,
+    isPayment: {
+      type: Boolean,
+      default: false,
+    },
+    isProfile: {
+      type: Boolean,
+      default: false,
+    },
+    isPaymentEmailSent: {
+      type: Boolean,
+      default: false,
+    },
+    isProfileEmailSent: {
+      type: Boolean,
+      default: false,
+    },
+    planname: { type: String },
+    tradeLicenseFileUrl: { type: String },
+    salesforceResponseMatchScreening: responseSchema,
+    invoiceDate: { type: String },
+    invoiceNumber: { type: String },
+    shareholders: [shareholderSchema],
   },
-  screeningDetails: screeningDetailsSchema,
-  isPayment: {
-    type: Boolean,
-    default: false // Default value
-  },
-  isProfile:{
-    type: Boolean,
-    default: false // Default value
-  },
-  isPaymentEmailSent: {
-    type: Boolean,
-    default: false,
-  },
-  isProfileEmailSent: {
-    type: Boolean,
-    default: false,
-  },
-  planname: { type: String },
-  tradeLicenseFileUrl: { type: String },
-  salesforceResponseMatchScreening: responseSchema, // Added field for Salesforce response
-  invoiceDate: { type: String },
-  invoiceNumber: { type: String },
-  shareholders: [shareholderSchema], // Added shareholders field
-   // Add screeningDetails as a sub-document
-});
+  {
+    timestamps: true, // <<--- This adds createdAt and updatedAt
+  }
+);
+
 
 module.exports = mongoose.model('Pidata', pidataSchema);
