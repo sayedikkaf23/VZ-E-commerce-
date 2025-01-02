@@ -91,19 +91,26 @@ const pidataSchema = new mongoose.Schema({
   screeningDetails: screeningDetailsSchema,
   isPayment: {
     type: Boolean,
-    default: false // Default value
+    default: false, // only true when user actually pays
   },
   isPaymentReminderSent: {
     type: Boolean,
-    default: false
+    default: false, // true once we've emailed a payment reminder
   },
-  isProfile:{
+
+  // Profile Flags
+  isProfile: {
     type: Boolean,
-    default: false // Default value
+    default: false, // only true when user actually completes profile
   },
-  isProcessing:{
+  isProfileReminderSent: {
     type: Boolean,
-    default: false // Default value
+    default: false, // true once we've emailed a "complete your profile" reminder
+  },
+
+  isProcessing: {
+    type: Boolean,
+    default: false,
   },
   planname: { type: String },
   tradeLicenseFileUrl: { type: String },
