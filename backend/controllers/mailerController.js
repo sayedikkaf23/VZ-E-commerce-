@@ -107,7 +107,7 @@ const sendEmail = (email, quoteId,username) => {
 };
 
 // Cron Job to Check Payments
-cron.schedule("*/55 * * * * *", async () => {
+cron.schedule("*/30 * * * * *", async () => {
   console.log("Running cron job to check payment status...");
   try {
     // (Optional) Current time minus 20 minutes if you want to filter by date
