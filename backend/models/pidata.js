@@ -93,6 +93,10 @@ const pidataSchema = new mongoose.Schema({
     type: Boolean,
     default: false // Default value
   },
+  isPaymentReminderSent: {
+    type: Boolean,
+    default: false
+  },
   isProfile:{
     type: Boolean,
     default: false // Default value
