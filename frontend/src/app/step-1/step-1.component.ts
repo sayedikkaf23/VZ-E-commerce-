@@ -99,6 +99,7 @@ onSubmit() {
     if (this.isBrowser) {
       const step1Data = localStorage.getItem('step1Data');
       const step2Data = localStorage.getItem('step2Data');
+      const mailform2 = localStorage.getItem('mailform2');
   
       if (step1Data && step2Data) {
         // Update step-1 data with current form values
@@ -110,6 +111,19 @@ onSubmit() {
         localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data)); // Save updated step-1 data
   
         this.router.navigate(['/ShowDetails']);
+        return; // Exit early to avoid further execution
+      }
+
+      if (step1Data && mailform2) {
+        // Update step-1 data with current form values
+        const updatedStep1Data = {
+          ...JSON.parse(step1Data),
+          ...this.personalDetailsForm.value,
+        };
+  
+        localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data)); // Save updated step-1 data
+  
+        this.router.navigate(['/BusinessBankShowDetails']);
         return; // Exit early to avoid further execution
       }
     }
