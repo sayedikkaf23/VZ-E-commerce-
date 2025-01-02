@@ -1,7 +1,7 @@
 const cron = require("node-cron");
 const nodemailer = require("nodemailer");
-const PiData = require("./models/pidata"); // Adjust path if needed
 
+const PiData = require('../models/pidata');
 // Flags to prevent overlapping runs
 let profileCronRunning = false;
 let paymentCronRunning = false;
