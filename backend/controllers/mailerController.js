@@ -110,14 +110,9 @@ const sendEmail = (email, quoteId,username) => {
 cron.schedule("*/30 * * * * *", async () => {
   console.log("Running cron job to check payment status...");
   try {
-    // (Optional) Current time minus 20 minutes if you want to filter by date
-    const twentyMinutesAgo = new Date(Date.now() - 20 * 60 * 1000);
-
     // Find records where payment is not done
-    // (You can also filter by createdAt <= twentyMinutesAgo if needed)
     const unpaidRecords = await PiData.find({
       isPayment: false,
-      // createdAt: { $lte: twentyMinutesAgo },
     });
 
     if (unpaidRecords.length === 0) {
@@ -126,22 +121,27 @@ cron.schedule("*/30 * * * * *", async () => {
     }
 
     for (const record of unpaidRecords) {
-      const { quoteWithProductDetails, leadWithDetails,quotePaymentWithDetails } = record;
+      const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = record;
 
       const email = quoteWithProductDetails?.quoteEmail;
       const quoteId = quotePaymentWithDetails?.QuotePaymentId;
-      const username = `${leadWithDetails?.FirstName} ${leadWithDetails?.LastName}`; // Combine first and last name
+      const username = `${leadWithDetails?.FirstName} ${leadWithDetails?.LastName}`;
 
       if (email) {
-        // Send the email
-        await sendEmail(email, quoteId, username);
-        console.log(`Reminder email sent to ${email} for Quote ID: ${quoteId}`);
+        // Use atomic operation to ensure email is not sent multiple times
+        const updatedRecord = await PiData.findOneAndUpdate(
+          { _id: record._id, isPayment: false }, // Condition
+          { isPayment: true },                   // Update
+          { new: true }                          // Return updated document
+        );
 
-        // Update isPayment to true after sending the email
-        record.isPayment = true;
-        await record.save(); 
-        // OR: await PiData.findByIdAndUpdate(record._id, { isPayment: true }, { new: true });
-
+        if (updatedRecord) {
+          // Send the email
+          await sendEmail(email, quoteId, username);
+          console.log(`Reminder email sent to ${email} for Quote ID: ${quoteId}`);
+        } else {
+          console.log(`Skipping email for Quote ID: ${quoteId} as it has been processed.`);
+        }
       } else {
         console.log(`No email found for Quote ID: ${quoteId}`);
       }
@@ -150,6 +150,7 @@ cron.schedule("*/30 * * * * *", async () => {
     console.error("Error while running the cron job:", error);
   }
 });
+
 
 
 
@@ -237,15 +238,9 @@ const sendProfileEmail = (email, quoteId, username) => {
 cron.schedule("*/10 * * * * *", async () => {
   console.log("Running cron job to check profile completion status...");
   try {
-    // (Optional) Use a time filter if you only want to send after a certain age
-    const twentyMinutesAgo = new Date(Date.now() - 20 * 60 * 1000);
-
     // Find records where the profile is not complete
-    // (Add createdAt <= twentyMinutesAgo if you only want to send 
-    // after a certain elapsed time)
     const incompleteProfiles = await PiData.find({
       isProfile: false,
-      // createdAt: { $lte: twentyMinutesAgo },
     });
 
     if (incompleteProfiles.length === 0) {
@@ -254,21 +249,27 @@ cron.schedule("*/10 * * * * *", async () => {
     }
 
     for (const record of incompleteProfiles) {
-      const { quoteWithProductDetails, leadWithDetails,quotePaymentWithDetails } = record;
+      const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = record;
 
-      // Adjust the property names as needed to match your schema
       const email = quoteWithProductDetails?.quoteEmail;
       const quoteId = quotePaymentWithDetails?.QuotePaymentId;
       const username = `${leadWithDetails?.FirstName} ${leadWithDetails?.LastName}`;
 
       if (email) {
-        // Send the “Complete Registration” email
-        await sendProfileEmail(email, quoteId, username);
-        console.log(`Profile completion reminder email sent to ${email} for Quote ID: ${quoteId}`);
+        // Use atomic operation to ensure email is not sent multiple times
+        const updatedRecord = await PiData.findOneAndUpdate(
+          { _id: record._id, isProfile: false }, // Condition
+          { isProfile: true },                   // Update
+          { new: true }                          // Return updated document
+        );
 
-        // After sending the email, update isProfile to true
-        record.isProfile = true;
-        await record.save();
+        if (updatedRecord) {
+          // Send the email
+          await sendProfileEmail(email, quoteId, username);
+          console.log(`Profile completion reminder email sent to ${email} for Quote ID: ${quoteId}`);
+        } else {
+          console.log(`Skipping email for Quote ID: ${quoteId} as it has been processed.`);
+        }
       } else {
         console.log(`No email found for Quote ID: ${quoteId}`);
       }
