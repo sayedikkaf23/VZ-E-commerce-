@@ -97,6 +97,14 @@ const pidataSchema = new mongoose.Schema({
     type: Boolean,
     default: false // Default value
   },
+  isPaymentEmailSent: {
+    type: Boolean,
+    default: false,
+  },
+  isProfileEmailSent: {
+    type: Boolean,
+    default: false,
+  },
   planname: { type: String },
   tradeLicenseFileUrl: { type: String },
   salesforceResponseMatchScreening: responseSchema, // Added field for Salesforce response
