@@ -2602,6 +2602,13 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 .table-responsive {
     margin: 0; padding: 0; overflow-x: auto; background: white; margin-left: 309px;
   }
+
+  .logout-icon img {
+    width: 24px; /* Adjust width as needed */
+    height: 24px; /* Adjust height as needed */
+    margin-right: 6px; /* Space between icon and text */
+    vertical-align: middle; /* Align icon with text */
+  }
   
 
   
