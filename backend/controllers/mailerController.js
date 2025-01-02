@@ -99,32 +99,28 @@ cron.schedule("*/30 * * * * *", async () => {
   }
 
   paymentCronRunning = true;
-
   console.log("Running cron job to check payment status...");
+
   try {
+    // 1. Find records that are not paid, not being processed, and have not had a reminder sent yet
     const unpaidRecords = await PiData.find({
       isPayment: false,
+      isPaymentReminderSent: false,
       isProcessing: { $ne: true },
-      "quoteWithProductDetails.quoteEmail": { $exists: true } // Ensure email exists
+      "quoteWithProductDetails.quoteEmail": { $exists: true }
     });
 
-    console.log(`Found ${unpaidRecords.length} unpaid records.`);
+    console.log(`Found ${unpaidRecords.length} unpaid records that have not been sent a reminder.`);
 
     if (unpaidRecords.length === 0) {
-      console.log("No pending payments found.");
       paymentCronRunning = false;
       return;
     }
 
     for (const record of unpaidRecords) {
-      // Check if the record is still unpaid before processing
-      if (record.isPayment) {
-        console.log(`Record with ID ${record._id} has already been marked as paid. Skipping...`);
-        continue;
-      }
-
+      // Attempt to mark the record as processing
       const updatedRecord = await PiData.findOneAndUpdate(
-        { _id: record._id, isPayment: false, isProcessing: { $ne: true } },
+        { _id: record._id, isPayment: false, isPaymentReminderSent: false, isProcessing: { $ne: true } },
         { isProcessing: true },
         { new: true }
       );
@@ -141,23 +137,37 @@ cron.schedule("*/30 * * * * *", async () => {
 
       if (email) {
         try {
-          // Send payment email only if it's still unpaid
-          await sendEmail(email, quoteId, username);
-          console.log(`Payment email sent to ${email} for Quote ID: ${quoteId}`);
+          // Double-check if the record is still unpaid
+          const stillUnpaid = await PiData.findOne({ _id: record._id, isPayment: false });
+          if (stillUnpaid) {
+            await sendEmail(email, quoteId, username);
+            console.log(`Payment email sent to ${email} for Quote ID: ${quoteId}`);
 
-          // Mark the record as processed immediately after sending the email
-          await PiData.findByIdAndUpdate(
-            record._id,
-            { isPayment: true, isProcessing: false },
-            { new: true }
-          );
+            // 2. Mark only the reminder as sent, not the payment itself
+            await PiData.findByIdAndUpdate(
+              record._id,
+              { isPaymentReminderSent: true, isProcessing: false },
+              { new: true }
+            );
+          } else {
+            console.log(`Record with ID ${record._id} has been marked as paid after the last check.`);
+          }
         } catch (error) {
           console.error(`Error sending payment email to ${email}:`, error);
-          await PiData.findByIdAndUpdate(record._id, { isProcessing: false });
+          // Ensure record is unblocked from processing if sending fails
+          await PiData.findByIdAndUpdate(
+            record._id,
+            { isProcessing: false },
+            { new: true }
+          );
         }
       } else {
         console.log(`No email found for Quote ID: ${quoteId}`);
-        await PiData.findByIdAndUpdate(record._id, { isProcessing: false });
+        await PiData.findByIdAndUpdate(
+          record._id,
+          { isProcessing: false },
+          { new: true }
+        );
       }
     }
   } catch (error) {
@@ -169,8 +179,9 @@ cron.schedule("*/30 * * * * *", async () => {
 
 
 
+
 // Profile Completion Cron Job
-cron.schedule("*/30 * * * * *", async () => {
+cron.schedule("*/10 * * * * *", async () => {
   if (profileCronRunning) {
     console.log("Profile cron job is already running. Skipping this iteration...");
     return;
