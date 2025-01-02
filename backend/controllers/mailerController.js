@@ -2,6 +2,9 @@ const cron = require("node-cron");
 const nodemailer = require("nodemailer");
 const PiData = require("../models/pidata");
 
+
+let profileCronRunning = false;
+let paymentCronRunning = false;
 // Email Configuration
 const transporter = nodemailer.createTransport({
 
@@ -107,29 +110,41 @@ const sendEmail = (email, quoteId,username) => {
 };
 
 // Cron Job to Check Payments
+
+
+// Profile Completion Cron Job
+
+
+// Payment Status Cron Job
 cron.schedule("*/30 * * * * *", async () => {
+  if (paymentCronRunning) {
+    console.log("Payment cron job is already running. Skipping this iteration...");
+    return;
+  }
+
+  paymentCronRunning = true;
+
   console.log("Running cron job to check payment status...");
   try {
-    // Find unpaid records
     const unpaidRecords = await PiData.find({
       isPayment: false,
-      isProcessing: { $ne: true }, // Ensure not being processed
+      isProcessing: { $ne: true },
     });
 
     if (unpaidRecords.length === 0) {
       console.log("No pending payments found.");
+      paymentCronRunning = false;
       return;
     }
 
     for (const record of unpaidRecords) {
-      // Mark record as processing
       const updatedRecord = await PiData.findOneAndUpdate(
-        { _id: record._id, isPayment: false, isProcessing: { $ne: true } }, // Ensure record is not processed
-        { isProcessing: true }, // Update flag
+        { _id: record._id, isPayment: false, isProcessing: { $ne: true } },
+        { isProcessing: true },
         { new: true }
       );
 
-      if (!updatedRecord) continue; // Skip if already being processed
+      if (!updatedRecord) continue;
 
       const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = updatedRecord;
 
@@ -139,31 +154,39 @@ cron.schedule("*/30 * * * * *", async () => {
 
       if (email) {
         try {
-          // Send the payment email
           await sendEmail(email, quoteId, username);
           console.log(`Payment email sent to ${email} for Quote ID: ${quoteId}`);
 
-          // Update flags
-          updatedRecord.isPayment = true;
-          updatedRecord.isProcessing = false; // Reset processing flag
-          await updatedRecord.save();
+          await PiData.findByIdAndUpdate(
+            record._id,
+            { isPayment: true, isProcessing: false },
+            { new: true }
+          );
         } catch (error) {
           console.error(`Error sending payment email to ${email}:`, error);
-          updatedRecord.isProcessing = false; // Reset processing flag on error
-          await updatedRecord.save();
+
+          await PiData.findByIdAndUpdate(
+            record._id,
+            { isProcessing: false },
+            { new: true }
+          );
         }
       } else {
         console.log(`No email found for Quote ID: ${quoteId}`);
-        updatedRecord.isProcessing = false; // Reset processing flag
-        await updatedRecord.save();
+
+        await PiData.findByIdAndUpdate(
+          record._id,
+          { isProcessing: false },
+          { new: true }
+        );
       }
     }
   } catch (error) {
     console.error("Error while running the payment cron job:", error);
+  } finally {
+    paymentCronRunning = false;
   }
 });
-
-
 
 
 
@@ -247,30 +270,35 @@ const sendProfileEmail = (email, quoteId, username) => {
   return transporter.sendMail(mailOptions);
 };
 
-// Cron Job to Check incomplete registrations (isProfile: false)
 cron.schedule("*/10 * * * * *", async () => {
+  if (profileCronRunning) {
+    console.log("Profile cron job is already running. Skipping this iteration...");
+    return;
+  }
+
+  profileCronRunning = true;
+
   console.log("Running cron job to check profile completion status...");
   try {
-    // Find records with incomplete profiles
     const incompleteProfiles = await PiData.find({
       isProfile: false,
-      isProcessing: { $ne: true }, // Ensure not being processed
+      isProcessing: { $ne: true },
     });
 
     if (incompleteProfiles.length === 0) {
       console.log("No incomplete registrations found.");
+      profileCronRunning = false;
       return;
     }
 
     for (const record of incompleteProfiles) {
-      // Atomically set isProcessing to true
       const updatedRecord = await PiData.findOneAndUpdate(
-        { _id: record._id, isProfile: false, isProcessing: { $ne: true } }, // Ensure not processed
-        { isProcessing: true }, // Set processing flag
+        { _id: record._id, isProfile: false, isProcessing: { $ne: true } },
+        { isProcessing: true },
         { new: true }
       );
 
-      if (!updatedRecord) continue; // Skip if another process already updated
+      if (!updatedRecord) continue;
 
       const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = updatedRecord;
 
@@ -280,20 +308,17 @@ cron.schedule("*/10 * * * * *", async () => {
 
       if (email) {
         try {
-          // Send the profile completion email
           await sendProfileEmail(email, quoteId, username);
           console.log(`Profile email sent to ${email} for Quote ID: ${quoteId}`);
 
-          // Update flags
           await PiData.findByIdAndUpdate(
             record._id,
-            { isProfile: true, isProcessing: false }, // Mark as complete and reset processing
+            { isProfile: true, isProcessing: false },
             { new: true }
           );
         } catch (error) {
           console.error(`Error sending profile email to ${email}:`, error);
 
-          // Reset processing flag on error
           await PiData.findByIdAndUpdate(
             record._id,
             { isProcessing: false },
@@ -303,7 +328,6 @@ cron.schedule("*/10 * * * * *", async () => {
       } else {
         console.log(`No email found for Quote ID: ${quoteId}`);
 
-        // Reset processing flag
         await PiData.findByIdAndUpdate(
           record._id,
           { isProcessing: false },
@@ -313,5 +337,7 @@ cron.schedule("*/10 * * * * *", async () => {
     }
   } catch (error) {
     console.error("Error while running the profile cron job:", error);
+  } finally {
+    profileCronRunning = false;
   }
 });
