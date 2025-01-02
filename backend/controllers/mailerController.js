@@ -118,7 +118,7 @@ cron.schedule("*/55 * * * * *", async () => {
     const unpaidRecords = await PiData.find({
       isPayment: false,
       isPaymentEmailSent:false,
-      createdAt: { $lte: oneMinuteAgo },
+      createdAt: { $gt: oneMinuteAgo },
     });
 
     if (unpaidRecords.length === 0) {
@@ -248,7 +248,7 @@ cron.schedule("*/30 * * * * *", async () => {
     const incompleteProfiles = await PiData.find({
       isProfile: false,
       isProfileEmailSent: false,
-      createdAt: { $lte: oneMinuteAgo },
+      createdAt: {  $gt: oneMinuteAgo },
     });
 
     if (incompleteProfiles.length === 0) {
