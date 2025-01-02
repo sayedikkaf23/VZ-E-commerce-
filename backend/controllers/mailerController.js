@@ -92,7 +92,6 @@ const sendEmail = (email, quoteId, username) => {
   return transporter.sendMail(mailOptions);
 };
 
-// Payment Status Cron Job
 cron.schedule("*/30 * * * * *", async () => {
   if (paymentCronRunning) {
     console.log("Payment cron job is already running. Skipping this iteration...");
@@ -106,6 +105,7 @@ cron.schedule("*/30 * * * * *", async () => {
     const unpaidRecords = await PiData.find({
       isPayment: false,
       isProcessing: { $ne: true },
+      "quoteWithProductDetails.quoteEmail": { $exists: true } // Ensure email exists
     });
 
     if (unpaidRecords.length === 0) {
