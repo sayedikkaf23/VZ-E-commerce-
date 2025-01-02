@@ -110,9 +110,10 @@ const sendEmail = (email, quoteId,username) => {
 cron.schedule("*/30 * * * * *", async () => {
   console.log("Running cron job to check payment status...");
   try {
-    // Find records where payment is not done
+    // Find unpaid records
     const unpaidRecords = await PiData.find({
       isPayment: false,
+      isProcessing: { $ne: true }, // Ensure not being processed
     });
 
     if (unpaidRecords.length === 0) {
@@ -121,35 +122,47 @@ cron.schedule("*/30 * * * * *", async () => {
     }
 
     for (const record of unpaidRecords) {
-      const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = record;
+      // Mark record as processing
+      const updatedRecord = await PiData.findOneAndUpdate(
+        { _id: record._id, isPayment: false, isProcessing: { $ne: true } }, // Ensure record is not processed
+        { isProcessing: true }, // Update flag
+        { new: true }
+      );
+
+      if (!updatedRecord) continue; // Skip if already being processed
+
+      const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = updatedRecord;
 
       const email = quoteWithProductDetails?.quoteEmail;
       const quoteId = quotePaymentWithDetails?.QuotePaymentId;
       const username = `${leadWithDetails?.FirstName} ${leadWithDetails?.LastName}`;
 
       if (email) {
-        // Use atomic operation to ensure email is not sent multiple times
-        const updatedRecord = await PiData.findOneAndUpdate(
-          { _id: record._id, isPayment: false }, // Condition
-          { isPayment: true },                   // Update
-          { new: true }                          // Return updated document
-        );
-
-        if (updatedRecord) {
-          // Send the email
+        try {
+          // Send the payment email
           await sendEmail(email, quoteId, username);
-          console.log(`Reminder email sent to ${email} for Quote ID: ${quoteId}`);
-        } else {
-          console.log(`Skipping email for Quote ID: ${quoteId} as it has been processed.`);
+          console.log(`Payment email sent to ${email} for Quote ID: ${quoteId}`);
+
+          // Update flags
+          updatedRecord.isPayment = true;
+          updatedRecord.isProcessing = false; // Reset processing flag
+          await updatedRecord.save();
+        } catch (error) {
+          console.error(`Error sending payment email to ${email}:`, error);
+          updatedRecord.isProcessing = false; // Reset processing flag on error
+          await updatedRecord.save();
         }
       } else {
         console.log(`No email found for Quote ID: ${quoteId}`);
+        updatedRecord.isProcessing = false; // Reset processing flag
+        await updatedRecord.save();
       }
     }
   } catch (error) {
-    console.error("Error while running the cron job:", error);
+    console.error("Error while running the payment cron job:", error);
   }
 });
+
 
 
 
@@ -238,9 +251,10 @@ const sendProfileEmail = (email, quoteId, username) => {
 cron.schedule("*/10 * * * * *", async () => {
   console.log("Running cron job to check profile completion status...");
   try {
-    // Find records where the profile is not complete
+    // Find records with incomplete profiles
     const incompleteProfiles = await PiData.find({
       isProfile: false,
+      isProcessing: { $ne: true }, // Ensure not being processed
     });
 
     if (incompleteProfiles.length === 0) {
@@ -249,29 +263,40 @@ cron.schedule("*/10 * * * * *", async () => {
     }
 
     for (const record of incompleteProfiles) {
-      const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = record;
+      // Mark record as processing
+      const updatedRecord = await PiData.findOneAndUpdate(
+        { _id: record._id, isProfile: false, isProcessing: { $ne: true } }, // Ensure record is not processed
+        { isProcessing: true }, // Update flag
+        { new: true }
+      );
+
+      if (!updatedRecord) continue; // Skip if already being processed
+
+      const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = updatedRecord;
 
       const email = quoteWithProductDetails?.quoteEmail;
       const quoteId = quotePaymentWithDetails?.QuotePaymentId;
       const username = `${leadWithDetails?.FirstName} ${leadWithDetails?.LastName}`;
 
       if (email) {
-        // Use atomic operation to ensure email is not sent multiple times
-        const updatedRecord = await PiData.findOneAndUpdate(
-          { _id: record._id, isProfile: false }, // Condition
-          { isProfile: true },                   // Update
-          { new: true }                          // Return updated document
-        );
-
-        if (updatedRecord) {
-          // Send the email
+        try {
+          // Send the profile completion email
           await sendProfileEmail(email, quoteId, username);
-          console.log(`Profile completion reminder email sent to ${email} for Quote ID: ${quoteId}`);
-        } else {
-          console.log(`Skipping email for Quote ID: ${quoteId} as it has been processed.`);
+          console.log(`Profile email sent to ${email} for Quote ID: ${quoteId}`);
+
+          // Update flags
+          updatedRecord.isProfile = true;
+          updatedRecord.isProcessing = false; // Reset processing flag
+          await updatedRecord.save();
+        } catch (error) {
+          console.error(`Error sending profile email to ${email}:`, error);
+          updatedRecord.isProcessing = false; // Reset processing flag on error
+          await updatedRecord.save();
         }
       } else {
         console.log(`No email found for Quote ID: ${quoteId}`);
+        updatedRecord.isProcessing = false; // Reset processing flag
+        await updatedRecord.save();
       }
     }
   } catch (error) {

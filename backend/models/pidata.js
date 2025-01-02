@@ -97,6 +97,10 @@ const pidataSchema = new mongoose.Schema({
     type: Boolean,
     default: false // Default value
   },
+  isProcessing:{
+    type: Boolean,
+    default: false // Default value
+  },
   planname: { type: String },
   tradeLicenseFileUrl: { type: String },
   salesforceResponseMatchScreening: responseSchema, // Added field for Salesforce response
