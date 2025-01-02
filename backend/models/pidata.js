@@ -57,7 +57,7 @@ const pidataSchema = new mongoose.Schema({
   },
   quotePaymentWithDetails: {
     Currency: String,
-    QuotePaymentId: { type: String, unique: true }, // Ensuring QuotePaymentId is unique
+    QuotePaymentId: String,
     AccountId: String
   },
   quoteWithProductDetails: {
@@ -91,26 +91,11 @@ const pidataSchema = new mongoose.Schema({
   screeningDetails: screeningDetailsSchema,
   isPayment: {
     type: Boolean,
-    default: false, // only true when user actually pays
+    default: false // Default value
   },
-  isPaymentReminderSent: {
+  isProfile:{
     type: Boolean,
-    default: false, // true once we've emailed a payment reminder
-  },
-
-  // Profile Flags
-  isProfile: {
-    type: Boolean,
-    default: false, // only true when user actually completes profile
-  },
-  isProfileReminderSent: {
-    type: Boolean,
-    default: false, // true once we've emailed a "complete your profile" reminder
-  },
-
-  isProcessing: {
-    type: Boolean,
-    default: false,
+    default: false // Default value
   },
   planname: { type: String },
   tradeLicenseFileUrl: { type: String },
