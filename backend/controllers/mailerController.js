@@ -108,6 +108,8 @@ cron.schedule("*/30 * * * * *", async () => {
       "quoteWithProductDetails.quoteEmail": { $exists: true } // Ensure email exists
     });
 
+    console.log(`Found ${unpaidRecords.length} unpaid records.`);
+
     if (unpaidRecords.length === 0) {
       console.log("No pending payments found.");
       paymentCronRunning = false;
@@ -115,13 +117,22 @@ cron.schedule("*/30 * * * * *", async () => {
     }
 
     for (const record of unpaidRecords) {
+      // Check if the record is still unpaid before processing
+      if (record.isPayment) {
+        console.log(`Record with ID ${record._id} has already been marked as paid. Skipping...`);
+        continue;
+      }
+
       const updatedRecord = await PiData.findOneAndUpdate(
         { _id: record._id, isPayment: false, isProcessing: { $ne: true } },
         { isProcessing: true },
         { new: true }
       );
 
-      if (!updatedRecord) continue;
+      if (!updatedRecord) {
+        console.log(`Record with ID ${record._id} was already processed or does not exist.`);
+        continue;
+      }
 
       const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = updatedRecord;
       const email = quoteWithProductDetails?.quoteEmail;
@@ -134,7 +145,7 @@ cron.schedule("*/30 * * * * *", async () => {
           await sendEmail(email, quoteId, username);
           console.log(`Payment email sent to ${email} for Quote ID: ${quoteId}`);
 
-          // Mark the record as processed
+          // Mark the record as processed immediately after sending the email
           await PiData.findByIdAndUpdate(
             record._id,
             { isPayment: true, isProcessing: false },
@@ -155,6 +166,8 @@ cron.schedule("*/30 * * * * *", async () => {
     paymentCronRunning = false;
   }
 });
+
+
 
 // Profile Completion Cron Job
 cron.schedule("*/30 * * * * *", async () => {
