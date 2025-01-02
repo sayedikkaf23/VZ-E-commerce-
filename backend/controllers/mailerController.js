@@ -116,6 +116,8 @@ const sendEmail = (email, quoteId,username) => {
 
 
 // Payment Status Cron Job
+// let paymentCronRunning = false;
+
 cron.schedule("*/30 * * * * *", async () => {
   if (paymentCronRunning) {
     console.log("Payment cron job is already running. Skipping this iteration...");
@@ -128,7 +130,7 @@ cron.schedule("*/30 * * * * *", async () => {
   try {
     const unpaidRecords = await PiData.find({
       isPayment: false,
-      isProcessing: { $ne: true },
+      isProcessing: { $ne: true }, // Ensure the record is not already being processed
     });
 
     if (unpaidRecords.length === 0) {
@@ -138,13 +140,14 @@ cron.schedule("*/30 * * * * *", async () => {
     }
 
     for (const record of unpaidRecords) {
+      // Atomically set isProcessing to true to prevent another job from processing this record
       const updatedRecord = await PiData.findOneAndUpdate(
-        { _id: record._id, isPayment: false, isProcessing: { $ne: true } },
-        { isProcessing: true },
-        { new: true }
+        { _id: record._id, isPayment: false, isProcessing: { $ne: true } }, // Ensure the record is not processed
+        { isProcessing: true }, // Set processing flag to true
+        { new: true } // Return the updated record
       );
 
-      if (!updatedRecord) continue;
+      if (!updatedRecord) continue; // Skip if the record was already updated by another job
 
       const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = updatedRecord;
 
@@ -154,17 +157,20 @@ cron.schedule("*/30 * * * * *", async () => {
 
       if (email) {
         try {
+          // Send the payment email
           await sendEmail(email, quoteId, username);
           console.log(`Payment email sent to ${email} for Quote ID: ${quoteId}`);
 
+          // Update flags after sending the email
           await PiData.findByIdAndUpdate(
             record._id,
-            { isPayment: true, isProcessing: false },
+            { isPayment: true, isProcessing: false }, // Mark as complete and reset processing flag
             { new: true }
           );
         } catch (error) {
           console.error(`Error sending payment email to ${email}:`, error);
 
+          // Reset processing flag on error to prevent getting stuck
           await PiData.findByIdAndUpdate(
             record._id,
             { isProcessing: false },
@@ -174,6 +180,7 @@ cron.schedule("*/30 * * * * *", async () => {
       } else {
         console.log(`No email found for Quote ID: ${quoteId}`);
 
+        // Reset processing flag if no email is found
         await PiData.findByIdAndUpdate(
           record._id,
           { isProcessing: false },
@@ -187,7 +194,6 @@ cron.schedule("*/30 * * * * *", async () => {
     paymentCronRunning = false;
   }
 });
-
 
 
 const sendProfileEmail = (email, quoteId, username) => {
