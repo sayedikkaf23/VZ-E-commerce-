@@ -267,13 +267,20 @@
                         View Details
                       </button>
                     </td>
-                    <td style="text-align: center; padding: 6px;" *ngIf="item.tradeLicenseFileUrl">
-                      <button 
-                        class="cool-button" 
-                        (click)="openFileInNewTab(item.tradeLicenseFileUrl)">
-                        View File
-                      </button>
+                    <td style="text-align: center; padding: 6px;">
+                      <ng-container *ngIf="item.tradeLicenseFileUrl; else noFile">
+                        <button 
+                          class="cool-button" 
+                          (click)="openFileInNewTab(item.tradeLicenseFileUrl)">
+                          View File
+                        </button>
+                      </ng-container>
+                      <ng-template #noFile>
+                        <span style="color: #999; font-style: italic;">File Not Available</span>
+                      </ng-template>
                     </td>
+                    
+                    
                     
                     
                   </tr>
