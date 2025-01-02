@@ -1027,8 +1027,8 @@ async function payNowSaleforce(req, res) {
                       <strong>Amount:</strong> ${Amount}<br>
                     
                       You can access your Customer Portal here:<br>
-                      <a href="https://ecommerce.yeepeey.com/login" style="color: #007bff; text-decoration: underline;">Customer Portal</a><br>
-                      Your Email: <strong>${userEmail}</strong><br><br>
+                      <a href="https://ecommerce.yeepeey.com/login" style="color: #007bff; text-decoration: underline;">Customer Portal</a><br><br>
+                      Your Email: <strong>${userEmail}</strong><br>
                       Your temporary password: <strong>${randomPassword}</strong> (You can change it once logged in).<br><br>
                       Feel free to reach out if you have any questions.<br><br>
                       Thanks for choosing Virtuzone!<br>
