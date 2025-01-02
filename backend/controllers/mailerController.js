@@ -127,6 +127,7 @@ cron.schedule("*/30 * * * * *", async () => {
   paymentCronRunning = true;
 
   console.log("Running cron job to check payment status...");
+
   try {
     const unpaidRecords = await PiData.find({
       isPayment: false,
@@ -147,7 +148,10 @@ cron.schedule("*/30 * * * * *", async () => {
         { new: true } // Return the updated record
       );
 
-      if (!updatedRecord) continue; // Skip if the record was already updated by another job
+      if (!updatedRecord) {
+        console.log(`Record with ID ${record._id} was already processed by another job.`);
+        continue; // Skip if the record was already updated by another job
+      }
 
       const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = updatedRecord;
 
@@ -157,6 +161,8 @@ cron.schedule("*/30 * * * * *", async () => {
 
       if (email) {
         try {
+          console.log(`Preparing to send payment email to ${email} for Quote ID: ${quoteId}`);
+
           // Send the payment email
           await sendEmail(email, quoteId, username);
           console.log(`Payment email sent to ${email} for Quote ID: ${quoteId}`);
@@ -191,6 +197,7 @@ cron.schedule("*/30 * * * * *", async () => {
   } catch (error) {
     console.error("Error while running the payment cron job:", error);
   } finally {
+    console.log("Cron job finished.");
     paymentCronRunning = false;
   }
 });
