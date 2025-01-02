@@ -263,14 +263,14 @@ cron.schedule("*/10 * * * * *", async () => {
     }
 
     for (const record of incompleteProfiles) {
-      // Mark record as processing
+      // Atomically set isProcessing to true
       const updatedRecord = await PiData.findOneAndUpdate(
-        { _id: record._id, isProfile: false, isProcessing: { $ne: true } }, // Ensure record is not processed
-        { isProcessing: true }, // Update flag
+        { _id: record._id, isProfile: false, isProcessing: { $ne: true } }, // Ensure not processed
+        { isProcessing: true }, // Set processing flag
         { new: true }
       );
 
-      if (!updatedRecord) continue; // Skip if already being processed
+      if (!updatedRecord) continue; // Skip if another process already updated
 
       const { quoteWithProductDetails, leadWithDetails, quotePaymentWithDetails } = updatedRecord;
 
@@ -285,18 +285,30 @@ cron.schedule("*/10 * * * * *", async () => {
           console.log(`Profile email sent to ${email} for Quote ID: ${quoteId}`);
 
           // Update flags
-          updatedRecord.isProfile = true;
-          updatedRecord.isProcessing = false; // Reset processing flag
-          await updatedRecord.save();
+          await PiData.findByIdAndUpdate(
+            record._id,
+            { isProfile: true, isProcessing: false }, // Mark as complete and reset processing
+            { new: true }
+          );
         } catch (error) {
           console.error(`Error sending profile email to ${email}:`, error);
-          updatedRecord.isProcessing = false; // Reset processing flag on error
-          await updatedRecord.save();
+
+          // Reset processing flag on error
+          await PiData.findByIdAndUpdate(
+            record._id,
+            { isProcessing: false },
+            { new: true }
+          );
         }
       } else {
         console.log(`No email found for Quote ID: ${quoteId}`);
-        updatedRecord.isProcessing = false; // Reset processing flag
-        await updatedRecord.save();
+
+        // Reset processing flag
+        await PiData.findByIdAndUpdate(
+          record._id,
+          { isProcessing: false },
+          { new: true }
+        );
       }
     }
   } catch (error) {
