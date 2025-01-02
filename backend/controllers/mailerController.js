@@ -107,7 +107,7 @@ const sendEmail = (email, quoteId,username) => {
 };
 
 // 3) Payment Cron (runs every 30s)
-cron.schedule("*/30 * * * * *", async () => {
+cron.schedule("*/50 * * * * *", async () => {
   console.log("Payment Cron: Checking for records to send Payment email...");
 
   try {
