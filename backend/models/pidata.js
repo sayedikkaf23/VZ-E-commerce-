@@ -57,7 +57,7 @@ const pidataSchema = new mongoose.Schema({
   },
   quotePaymentWithDetails: {
     Currency: String,
-    QuotePaymentId: String,
+    QuotePaymentId: { type: String, unique: true }, // Ensuring QuotePaymentId is unique
     AccountId: String
   },
   quoteWithProductDetails: {
