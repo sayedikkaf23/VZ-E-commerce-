@@ -20,7 +20,10 @@ export class CustomerCardmanagementComponent implements OnInit {
   selectedRecord: any = null; // Initialize to null
   isSidebarActive = false;
   userName: string = ''; // Property to store the user's name
-
+  showModal = false;
+  
+  // Will store the shareholders to display in the modal
+  selectedShareholders: any[] = [];
 
   constructor(
     private userService: UserService,
@@ -117,7 +120,19 @@ export class CustomerCardmanagementComponent implements OnInit {
     }
   }
   
+  openShareholderModal(shareholders: any[]): void {
+    this.selectedShareholders = shareholders;
+    this.showModal = true;
+  }
 
+  closeModal(): void {
+    this.showModal = false;
+  }
+
+  closeModalOutside(event: MouseEvent): void {
+    // Closes the modal if the user clicks the backdrop
+    this.showModal = false;
+  }
   navigateLogout(): void {
     this.router.navigate(['/login']); // Navigate to login
   }

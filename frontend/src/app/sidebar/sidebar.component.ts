@@ -44,6 +44,7 @@ export class SidebarComponent implements OnInit {
     this.onlinePaymentService.getSidebarData().subscribe(
       (data: any) => {
         this.sidebarData = data;
+        // console.log(sidebarData,"sidebarData")
         this.loading =false
       },
       (error: any) => {
@@ -137,6 +138,7 @@ export class SidebarComponent implements OnInit {
       (response: any) => {
         console.log('Fetched Pi Data:', response);
         this.piData = response; // Assign the fetched data to the piData property
+        console.log(this.piData,"piData")
       },
       (error: any) => {
         console.error('Error fetching Pi Data:', error);

@@ -55,6 +55,19 @@
                 Please upload the Trade License file.
               </div>
             </div>
+
+            <ul *ngIf="companyTradeLicenseFile?.length">
+              <li *ngFor="let file of companyTradeLicenseFile">
+                {{ file.name }}
+                <a
+                  [href]="file.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View File
+                </a>
+              </li>
+            </ul>
           </div>
         
           <div class="item" formArrayName="shareholders">
@@ -103,7 +116,7 @@
                   </ul>
         
                   <div *ngIf="(!uploadedFileNames[i] || uploadedFileNames[i].length === 0) && shareholder.get('files')?.touched" class="error-message">
-                    Please upload at least one file.
+                    Please upload  file.
                   </div>
                 </div>
               </div>

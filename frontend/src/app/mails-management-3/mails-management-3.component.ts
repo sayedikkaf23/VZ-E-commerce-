@@ -62,10 +62,16 @@ export class MailsManagement3Component implements OnInit {
       parsedData2 = JSON.parse(savedData2);
 
       // Merge passportNumber if counts match
-      if (parsedData2.shareholders && parsedData2.shareholders.length === this.shareholdersData.length) {
+      if (parsedData2.shareholders) {
+        // Loop through all shareholders in `this.shareholdersData`
         this.shareholdersData.forEach((sh, i) => {
-          if (parsedData2.shareholders[i].passportNumber) {
-            sh.passportNumber = parsedData2.shareholders[i].passportNumber;
+          // If a corresponding shareholder in parsedData2 exists, merge it
+          if (parsedData2.shareholders[i]) {
+            if (parsedData2.shareholders[i].passportNumber) {
+              sh.passportNumber = parsedData2.shareholders[i].passportNumber;
+            }
+            // Merge other fields if needed, e.g. name, nationalityshareholder, etc.
+            // sh.name = parsedData2.shareholders[i].name || sh.name;
           }
         });
       }
@@ -181,30 +187,60 @@ export class MailsManagement3Component implements OnInit {
   }
 
   onSubmit(): void {
+    // Mark the entire form and each shareholder as touched
     this.formData.markAllAsTouched();
     this.shareholders.controls.forEach(control => control.markAllAsTouched());
-
+  
+    // 1) Validate the "files" for each shareholder
+    this.shareholders.controls.forEach((control, i) => {
+      const filesFormControl = control.get('files');
+      // Check if this.uploadedFileNames[i] exists and is non-empty
+      if (!this.uploadedFileNames[i] || this.uploadedFileNames[i].length === 0) {
+        // If empty, manually set an error
+        filesFormControl?.setErrors({ required: true });
+      } else {
+        // Remove errors if files exist
+        filesFormControl?.setErrors(null);
+      }
+    });
+  
+    // 2) Validate the Trade License file
+    //    (i.e., ensure at least one file is uploaded)
+    const tradeLicenseControl = this.formData.get('companyTradeLicenseFileName');
+    if (!this.companyTradeLicenseFile || this.companyTradeLicenseFile.length === 0) {
+      tradeLicenseControl?.setErrors({ required: true });
+    } else {
+      tradeLicenseControl?.setErrors(null);
+    }
+  
+    // Now proceed if form is valid
     if (this.formData.valid) {
       const formValues = this.formData.value;
-
+  
       const dataToSave = {
         ...formValues,
         // Store the trade license file info (already as { name, url } object)
         companyTradeLicenseFile: this.companyTradeLicenseFile,
-        // Map shareholders to include uploaded file info
+  
+        // Map shareholders to include their uploaded file info
         shareholders: formValues.shareholders.map((shareholder: any, index: number) => ({
           ...shareholder,
           files: this.uploadedFileNames[index] || []
         })),
+  
+        // Keep track of all uploaded file names
         uploadedFileNames: this.uploadedFileNames
       };
-
+  
       localStorage.setItem('mailform2', JSON.stringify(dataToSave));
       this.router.navigate(['/mails-management-details']);
     } else {
       console.log('Please fill all required fields');
+      // You can also log the form to see exactly which control is invalid
+      // console.log('Form Controls', this.formData.controls);
     }
   }
+  
 
   triggerFileUpload(): void {
     this.fileInput.nativeElement.click();

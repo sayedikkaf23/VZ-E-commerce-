@@ -23,12 +23,29 @@ export class _HomeComponent {
 
   ngOnInit(): void {
     this.loadServices();
-
+  
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-    localStorage.clear();
+  
+    // Remove specific items from localStorage
+    const keysToRemove = [
+      'step2Data',
+      'step1Data',
+      'mailform2',
+      'mailform',
+      'mailform1',
+      'mergedData',
+      'virtualdata',
+      'virtualdata2',
+      'virtualdata1'
+    ];
+  
+    keysToRemove.forEach((key) => {
+      localStorage.removeItem(key);
+    });
   }
+  
 
   loadServices(): void {
     this.userService.getServices().subscribe(

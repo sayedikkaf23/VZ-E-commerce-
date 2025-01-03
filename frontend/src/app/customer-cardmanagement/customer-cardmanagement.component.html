@@ -273,10 +273,10 @@
                       </button>
                     </td>
                     <td style="text-align: center; padding: 6px;">
-                      <ng-container *ngIf="item.tradeLicenseFileUrl; else noFile">
+                      <ng-container *ngIf="item.shareholders?.length > 0; else noFile">
                         <button 
                           class="cool-button" 
-                          (click)="openFileInNewTab(item.tradeLicenseFileUrl)">
+                          (click)="openShareholderModal(item.shareholders)">
                           View File
                         </button>
                       </ng-container>
@@ -284,6 +284,7 @@
                         <span style="color: #999; font-style: italic;">File Not Available</span>
                       </ng-template>
                     </td>
+                    
                     
                     
                     
@@ -375,7 +376,133 @@
     </div>
   </div>
   
+
+  
   </body>
     
     
-    
+  <div
+  class="modal fade"
+  tabindex="-1"
+  [ngClass]="{ 'show': showModal }"
+  [ngStyle]="{ display: showModal ? 'block' : 'none' }"
+  (click)="closeModalOutside($event)"
+  style="position: fixed; top:0; left:0; width:100%; height:100%; background-color: rgba(0,0,0,0.5);"
+>
+  <div
+    class="modal-dialog"
+    (click)="$event.stopPropagation()"
+    style="margin: 2rem auto; max-width: 800px;"
+  >
+    <div class="modal-content" style="border: none; border-radius: 4px;">
+      <div
+        class="modal-header"
+        style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem;"
+      >
+        <h5 class="modal-title">Shareholder Details</h5>
+        <button
+          type="button"
+          class="btn-close"
+          (click)="closeModal()"
+          aria-label="Close"
+          style="cursor:pointer; background:none; border: none; font-size:1.2rem;"
+        >
+          &times;
+        </button>
+      </div>
+
+      <div class="modal-body" style="padding: 1rem;">
+        <div *ngIf="(selectedShareholders?.length || 0) > 0; else noShareholders">
+
+          <!-- Table to display multiple shareholders -->
+          <table
+            style="
+              width: 100%;
+              border-collapse: collapse;
+              margin-bottom: 1rem;
+            "
+          >
+            <!-- Table Header -->
+            <thead>
+              <tr style="background-color: #f1f1f1; text-align: left;">
+                <th style="padding: 0.5rem;">#</th>
+                <th style="padding: 0.5rem;">Name</th>
+                <th style="padding: 0.5rem;">Passport</th>
+                <th style="padding: 0.5rem;">Nationality</th>
+                <th style="padding: 0.5rem;">Share %</th>
+                <th style="padding: 0.5rem;">DOB</th>
+                <th style="padding: 0.5rem;">Files</th>
+              </tr>
+            </thead>
+
+            <!-- Table Body -->
+            <tbody>
+              <tr
+                *ngFor="let shareholder of selectedShareholders; let i = index"
+                style="border-bottom: 1px solid #ddd;"
+              >
+                <td style="padding: 0.5rem; width: 20px;">
+                  {{ i + 1 }}
+                </td>
+                <td style="padding: 0.5rem; min-width: 120px;">
+                  {{ shareholder.name }}
+                </td>
+                <td style="padding: 0.5rem; min-width: 100px;">
+                  {{ shareholder.passportNumber }}
+                </td>
+                <td style="padding: 0.5rem; min-width: 100px;">
+                  {{ shareholder.nationalityshareholder }}
+                </td>
+                <td style="padding: 0.5rem; width: 60px;">
+                  {{ shareholder.shareholderPercentage }}
+                </td>
+                <td style="padding: 0.5rem; min-width: 90px;">
+                  {{ shareholder.dob | date }}
+                </td>
+                <td style="padding: 0.5rem; min-width: 100px;">
+                  <div *ngIf="shareholder.files?.length > 0; else noFiles">
+                    <ul style="list-style-type: none; margin: 0; padding: 0;">
+                      <li
+                        *ngFor="let file of shareholder.files"
+                        style="margin-bottom: 4px;"
+                      >
+                        <!-- File name -->
+                        <!-- {{ file.name }}<br /> -->
+                        <!-- File link -->
+                        <a
+                          [href]="file.url"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style="color: #007bff; text-decoration: underline;"
+                        >
+                          View
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                  <ng-template #noFiles>
+                    <span style="font-size: 0.9rem; color: #999;">No files</span>
+                  </ng-template>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- If no shareholders at all, show this block -->
+        <ng-template #noShareholders>
+          <p>No shareholders found.</p>
+        </ng-template>
+      </div>
+
+      <div
+        class="modal-footer"
+        style="display: flex; align-items: center; justify-content: flex-end; padding: 0.75rem 1rem;"
+      >
+        <button type="button" class="btn btn-secondary" (click)="closeModal()" style="cursor:pointer;">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

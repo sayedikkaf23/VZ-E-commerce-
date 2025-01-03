@@ -40,7 +40,7 @@ import { UserDashboardLayoutComponent } from './user-dashboard-layout/user-dashb
 import { ServicePageComponent } from './service-page/service-page.component';
 import { CardmachineComponent } from './cardmachine/cardmachine.component';
 import { CustomerCardmanagementComponent } from './customer-cardmanagement/customer-cardmanagement.component';
-
+import { AlreadypaidComponent } from './alreadypaid/alreadypaid.component';
 
 const routes: Routes = [
 
@@ -54,7 +54,7 @@ const routes: Routes = [
     component: _HomeComponent,
    
   },
-
+  { path: 'onlinepayments/:id', component: AlreadypaidComponent },
   {
     path: 'onlinepayment/:id',
     component: OnlinepaymentComponent,
