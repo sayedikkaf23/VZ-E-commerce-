@@ -1,0 +1,32 @@
+.blur-container {
+    position: relative;
+    left: -450px;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.background-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://res.cloudinary.com/dvekmmxxx/image/upload/v1708431171/Screenshot_2024-02-20_174138_bto8k6.png'); /* Replace with the path to your image */
+    background-size: cover;
+    filter: blur(10px); /* Adjust the blur amount as needed */
+    z-index: -1; /* Move the background behind the content */
+}
+
+.content {
+    position: relative;
+    z-index: 1; /* Keep the content above the blurred background */
+}
+
+.message {
+    /* Add any styles for your message */
+    color: white;
+    font-size: 24px;
+    text-align: center;
+    margin-top: 50vh; /* Adjust the vertical position as needed */
+}

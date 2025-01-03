@@ -58,6 +58,7 @@ import { UserDashboardComponent } from './user-dashboard/user-dashboard.componen
 import { ServicePageComponent } from './service-page/service-page.component';
 import { UserNavComponent } from './user-nav/user-nav.component';
 import { CustomerCardmanagementComponent } from './customer-cardmanagement/customer-cardmanagement.component';
+import { AlreadypaidComponent } from './alreadypaid/alreadypaid.component';
 
 @NgModule({
   declarations: [
@@ -108,6 +109,7 @@ import { CustomerCardmanagementComponent } from './customer-cardmanagement/custo
     ClientHeaderComponent,
     UserNavComponent,
     CustomerCardmanagementComponent,
+    AlreadypaidComponent,
     
   ],
   imports: [
