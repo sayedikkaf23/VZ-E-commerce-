@@ -44,8 +44,8 @@
               <hr/> <h3 class="mb-0"><b>Need Assistance? </b></h3>
         <p>Contact your sales agent:</p>
   
-              <p><b>{{ piData?.opportunityOwnerName }}</b></p>
-              <h6>{{ piData?.position }}</h6>
+              <p><b>{{ piData?.salesPersonDetails.salesPersonName }}</b></p>
+              <!-- <h6>{{ piData?.salesPersonDetails }}</h6> -->
         <div class="mb-3">
           <div class="row align-items-center gx-1 mb-0">
             <!-- <div class="col-auto">
@@ -54,7 +54,7 @@
               </svg>
             </div> -->
             <div class="col">
-                          <h6 class="mb-0"><a href="tel:{{ piData?.opportunityOwnerPhone }}">{{ piData?.opportunityOwnerPhone }}</a></h6>
+                          <h6 class="mb-0"><a href="tel:{{ piData?.salesPersonDetails.salesPersonMobile }}">{{ piData?.opportunityOwnerPhone }}</a></h6>
             </div>
           </div>
           <div class="row align-items-center gx-1">

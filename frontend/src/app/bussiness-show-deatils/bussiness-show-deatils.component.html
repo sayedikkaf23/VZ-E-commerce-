@@ -53,26 +53,33 @@
                             <h4>Order Summary</h4>
                             <!-- <a [routerLink]="['/step-2']" class="btn-edit">Edit</a> -->
                         </div>
-                        <div class="order-summary-table-wrapper">
-                          <table class="order-summary-table">
-                            <thead>
-                              <tr>
-                                <th class="column-space">Price</th>
-                                <th class="column-space">VAT</th>
-                                <th class="column-space">Discount Price</th>
-                                <th class="column-space">Total Amount</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr>
-                                <td>AED {{ quoteWithProductDetails?.totalPrice || 0 }}</td>
-                                <td>AED {{ (quoteWithProductDetails?.totalIncludingVAT || 0) - (quoteWithProductDetails?.totalPrice || 0) }}</td>
-                                <td>AED {{ quoteWithProductDetails?.Discount || 0 }}</td>
-                                <td>AED {{ quoteWithProductDetails?.total_including_Vat || 0 }}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
+                        <table class="order-summary-table">
+                          <thead>
+                            <tr>
+                              <th class="column-space">Price</th>
+                              <th class="column-space">VAT</th>
+                              <th class="column-space">Discount Price</th>
+                              <th class="column-space">Total Amount</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>AED {{ quoteWithProductDetails?.totalAmount || 0 }}</td>
+                              <td>
+                                AED
+                                {{
+                                 quoteWithProductDetails?.totalVAT
+                                }}
+                              </td>
+            
+                              <td>AED {{ quoteWithProductDetails?.Discount || 0 }}</td>
+            
+                              <td>
+                                AED {{ quoteWithProductDetails?.total_including_Vat || 0 }}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                           
                     </div>
                 </div>

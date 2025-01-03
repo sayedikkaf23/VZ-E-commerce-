@@ -34,6 +34,8 @@ const responseSchema = new mongoose.Schema({
     }
   ],
   total_including_Vat: { type: Number },
+  totalVAT: { type: Number },
+  totalAmount: { type: Number },
   matchScore: { type: Number },
   leadId: { type: String },
   accountId: { type: String },

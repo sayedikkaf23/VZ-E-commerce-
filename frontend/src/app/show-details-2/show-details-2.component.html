@@ -68,12 +68,11 @@
               </thead>
               <tbody>
                 <tr>
-                  <td>AED {{ quoteWithProductDetails?.totalPrice || 0 }}</td>
+                  <td>AED {{ quoteWithProductDetails?.totalAmount || 0 }}</td>
                   <td>
                     AED
                     {{
-                      (quoteWithProductDetails?.totalIncludingVAT || 0) -
-                        (quoteWithProductDetails?.totalPrice || 0)
+                     quoteWithProductDetails?.totalVAT
                     }}
                   </td>
 
