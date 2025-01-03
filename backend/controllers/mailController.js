@@ -322,6 +322,11 @@ console.log(`${process.env.EXTERNAL_API_SCREENING_URL}`)
       screeningDetails: { // Add screening details to the document
         matchScore: matchScore,
       },
+      salesPersonDetails: { // Adding salesperson details
+        salesPersonEmail: responseData.salesPersonDetails?.salesPersonEmail || 'N/A',
+        salesPersonMobile: responseData.salesPersonDetails?.salesPersonMobile || 'N/A',
+        salesPersonName: responseData.salesPersonDetails?.salesPersonName || 'N/A',
+    },
       isProfile: isProfile ,
       planname: planname ,
       tradeLicenseFileUrl: tradeLicenseFileUrl ,

@@ -111,6 +111,11 @@ const pidataSchema = new mongoose.Schema(
     invoiceDate: { type: String },
     invoiceNumber: { type: String },
     shareholders: [shareholderSchema],
+    salesPersonDetails: {
+      salesPersonEmail: { type: String },
+      salesPersonMobile: { type: String },
+      salesPersonName: { type: String },
+    },
   },
   {
     timestamps: true, // <<--- This adds createdAt and updatedAt
