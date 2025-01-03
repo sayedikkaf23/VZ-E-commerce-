@@ -80,12 +80,15 @@ i: any;
   
       // Store merged data in localStorage for the final step
       localStorage.setItem('mergedData', JSON.stringify(mergedData));
-      this.tradeLicenseFileurl  = additionalShareholderInfo.companyTradeLicenseFile[0].url;
+     
       // Assign displayShareholders
       this.displayShareholders = Array.isArray(mergedData.shareholders)
         ? mergedData.shareholders
         : Object.values(mergedData.shareholders || []);
   
+
+        this.tradeLicenseFileurl  = additionalShareholderInfo.companyTradeLicenseFile[0].url;
+
       console.log("Merged Data:", mergedData, this.displayShareholders);
     }
   
