@@ -1242,7 +1242,7 @@ html .ajax-file-upload-filename {
   /* Submenu items */
   .submenu-item {
     display: block;
-    padding: 10px 15px;
+    padding: 10px 25px 10px 5px;
     color: #333;
     text-decoration: none;
     font-size: 14px;
@@ -2606,7 +2606,7 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
   .logout-icon img {
     width: 24px; /* Adjust width as needed */
     height: 24px; /* Adjust height as needed */
-    margin-right: 6px; /* Space between icon and text */
+    margin-right: 9px; /* Space between icon and text */
     vertical-align: middle; /* Align icon with text */
   }
   

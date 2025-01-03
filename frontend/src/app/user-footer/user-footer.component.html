@@ -1,10 +1,10 @@
 <div class="details-footer">
                 
-    <div class="d-block d-md-none">
+    <div class="d-block d-md-none" style="margin-bottom: 10px;">
         
         <hr/><h2><b>Need Assistance? </b></h2>
         <h3>Contact your sales agent:</h3>
-        <div class="row gx-0 justify-content-between">
+        <div class="row gx-0 justify-content-between" style="margin: 0 5px;">
             <div class="col-auto">
                 <p><b> {{ sidebarData?.salesAgent?.name }}</b></p>
                 <h6>{{ sidebarData?.salesAgent?.position }}</h6>
@@ -52,7 +52,7 @@
         <!-- <li><a href="#">Terms and Conditions</a></li>
         <li><a href="https://virtuzone.com/faq/" target="_blank">FAQs</a></li> -->
         
-        <li style="margin-right: 15px;">
+        <li style="margin-right: 15px;" >
             <a target="__blank" href="https://userimg-assets.customeriomail.com/images/client-env-135739/1713958104391_Terms%20and%20Conditions_01HW7XTB85H8YBZW9ZJAE35C8P.pdf">
                 Terms and Conditions
             </a>
@@ -69,3 +69,30 @@
         </li>
     </ul>
 </div>
+
+
+<style>
+    @media (max-width: 768px) {
+        ul {
+            flex-direction: column;
+            text-align: center;
+        }
+        li {
+            border: none !important;
+             margin-bottom: 0;
+             margin-left: 15px;
+             
+        }
+
+        .details-footer ul li:last-child {
+            top: -9px;
+        }
+
+        
+        
+        a img {
+            height: 30px;
+            
+        }
+    }
+</style>
