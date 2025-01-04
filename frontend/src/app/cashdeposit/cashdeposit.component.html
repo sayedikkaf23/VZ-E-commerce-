@@ -1,4 +1,3 @@
-
 <app-sidebar></app-sidebar>
          
 
@@ -80,10 +79,11 @@
                               <input type="file"  id="fileInput" (change)="onFileSelected($event)" style="display: none;" #fileInput multiple class="ufile">
                           </div>
                           <div class="fu-list">
-                              <div class="item" *ngFor="let document of uploadedDocuments; let last = last let i = index">
-                                {{ document }}{{ last ? "" : ", " }}
-                                  <button (click)="removeFile(i)">×</button>
-                              </div>
+                             <div class="item" *ngFor="let document of uploadedDocuments; let i = index; let last = last">
+  {{ document }}{{ last ? "" : ", " }}
+  <button (click)="removeFile(i)">×</button>
+</div>
+
                               <!-- <div class="item">
                                 {{ document }}{{ last ? "" : ", " }}
                                   <button>×</button>
@@ -112,9 +112,5 @@
 
     </div>
    
-    <app-footer></app-footer>
+    <app-user-footer></app-user-footer>
 </div>
-
-
-
-

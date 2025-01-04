@@ -45,6 +45,9 @@ import { CashovercounterComponent } from './cashovercounter/cashovercounter.comp
 import { CashoverCounterComponent } from './cashover-counter/cashover-counter.component';
 import { CashoversuccessComponent } from './cashoversuccess/cashoversuccess.component';
 import { BankTransferSuccessComponent } from './bank-transfer-success/bank-transfer-success.component';
+import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
+import { BanktransferComponent } from './banktransfer/banktransfer.component';
+
 
 const routes: Routes = [
 
@@ -59,6 +62,7 @@ const routes: Routes = [
    
   },
   { path: 'onlinepayments/:id', component: AlreadypaidComponent },
+  { path: 'cashdeposit/:id', component: CashdepositComponent },
   {
     path: 'onlinepayment/:id',
     component: OnlinepaymentComponent,
@@ -69,7 +73,7 @@ const routes: Routes = [
   // new
   { path: 'successful/:id', component: SuccessComponent },
   { path: 'success/:id', component: BankTransferSuccessComponent },
-
+  { path: 'banktransfer/:id', component: BanktransferComponent },
   {
     path: 'mail-management-1',
     component: MailsManagement1Component,

@@ -439,11 +439,11 @@
                 <input type="radio" name="preferred-pm" id="pm-3" />
                 <label for="pm-3">
                   <div
-                    *ngIf="method.cashDeposit"
-                    class="row align-items-center"
-                    [routerLink]="'/cashdeposit/' + piData.quotePaymentId"
-                    [queryParams]="{type: type}"
-                  >
+                  *ngIf="method.cashDeposit"
+                  class="row align-items-center"
+                  (click)="onNavigate()"
+                >
+                
                     <div class="col-auto">
                       <div class="icon">
                         <img
@@ -466,7 +466,7 @@
                   <div
                     class="row align-items-center"
                     *ngIf="method.chequeDeposit"
-                    [routerLink]="'/chequedeposit/' + piData.quotePaymentId"
+                    [routerLink]="'/chequedeposit/' +  piData.quotePaymentWithDetails.QuotePaymentId"
                     [queryParams]="{type: type}"
                   >
                     <div class="col-auto">
@@ -575,7 +575,7 @@
                 <label for="pm-6">
                   <div
                     class="row align-items-center"
-                    [routerLink]="'/banktransfer/' + piData.quotePaymentId"
+                    [routerLink]="'/banktransfer/' +  piData.quotePaymentWithDetails.QuotePaymentId"
                     [queryParams]="{type: type}"
                     *ngIf="method.bankTransfer"
                   >

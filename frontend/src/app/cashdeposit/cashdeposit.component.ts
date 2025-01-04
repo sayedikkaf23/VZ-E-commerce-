@@ -31,7 +31,8 @@ import { Router } from '@angular/router';
 
 export class CashdepositComponent implements OnInit{
 
-  
+  isVisible: boolean = false;
+
   showContent: boolean = false;
   showCurrencyContent: boolean = false;
   showUploadContent: boolean = false;
@@ -68,7 +69,9 @@ export class CashdepositComponent implements OnInit{
 
   }
 
-
+  toggleVisibility(): void {
+    this.isVisible = !this.isVisible;
+  }
   submitForm() {
     if (!this.selectedFiles || this.selectedFiles.length === 0) {
       alert("Please upload a file.");

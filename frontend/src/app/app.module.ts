@@ -64,8 +64,8 @@ import { CashoverCounterComponent } from './cashover-counter/cashover-counter.co
 import { CashovercounterComponent } from './cashovercounter/cashovercounter.component';
 import { CashoversuccessComponent } from './cashoversuccess/cashoversuccess.component';
 import { BankTransferSuccessComponent } from './bank-transfer-success/bank-transfer-success.component';
-
-
+import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
+import { BanktransferComponent } from './banktransfer/banktransfer.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -121,6 +121,9 @@ import { BankTransferSuccessComponent } from './bank-transfer-success/bank-trans
     CashovercounterComponent,
     CashoversuccessComponent,
     BankTransferSuccessComponent,
+    // CashDepositCustomerComponent,
+    CashdepositComponent,
+    BanktransferComponent
     
   ],
   imports: [

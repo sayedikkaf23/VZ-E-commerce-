@@ -48,6 +48,8 @@ export class OnlinepaymentComponent implements OnInit {
       this.onlinePaymentFunction();
     }
   
+   
+
     // Simulate a 3-second delay for the loader
     setTimeout(() => {
       this.onlinePaymentService.getPaymentMethods().subscribe(
@@ -468,4 +470,26 @@ export class OnlinepaymentComponent implements OnInit {
   //     }
   //   );
   // }
+
+
+  onNavigate() {
+    const quotePaymentId = this.piData?.quotePaymentWithDetails?.QuotePaymentId;
+    console.log('Attempting to navigate with QuotePaymentId:', quotePaymentId);
+  
+    if (quotePaymentId) {
+      // Navigate to the route programmatically
+      this.router.navigate(['/cashdeposit', quotePaymentId]);
+      console.log('Navigation to /cashdeposit/' + quotePaymentId + ' initiated.');
+    } else {
+      console.error('QuotePaymentId is undefined or invalid.');
+      this.showErrorMessage('Payment ID is missing. Cannot proceed with cash deposit.');
+    }
+  }
+  
+  showErrorMessage(message: string) {
+    // Implement your error display logic here (e.g., using a modal or toast notification)
+    alert(message); // Simple alert for demonstration purposes
+  }
+  
+
 }

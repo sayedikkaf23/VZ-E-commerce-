@@ -11,16 +11,19 @@ import { filter } from 'rxjs/operators';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'frontend';
 
+  // List of routes where dynamic scripts and styles should be loaded
   specialRoutes: string[] = [
-    '/onlinepayment',  // This route will load styles for any /onlinepayment/:id
-    '/failure',        // This route will load styles for any /failure/:id
-    '/successful',     // This route will load styles for any /successful/:id
-    '/onlinepayments',     // This route will load styles for any /successful/:id
-    '/cardmachine',    // This route will load styles for any /successful/:id
-    '/cashovercounter',    // This route will load styles for any /successful/:id
-    '/cashover-counter',    
-    '/success',    
-    '/cashcountersuccess',    
+    '/onlinepayment',
+    '/failure',
+    '/successful',
+    '/onlinepayments',
+    '/cardmachine',
+    '/cashovercounter',
+    '/cashover-counter',
+    '/success',
+    '/cashcountersuccess',
+    '/cashdeposit',
+    '/banktransfer',
   ];
 
   // Arrays to store dynamically added scripts and styles
@@ -55,15 +58,20 @@ export class AppComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // Subscribe to router events to dynamically load/remove assets based on the route
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
         this.currentRoute = event.urlAfterRedirects;
         this.loadAssets();
       });
+
+
+      
   }
 
   ngOnDestroy(): void {
+    // Remove assets when the component is destroyed
     this.removeAssets();
   }
 
@@ -72,22 +80,16 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private loadAssets(): void {
     if (isPlatformBrowser(this.platformId)) {
-
-      // if (this.currentRoute.startsWith('/user/dashboard')) {
-      //   // Remove assets if they were previously loaded.
-      //   this.removeAssets();
-      //   return;  // Stop here so we don't load anything
-      // }
-
       // Check if the current route matches one of the special routes
-      const isSpecialRoute = this.specialRoutes.some(route => this.currentRoute.startsWith(route));
-      
+      const isSpecialRoute = this.specialRoutes.some((route) =>
+        this.currentRoute.startsWith(route)
+      );
+
       if (!isSpecialRoute) {
         return;
       }
 
-  
-
+      // Load scripts and styles
       this.dynamicScripts.forEach((src) => this.loadScript(src));
       this.dynamicStyles.forEach((href) => this.loadStyle(href));
     }
@@ -108,12 +110,17 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private loadScript(src: string): void {
     if (isPlatformBrowser(this.platformId)) {
+      // Avoid loading the script multiple times
       if (!document.querySelector(`script[src="${src}"]`)) {
         const script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = src;
         script.async = true;
+        script.onload = () => console.log(`${src} loaded successfully.`);
+        script.onerror = () => console.error(`Failed to load script: ${src}`);
         document.body.appendChild(script);
+      } else {
+        console.log(`${src} is already loaded.`);
       }
     }
   }
@@ -126,6 +133,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const script = document.querySelector(`script[src="${src}"]`);
       if (script) {
         script.remove();
+        console.log(`${src} removed successfully.`);
       }
     }
   }
@@ -135,11 +143,16 @@ export class AppComponent implements OnInit, OnDestroy {
    */
   private loadStyle(href: string): void {
     if (isPlatformBrowser(this.platformId)) {
+      // Avoid loading the style multiple times
       if (!document.querySelector(`link[href="${href}"]`)) {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href = href;
+        link.onload = () => console.log(`${href} loaded successfully.`);
+        link.onerror = () => console.error(`Failed to load style: ${href}`);
         document.head.appendChild(link);
+      } else {
+        console.log(`${href} is already loaded.`);
       }
     }
   }
@@ -152,6 +165,7 @@ export class AppComponent implements OnInit, OnDestroy {
       const link = document.querySelector(`link[href="${href}"]`);
       if (link) {
         link.remove();
+        console.log(`${href} removed successfully.`);
       }
     }
   }
