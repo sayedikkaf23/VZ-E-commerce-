@@ -6,11 +6,12 @@ const {
     payNowSaleforce,
     payNowByStripe,
     payNow,
-    AddCashMachin
+    AddCashMachin,
+    AddCashCounter
 } = require("../controllers/paymentController");
  
-const {upload} = require("../middleware/fileUpload");
-
+// const {upload} = require("../middleware/fileUpload");
+const upload = require('../middleware/multerConfig'); 
  
 const router = express.Router();
  
@@ -19,6 +20,7 @@ router.post(
     // upload.array("transfer_copy"),
     AddCashMachin
   );
+  router.post('/addCashCounter/:quoteId', upload.array('transfer_copy',3), AddCashCounter);
 router.post("/payNowSaleforce/:quoteId", payNowSaleforce);
 router.get("/payNowByFiserv/:quoteId", payNowByFiserv);
 router.post("/magnatiTransactionStatus", MagnatiTransactionStatus);

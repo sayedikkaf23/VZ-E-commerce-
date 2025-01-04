@@ -539,8 +539,8 @@
                     *ngIf="method.cashOverCounter"
                     (click)="
                       handleCashOverCounterClick(
-                        piData.quotePaymentId,
-                        piData.partPayment
+                        piData.quotePaymentWithDetails.QuotePaymentId,
+                        piData.salesforceResponseMatchScreening.total_including_Vat
                       )
                     "
                   >

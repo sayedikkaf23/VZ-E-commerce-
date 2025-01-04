@@ -3,10 +3,13 @@ const OnlinePayment = require("../models/OnlinePaymentModel");
 const { validationResult } = require("express-validator");
 const AWS = require("aws-sdk"); // Remove the import * as AWS from 'aws-sdk';
 const fs = require("fs");
+const AccountDetail = require("../models/accountDetail");
+const CardMachine = require("../models/CardMachine");
 const nodemailer = require("nodemailer");
 const axios = require("axios");
 const crypto = require("crypto");
 const User = require("../models/user"); // Assuming the User model is in 'models/user'
+const CashCounter = require("../models/CashOverCounter");
 const bcrypt = require("bcrypt");
 const MailDetails = require('../models/mailManagement'); // Import the model
 const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
@@ -59,6 +62,28 @@ const mailTransporter = nodemailer.createTransport({
   },
 });
 
+
+
+const rates = {
+  EUR: { USD: 1.08, AED: 3.98 },
+  USD: { EUR: 0.92, AED: 3.65 },
+  AED: { USD: 1/3.65, EUR: 0.25 }, // changed this line
+};
+
+const convertFileToBase64 = (filePath) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(filePath, (err, data) => {
+      if (err) {
+        reject(err);
+      } else {
+        const base64Data = data.toString('base64');
+        resolve(base64Data);
+      }
+    });
+  });
+};
+
+
 const AddCashMachin = async (req, res) => {
   // Validation errors check
   const errors = validationResult(req);
@@ -90,9 +115,18 @@ const AddCashMachin = async (req, res) => {
   // console.log(transfer_copy)
 
   try {
-    const existingUser = await PiData.findOne({
-      $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
-    });
+    // const existingUser = await PiData.findOne({
+    //   $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
+    // });
+
+     const existingUser = await PiData.findOne({
+            $or: [
+              { "quoteWithProductDetails.quoteId": quoteId },
+              { "quotePaymentWithDetails.QuotePaymentId": quoteId },
+            ],
+          });
+
+
 
     if (!existingUser) {
       return res.status(400).json({ message: "User not found" });
@@ -115,22 +149,22 @@ const AddCashMachin = async (req, res) => {
         bank_address: accountDetails.bank_address,
       },
       transactionDetails: {
-        amount: existingUser.totalIncludingVAT,
-        quotePaymentId: existingUser.quotePaymentId,
-        partPayment: existingUser.partPayment,
+        amount: existingUser.salesforceResponseMatchScreening.totalAmount,
+        quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
+        partPayment: existingUser.salesforceResponseMatchScreening.total_including_Vat,
         // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
         // toCurrency: currency_convertingto,
-        proformaInvoiceNumber: existingUser.invoiceNumber,
+        proformaInvoiceNumber: existingUser.quotePaymentWithDetails.QuotePaymentId,
         currencyPaid: "AED",
         // amountPaid:existingUser.totalIncludingVAT,
       },
       customerDetails: {
-        name: existingUser.AccountName,
-        id: existingUser.quoteEmail, // Assuming this is the desired ID
+        name: existingUser.leadWithDetails.FirstName,
+        id: existingUser.leadWithDetails.Email, // Assuming this is the desired ID
       },
       // fileUpload: fileNames, // Assuming this is a string representing the file path or URL
       status: "AR Review",
-      quoteId: existingUser.quoteId,
+      quoteId: existingUser.quotePaymentWithDetails.QuotePaymentId,
       generalLedgerCode: "1351 - Point of Sale", // Default status
     });
 
@@ -1422,6 +1456,678 @@ async function MagnatiTransactionStatus(req, res) {
   }
 }
 
+
+const AddCashCounter = async (req, res) => {
+  // Validation errors check
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  const { quoteId } = req.params;
+  //  console.log(quoteId)
+
+   const tokenResponse = await axios.post(
+       `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
+     );
+
+  const accessToken = tokenResponse.data.access_token;
+  const saleforcUrl = tokenResponse.data.instance_url;
+  console.log("Access Token:", accessToken);
+
+ 
+  try {
+    const existingUser = await PiData.findOne({
+      $or: [
+        { "quoteWithProductDetails.quoteId": quoteId },
+        { "quotePaymentWithDetails.QuotePaymentId": quoteId },
+      ],
+    });
+
+    if (!existingUser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const accountDetailsResult = await AccountDetail.find();
+    if (!accountDetailsResult || accountDetailsResult.length === 0) {
+      return res.status(400).json({ message: "Account details not found" });
+    }
+
+    const accountDetails = accountDetailsResult[0];
+
+    // Check the condition for totalIncludingVAT
+    if (existingUser.salesforceResponseMatchScreening.total_including_Vat < 55000) {
+      // Handle the case when totalIncludingVAT is less than 55000
+      // For example, save the file here or send a different response
+      // You can add your specific logic here
+      // Example: Save the file
+      // const filePath = ...; // Define the file path
+      // Save the file using appropriate logic
+
+      const newBankTransferForm = new ChequeDesposit({
+        bankDetails: {
+          bank_name: accountDetails.bank_name,
+          account_name: accountDetails.account_name,
+          iban_number: accountDetails.iban_number,
+          account_number: accountDetails.account_number,
+          swift_code: accountDetails.swift_code,
+          bank_address: accountDetails.bank_address,
+        },
+        transactionDetails: {
+          amount: existingUser.salesforceResponseMatchScreening.totalAmount,
+        quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
+        partPayment: existingUser.salesforceResponseMatchScreening.total_including_Vat,
+        proformaInvoiceNumber: existingUser.quotePaymentWithDetails.QuotePaymentId,
+        currencyPaid: "AED",
+        },
+        customerDetails: {
+          name: existingUser.leadWithDetails.FirstName,
+          id: existingUser.leadWithDetails.Email, // Assuming this is the desired ID
+        },
+        status: "compliance Review",
+        generalLedgerCode: "1341 - Cash in Hand (AED)",
+      });
+
+      await newBankTransferForm.save();
+      // const requestBody = {
+      //   paymentmethod: "Cash Over Counter",
+      //   amount_received: newBankTransferForm.transactionDetails.partPayment,
+      //   bank_name: "Cash in Hand (AED)",
+      //   GL_code: newBankTransferForm.generalLedgerCode,
+      //   Pay_Currency: newBankTransferForm.transactionDetails.currencyPaid,
+      //   payment_status: newBankTransferForm.status,
+      // };
+
+      const requestBody =  {
+        "qp": {
+          paymentmethod: "Cash Over Counter",
+          amount_received: newBankTransferForm.transactionDetails.amount,
+          bank_name: "Cash in Hand (AED)",
+          GL_code: newBankTransferForm.generalLedgerCode,
+          Pay_Currency: newBankTransferForm.transactionDetails.currencyPaid,
+          payment_status: newBankTransferForm.status,
+          quotePaymentId:newBankTransferForm.transactionDetails.quotePaymentId
+        },
+        "attachments": [
+          {
+            "Body": "",
+            "ContentType": "",
+            "Name": ""
+          },
+          {
+            "Body": "",
+            "ContentType": "",
+            "Name": ""
+          }
+        ]
+      }
+
+      console.log(requestBody);
+
+      // Set up the headers with the access token
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json", // Specify the content type as JSON
+      };
+
+      const endpointUrl = `${saleforcUrl}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${newBankTransferForm.transactionDetails.quotePaymentId}`;
+
+      axios
+        .put(endpointUrl, requestBody, { headers })
+        .then((response) => {
+          // Handle the response here
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          // Handle errors here
+          console.error("Error:", error);
+        });
+
+      return res.status(200).json({
+        message: "Cash Over Counter Transfer processed",
+        paymentmethod: "Cash Over Counter",
+
+        Amountpaid: newBankTransferForm.amount,
+        partPayment: newBankTransferForm.partPayment,
+        status: newBankTransferForm.status,
+        Name: newBankTransferForm.customerDetails.name,
+        proformaInvoiceNumber:
+          newBankTransferForm.transactionDetails.proformaInvoiceNumber,
+        Currency: newBankTransferForm.currencyPaid,
+        generalLedgerCode: newBankTransferForm.generalLedgerCode,
+        currencyPaid: newBankTransferForm.transactionDetails.currencyPaid,
+      });
+    } else {
+      // Create a new PaymentForm instance
+      const uploadedFiles = req.files;
+      const fileNames = uploadedFiles.map((file) => file.filename);
+      // const fileNames = uploadedFiles/
+      console.log(fileNames);
+      const uploadPromises = uploadedFiles.map(async (file) => {
+        const filePath = 'transfer_copy/' + file.filename; // Update this path
+        const fileContent = fs.readFileSync(filePath);
+        const params = {
+          Bucket: process.env.S3_BUCKET_NAME,
+          Key: file.filename,
+          Body: fileContent,
+          ContentType: file.mimetype, // Set this according to your file type
+        };
+    
+        const uploadResult = await s3.upload(params).promise();
+        return uploadResult.Location; // URL of the uploaded file
+      });
+    
+      const paymentReceiptURLs = await Promise.all(uploadPromises);
+ 
+
+      const newBankTransferForm = new CashCounter({
+        bankDetails: {
+          bank_name: accountDetails.bank_name,
+          account_name: accountDetails.account_name,
+          iban_number: accountDetails.iban_number,
+          account_number: accountDetails.account_number,
+          swift_code: accountDetails.swift_code,
+          bank_address: accountDetails.bank_address,
+        },
+        transactionDetails: {
+          amount: existingUser.salesforceResponseMatchScreening.totalAmount,
+          quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
+          partPayment: existingUser.salesforceResponseMatchScreening.total_including_Vat,
+          proformaInvoiceNumber: existingUser.quotePaymentWithDetails.QuotePaymentId,
+        currencyPaid: "AED",
+          
+        },
+        customerDetails: {
+          name: existingUser.leadWithDetails.FirstName,
+          id: existingUser.leadWithDetails.Email, // Assuming this is the desired ID
+        },
+        fileUpload: paymentReceiptURLs,
+        quoteId: existingUser.quotePaymentWithDetails.QuotePaymentId,
+        status: "compliance Review",
+        generalLedgerCode: "1301 - VZ ADCB (AED) 10515838124001",
+      });
+
+
+      let attachments = [];
+      for (const file of req.files) {
+        const filePath = 'transfer_copy/' + file.filename; // Update this path
+        const base64Data = await convertFileToBase64(filePath);
+        attachments.push({
+          Body: base64Data,
+          ContentType:file.mimetype, // Set this according to your file type
+          Name: file.originalname
+        });
+      }
+
+      await newBankTransferForm.save();
+
+      const qp = {
+        paymentmethod: "Cash Over Counter",
+        amount_received: newBankTransferForm.transactionDetails.partPayment,
+          bank_name:  "Cash in Hand (AED)",
+          GL_code: newBankTransferForm.generalLedgerCode,
+          Pay_Currency: newBankTransferForm.transactionDetails.currencyPaid,
+          payment_status: newBankTransferForm.status,
+          quotePaymentId:newBankTransferForm.transactionDetails.quotePaymentId
+      };
+    
+     
+      const requestBody = {
+        qp,
+        paymentReceiptURLs
+        
+      };
+
+      console.log(requestBody)
+      // Set up the headers with the access token
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json", // Specify the content type as JSON
+      };
+
+      const endpointUrl = `${saleforcUrl}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${newBankTransferForm.transactionDetails.quotePaymentId}`;
+
+      axios
+        .put(endpointUrl, requestBody, { headers })
+        .then((response) => {
+          // Handle the response here
+          console.log("Response:", response.data);
+        })
+        .catch((error) => {
+          // Handle errors here
+          console.error("Error:", error);
+        });
+
+        await sendEmail(existingUser.salesPersonDetails.salesPersonName,newBankTransferForm.customerDetails.id, existingUser.leadWithDetails.FirstName,existingUser.salesPersonDetails.salesPersonEmail);
+        let HtmlBody=`<!DOCTYPE html>
+        <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+        
+        <head>
+          <title></title>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]-->
+          <style>
+            * {
+              box-sizing: border-box;
+            }
+        
+            body {
+              margin: 0;
+              padding: 0;
+            }
+        
+            a[x-apple-data-detectors] {
+              color: inherit !important;
+              text-decoration: inherit !important;
+            }
+        
+            #MessageViewBody a {
+              color: inherit;
+              text-decoration: none;
+            }
+        
+            p {
+              line-height: inherit
+            }
+        
+            .desktop_hide,
+            .desktop_hide table {
+              mso-hide: all;
+              display: none;
+              max-height: 0px;
+              overflow: hidden;
+            }
+        
+            .image_block img+div {
+              display: none;
+            }
+        
+            @media (max-width:620px) {
+              .social_block.desktop_hide .social-table {
+                display: inline-block !important;
+              }
+        
+              .mobile_hide {
+                display: none;
+              }
+        
+              .row-content {
+                width: 100% !important;
+              }
+        
+              .stack .column {
+                width: 100%;
+                display: block;
+              }
+        
+              .mobile_hide {
+                min-height: 0;
+                max-height: 0;
+                max-width: 0;
+                overflow: hidden;
+                font-size: 0px;
+              }
+        
+              .desktop_hide,
+              .desktop_hide table {
+                display: table !important;
+                max-height: none !important;
+              }
+            }
+          </style>
+        </head>
+        
+        <body style="background-color: #ffffff; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+          <table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff;">
+            <tbody>
+              <tr>
+                <td>
+                  <table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 600px;" width="600">
+                            <tbody>
+                              <tr>
+                                <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                  <table class="paragraph_block block-1" width="100%" border="0" cellpadding="5" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                    <tr>
+                                      <td class="pad">
+                                        <div style="color:#000000;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:150%;text-align:left;mso-line-height-alt:21px;">
+                                          <p style="margin: 0; margin-bottom: 16px;">Hello,</p>
+                                          <p style="margin: 0; margin-bottom: 16px;">A customer has chosen to pay via <b>cash over counter.</b> </p>
+                                          <p style="margin: 0; margin-bottom: 16px;">Reference Quote Number - <b>${existingUser.quotePaymentName}</b> </p>
+                                       
+                                     
+                                         
+                                          <p style="margin: 0;">Thank you!</p>
+                                       
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                    <tbody>
+                      <tr>
+                        <td>
+                          <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 600px;" width="600">
+                            <tbody>
+                              <tr>
+                                <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; padding-top: 30px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                                  <table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <tr>
+                                      <td class="pad" style="padding-bottom:20px;width:100%;padding-right:0px;padding-left:0px;">
+                                        <div class="alignment" align="center" style="line-height:10px">
+                                          <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/661805_644134/VZ%20Logo.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                  <table class="social_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                    <tr>
+                                      <td class="pad" style="text-align:center;padding-right:0px;padding-left:0px;">
+                                        <div class="alignment" align="center">
+                                          <table class="social-table" width="276px" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; display: inline-block;">
+                                            <tr>
+                                              <td style="padding:0 7px 0 7px;"><a href="https://www.facebook.com/virtuzone" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/facebook@2x.png" width="32" height="32" alt="Facebook" title="Facebook" style="display: block; height: auto; border: 0;"></a></td>
+                                              <td style="padding:0 7px 0 7px;"><a href="https://twitter.com/Virtuzone_UAE" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/twitter@2x.png" width="32" height="32" alt="Twitter" title="Twitter" style="display: block; height: auto; border: 0;"></a></td>
+                                              <td style="padding:0 7px 0 7px;"><a href="http://www.youtube.com/virtuzoneuae" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/youtube@2x.png" width="32" height="32" alt="YouTube" title="YouTube" style="display: block; height: auto; border: 0;"></a></td>
+                                              <td style="padding:0 7px 0 7px;"><a href="http://www.instagram.com/virtuzone" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/instagram@2x.png" width="32" height="32" alt="Instagram" title="Instagram" style="display: block; height: auto; border: 0;"></a></td>
+                                              <td style="padding:0 7px 0 7px;"><a href="http://www.linkedin.com/company/virtuzone" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/linkedin@2x.png" width="32" height="32" alt="LinkedIn" title="LinkedIn" style="display: block; height: auto; border: 0;"></a></td>
+                                              <td style="padding:0 7px 0 7px;"><a href="https://www.vz.ae/" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/website@2x.png" width="32" height="32" alt="Web Site" title="Web Site" style="display: block; height: auto; border: 0;"></a></td>
+                                            </tr>
+                                          </table>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                  <table class="text_block block-3" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                    <tr>
+                                      <td class="pad" style="padding-left:10px;padding-right:10px;padding-top:10px;">
+                                        <div style="font-family: sans-serif">
+                                          <div class style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; mso-line-height-alt: 18px; color: #000000; line-height: 1.5;">
+                                            <p style="margin: 0; text-align: center; mso-line-height-alt: 18px;"><a href="https://g.page/virtuzone?share" target="_blank" style="text-decoration: underline; color: #000000;" rel="noopener">Office 404, Al Saaha Office, Building B, Souk Al Bahar, Old Town Island,<br>Burj Khalifa District, Dubai - UAE</a></p>
+                                          </div>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  </table>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table><!-- End -->
+        </body>
+        
+        </html>
+        `
+        let subjectMail="Customer paying via cash over counter"
+        let toMail= process.env.ToMailCashOverCounter
+        await  ReviewsendEmail(existingUser.salesPersonDetails.salesPersonEmail,toMail,subjectMail,HtmlBody,attachments)
+
+      return res.status(200).json({
+        message: "Cash Over Counter Transfer processed successfully",
+        Paymentmodes: "Cash Over Counter",
+
+        Amountpaid: newBankTransferForm.totalIncludingVAT,
+        partPayment: newBankTransferForm.partPayment,
+        status: newBankTransferForm.status,
+        Name: newBankTransferForm.customerDetails.name,
+        proformaInvoiceNumber:
+          newBankTransferForm.transactionDetails.proformaInvoiceNumber,
+        receiptfile: newBankTransferForm.fileUpload,
+        Currency: newBankTransferForm.currencyPaid,
+        generalLedgerCode: newBankTransferForm.generalLedgerCode,
+        currencyPaid: newBankTransferForm.transactionDetails.currencyPaid,
+      });
+    }
+  } catch (err) {
+    console.error("Error during Bank Transfer processing:", err);
+    return res.status(500).json({ message: "Server error" });
+  }
+};
+
+
+
+
+async function sendEmail(opportunityName,to,name,opportunityOwnerEmail) {
+  // Email options
+
+    const data = {
+      from: process.env.SMTP_USER,
+      to: to,
+      cc: opportunityOwnerEmail,
+      replyTo:"monish@yeepeey.com",
+      subject:"Notice: Your documents are now under review",
+       html: `<!DOCTYPE html>
+      <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+    
+    <head>
+      <title></title>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"><!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]-->
+      <style>
+        * {
+          box-sizing: border-box;
+        }
+    
+        body {
+          margin: 0;
+          padding: 0;
+        }
+    
+        a[x-apple-data-detectors] {
+          color: inherit !important;
+          text-decoration: inherit !important;
+        }
+    
+        #MessageViewBody a {
+          color: inherit;
+          text-decoration: none;
+        }
+    
+        p {
+          line-height: inherit
+        }
+    
+        .desktop_hide,
+        .desktop_hide table {
+          mso-hide: all;
+          display: none;
+          max-height: 0px;
+          overflow: hidden;
+        }
+    
+        .image_block img+div {
+          display: none;
+        }
+    
+        @media (max-width:620px) {
+          .social_block.desktop_hide .social-table {
+            display: inline-block !important;
+          }
+    
+          .mobile_hide {
+            display: none;
+          }
+    
+          .row-content {
+            width: 100% !important;
+          }
+    
+          .stack .column {
+            width: 100%;
+            display: block;
+          }
+    
+          .mobile_hide {
+            min-height: 0;
+            max-height: 0;
+            max-width: 0;
+            overflow: hidden;
+            font-size: 0px;
+          }
+    
+          .desktop_hide,
+          .desktop_hide table {
+            display: table !important;
+            max-height: none !important;
+          }
+        }
+      </style>
+    </head>
+    
+    <body style="background-color: #ffffff; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+      <table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #ffffff;">
+        <tbody>
+          <tr>
+            <td>
+              <table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                <tbody>
+                  <tr>
+                    <td>
+                      <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 600px;" width="600">
+                        <tbody>
+                          <tr>
+                            <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                              <table class="paragraph_block block-1" width="100%" border="0" cellpadding="5" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                <tr>
+                                  <td class="pad">
+                                    <div style="color:#000000;direction:ltr;font-family:Arial, Helvetica, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:150%;text-align:left;mso-line-height-alt:21px;">
+                                      <p style="margin: 0; margin-bottom: 16px;">Hi&nbsp;${name},</p>
+                                      <p style="margin: 0; margin-bottom: 16px;">Thank you for uploading the required supporting documents for your preferred payment method. We are pleased to inform you that they are now under review.</p>
+                                      <p style="margin: 0; margin-bottom: 16px;">Our team will reach out to you if further details or documents are needed. We will also update you on the status of your payment and documents accordingly.</p>
+                                     <br>
+                                      <p style="margin: 0;">Regards,</p>
+                                      <p style="margin: 0;">${opportunityName}</p>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                <tbody>
+                  <tr>
+                    <td>
+                      <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000000; width: 600px;" width="600">
+                        <tbody>
+                          <tr>
+                            <td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; padding-bottom: 30px; padding-left: 20px; padding-right: 20px; padding-top: 30px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+                              <table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <tr>
+                                  <td class="pad" style="padding-bottom:20px;width:100%;padding-right:0px;padding-left:0px;">
+                                    <div class="alignment" align="center" style="line-height:10px">
+                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/661805_644134/VZ%20Logo.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </table>
+                              <table class="social_block block-2" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+                                <tr>
+                                  <td class="pad" style="text-align:center;padding-right:0px;padding-left:0px;">
+                                    <div class="alignment" align="center">
+                                      <table class="social-table" width="276px" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; display: inline-block;">
+                                        <tr>
+                                          <td style="padding:0 7px 0 7px;"><a href="https://www.facebook.com/virtuzone" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/facebook@2x.png" width="32" height="32" alt="Facebook" title="Facebook" style="display: block; height: auto; border: 0;"></a></td>
+                                          <td style="padding:0 7px 0 7px;"><a href="https://twitter.com/Virtuzone_UAE" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/twitter@2x.png" width="32" height="32" alt="Twitter" title="Twitter" style="display: block; height: auto; border: 0;"></a></td>
+                                          <td style="padding:0 7px 0 7px;"><a href="http://www.youtube.com/virtuzoneuae" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/youtube@2x.png" width="32" height="32" alt="YouTube" title="YouTube" style="display: block; height: auto; border: 0;"></a></td>
+                                          <td style="padding:0 7px 0 7px;"><a href="http://www.instagram.com/virtuzone" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/instagram@2x.png" width="32" height="32" alt="Instagram" title="Instagram" style="display: block; height: auto; border: 0;"></a></td>
+                                          <td style="padding:0 7px 0 7px;"><a href="http://www.linkedin.com/company/virtuzone" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/linkedin@2x.png" width="32" height="32" alt="LinkedIn" title="LinkedIn" style="display: block; height: auto; border: 0;"></a></td>
+                                          <td style="padding:0 7px 0 7px;"><a href="https://www.vz.ae/" target="_blank"><img src="https://app-rsrc.getbee.io/public/resources/social-networks-icon-sets/t-only-logo-dark-gray/website@2x.png" width="32" height="32" alt="Web Site" title="Web Site" style="display: block; height: auto; border: 0;"></a></td>
+                                        </tr>
+                                      </table>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </table>
+                              <table class="text_block block-3" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+                                <tr>
+                                  <td class="pad" style="padding-left:10px;padding-right:10px;padding-top:10px;">
+                                    <div style="font-family: sans-serif">
+                                      <div class style="font-size: 12px; font-family: Arial, Helvetica, sans-serif; mso-line-height-alt: 18px; color: #000000; line-height: 1.5;">
+                                        <p style="margin: 0; text-align: center; mso-line-height-alt: 18px;"><a href="https://g.page/virtuzone?share" target="_blank" style="text-decoration: underline; color: #000000;" rel="noopener">Office 404, Al Saaha Office, Building B, Souk Al Bahar, Old Town Island,<br>Burj Khalifa District, Dubai - UAE</a></p>
+                                      </div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </table>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table><!-- End -->
+    </body>
+    
+    </html>
+    `,
+    };
+  
+    mailTransporter.sendMail(data, function (error, info) {
+      if (error) {
+          console.error('Failed to send email:', error);
+      } else {
+          console.log('Email sent:', info.response);
+      }
+  });
+
+
+}
+async function ReviewsendEmail(opportunityOwnerEmail,toMail,subjectMail,HtmlBody,attachments) {
+  // Email options
+
+  const mailOptions = {
+    from: process.env.SMTP_USER,
+    to: [toMail, opportunityOwnerEmail],
+    subject: subjectMail,
+    html: HtmlBody,
+    attachments: attachments.map((attachment) => ({
+        filename: attachment.Name,
+        content: attachment.Body,
+        encoding: 'base64',
+        contentType: attachment.ContentType,
+    })),
+};
+  
+mailTransporter.sendMail(mailOptions, function (error, info) {
+  if (error) {
+      console.error('Failed to send email:', error);
+  } else {
+      console.log('Email sent:', info.response);
+  }
+});
+  // Send the email
+
+}
+
+
 exports.payNow = payNow;
 exports.payNowSaleforce = payNowSaleforce;
 exports.payNowByStripe = payNowByStripe;
@@ -1429,3 +2135,4 @@ exports.payNowByTelr = payNowByTelr;
 exports.payNowByFiserv = payNowByFiserv;
 exports.MagnatiTransactionStatus = MagnatiTransactionStatus;
 exports.AddCashMachin = AddCashMachin;
+exports.AddCashCounter = AddCashCounter;

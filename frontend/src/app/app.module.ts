@@ -59,6 +59,12 @@ import { ServicePageComponent } from './service-page/service-page.component';
 import { UserNavComponent } from './user-nav/user-nav.component';
 import { CustomerCardmanagementComponent } from './customer-cardmanagement/customer-cardmanagement.component';
 import { AlreadypaidComponent } from './alreadypaid/alreadypaid.component';
+import { CardmachineComponent } from './cardmachine/cardmachine.component';
+import { CashoverCounterComponent } from './cashover-counter/cashover-counter.component';
+import { CashovercounterComponent } from './cashovercounter/cashovercounter.component';
+import { CashoversuccessComponent } from './cashoversuccess/cashoversuccess.component';
+import { BankTransferSuccessComponent } from './bank-transfer-success/bank-transfer-success.component';
+
 
 @NgModule({
   declarations: [
@@ -101,6 +107,8 @@ import { AlreadypaidComponent } from './alreadypaid/alreadypaid.component';
     UserLoginComponent,
     OnlinepaymentComponent,
     SidebarComponent,
+    CardmachineComponent,
+    CashoverCounterComponent,
     UserFooterComponent,
     FailerComponent,
     SuccessComponent,
@@ -110,6 +118,9 @@ import { AlreadypaidComponent } from './alreadypaid/alreadypaid.component';
     UserNavComponent,
     CustomerCardmanagementComponent,
     AlreadypaidComponent,
+    CashovercounterComponent,
+    CashoversuccessComponent,
+    BankTransferSuccessComponent,
     
   ],
   imports: [

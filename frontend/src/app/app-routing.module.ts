@@ -41,6 +41,10 @@ import { ServicePageComponent } from './service-page/service-page.component';
 import { CardmachineComponent } from './cardmachine/cardmachine.component';
 import { CustomerCardmanagementComponent } from './customer-cardmanagement/customer-cardmanagement.component';
 import { AlreadypaidComponent } from './alreadypaid/alreadypaid.component';
+import { CashovercounterComponent } from './cashovercounter/cashovercounter.component';
+import { CashoverCounterComponent } from './cashover-counter/cashover-counter.component';
+import { CashoversuccessComponent } from './cashoversuccess/cashoversuccess.component';
+import { BankTransferSuccessComponent } from './bank-transfer-success/bank-transfer-success.component';
 
 const routes: Routes = [
 
@@ -64,12 +68,16 @@ const routes: Routes = [
   { path: 'failure/:id', component: FailerComponent },
   // new
   { path: 'successful/:id', component: SuccessComponent },
+  { path: 'success/:id', component: BankTransferSuccessComponent },
 
   {
     path: 'mail-management-1',
     component: MailsManagement1Component,
    
   },
+  { path: 'cashovercounter/:id', component: CashovercounterComponent },
+  { path: 'cashover-counter/:id', component: CashoverCounterComponent },
+  { path: 'cashcountersuccess/:id', component: CashoversuccessComponent },
   {
     path: 'mail-management-2',
     component: MailsManagement2Component,

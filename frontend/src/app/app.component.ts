@@ -16,6 +16,11 @@ export class AppComponent implements OnInit, OnDestroy {
     '/failure',        // This route will load styles for any /failure/:id
     '/successful',     // This route will load styles for any /successful/:id
     '/onlinepayments',     // This route will load styles for any /successful/:id
+    '/cardmachine',    // This route will load styles for any /successful/:id
+    '/cashovercounter',    // This route will load styles for any /successful/:id
+    '/cashover-counter',    
+    '/success',    
+    '/cashcountersuccess',    
   ];
 
   // Arrays to store dynamically added scripts and styles

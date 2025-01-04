@@ -10,7 +10,7 @@ export class CardmachineService {
   constructor(private http: HttpClient) { }
 
   sendCashMachinData(quoteId: string) {
-    const url = `${environment.apiUrl}/user/addCashMachin/${quoteId}`;
+    const url = `${environment.apiUrl}/payment/addCashMachin/${quoteId}`;
   
     // Remove the file-related code since you are not sending a file
     // const uploadData = new FormData();

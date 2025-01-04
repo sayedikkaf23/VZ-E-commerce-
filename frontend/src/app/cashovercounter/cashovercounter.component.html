@@ -1,0 +1,62 @@
+
+    
+        <app-sidebar></app-sidebar>
+         
+        <div class="details-content">
+
+            <div class="container">
+              
+
+                <div *ngIf="isTotalIncludingVATGreaterThan25300(); ">
+                    <div class="uploaddocument-list text-center">
+                      <h2 class="bg-title mb-md-5"><span>CASH OVER COUNTER</span></h2>  
+                        <h5><span>Please upload any <b>one</b> of the following documents:</span></h5>
+                        <div class="fw-wrap">
+                          <div class="fileuploader">
+                              <svg width="44" height="33" viewBox="0 0 44 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M2 15.5485V31.0323H42V15.5485" stroke="#010C40" stroke-width="3"/>
+                                  <path d="M29.7412 9.76534L21.9759 2L14.2106 9.76534" stroke="#010C40" stroke-width="2.97437" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                                  <path d="M21.9761 23.7479L21.9761 2.21741" stroke="#010C40" stroke-width="2.97437" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+                              </svg>
+                              <p><strong>Upload your documents here</strong><br>
+                                1. Last 3 months bank statements <br>
+                                2. Commission Receipt <br>
+                                3. ATM Withdrawal Slip</p>
+                              <label for="fileInput" style="cursor: pointer;">
+                              <h6 >Browse</h6>
+                            </label>
+                              <input type="file"  id="fileInput" (change)="onFileSelected($event)" style="display: none;" #fileInput multiple class="ufile">
+                          </div>
+                        
+                            <div class="fu-list">
+                                <div class="item" *ngFor="let document of uploadedDocuments; let i = index; let last = last">
+                                  {{ document }}{{ last ? "" : ", " }}
+                                  <button (click)="removeFile(i)">×</button>
+                                </div>
+                             
+                              
+                              <!-- <div class="item">
+                                {{ document }}{{ last ? "" : ", " }}
+                                  <button>×</button>
+                              </div> -->
+                          </div>
+                     
+                      </div>
+                        <div class="text-center mt-5">
+                          <a (click)="submitForm(2)" class="btn btn-success">Submit</a>
+                        </div>
+                      </div>
+                    </div>
+                    
+          
+            </div>
+     
+            <app-user-footer></app-user-footer>
+            
+        </div>
+
+
+
+
+
+   
