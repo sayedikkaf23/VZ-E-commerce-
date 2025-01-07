@@ -144,7 +144,7 @@ export class BanktransferComponent implements OnInit {
       (response) => {
        
         this.piData = response;
-        this.defaultValue = response.partPayment;
+        this.defaultValue = response.salesforceResponseMatchScreening.total_including_Vat;
         callback();
         
       },

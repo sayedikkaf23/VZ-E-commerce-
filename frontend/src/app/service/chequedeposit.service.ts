@@ -10,7 +10,7 @@ export class ChequedepositService {
   constructor(private http: HttpClient) { }
 
   sendChequeDepositData(quoteId: string, files: File[]) {
-    const url = `${environment.apiUrl}/user/addChequeDeposit/${quoteId}`;
+    const url = `${environment.apiUrl}/payment/addChequeDeposit/${quoteId}`;
     
     const uploadData = new FormData();
     for (let i = 0; i < files.length; i++) {

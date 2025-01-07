@@ -47,7 +47,7 @@ import { CashoversuccessComponent } from './cashoversuccess/cashoversuccess.comp
 import { BankTransferSuccessComponent } from './bank-transfer-success/bank-transfer-success.component';
 import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
 import { BanktransferComponent } from './banktransfer/banktransfer.component';
-
+import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
 
 const routes: Routes = [
 
@@ -61,6 +61,7 @@ const routes: Routes = [
     component: _HomeComponent,
    
   },
+  { path: 'chequedeposit/:id', component: ChequedepositComponent },
   { path: 'onlinepayments/:id', component: AlreadypaidComponent },
   { path: 'cashdeposit/:id', component: CashdepositComponent },
   {

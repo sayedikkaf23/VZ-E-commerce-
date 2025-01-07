@@ -8,7 +8,9 @@ const {
     payNow,
     AddCashMachin,
     AddCashCounter,
-    AddCashDeposit
+    AddCashDeposit,
+    convertCurrency,
+    AddBankTransfer
 } = require("../controllers/paymentController");
  
 // const {upload} = require("../middleware/fileUpload");
@@ -27,6 +29,12 @@ router.post(
     upload.array("transfer_copy"),
     AddCashDeposit
   );
+
+  router.post(
+    "/addbankTransfer/:quoteId",
+    upload.array("transfer_copy"),
+    AddBankTransfer
+  );
 router.post("/payNowSaleforce/:quoteId", payNowSaleforce);
 router.get("/payNowByFiserv/:quoteId", payNowByFiserv);
 router.post("/magnatiTransactionStatus", MagnatiTransactionStatus);
@@ -34,6 +42,6 @@ router.get("/paynow/:quoteId", payNow);
 router.get("/payNowByStripe/:quoteId", payNowByStripe);
 router.get("/payNowByTelr/:quoteId", payNowByTelr);
  
- 
+router.post("/convert-currency", convertCurrency);
  
 module.exports = router;

@@ -1,0 +1,4 @@
+:host ::ng-deep .collapse {
+    visibility: visible !important;
+  }
+  

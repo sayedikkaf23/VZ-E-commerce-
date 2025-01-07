@@ -29,7 +29,7 @@ export class BankTransferService {
   constructor(private http: HttpClient) { }
 
   sendBankTransferData(quoteId: string, formData: any, files: File[]) {
-    const url = `${environment.apiUrl}/user/addbankTransfer/${quoteId}`;
+    const url = `${environment.apiUrl}/payment/addbankTransfer/${quoteId}`;
     
     const uploadData = new FormData();
 
@@ -51,7 +51,7 @@ export class BankTransferService {
 
   convertCurrency(fromCurrency: string, toCurrency: string, amount: number) {
     const body = { fromCurrency, toCurrency, amount };
-    return this.http.post(`${environment.apiUrl}/user/convert-currency`, body);
+    return this.http.post(`${environment.apiUrl}/payment/convert-currency`, body);
   }
 
 }
