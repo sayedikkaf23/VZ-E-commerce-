@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, OnDestroy {
     '/cashcountersuccess',
     '/cashdeposit',
     '/banktransfer',
+    '/chequedeposit',
   ];
 
   // Arrays to store dynamically added scripts and styles
