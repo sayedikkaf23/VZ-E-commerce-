@@ -485,26 +485,39 @@
                     <span style="font-size: 0.9rem; color: #999;">No files</span>
                   </ng-template>
                 </td>
+
+                
                 <td style="padding: 0.5rem; min-width: 100px;">
-                  <ng-container *ngIf="!shareholder.uploadedFile; else uploaded">
-                    <input
-                      type="file"
-                      (change)="onFileSelected($event, i)"
-                      accept=".pdf,.doc,.docx,.jpg,.png"
-                    />
+                  <!-- Always show the file input field -->
+                  <input
+                    type="file"
+                    (change)="onFilesSelected($event, i)"
+                    accept=".pdf,.doc,.docx,.jpg,.png"
+                    multiple
+                    style="border: none; background: none;"
+                    aria-label="Choose files"
+                  />
+                
+                  <!-- Display the uploaded files if there are any -->
+                  <ng-container *ngIf="shareholder.uploadedFiles?.length > 0">
+                    <ul style="list-style-type: none; margin: 0; padding: 0;">
+                      <li *ngFor="let file of shareholder.uploadedFiles">
+                        <a
+                          href="javascript:void(0)"
+                          (click)="viewFile(file.url)"
+                          style="color: #007bff; text-decoration: underline;"
+                        >
+                          {{ file.name }}
+                        </a>
+                      </li>
+                    </ul>
                   </ng-container>
-                  <ng-template #uploaded>
-                    <!-- Trigger file view in a new tab -->
-                    <a
-                      href="javascript:void(0)"
-                      (click)="viewFile(shareholder.uploadedFile.url)"
-                      style="color: #007bff; text-decoration: underline;"
-                    >
-                      {{ shareholder.uploadedFile.name }}
-                    </a>
-                  </ng-template>
-                  
                 </td>
+                
+                
+                
+                
+                
                 
               </tr>
             </tbody>
