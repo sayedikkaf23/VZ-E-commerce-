@@ -24,12 +24,16 @@ export class CustomerCardmanagementComponent implements OnInit {
   
   // Will store the shareholders to display in the modal
   selectedShareholders: any[] = [];
+  uploadedFileNames: Array<Array<{ name: string; url: string }>> = [];
 
   constructor(
     private userService: UserService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+    
+  ) {
+    this.selectedShareholders.forEach(() => this.uploadedFileNames.push([]));
+  }
 
   ngOnInit(): void {
     console.log('Current Route:', this.route.snapshot.url); // Check the current URL
@@ -124,6 +128,37 @@ export class CustomerCardmanagementComponent implements OnInit {
     this.selectedShareholders = shareholders;
     this.showModal = true;
   }
+
+  onFilesSelected(event: Event, index: number) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      // Get the selected files and create object URLs for each
+      const files = Array.from(input.files);
+      const fileUrls = files.map(file => ({
+        name: file.name,
+        url: URL.createObjectURL(file)
+      }));
+  
+      // Add the selected files to the shareholder's uploadedFiles array
+      this.selectedShareholders[index].uploadedFiles = [
+        ...(this.selectedShareholders[index].uploadedFiles || []),
+        ...fileUrls
+      ];
+  
+      // Optionally, clear the input field (to reset the input display)
+      // input.value = ''; // This will reset the file input to make it look like a fresh file selection
+    }
+  }
+  
+  
+  viewFile(fileUrl: string) {
+    // Open the file in a new browser tab
+    window.open(fileUrl, '_blank');
+  }
+  
+  
+  
+  
 
   closeModal(): void {
     this.showModal = false;

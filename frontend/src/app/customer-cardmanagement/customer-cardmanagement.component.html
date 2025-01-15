@@ -392,7 +392,7 @@
   <div
     class="modal-dialog"
     (click)="$event.stopPropagation()"
-    style="margin: 2rem auto; max-width: 800px;"
+    style="margin: 2rem auto; max-width: 900px;"
   >
     <div class="modal-content" style="border: none; border-radius: 4px;">
       <div
@@ -432,6 +432,7 @@
                 <th style="padding: 0.5rem;">Share %</th>
                 <th style="padding: 0.5rem;">DOB</th>
                 <th style="padding: 0.5rem;">Files</th>
+                <th style="padding: 0.5rem;">Add File</th>
               </tr>
             </thead>
 
@@ -484,6 +485,40 @@
                     <span style="font-size: 0.9rem; color: #999;">No files</span>
                   </ng-template>
                 </td>
+
+                
+                <td style="padding: 0.5rem; min-width: 100px;">
+                  <!-- Always show the file input field -->
+                  <input
+                    type="file"
+                    (change)="onFilesSelected($event, i)"
+                    accept=".pdf,.doc,.docx,.jpg,.png"
+                    multiple
+                    style="border: none; background: none;"
+                    aria-label="Choose files"
+                  />
+                
+                  <!-- Display the uploaded files if there are any -->
+                  <ng-container *ngIf="shareholder.uploadedFiles?.length > 0">
+                    <ul style="list-style-type: none; margin: 0; padding: 0;">
+                      <li *ngFor="let file of shareholder.uploadedFiles">
+                        <a
+                          href="javascript:void(0)"
+                          (click)="viewFile(file.url)"
+                          style="color: #007bff; text-decoration: underline;"
+                        >
+                          {{ file.name }}
+                        </a>
+                      </li>
+                    </ul>
+                  </ng-container>
+                </td>
+                
+                
+                
+                
+                
+                
               </tr>
             </tbody>
           </table>
