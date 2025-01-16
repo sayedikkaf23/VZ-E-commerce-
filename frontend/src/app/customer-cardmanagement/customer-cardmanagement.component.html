@@ -288,7 +288,7 @@
                       </ng-template>
                     </td>
                     <td style="text-align: center; padding: 6px;">
-                      <button class="cool-button" (click)="viewDetails(item)">
+                      <button class="cool-button" (click)="uploadDetailsModal()">
                         Upload Files
                       </button>
                     </td>
@@ -313,6 +313,7 @@
         
       </div><!-- end .row -->
     </div><!-- end .container-fluid -->
+
     <!-- modla -->
     <div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg"  >
@@ -383,7 +384,130 @@
     </div>
   </div>
   
+<!-- Upload files Modal -->
+<div class="modal fade" id="uploadDetailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg"  >
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel"> Additional Files Upload</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
 
+      <!-- Modal Body -->
+      <div class="modal-body">
+        <!-- Table Section -->
+        <table class="table table-bordered align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Select Document Type</th>
+              <th>Upload Additional Files</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <fieldset>
+                  <select
+                  name="DocumentType"
+                  id="DocumentType"
+                  class="form-select"
+                  [(ngModel)]="selectedDocumentType"
+                >
+                  <option value="" disabled selected>
+                    Choose Document type
+                  </option>
+                  <option value="Trade License">Trade License</option>
+                  <option value="Company Visa">Company Visa</option>
+                  <option value="Commercial License">Commercial License</option>
+                </select>
+                </fieldset>
+                
+              </td>
+              <td style="padding: 0.5rem; min-width: 100px;">
+                <!-- File Input -->
+                <input
+                  type="file"
+                  (change)="onFilesSelected($event)"
+                  accept=".pdf,.doc,.docx,.jpg,.png"
+                  multiple
+                  style="border: none; background: none; display: block; margin-bottom: 10px;"
+                  aria-label="Choose files"
+                />
+      
+                <!-- Display Uploaded Files -->
+                <ng-container *ngIf="uploadedFiles.length > 0">
+                  <ul style="list-style-type: none; margin: 0; padding: 0; margin-top: 8px;">
+                    <li
+                      *ngFor="let file of uploadedFiles"
+                      style="margin-bottom: 8px; display: flex; flex-direction: column; align-items: flex-start;"
+                    >
+                      <span style="color: #007bff; font-weight: bold;">
+                        {{ file.type }}
+                      </span>
+                      <div
+                        style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px; width: 100%;"
+                      >
+                        <!-- File Icon and Name -->
+                        <div style="display: flex; align-items: center;">
+                          <span style="margin-right: 8px; color: #010e1c;">📄</span>
+                          <a
+                            href="javascript:void(0)"
+                            (click)="viewFile(file.url)"
+                            style="color: #010e1c; text-decoration: underline; font-size: 14px;"
+                          >
+                            {{ file.name }}
+                          </a>
+                        </div>
+
+                        <!-- Remove File Button -->
+                        <button
+                          (click)="removeFile(file)"
+                          style="
+                            background: none;
+                            border: none;
+                            color: #ff0000;
+                            font-size: 16px;
+                            cursor: pointer;
+                          "
+                          aria-label="Remove file"
+                        >
+                          ✖
+                        </button>
+                      </div>
+                    </li>
+                  </ul>
+                </ng-container>
+
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+       <!-- Submit Button -->
+  <div style="text-align:center; margin-top: 20px; margin-bottom: 10px;">
+    <button
+      class="cool-button"
+      style="
+      padding: 10px 20px;
+      font-size: 14px;
+      border-radius: 4px;
+      cursor: pointer;
+    "
+    >
+      Submit
+    </button>
+  </div>
+
+    </div>
+  </div>
+</div>
   
   </body>
     
