@@ -440,54 +440,56 @@
                   aria-label="Choose files"
                 />
       
-                <!-- Display Uploaded Files -->
-                <ng-container *ngIf="uploadedFiles.length > 0">
-                  <ul style="list-style-type: none; margin: 0; padding: 0; margin-top: 8px;">
-                    <li
-                      *ngFor="let file of uploadedFiles"
-                      style="margin-bottom: 8px; display: flex; flex-direction: column; align-items: flex-start;"
-                    >
-                      <span style="color: #007bff; font-weight: bold;">
-                        {{ file.type }}
-                      </span>
-                      <div
-                        style="display: flex; align-items: center; justify-content: space-between; margin-top: 4px; width: 100%;"
-                      >
-                        <!-- File Icon and Name -->
-                        <div style="display: flex; align-items: center;">
-                          <span style="margin-right: 8px; color: #010e1c;">📄</span>
-                          <a
-                            href="javascript:void(0)"
-                            (click)="viewFile(file.url)"
-                            style="color: #010e1c; text-decoration: underline; font-size: 14px;"
-                          >
-                            {{ file.name }}
-                          </a>
-                        </div>
-
-                        <!-- Remove File Button -->
-                        <button
-                          (click)="removeFile(file)"
-                          style="
-                            background: none;
-                            border: none;
-                            color: #ff0000;
-                            font-size: 16px;
-                            cursor: pointer;
-                          "
-                          aria-label="Remove file"
-                        >
-                          ✖
-                        </button>
-                      </div>
-                    </li>
-                  </ul>
-                </ng-container>
+               
 
               </td>
             </tr>
           </tbody>
         </table>
+         <!-- Display Uploaded Files -->
+         <ng-container *ngIf="uploadedFiles.length > 0">
+          <ul style="list-style-type: none; margin: 0; padding: 0; margin-top: 8px;">
+            <li
+              *ngFor="let file of uploadedFiles"
+              style="margin-bottom: 8px; display: flex; flex-direction: column; align-items: flex-start;"
+            >
+              <span style="color: #007bff; font-weight: bold;">
+                {{ file.type }}
+              </span>
+              <div
+                style="display: flex; align-items: center;  margin-top: 4px; width: 100%;"
+              >
+                <!-- File Icon and Name -->
+                <div style="display: flex; align-items: center;">
+                  <span style="margin-right: 8px; color: #010e1c;">📄</span>
+                  <a
+                    href="javascript:void(0)"
+                    (click)="viewFile(file.url)"
+                    style="color: #010e1c; text-decoration: underline; font-size: 14px;"
+                  >
+                    {{ file.name }}
+                  </a>
+                </div>
+
+                <!-- Remove File Button -->
+                <button
+                  (click)="removeFile(file)"
+                  style="
+                    background: none;
+                    border: none;
+                    color: #ff0000;
+                    font-size: 16px;
+                    cursor: pointer;
+                    margin-left: 20px;
+                  "
+                  aria-label="Remove file"
+                >
+                  ✖
+                </button>
+              </div>
+            </li>
+          </ul>
+        </ng-container>
       </div>
       
        <!-- Submit Button -->
