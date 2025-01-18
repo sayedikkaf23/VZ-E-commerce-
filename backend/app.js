@@ -16,6 +16,7 @@ var mailDetails = require("./routes/mailform");
 var nationalities=require('./routes/nationality')
 const paymentMethodRoutes = require('./routes/paymentMethodRoutes');
 const authRoutes = require('./routes/authRoutes');
+const documentRoute = require('./routes/documentRoute');
 
 var app = express();
 require('./controllers/mailerController');
@@ -58,6 +59,7 @@ app.use('/nationalities',nationalities)
 app.use('/payment',paymentMethodRoutes)
 app.use('/auth', authRoutes);
 app.use('/online', onlinePayment);
+app.use('/documentype', documentRoute);
 app.use('/payment', paymentRoute);
 
 if (!process.env.SALESFORCE_USERNAME || !process.env.SALESFORCE_PASSWORD) {
