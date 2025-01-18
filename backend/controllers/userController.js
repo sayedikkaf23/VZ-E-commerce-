@@ -296,7 +296,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
   // Destructure fields from the request body
   const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders ,isProfile,planname} = req.body;
   const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
-
+  let subcategory
   // Construct the JSON body to send to Salesforce
   const requestBody = {
     firstName,
@@ -307,7 +307,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
     dob,
   };
   console.log(requestBody,shareholders);
-
+ 
   try {
     // Step 1: Authenticate with the external API
     console.log(process.env.EXTERNAL_API_SCREENING_URL)
@@ -353,7 +353,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
     // Extract and use responseData safely
     const responseData = salesforceResponse.data;
     console.log("Extracted Salesforce Data:", responseData);
-
+    subcategory = "personal"
     
    
 
@@ -403,6 +403,8 @@ exports.callSalesforceEndpoint = async (req, res) => {
       );
     } else if (CustomerType == "C") {
       // Call corporate customer screening API
+      subcategory = "business"
+
 
       const formattedShareholders = shareholders.map(shareholder => ({
         FirstName: shareholder.firstName || '',
@@ -523,6 +525,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
     },
       isProfile: isProfile ,
       planname: planname ,
+      subcategory: subcategory ,
     });
 
     // Step 6: Save the document to MongoDB

@@ -108,6 +108,7 @@ const pidataSchema = new mongoose.Schema(
       default: false,
     },
     planname: { type: String },
+    subcategory: { type: String },
     tradeLicenseFileUrl: { type: String },
     salesforceResponseMatchScreening: responseSchema,
     invoiceDate: { type: String },
