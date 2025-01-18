@@ -2748,4 +2748,12 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
     transform: translateY(-2px);
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
   }
+
+
+  @media (max-width: 768px) {
+    .dynamic-options {
+      font-size: 10px; /* Slightly smaller font for smaller screens */
+      padding: 0.4rem; /* Adjust padding */
+    }
   
+  }

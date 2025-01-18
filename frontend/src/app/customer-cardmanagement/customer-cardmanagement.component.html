@@ -288,7 +288,7 @@
                       </ng-template>
                     </td>
                     <td style="text-align: center; padding: 6px;">
-                      <button class="cool-button" (click)="uploadDetailsModal()">
+                      <button class="cool-button" (click)="uploadDetailsModal(item)">
                         Upload Files
                       </button>
                     </td>
@@ -390,7 +390,7 @@
     <div class="modal-content">
       <!-- Modal Header -->
       <div class="modal-header">
-        <h5 class="modal-title" id="detailsModalLabel"> Additional Files Upload</h5>
+        <h5 class="modal-title" id="detailsModalLabel">  Upload Document for {{ selectedRecord?.planname }}</h5>
         <button
           type="button"
           class="btn-close"
@@ -410,21 +410,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>
+            <tr >
+              <td  style="padding: 0.5rem; min-width: 100px;">
                 <fieldset>
                   <select
                   name="DocumentType"
                   id="DocumentType"
-                  class="form-select"
+                  class="form-select dynamic-options"
                   [(ngModel)]="selectedDocumentType"
                 >
                   <option value="" disabled selected>
                     Choose Document type
                   </option>
-                  <option value="Trade License">Trade License</option>
-                  <option value="Company Visa">Company Visa</option>
-                  <option value="Commercial License">Commercial License</option>
+                  <option *ngFor="let option of documentTypeOptions" [value]="option">
+                    {{ option }}
+                  </option>
                 </select>
                 </fieldset>
                 

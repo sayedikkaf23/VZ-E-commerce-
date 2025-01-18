@@ -29,6 +29,8 @@ export class CustomerCardmanagementComponent implements OnInit {
   selectedDocumentType: string = ''; // Stores the selected document type
   uploadedFiles: { name: string; url: string; type: string }[] = []; // Stores uploaded files with their document types
 
+  documentTypeOptions: string[] = []; // Options for the dropdown
+  selectedIndex: number = 0;
 
 
   constructor(
@@ -123,12 +125,34 @@ export class CustomerCardmanagementComponent implements OnInit {
     }
   }
   
-  uploadDetailsModal() {
+  uploadDetailsModal(record: any): void {
+    // Store the selected record and its index
+    this.selectedRecord = record;
+
+  
+    // Dynamically set dropdown options based on the selected record's planname
+    this.documentTypeOptions = this.getOptions(record.planname,record.subcategory);
+
+    //showing modal
     const modalElement = document.getElementById('uploadDetailsModal');
     if (modalElement) {
       // Use the Bootstrap modal
       const modal = new (window as any).bootstrap.Modal(modalElement);
       modal.show();
+    }
+
+  }
+
+  // Dynamic options based on planname
+  getOptions(planname: string, subcategory: string): string[] {
+    if (planname === 'Mail Management' || planname === 'Virtual Reception' ) {
+      return ['Trade License', 'Certificate of Incorporation', 'MAO/AOA', 'Shareholder Documents(passport,ID,utility bills)'];
+    } else if (subcategory === 'personal') {
+      return ['Passport Copy(both sides)', 'ID Copy(both sides)', 'Utility Bill', 'Salary Slips(past 3 months)', 'Passport Size Photo'];
+    } else if (subcategory === 'business') {
+      return ['Trade License', 'Certificate of Incorporation', 'MAO/AOA', 'Shareholder Documents(passport,ID,utility bills)'];
+    } else {
+      return ['General Document', 'Other'];
     }
   }
 
@@ -183,7 +207,6 @@ export class CustomerCardmanagementComponent implements OnInit {
       (file) => file.url !== fileToRemove.url
     );
   }
-
   
   
   
