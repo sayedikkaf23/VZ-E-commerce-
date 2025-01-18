@@ -2707,10 +2707,8 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
 
 
   
-
-
  /* General styles for the file input */
-input[type="file"] {
+ input[type="file"] {
     cursor: pointer;
     border: none;                /* Remove border around the input */
     background: none;            /* Remove background */
@@ -2751,4 +2749,3 @@ input[type="file"] {
     box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
   }
   
-

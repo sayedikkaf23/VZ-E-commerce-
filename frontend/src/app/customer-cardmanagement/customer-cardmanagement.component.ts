@@ -15,6 +15,8 @@ interface Service {
   styleUrls: ['./customer-cardmanagement.component.css'], // Fix the styleUrls property
 })
 export class CustomerCardmanagementComponent implements OnInit {
+
+
   services: Service[] = []; // Initialize an empty array for services
   records: any[] = [];
   selectedRecord: any = null; // Initialize to null
@@ -24,7 +26,10 @@ export class CustomerCardmanagementComponent implements OnInit {
   
   // Will store the shareholders to display in the modal
   selectedShareholders: any[] = [];
-  uploadedFileNames: Array<Array<{ name: string; url: string }>> = [];
+  selectedDocumentType: string = ''; // Stores the selected document type
+  uploadedFiles: { name: string; url: string; type: string }[] = []; // Stores uploaded files with their document types
+
+
 
   constructor(
     private userService: UserService,
@@ -32,7 +37,7 @@ export class CustomerCardmanagementComponent implements OnInit {
     private router: Router
     
   ) {
-    this.selectedShareholders.forEach(() => this.uploadedFileNames.push([]));
+   
   }
 
   ngOnInit(): void {
@@ -118,6 +123,16 @@ export class CustomerCardmanagementComponent implements OnInit {
     }
   }
   
+  uploadDetailsModal() {
+    const modalElement = document.getElementById('uploadDetailsModal');
+    if (modalElement) {
+      // Use the Bootstrap modal
+      const modal = new (window as any).bootstrap.Modal(modalElement);
+      modal.show();
+    }
+  }
+
+
   openFileInNewTab(fileUrl: string): void {
     if (fileUrl) {
       window.open(fileUrl, '_blank');
@@ -129,33 +144,46 @@ export class CustomerCardmanagementComponent implements OnInit {
     this.showModal = true;
   }
 
-  onFilesSelected(event: Event, index: number) {
+
+
+   // Handles file selection
+  onFilesSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
+
     if (input.files && input.files.length > 0) {
-      // Get the selected files and create object URLs for each
+      // Prevent upload if no document type is selected
+      if (!this.selectedDocumentType) {
+        alert('Please select a document type before uploading files.');
+        return;
+      }
+
       const files = Array.from(input.files);
-      const fileUrls = files.map(file => ({
+      const fileUrls = files.map((file) => ({
         name: file.name,
-        url: URL.createObjectURL(file)
+        url: URL.createObjectURL(file), // Generate URL for the file
+        type: this.selectedDocumentType, // Lock the document type for this file
       }));
-  
-      // Add the selected files to the shareholder's uploadedFiles array
-      this.selectedShareholders[index].uploadedFiles = [
-        ...(this.selectedShareholders[index].uploadedFiles || []),
-        ...fileUrls
-      ];
-  
-      // Optionally, clear the input field (to reset the input display)
-      // input.value = ''; // This will reset the file input to make it look like a fresh file selection
+
+      // Append selected files to the uploadedFiles array
+      this.uploadedFiles = [...this.uploadedFiles, ...fileUrls];
+
+      // Reset the file input field
+      input.value = '';
     }
   }
-  
-  
-  viewFile(fileUrl: string) {
-    // Open the file in a new browser tab
+
+  // Placeholder for file viewing logic
+  viewFile(fileUrl: string): void {
     window.open(fileUrl, '_blank');
   }
   
+  // Removes a specific file from the list
+  removeFile(fileToRemove: { name: string; url: string; type: string }): void {
+    this.uploadedFiles = this.uploadedFiles.filter(
+      (file) => file.url !== fileToRemove.url
+    );
+  }
+
   
   
   
