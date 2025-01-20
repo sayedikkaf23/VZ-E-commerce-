@@ -969,13 +969,13 @@ async function payNowSaleforce(req, res) {
 
       const requestBodySalesforce2 = {
         qp: {
-          paymentmethod: "Pay via Card Machine",
-          amount_received: 55471.5,
-          bank_name: "Point of Sale",
-          GL_code: "1351 - Point of Sale",
+          paymentmethod: "Pay Now",
+          amount_received: paynowdata.transactionDetails.amount,
+          bank_name: "Payment Gateway",
+          GL_code: "1301 - VZ ADCB (AED) 10515838124001",
           Pay_Currency: "AED",
-          payment_status: "AR Review",
-          quotePaymentId: "aAWdu0000000njtGAA",
+          payment_status: "Paid",
+          quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
         },
         attachments: [
           {
