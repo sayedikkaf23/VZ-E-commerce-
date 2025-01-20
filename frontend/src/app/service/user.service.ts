@@ -64,4 +64,5 @@ export class UserService {  // Changed the service name to UserService
   login(email: string, password: string): Observable<any> {
     return this.http.post(`${this.url}/user/login`, { email, password }); // Sending email and password for login
   }
+  
 }

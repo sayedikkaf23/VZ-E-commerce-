@@ -1,4 +1,3 @@
-// models/pidata.model.js
 const mongoose = require('mongoose');
 
 
@@ -119,6 +118,13 @@ const pidataSchema = new mongoose.Schema(
       salesPersonMobile: { type: String },
       salesPersonName: { type: String },
     },
+    additionalUploadedFiles: [
+      {
+        name: { type: String, required: true },
+        url: { type: String, required: true },
+        type: { type: String, required: true },
+      }
+    ],
   },
   {
     timestamps: true, // <<--- This adds createdAt and updatedAt
