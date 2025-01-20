@@ -28,14 +28,17 @@
           />
         </div>
       
-        <div class="form-field">
+        <div class="form-field" style="position: relative;">
           <input
-            style="width: 400px;"
-            type="password"
+            style="width: 100%;"
+            [type]="passwordVisible ? 'text' : 'password'"
             class="form-control"
             formControlName="password"
             placeholder="Password"
           />
+          <span class="eye-icon" (click)="togglePasswordVisibility()" >
+            <i class="fas" [ngClass]="passwordVisible ?  'fa-eye' : 'fa-eye-slash' "></i>
+          </span>
         </div>
       
         <div class="row align-items-center justify-content-between">

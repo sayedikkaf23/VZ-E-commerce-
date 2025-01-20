@@ -26,15 +26,20 @@
         />
       </div>
 
-      <div class="form-field mt-3">
+      <div class="form-field mt-3" style="position: relative;">
         <input
           style="width: 100%;"
-          type="password"
+          [type]="passwordVisible ? 'text' : 'password'"
           class="form-control"
           formControlName="password"
           placeholder="Password"
         />
+        <span class="eye-icon" (click)="togglePasswordVisibility()" >
+          <i class="fas" [ngClass]="passwordVisible ?  'fa-eye' : 'fa-eye-slash' "></i>
+        </span>
       </div>
+
+      
 
       <div class="form-check mt-3">
         <input

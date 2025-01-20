@@ -2246,3 +2246,16 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
       
 }
 
+.eye-icon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+  
+  .fas {
+    width: 20px;
+    height: 20px;
+  }
+
