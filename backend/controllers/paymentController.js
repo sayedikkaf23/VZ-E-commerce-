@@ -1252,7 +1252,7 @@ if (PiDataCheck) {
 } else {
   console.log("No document found for the given quoteId.");
 }
-res.json({ message: "Success" });
+// res.json({ message: "Success" });
 
   } catch (error) {
     console.log(error);
