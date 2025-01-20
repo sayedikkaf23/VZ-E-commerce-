@@ -167,8 +167,10 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
         if (quotePaymentId) {
 
           console.log("quotePaymentId")
-          
-          localStorage.clear();
+          localStorage.removeItem('virtualdata');
+          localStorage.removeItem('virtualdata1');
+          localStorage.removeItem('virtualdata2');
+          // localStorage.clear();
           this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
           // window.location.href = paymentUrl;
           // return of(null);

@@ -55,6 +55,10 @@ export class VirtualReceptionistComponent {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
     
     const today = new Date();
     const year = today.getFullYear() - 18;

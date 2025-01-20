@@ -147,7 +147,7 @@ export class ShowDetails2Component implements AfterViewInit {
           // Clear stored data
           localStorage.removeItem('step1Data');
           localStorage.removeItem('step2Data');
-          localStorage.clear();
+          // localStorage.clear();
 
           const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
   

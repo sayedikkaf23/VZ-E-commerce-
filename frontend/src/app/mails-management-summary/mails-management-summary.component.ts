@@ -169,8 +169,10 @@ export class MailsManagementSummaryComponent {
         if (quotePaymentId) {
 
           console.log("quotePaymentId")
-          
-          localStorage.clear();
+          localStorage.removeItem('mailform');
+          localStorage.removeItem('mailform1');
+          localStorage.removeItem('mailform2');
+          // localStorage.clear();
           this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
           // const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
           // window.location.href = paymentUrl; // Redirect to payment URL

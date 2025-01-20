@@ -969,12 +969,12 @@ async function payNowSaleforce(req, res) {
 
       const requestBodySalesforce2 = {
         qp: {
-          paymentmethod: "Pay Now",
-          amount_received: paynowdata.transactionDetails.amount,
-          bank_name: "Payment Gateway",
-          GL_code: "1301 - VZ ADCB (AED) 10515838124001",
-          Pay_Currency: "AED",
-          payment_status: "Paid",
+          paymentMethod: "Pay Now",
+          amountReceived: paynowdata.transactionDetails.amount,
+          bankName: "Payment Gateway",
+          glCode: "1301 - VZ ADCB (AED) 10515838124001",
+          payCurrency: "AED",
+          paymentStatus: "Paid",
           quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
         },
         attachments: [
@@ -1013,7 +1013,7 @@ async function payNowSaleforce(req, res) {
 
 
 
-        
+
         res.json({
           message: "Success",
           response2: response2.data,
