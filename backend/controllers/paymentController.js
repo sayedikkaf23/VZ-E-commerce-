@@ -1245,7 +1245,8 @@ if (PiDataCheck) {
 } else {
   console.log("No document found for the given quoteId.");
 }
-    res.json({ message: "Success" });
+res.json({ message: "Success", endpointUrl2 });
+
   } catch (error) {
     console.log(error);
     res
