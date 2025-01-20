@@ -1,0 +1,132 @@
+@media (min-width:992px) and (max-width:1199px){
+    :root {
+        --page-content-space: 15px;
+    }
+    .header-profile-name > .btn .text{
+        display: none;
+    }
+    .header-profile-name .btn .icon{
+        margin-right: 0;
+    }
+    header nav > ul > li + li {
+        margin-left: 20px;
+    }
+    header nav > ul > li > a {
+        font-size: 13px;
+    }
+    html .btn {
+        padding: 0 15px;
+    }
+    .header-search-field {
+        width: 200px;
+    }
+    .page-heading h2 {
+        font-size: 20px;
+    }
+    .page-heading-search-field {
+        min-width: 180px;
+    }
+    .filter-item-field label {
+        display: none;
+    }
+    body.sidebar-collapsein header {
+        transform: translateX(var(--sidebar-width));
+        padding-left: var(--page-content-space);
+    }
+
+
+
+}
+
+@media (min-width:768px) and (max-width:991px){
+    :root {
+        --page-content-space: 15px;
+        --body-font-size:12px;
+        --sidebar-width:200px;
+    }
+    body{
+        padding-left: 54px;
+    }
+    header{
+        padding-left: 72px;
+    }
+    .header-profile-name > .btn .text{
+        display: none;
+    }
+    .header-profile-name .btn .icon{
+        margin-right: 0;
+    }
+    header nav > ul > li + li {
+        margin-left: 20px;
+    }
+    header nav > ul > li > a {
+        font-size: 13px;
+    }
+    html .btn {
+        padding: 0 15px;
+    }
+    .header-search-field {
+        width: auto;
+    }
+    html .header-search-field .dropdown-menu {
+        min-width: 250px;
+        padding: 8px;
+    }
+    .page-heading h2 {
+        font-size: 18px;
+    }
+    .page-heading-search-field {
+        display: none
+    }
+    .filter-item-field label {
+        display: none;
+    }
+    body.sidebar-collapsein header {
+        transform: translateX(var(--sidebar-width));
+        padding-left: var(--page-content-space);
+    }
+    ul.header-icon-list {
+        padding-right: 0;
+        border:0 !important;
+    }
+    .btn {
+        --cs-btn-font-size: 13px;
+        --cs-btn-line-height: 34px;
+        --cs-btn-min-width: 90px;
+    }
+    .select2-container--default .select2-selection--single {
+        height: 36px;
+    }
+    .btn-sm {
+        --cs-btn-min-width: 70px;
+    }
+    .header-nav-wrap .navwrap {
+        max-width: calc(100vw - 210px);
+    }
+    html .table tbody td, html .table tbody th {
+        padding: 5px 10px;
+        height: 38px;
+    }
+    .table.table-list-data thead th {
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+    .sidebar-logo .img-icon {
+        max-width: 38px;
+    }
+    ul.menu-navigation > li {
+        margin-bottom: 10px;
+    }
+    ul.menu-navigation > li > a {
+        padding: 5px 15px;
+        font-size: 14px;
+    }
+    .menu-sidebar {
+        width: 54px;
+    }
+    html .simplebar-track.simplebar-vertical .simplebar-scrollbar:before{
+        left: 5px;
+    }
+    
+
+}
