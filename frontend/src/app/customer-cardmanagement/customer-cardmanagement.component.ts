@@ -26,6 +26,7 @@ export class CustomerCardmanagementComponent implements OnInit {
   
   // Will store the shareholders to display in the modal
   selectedShareholders: any[] = [];
+  selectedaddAdditionalFile: any[] = [];
   selectedDocumentType: string = ''; // Stores the selected document type
   uploadedFiles: { name: string; url: string; type: string }[] = []; // Stores uploaded files with their document types
 
@@ -132,7 +133,7 @@ export class CustomerCardmanagementComponent implements OnInit {
     console.log("Selected Record:", record);
   
     // Populate uploadedFiles with additionalUploadedFiles if they exist
-    // this.uploadedFiles = record.additionalUploadedFiles || [];
+    this.additionalFiles = record.additionalUploadedFiles || [];
   
     // Dynamically set dropdown options based on the record's planname (if needed)
     this.documentTypeOptions = this.getOptions(record.planname, record.subcategory);
@@ -168,8 +169,10 @@ export class CustomerCardmanagementComponent implements OnInit {
     }
   }
   
-  openShareholderModal(shareholders: any[]): void {
+  openShareholderModal(shareholders: any[],addAdditionalFile:any[]): void {
     this.selectedShareholders = shareholders;
+    this.selectedaddAdditionalFile = addAdditionalFile;
+    console.log( this.selectedaddAdditionalFile)
     this.showModal = true;
   }
 
@@ -308,6 +311,33 @@ export class CustomerCardmanagementComponent implements OnInit {
   }
   navigateLogout(): void {
     this.router.navigate(['/login']); // Navigate to login
+  }
+
+  additionalFiles = [
+  ];
+  
+  newFile: File | null = null;
+  newFileCategory = '';
+  
+  handleFileUpload(event: any) {
+    this.newFile = event.target.files[0];
+  }
+  
+  // addAdditionalFile() {
+  //   if (this.newFile && this.newFileCategory) {
+  //     const newFileEntry = {
+  //       category: this.newFileCategory,
+  //       name: this.newFile.name,
+  //       url: `/path/to/${this.newFile.name}`, // Replace with actual upload logic
+  //     };
+  //     // this.additionalFiles.push(newFileEntry);
+  //     this.newFile = null;
+  //     this.newFileCategory = '';
+  //   }
+  // }
+  
+  removeAdditionalFile(file: any) {
+    this.additionalFiles = this.additionalFiles.filter((f) => f !== file);
   }
 }
 

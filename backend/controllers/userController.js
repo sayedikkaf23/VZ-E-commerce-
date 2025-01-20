@@ -1094,8 +1094,11 @@ exports.updateAdditionalUploadedFiles = async (req, res) => {
       return res.status(404).json({ error: "Record not found" });
     }
 
-    // Update files in the record
-    record.additionalUploadedFiles = files;
+    // Merge existing files with new files
+    record.additionalUploadedFiles = [
+      ...(record.additionalUploadedFiles || []),
+      ...files,
+    ];
 
     // Save the record
     await record.save();

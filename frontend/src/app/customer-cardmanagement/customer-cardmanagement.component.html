@@ -279,16 +279,16 @@
                       </button>
                     </td>
                     <td style="text-align: center; padding: 6px;">
-                      <ng-container *ngIf="item.shareholders?.length > 0; else noFile">
+                      <ng-container >
                         <button 
                           class="cool-button" 
-                          (click)="openShareholderModal(item.shareholders)">
+                          (click)="openShareholderModal(item.shareholders, item.additionalUploadedFiles)">
                           View File
                         </button>
                       </ng-container>
-                      <ng-template #noFile>
+                      <!-- <ng-template #noFile>
                         <span style="color: #999; font-style: italic;">File Not Available</span>
-                      </ng-template>
+                      </ng-template> -->
                     </td>
                     <td style="text-align: center; padding: 6px;">
                       <button class="cool-button" (click)="uploadDetailsModal(item)">
@@ -587,17 +587,16 @@
       </div>
 
       <div class="modal-body" style="padding: 1rem;">
+        <!-- Shareholders Section -->
         <div *ngIf="(selectedShareholders?.length || 0) > 0; else noShareholders">
-
-          <!-- Table to display multiple shareholders -->
           <table
             style="
               width: 100%;
               border-collapse: collapse;
               margin-bottom: 1rem;
+              font-size: 0.95rem;
             "
           >
-            <!-- Table Header -->
             <thead>
               <tr style="background-color: #f1f1f1; text-align: left;">
                 <th style="padding: 0.5rem;">#</th>
@@ -607,70 +606,69 @@
                 <th style="padding: 0.5rem;">Share %</th>
                 <th style="padding: 0.5rem;">DOB</th>
                 <th style="padding: 0.5rem;">Files</th>
-                <!-- <th style="padding: 0.5rem;">Add File</th> -->
+               
               </tr>
             </thead>
-
-            <!-- Table Body -->
             <tbody>
               <tr
                 *ngFor="let shareholder of selectedShareholders; let i = index"
                 style="border-bottom: 1px solid #ddd;"
               >
-                <td style="padding: 0.5rem; width: 20px;">
-                  {{ i + 1 }}
+                <td style="padding: 0.5rem;">{{ i + 1 }}</td>
+                <td style="padding: 0.5rem;">{{ shareholder.name }}</td>
+                <td style="padding: 0.5rem;">{{ shareholder.passportNumber }}</td>
+                <td style="padding: 0.5rem;">{{ shareholder.nationalityshareholder }}</td>
+                <td style="padding: 0.5rem;">{{ shareholder.shareholderPercentage }}</td>
+                <td style="padding: 0.5rem;">{{ shareholder.dob | date }}</td>
+                <td style="padding: 0.5rem;">
+                  <a
+                    *ngIf="shareholder.files?.length"
+                    [href]="shareholder.files[0]?.url"
+                    target="_blank"
+                    style="color: #007bff; text-decoration: underline;"
+                  >
+                    View
+                  </a>
+                  <span *ngIf="!shareholder.files?.length" style="color: #999;">No files</span>
                 </td>
-                <td style="padding: 0.5rem; min-width: 120px;">
-                  {{ shareholder.name }}
-                </td>
-                <td style="padding: 0.5rem; min-width: 100px;">
-                  {{ shareholder.passportNumber }}
-                </td>
-                <td style="padding: 0.5rem; min-width: 100px;">
-                  {{ shareholder.nationalityshareholder }}
-                </td>
-                <td style="padding: 0.5rem; width: 60px;">
-                  {{ shareholder.shareholderPercentage }}
-                </td>
-                <td style="padding: 0.5rem; min-width: 90px;">
-                  {{ shareholder.dob | date }}
-                </td>
-                <td style="padding: 0.5rem; min-width: 100px;">
-                  <div *ngIf="shareholder.files?.length > 0; else noFiles">
-                    <ul style="list-style-type: none; margin: 0; padding: 0;">
-                      <li
-                        *ngFor="let file of shareholder.files"
-                        style="margin-bottom: 4px;"
-                      >
-                        <!-- File name -->
-                        <!-- {{ file.name }}<br /> -->
-                        <!-- File link -->
-                        <a
-                          [href]="file.url"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style="color: #007bff; text-decoration: underline;"
-                        >
-                          View
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                  <ng-template #noFiles>
-                    <span style="font-size: 0.9rem; color: #999;">No files</span>
-                  </ng-template>
-                </td>
-
-                
-                
-                
-                
+                <!-- <td style="padding: 0.5rem;">{{ shareholder.phone }}</td>
+                <td style="padding: 0.5rem;">{{ shareholder.email }}</td> -->
               </tr>
             </tbody>
           </table>
         </div>
 
-        <!-- If no shareholders at all, show this block -->
+        <!-- Additional Files Section -->
+     <!-- Additional Files Section -->
+<h6 style="margin-top: 1.5rem; font-weight: bold;">Additional Files</h6>
+<br>
+
+<!-- Only display files if there are any; otherwise display a fallback message -->
+<div
+  *ngIf="(selectedaddAdditionalFile?.length || 0) > 0; else noAdditionalFiles"
+  style="padding: 1rem; border-radius: 4px;"
+>
+  <div *ngFor="let file of selectedaddAdditionalFile" style="margin-bottom: 0.75rem;">
+    <strong>{{ file.type }}</strong>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span>{{ file.name }}</span>
+      <a
+        [href]="file.url"
+        target="_blank"
+        style="color: #007bff; text-decoration: underline;"
+      >
+        View
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Fallback message for when there are no additional files -->
+<ng-template #noAdditionalFiles>
+  <p>No additional files added.</p>
+</ng-template>
+
+
         <ng-template #noShareholders>
           <p>No shareholders found.</p>
         </ng-template>
@@ -687,3 +685,5 @@
     </div>
   </div>
 </div>
+
+
