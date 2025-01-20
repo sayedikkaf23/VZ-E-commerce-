@@ -969,13 +969,13 @@ async function payNowSaleforce(req, res) {
 
       const requestBodySalesforce2 = {
         qp: {
-          paymentmethod: "Pay via Card Machine",
-          amount_received: 55471.5,
-          bank_name: "Point of Sale",
-          GL_code: "1351 - Point of Sale",
+          paymentmethod: "Pay Now",
+          amount_received: paynowdata.transactionDetails.amount,
+          bank_name: "Payment Gateway",
+          GL_code: "1301 - VZ ADCB (AED) 10515838124001",
           Pay_Currency: "AED",
-          payment_status: "AR Review",
-          quotePaymentId: "aAWdu0000000njtGAA",
+          payment_status: "Paid",
+          quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
         },
         attachments: [
           {
@@ -992,8 +992,9 @@ async function payNowSaleforce(req, res) {
       };
   
       // Endpoint URL for the second API call
-      const endpointUrl2 = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/aAWdu0000000njtGAA`;
+      const endpointUrl2 = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${paynowdata.transactionDetails.quotePaymentId}`;
   
+      console.log(requestBodySalesforce2,"requestBodySalesforce2")
       // Making the second API call
        axios.put(endpointUrl2, requestBodySalesforce2, { headers })
       .then(async (response2) => {
@@ -1009,6 +1010,13 @@ async function payNowSaleforce(req, res) {
             },
           }
         );
+
+
+        res.json({
+          message: "Success",
+          response2: response2.data,
+        });
+
       })
       .catch((error) => {
         // Handle errors from both API calls
@@ -1245,7 +1253,8 @@ if (PiDataCheck) {
 } else {
   console.log("No document found for the given quoteId.");
 }
-    res.json({ message: "Success" });
+// res.json({ message: "Success" });
+
   } catch (error) {
     console.log(error);
     res
