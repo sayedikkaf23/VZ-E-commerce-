@@ -143,6 +143,8 @@ export class CustomerCardmanagementComponent implements OnInit {
       modalElement.style.display = 'block'; // Show modal
       modalElement.classList.add('show'); // Add 'show' class
     }
+
+    document.querySelector('.app-wrapper')?.classList.add('blur-background');
   }
   
 
@@ -291,6 +293,8 @@ export class CustomerCardmanagementComponent implements OnInit {
   
     // Optionally reset modal-related data here
     this.uploadedFiles = [];
+
+    document.querySelector('.app-wrapper')?.classList.remove('blur-background');
   }
   
 

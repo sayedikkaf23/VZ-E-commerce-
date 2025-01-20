@@ -2757,3 +2757,10 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
     }
   
   }
+
+  .blur-background {
+    filter: blur(5px); /* Adjust the blur intensity as needed */
+    pointer-events: none; /* Prevent interaction with the blurred background */
+    opacity: 0.9; /* Optional: Dim the background slightly */
+  }
+  
