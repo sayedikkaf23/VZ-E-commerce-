@@ -681,15 +681,19 @@ exports.getPersonalBank = async (req, res) => {
       .json({ error: "Error fetching personal bank submissions", details: error.message });
   }
 };
-
 exports.getBusinessBank = async (req, res) => {
   try {
-    const businessBankSubmissions = await UserDetails.find({ type: "Business Bank" }); // Fetch submissions with type "Business Bank"
-    res.status(200).json(businessBankSubmissions); // Return business bank submissions as JSON
+    // Fetch documents from the PiData collection with subcategory 'business'
+    const businessBankSubmissions = await PiData.find({ subcategory: "business" });
+
+    // Return the fetched documents as a JSON response
+    res.status(200).json(businessBankSubmissions);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Error fetching business bank submissions", details: error.message });
+    // Handle errors and return an appropriate response
+    res.status(500).json({
+      error: "Error fetching business bank submissions",
+      details: error.message,
+    });
   }
 };
 
