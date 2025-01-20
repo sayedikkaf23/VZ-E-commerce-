@@ -33,6 +33,8 @@ export class CustomerCardmanagementComponent implements OnInit {
   selectedIndex: number = 0;
 
 
+  isLoading = false;
+
   constructor(
     private userService: UserService,
     private route: ActivatedRoute,
@@ -126,22 +128,23 @@ export class CustomerCardmanagementComponent implements OnInit {
   }
   
   uploadDetailsModal(record: any): void {
-    // Store the selected record and its index
-    this.selectedRecord = record;
-
+    this.selectedRecord = record; // Store the selected record
+    console.log("Selected Record:", record);
   
-    // Dynamically set dropdown options based on the selected record's planname
-    this.documentTypeOptions = this.getOptions(record.planname,record.subcategory);
-
-    //showing modal
+    // Populate uploadedFiles with additionalUploadedFiles if they exist
+    this.uploadedFiles = record.additionalUploadedFiles || [];
+  
+    // Dynamically set dropdown options based on the record's planname (if needed)
+    this.documentTypeOptions = this.getOptions(record.planname, record.subcategory);
+  
+    // Show the modal (if not using Bootstrap, use your own implementation)
     const modalElement = document.getElementById('uploadDetailsModal');
     if (modalElement) {
-      // Use the Bootstrap modal
-      const modal = new (window as any).bootstrap.Modal(modalElement);
-      modal.show();
+      modalElement.style.display = 'block'; // Show modal
+      modalElement.classList.add('show'); // Add 'show' class
     }
-
   }
+  
 
   // Dynamic options based on planname
   getOptions(planname: string, subcategory: string): string[] {
@@ -171,28 +174,49 @@ export class CustomerCardmanagementComponent implements OnInit {
 
 
    // Handles file selection
-  onFilesSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
+   onFilesSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (!files || files.length === 0) {
+      return;
+    }
 
-    if (input.files && input.files.length > 0) {
-      // Prevent upload if no document type is selected
-      if (!this.selectedDocumentType) {
-        alert('Please select a document type before uploading files.');
-        return;
-      }
+    // For each selected file, get its presigned URL and upload
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      this.isLoading = true;
 
-      const files = Array.from(input.files);
-      const fileUrls = files.map((file) => ({
-        name: file.name,
-        url: URL.createObjectURL(file), // Generate URL for the file
-        type: this.selectedDocumentType, // Lock the document type for this file
-      }));
+      // Request a presigned URL from your backend
+      this.userService.getPresignedUrl(file).subscribe(
+        (response: any) => {
+          const presignedUrl = response.url;
 
-      // Append selected files to the uploadedFiles array
-      this.uploadedFiles = [...this.uploadedFiles, ...fileUrls];
-
-      // Reset the file input field
-      input.value = '';
+          // Upload the file to the presigned URL
+          fetch(presignedUrl, {
+            method: 'PUT',
+            headers: { 'Content-Type': file.type },
+            body: file
+          })
+            .then(() => {
+              // Add the file info to our array, including the user-selected document type
+              this.uploadedFiles.push({
+                name: file.name,
+                url: presignedUrl.split('?')[0], // If you want the actual file URL w/out query
+                type: this.selectedDocumentType, 
+                // originalType: file.type
+              });
+              console.log('File uploaded successfully:', file.name);
+              this.isLoading = false;
+            })
+            .catch((error) => {
+              console.error('File upload failed', error);
+              this.isLoading = false;
+            });
+        },
+        (error) => {
+          console.error('Error getting presigned URL', error);
+          this.isLoading = false;
+        }
+      );
     }
   }
 
@@ -209,11 +233,67 @@ export class CustomerCardmanagementComponent implements OnInit {
   }
   
   
-  
+  submitDocuments(): void {
+    // Example payload
+    const payload = {
+      someId: this.selectedRecord._id,
+      files: this.uploadedFiles
+    };
+
+    console.log('Submitting documents:', payload);
+
+    // Make a call to your backend to save file info
+    // or do any other processing you need here.
+    this.userService.updateAdditionalUploadedFiles(payload)
+      .subscribe(
+        (response) => {
+          console.log('Documents submitted successfully!', response);
+
+
+          const modalElement = document.getElementById('uploadDetailsModal');
+          if (modalElement) {
+            modalElement.classList.remove('show'); // Remove Bootstrap's "show" class
+            modalElement.style.display = 'none'; // Hide the modal
+            modalElement.setAttribute('aria-hidden', 'true'); // Update accessibility
+            document.body.classList.remove('modal-open'); // Remove modal-open class from body
+            const backdrop = document.querySelector('.modal-backdrop');
+            if (backdrop) {
+              backdrop.remove(); // Remove the backdrop manually if it exists
+            }
+          }
+    
+          // Optionally close the modal or reset the form
+        },
+        (error) => {
+          console.error('Error submitting documents', error);
+        }
+      );
+  }
 
   closeModal(): void {
     this.showModal = false;
+
+    
   }
+
+  closeModalFileupload(): void {
+    const modalElement = document.getElementById('uploadDetailsModal');
+    if (modalElement) {
+      modalElement.style.display = 'none'; // Hide the modal
+      modalElement.classList.remove('show'); // Remove the "show" class
+    }
+  
+    // Remove the backdrop if it exists
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+      backdrop.remove();
+    }
+  
+    // Optionally reset modal-related data here
+    this.uploadedFiles = [];
+  }
+  
+
 
   closeModalOutside(event: MouseEvent): void {
     // Closes the modal if the user clicks the backdrop
@@ -223,3 +303,11 @@ export class CustomerCardmanagementComponent implements OnInit {
     this.router.navigate(['/login']); // Navigate to login
   }
 }
+
+
+
+
+
+
+
+
