@@ -13,7 +13,8 @@ require('dotenv').config();
 
 
  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
-const MenuItem=require('../models/MenuItem')
+const MenuItem=require('../models/MenuItem');
+const pidata = require("../models/pidata");
 
 // Handle form submission and file uploads
 
@@ -684,10 +685,30 @@ exports.getPersonalBank = async (req, res) => {
 exports.getBusinessBank = async (req, res) => {
   try {
     // Fetch documents from the PiData collection with subcategory 'business'
-    const businessBankSubmissions = await PiData.find({ subcategory: "business" });
+    const businessBankSubmissions = await Pidata.find({ subcategory: "business" });
 
-    // Return the fetched documents as a JSON response
-    res.status(200).json(businessBankSubmissions);
+    // Prepare an array to store the merged results
+    const mergedResults = [];
+
+    // Loop through each PiData document and find corresponding UserDetails data
+    for (const submission of businessBankSubmissions) {
+      const { quotePaymentWithDetails } = submission;
+      const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
+
+      // Fetch the corresponding UserDetails document using QuotePaymentId
+      const userDetails = await UserDetails.findOne({ "quotePaymentWithDetails.QuotePaymentId": quotePaymentId });
+
+      // Merge PiData and UserDetails
+      const mergedData = {
+        ...submission._doc, // Use _doc to get the plain object representation of the document
+        userDetails: userDetails || null, // Add userDetails data or set null if not found
+      };
+
+      mergedResults.push(mergedData);
+    }
+
+    // Return the merged results as a JSON response
+    res.status(200).json(mergedResults);
   } catch (error) {
     // Handle errors and return an appropriate response
     res.status(500).json({
