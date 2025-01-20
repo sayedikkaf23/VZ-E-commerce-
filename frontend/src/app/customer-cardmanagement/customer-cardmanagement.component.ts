@@ -243,6 +243,7 @@ export class CustomerCardmanagementComponent implements OnInit {
     };
 
     console.log('Submitting documents:', payload);
+    document.querySelector('.app-wrapper')?.classList.remove('blur-background');
 
     // Make a call to your backend to save file info
     // or do any other processing you need here.
@@ -262,6 +263,8 @@ export class CustomerCardmanagementComponent implements OnInit {
             if (backdrop) {
               backdrop.remove(); // Remove the backdrop manually if it exists
             }
+
+           
           }
     
           // Optionally close the modal or reset the form
