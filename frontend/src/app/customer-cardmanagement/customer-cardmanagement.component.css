@@ -1241,13 +1241,14 @@ html .ajax-file-upload-filename {
   
   /* Submenu items */
   .submenu-item {
-    display: block;
     padding: 10px 25px 10px 5px;
     color: #333;
     text-decoration: none;
     font-size: 14px;
     text-align: center; /* Center-align the text */
     cursor: pointer;
+    display: flex;
+    align-items: center;
   }
   
   .submenu-item:hover {
