@@ -279,16 +279,16 @@
                       </button>
                     </td>
                     <td style="text-align: center; padding: 6px;">
-                      <ng-container *ngIf="item.shareholders?.length > 0; else noFile">
+                      <ng-container >
                         <button 
                           class="cool-button" 
-                          (click)="openShareholderModal(item.shareholders)">
+                          (click)="openShareholderModal(item.shareholders, item.additionalUploadedFiles)">
                           View File
                         </button>
                       </ng-container>
-                      <ng-template #noFile>
+                      <!-- <ng-template #noFile>
                         <span style="color: #999; font-style: italic;">File Not Available</span>
-                      </ng-template>
+                      </ng-template> -->
                     </td>
                     <td style="text-align: center; padding: 6px;">
                       <button class="cool-button" (click)="uploadDetailsModal(item)">
@@ -639,31 +639,35 @@
         </div>
 
         <!-- Additional Files Section -->
-        <h6 style="margin-top: 1.5rem; font-weight: bold;">Additional Files</h6>
-         
-          <br>
-        <div style=" padding: 1rem; border-radius: 4px;">
-          <div *ngFor="let file of additionalFiles" style="margin-bottom: 0.75rem;">
-            <strong>{{ file.category }}</strong>
-            <div style="display: flex; align-items: center; gap: 1rem;">
-              <span>{{ file.name }}</span>
-              <a
-                [href]="file.url"
-                target="_blank"
-                style="color: #007bff; text-decoration: underline;"
-              >
-                View
-              </a>
-              <!-- <button
-                type="button"
-                (click)="removeAdditionalFile(file)"
-                style="background: none; border: none; color: #d9534f; cursor: pointer;"
-              >
-                ✖
-              </button> -->
-            </div>
-          </div>
-        </div>
+     <!-- Additional Files Section -->
+<h6 style="margin-top: 1.5rem; font-weight: bold;">Additional Files</h6>
+<br>
+
+<!-- Only display files if there are any; otherwise display a fallback message -->
+<div
+  *ngIf="(selectedaddAdditionalFile?.length || 0) > 0; else noAdditionalFiles"
+  style="padding: 1rem; border-radius: 4px;"
+>
+  <div *ngFor="let file of selectedaddAdditionalFile" style="margin-bottom: 0.75rem;">
+    <strong>{{ file.type }}</strong>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <span>{{ file.name }}</span>
+      <a
+        [href]="file.url"
+        target="_blank"
+        style="color: #007bff; text-decoration: underline;"
+      >
+        View
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- Fallback message for when there are no additional files -->
+<ng-template #noAdditionalFiles>
+  <p>No additional files added.</p>
+</ng-template>
+
 
         <ng-template #noShareholders>
           <p>No shareholders found.</p>
