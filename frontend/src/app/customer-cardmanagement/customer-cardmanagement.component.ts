@@ -151,7 +151,7 @@ export class CustomerCardmanagementComponent implements OnInit {
     if (planname === 'Mail Management' || planname === 'Virtual Reception' ) {
       return ['Trade License', 'Certificate of Incorporation', 'MAO/AOA', 'Shareholder Documents(passport,ID,utility bills)'];
     } else if (subcategory === 'personal') {
-      return ['Passport Copy(both sides)', 'ID Copy(both sides)', 'Utility Bill', 'Salary Slips(past 3 months)', 'Passport Size Photo'];
+      return ['Passport Copy(Front side)','Passport Copy(Back side)', 'ID Copy(both sides)', 'Utility Bill', 'Salary Slips(past 3 months)', 'Passport Size Photo'];
     } else if (subcategory === 'business') {
       return ['Trade License', 'Certificate of Incorporation', 'MAO/AOA', 'Shareholder Documents(passport,ID,utility bills)'];
     } else {
