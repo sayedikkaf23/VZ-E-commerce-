@@ -1047,5 +1047,41 @@ exports.getallUserSerive = async (req, res) => {
   }
 };
 
+exports.updateAdditionalUploadedFiles = async (req, res) => {
+  try {
+    // Extract payload
+    const { payload } = req.body;
+    if (!payload) {
+      return res.status(400).json({ error: "Payload is required" });
+    }
+
+    const { files, someId } = payload;
+
+    // Validate the payload
+    if (!someId || !files || !Array.isArray(files)) {
+      return res.status(400).json({ error: "Invalid payload structure" });
+    }
+
+    // Find the record in the database
+    const record = await Pidata.findById(someId);
+
+    if (!record) {
+      return res.status(404).json({ error: "Record not found" });
+    }
+
+    // Update files in the record
+    record.additionalUploadedFiles = files;
+
+    // Save the record
+    await record.save();
+
+    return res.status(200).json({ message: "Files updated successfully", record });
+  } catch (err) {
+    console.error("Error updating files:", err.message || err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 

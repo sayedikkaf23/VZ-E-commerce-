@@ -24,5 +24,5 @@ router.post('/getallUserSerive', userController.getallUserSerive);
 router.post('/menu-items', userController.addMenuItems);
 router.post('/checkStatus', userController.checkStatus);
 router.post('/MatchScoreProductService', userController.MatchScoreProductService);
-
+router.post('/updateAdditionalUploadedFiles', userController.updateAdditionalUploadedFiles);
 module.exports = router;
