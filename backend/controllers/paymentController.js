@@ -1009,6 +1009,13 @@ async function payNowSaleforce(req, res) {
             },
           }
         );
+
+
+        res.json({
+          message: "Success",
+          response2: response2.data,
+        });
+
       })
       .catch((error) => {
         // Handle errors from both API calls
@@ -1245,7 +1252,7 @@ if (PiDataCheck) {
 } else {
   console.log("No document found for the given quoteId.");
 }
-res.json({ message: "Success", endpointUrl2 });
+res.json({ message: "Success" });
 
   } catch (error) {
     console.log(error);
