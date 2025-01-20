@@ -37,9 +37,8 @@
                                 <tr *ngFor="let product of matchScoreResponse?.data?.products">
                                     <td>{{ product.productName }}</td>
                                     <td>{{ product.productQuantity }}</td>
-                                    <td class="currency">{{ product.productUnitPrice }}</td>
-                                    <td class="currency">{{ (product.productUnitPrice * product.productQuantity * 1.05)
-                                        }}</td>
+                                    <td class="currency">{{ product.productUnitPrice | number:'1.0-2' }}</td>
+                                    <td class="currency">{{ (product.productUnitPrice * product.productQuantity * 1.05) | number:'1.0-2' }}</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -64,19 +63,16 @@
                             </thead>
                             <tbody>
                               <tr>
-                                <td>AED {{ quoteWithProductDetails?.totalAmount || 0 }}</td>
-                                <td>
-                                  AED
-                                  {{
-                                   quoteWithProductDetails?.totalVAT
-                                  }}
-                                </td>
-              
-                                <td>AED {{ quoteWithProductDetails?.Discount || 0 }}</td>
-              
-                                <td>
-                                  AED {{ quoteWithProductDetails?.total_including_Vat || 0 }}
-                                </td>
+                                <td>AED {{ quoteWithProductDetails?.totalAmount | number:'1.0-2' }}</td>
+    <td>AED {{ quoteWithProductDetails?.totalVAT | number:'1.0-2' }}</td>
+    <td>
+      {{
+        quoteWithProductDetails?.Discount != null && quoteWithProductDetails?.Discount !== '' 
+          ? ('AED ' + (quoteWithProductDetails?.Discount | number:'1.0-2')) 
+          : 'NA'
+      }}
+    </td>
+    <td>AED {{ quoteWithProductDetails?.total_including_Vat | number:'1.0-2' }}</td>
                               </tr>
                             </tbody>
                           </table>
