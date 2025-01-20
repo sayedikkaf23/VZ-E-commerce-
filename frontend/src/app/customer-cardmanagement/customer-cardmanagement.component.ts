@@ -243,7 +243,7 @@ export class CustomerCardmanagementComponent implements OnInit {
     };
 
     console.log('Submitting documents:', payload);
-    document.querySelector('.app-wrapper')?.classList.remove('blur-background');
+    document.querySelector('.app-wrapper')?.classList.remove('blur-background'); //clears the background blur
 
     // Make a call to your backend to save file info
     // or do any other processing you need here.
