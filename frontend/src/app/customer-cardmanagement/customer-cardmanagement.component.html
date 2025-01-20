@@ -417,14 +417,14 @@
             </thead>
             <tbody>
               <tr >
-                <td  style="padding: 0.5rem; min-width: 100px;">
+                <td  style="padding: 0.5rem; width: 50%; ">
                   <fieldset>
                     <select
                     name="DocumentType"
                     id="DocumentType"
                     class="form-select dynamic-options"
                     [(ngModel)]="selectedDocumentType"
-                    style="padding-left: 10px;"
+                    style="padding-left: 10px; width: 250px;  margin: 0 auto; "
                   >
                     <option value="" disabled selected>
                       Choose Document type
@@ -436,7 +436,7 @@
                   </fieldset>
                   
                 </td>
-                <td style="padding: 0.5rem; min-width: 100px;">
+                <td style="padding: 0.5rem; width: 50%;">
                   <!-- File Input -->
                   
                     <input
@@ -444,8 +444,9 @@
                     (change)="onFilesSelected($event)"
                     accept=".pdf,.doc,.docx,.jpg,.png"
                     multiple
-                    style="border: none; background: none; display: inline-block; text-align: center; width: 130px"
+                    style="border: none; background: none; display: inline-block; text-align: center; margin-top: 15px; "
                     aria-label="Choose files"
+                    
                   />
                    
                   
