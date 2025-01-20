@@ -1,12 +1,14 @@
+<div class="loader-container" *ngIf="isLoading">
+  <div class="loader"></div>
+</div>
 
-
-<body style="padding-top: 0px;">
+<body style="padding-top: 0px;" >
   <!-- Container-fluid for full-width layout -->
-  <div class="container-fluid p-0">
+  <div class="container-fluid p-0 app-wrapper">
       <div class="row g-0"><!-- g-0 removes default column gutters -->
         
         <!-- Sidebar Column -->
-        <div class="col-auto">
+        <div class="col-auto" >
           
           <div
             class="admin-sidebar"
@@ -19,7 +21,7 @@
               <div class="row justify-content-between gx-0 align-items-center">
                 <div class="col-auto">
                   <div class="logo text-center">
-                    <a href="#">
+                    <a >
                       <img src="assets/images/logo-white.svg" alt="" class="d-block" />
                     </a>
                   </div>
@@ -54,7 +56,7 @@
                       </a>
                     </li>
                     <li>
-                      <a href="#">
+                      <a >
                         <span class="icon">
                           <img src="assets/images/sidebarnav-icon/10.svg" />
                         </span>
@@ -145,7 +147,7 @@
     
                 <!-- Title for Larger Screens -->
                 <div class="col-auto d-none d-md-block">
-                  <h3 style="margin: 0; font-size: 18px; font-weight: bold;">Services</h3>
+                  <h3 style="margin: 0; font-size: 18px; font-weight: bold; position: absolute; left: 330px; ">Services</h3>
                 </div>
     
                 <!-- Profile Section -->
@@ -157,11 +159,11 @@
                           {{ userName }}
                         </a>
                         <div class="submenu">
-                          <hr />
+                         
                           <ul class="inner-submenu">
                             <li>
                               <a (click)="navigateLogout()" class="submenu-item">
-                                <span class="logout-icon">
+                                <span class="logout-icon" style="margin: 0 9px;">
                                   <img src="assets/images/logout/logout.svg" />
                                 </span>
                                 Log Out
@@ -253,7 +255,7 @@
                     
                     <!-- Amount (subTotal or totalPrice, depending on your needs) -->
                     <td style="text-align: center; padding: 6px;">
-                      {{ item.salesforceResponseMatchScreening?.total_including_Vat }}
+                      {{ item.salesforceResponseMatchScreening?.total_including_Vat | number:'1.0-0' }}
                     </td>
               
                     <!-- Products List -->
@@ -385,170 +387,175 @@
     </div>
   </div>
   
+
+</body>
+
+
 <!-- Upload files Modal -->
-<div class="modal fade" id="uploadDetailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg"  >
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h5 class="modal-title" id="detailsModalLabel">  Upload Document for {{ selectedRecord?.planname }}</h5>
-        <button
-        type="button"
-        class="btn-close"
-        (click)="closeModalFileupload()"
-        aria-label="Close"
-      ></button>
-      
-      </div>
-
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <!-- Table Section -->
-        <table class="table table-bordered align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>Select Document Type</th>
-              <th>Upload Additional Files</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr >
-              <td  style="padding: 0.5rem; min-width: 100px;">
-                <fieldset>
-                  <select
-                  name="DocumentType"
-                  id="DocumentType"
-                  class="form-select dynamic-options"
-                  [(ngModel)]="selectedDocumentType"
-                  style="padding-left: 10px;"
-                >
-                  <option value="" disabled selected>
-                    Choose Document type
-                  </option>
-                  <option *ngFor="let option of documentTypeOptions" [value]="option">
-                    {{ option }}
-                  </option>
-                </select>
-                </fieldset>
-                
-              </td>
-              <td style="padding: 0.5rem; min-width: 100px;">
-                <!-- File Input -->
-                
-                  <input
-                  type="file"
-                  (change)="onFilesSelected($event)"
-                  accept=".pdf,.doc,.docx,.jpg,.png"
-                  multiple
-                  style="border: none; background: none; display: inline-block; text-align: center; width: 130px"
-                  aria-label="Choose files"
-                />
-                 
-                
-      
-                <!-- Upload size information -->
-                <small style="display: block; margin-top: 6px; font-size: 9px; color: #c01111; text-align: center;">
-                  Upload size: Max size upto 2 MB
-                </small>
-
-              </td>
-            </tr>
-          </tbody>
-        </table>
-         <!-- Display Uploaded Files -->
-        <!-- Display Uploaded Files -->
-<ng-container *ngIf="uploadedFiles.length > 0">
-  <div class="row" style="margin-top: 8px;">
-    <!-- Loop through uploaded files -->
-    <div
-      *ngFor="let file of uploadedFiles"
-      class="col-lg-6 col-md-6"
-      style="margin-bottom: 16px;"
-    >
+  <div class="modal fade" id="uploadDetailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true" style="z-index: 999; filter: none;">
+    <div class="modal-dialog modal-dialog-centered modal-lg"  >
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="detailsModalLabel">  Upload Document for {{ selectedRecord?.planname }}</h5>
+          <button
+          type="button"
+          class="btn-close"
+          (click)="closeModalFileupload()"
+          aria-label="Close"
+        ></button>
+        
+        </div>
+  
+        <!-- Modal Body -->
+        <div class="modal-body">
+          <!-- Table Section -->
+          <table class="table table-bordered align-middle">
+            <thead class="table-light">
+              <tr>
+                <th>Select Document Type</th>
+                <th>Upload Additional Files</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr >
+                <td  style="padding: 0.5rem; width: 50%; ">
+                  <fieldset>
+                    <select
+                    name="DocumentType"
+                    id="DocumentType"
+                    class="form-select dynamic-options"
+                    [(ngModel)]="selectedDocumentType"
+                    style="padding-left: 10px; width: 250px;  margin: 0 auto; "
+                  >
+                    <option value="" disabled selected>
+                      Choose Document type
+                    </option>
+                    <option *ngFor="let option of documentTypeOptions" [value]="option">
+                      {{ option }}
+                    </option>
+                  </select>
+                  </fieldset>
+                  
+                </td>
+                <td style="padding: 0.5rem; width: 50%;">
+                  <!-- File Input -->
+                  
+                    <input
+                    type="file"
+                    (change)="onFilesSelected($event)"
+                    accept=".pdf,.doc,.docx,.jpg,.png"
+                    multiple
+                    style="border: none; background: none; display: inline-block; text-align: center; margin-top: 15px; "
+                    aria-label="Choose files"
+                    
+                  />
+                   
+                  
+        
+                  <!-- Upload size information -->
+                  <small style="display: block; margin-top: 6px; font-size: 9px; color: #c01111; text-align: center;">
+                    Upload size: Max size upto 2 MB
+                  </small>
+  
+                </td>
+              </tr>
+            </tbody>
+          </table>
+           <!-- Display Uploaded Files -->
+          <!-- Display Uploaded Files -->
+  <ng-container *ngIf="uploadedFiles.length > 0">
+    <div class="row" style="margin-top: 8px;">
+      <!-- Loop through uploaded files -->
       <div
-        style="
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          
-          padding: 6px;
-          
-        "
+        *ngFor="let file of uploadedFiles"
+        class="col-lg-6 col-md-6"
+        style="margin-bottom: 16px;"
       >
-        <!-- File Type -->
-        <span style="color: #007bff; font-weight: bold;">
-          {{ file.type }}
-        </span>
-
-        <!-- File Icon and Name -->
         <div
           style="
             display: flex;
-            align-items: center;
-            margin-top: 4px;
-            width: 100%;
+            flex-direction: column;
+            align-items: flex-start;
+            
+            padding: 6px;
+            
           "
         >
-          <div style="display: flex; align-items: center;">
-            <span style="margin-right: 8px; color: #010e1c;">📄</span>
-            <a
-              href="javascript:void(0)"
-              (click)="viewFile(file.url)"
-              style="
-                color: #010e1c;
-                text-decoration: underline;
-                font-size: 14px;
-                word-break: break-word;
-              "
-            >
-              {{ file.name }}
-            </a>
-          </div>
-
-          <!-- Remove File Button -->
-          <button
-            (click)="removeFile(file)"
+          <!-- File Type -->
+          <span style="color: #007bff; font-weight: bold;">
+            {{ file.type }}
+          </span>
+  
+          <!-- File Icon and Name -->
+          <div
             style="
-              background: none;
-              border: none;
-              color: #ff0000;
-              font-size: 16px;
-              cursor: pointer;
-              margin-left: 15px;
+              display: flex;
+              align-items: center;
+              margin-top: 4px;
+              width: 100%;
             "
-            aria-label="Remove file"
           >
-            ✖
-          </button>
+            <div style="display: flex; align-items: center;">
+              <span style="margin-right: 8px; color: #010e1c;">📄</span>
+              <a
+                href="javascript:void(0)"
+                (click)="viewFile(file.url)"
+                style="
+                  color: #010e1c;
+                  text-decoration: underline;
+                  font-size: 14px;
+                  word-break: break-word;
+                "
+              >
+                {{ file.name }}
+              </a>
+            </div>
+  
+            <!-- Remove File Button -->
+            <button
+              (click)="removeFile(file)"
+              style="
+                background: none;
+                border: none;
+                color: #ff0000;
+                font-size: 16px;
+                cursor: pointer;
+                margin-left: 15px;
+              "
+              aria-label="Remove file"
+            >
+              ✖
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-</ng-container>
-
+  </ng-container>
+  
+        </div>
+        
+         <!-- Submit Button -->
+    <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
+      <button
+        class="cool-button"
+        style="
+        padding: 10px 20px;
+        font-size: 14px;
+        border-radius: 4px;
+        cursor: pointer;
+      "
+        (click)="submitDocuments()"
+      >
+        Submit
+      </button>
+    </div>
+  
       </div>
-      
-       <!-- Submit Button -->
-  <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
-    <button
-      class="cool-button"
-      style="
-      padding: 10px 20px;
-      font-size: 14px;
-      border-radius: 4px;
-      cursor: pointer;
-    "
-      (click)="submitDocuments()"
-    >
-      Submit
-    </button>
-  </div>
-
     </div>
   </div>
-</div>
-  
-  </body>
+    
+    
   <div
   class="modal fade"
   tabindex="-1"

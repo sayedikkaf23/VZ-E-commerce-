@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr'; // Import ToastrService
 })
 export class AdminLoginComponent implements OnInit {
   loginForm: FormGroup;
+  passwordVisible: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -22,6 +23,10 @@ export class AdminLoginComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]]
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.passwordVisible = !this.passwordVisible;
   }
 
   ngOnInit(): void {}

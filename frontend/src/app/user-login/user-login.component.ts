@@ -9,7 +9,9 @@ import { ToastrService } from 'ngx-toastr'; // Import ToastrServiceImport Toastr
   styleUrl: './user-login.component.css'
 })
 export class UserLoginComponent {
+
   loginForm: FormGroup;
+  passwordVisible: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -25,6 +27,10 @@ export class UserLoginComponent {
   }
 
   ngOnInit(): void {}
+
+  togglePasswordVisibility(): void {
+    this.passwordVisible = !this.passwordVisible;
+  }
 
   
   submit(): void {

@@ -1241,13 +1241,14 @@ html .ajax-file-upload-filename {
   
   /* Submenu items */
   .submenu-item {
-    display: block;
     padding: 10px 25px 10px 5px;
     color: #333;
     text-decoration: none;
     font-size: 14px;
     text-align: center; /* Center-align the text */
     cursor: pointer;
+    display: flex;
+    align-items: center;
   }
   
   .submenu-item:hover {
@@ -2713,33 +2714,30 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
     border: none;                /* Remove border around the input */
     background: none;            /* Remove background */
     color: transparent;          /* Hide the default "No file chosen" text */
+    height: 24px;
+    
   }
   
   /* Style the button for modern browsers */
-  input[type="file"]::file-selector-button {
-    background-color: red; 
-    color: #fff; /* White text */
-    font-size: 14px;
-    font-weight: 500;
-    padding: 7px 15px;
-    border: none;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-    cursor: pointer;
-    transition: all 0.3s ease-in-out; /* Smooth transition for hover */
-  }
-  
-  /* Style the button for WebKit browsers (e.g., Chrome, Safari) */
+  input[type="file"]::file-selector-button,
   input[type="file"]::-webkit-file-upload-button {
     background-color: red; 
     color: #fff; /* White text */
     font-size: 14px;
+    
     font-weight: 500;
-    padding: 7px 15px;
+    padding: 7px ;
     border: none;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
     cursor: pointer;
     transition: all 0.3s ease-in-out; /* Smooth transition for hover */
+    width: 250px;
+    height: 24px;
+    line-height: 15px;
+    
   }
+  
+
   
   /* Add hover effect for the button */
   input[type="file"]::file-selector-button:hover,
@@ -2757,3 +2755,119 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
     }
   
   }
+
+
+
+
+
+
+
+
+
+
+  
+/* Loader Container */
+.loader-container {
+    position: fixed; /* Covers the whole viewport */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(255, 255, 255, 0.7); /* Slightly more opaque background */
+    z-index: 9999; /* Ensures it stays on top of other elements */
+    font-family: 'Arial', sans-serif; /* Consistent font */
+    color: #333; /* Dark text color */
+  }
+  
+  /* Loader Styles */
+  .loader {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #FF5A5F; /* Starting color */
+    border-radius: 50%;
+    width: 50px; /* Slightly larger loader */
+    height: 50px;
+    animation: spin 1.5s linear infinite;
+    margin-right: 12px; /* Adjusted space between the loader and text */
+  }
+  
+  /* Spin Animation */
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+      border-top-color: #FF5A5F;
+    }
+    50% {
+      border-top-color: #9B51E0; /* Transition color */
+    }
+    100% {
+      transform: rotate(360deg);
+      border-top-color: #FF5A5F;
+    }
+  }
+  
+  /* Text Styles */
+  .loader-text {
+    font-size: 14px; /* Smaller font size */
+    font-weight: 500; /* Lighter font weight for a more subtle appearance */
+    color: #FF5A5F; /* Match the color of the loader for consistency */
+    display: flex;
+    align-items: center; /* Vertically center text with the loader */
+    letter-spacing: 0.5px; /* Slight spacing between letters for clarity */
+    text-transform: uppercase; /* Uppercase for a more modern feel */
+    animation: fadeIn 1.5s ease-in-out; /* Fade-in effect for the text */
+  }
+  
+  /* Fade-In Animation for Text */
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 767px) {
+    .table,
+    .order-summary-table,
+    .product-table {
+      overflow-x: auto;
+      display: block; /* Allows horizontal scrolling */
+      width: 100%;
+    }
+  
+    .table th,
+    .order-summary-table th,
+    .product-table th {
+      white-space: normal; /* Allow wrapping of headers on mobile */
+      word-wrap: break-word; /* Break words to fit */
+      padding: 8px 10px; /* Adjust padding for smaller screens */
+    }
+  
+    .table td,
+    .order-summary-table td,
+    .product-table td {
+      padding: 8px 10px; /* Adjust padding for smaller screens */
+    }
+    @media (max-width: 767px) {
+      .primary-btn {
+        width: 100% !important;  /* Full width for mobile */
+        max-width: 400px !important; /* Set max-width for mobile */
+        height: 45px !important; /* Adjust height for mobile */
+        padding: 10px 15px !important; /* Adjust padding for mobile */
+        font-size: 16px !important; /* Adjust font size for mobile */
+      }
+    }
+  }
+  
+
+  .blur-background {
+    filter: blur(5px); /* Adjust the blur intensity as needed */
+    pointer-events: none; /* Prevent interaction with the blurred background */
+    opacity: 0.9; /* Optional: Dim the background slightly */
+  }
+  

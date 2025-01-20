@@ -132,7 +132,7 @@ export class CustomerCardmanagementComponent implements OnInit {
     console.log("Selected Record:", record);
   
     // Populate uploadedFiles with additionalUploadedFiles if they exist
-    this.uploadedFiles = record.additionalUploadedFiles || [];
+    // this.uploadedFiles = record.additionalUploadedFiles || [];
   
     // Dynamically set dropdown options based on the record's planname (if needed)
     this.documentTypeOptions = this.getOptions(record.planname, record.subcategory);
@@ -143,6 +143,8 @@ export class CustomerCardmanagementComponent implements OnInit {
       modalElement.style.display = 'block'; // Show modal
       modalElement.classList.add('show'); // Add 'show' class
     }
+
+    document.querySelector('.app-wrapper')?.classList.add('blur-background');
   }
   
 
@@ -291,6 +293,8 @@ export class CustomerCardmanagementComponent implements OnInit {
   
     // Optionally reset modal-related data here
     this.uploadedFiles = [];
+
+    document.querySelector('.app-wrapper')?.classList.remove('blur-background');
   }
   
 
