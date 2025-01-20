@@ -21,8 +21,8 @@
           <th scope="col">Name &#x2191;&#x2193;</th>
           <th scope="col">Email &#x2191;&#x2193;</th>
           <th scope="col">Nationality &#x2191;&#x2193;</th>
-          <th scope="col">Birthday &#x2191;&#x2193;</th>
-          <th scope="col">Mobile Numbern &#x2191;&#x2193; </th>
+          <!-- <th scope="col">Birthday &#x2191;&#x2193;</th> -->
+          <th scope="col">Mobile Number &#x2191;&#x2193; </th>
           <th scope="col">Jurisdiction &#x2191;&#x2193;</th>
           <th scope="col">Shareholder Count &#x2191;&#x2193;</th>
           <th scope="col">Turn Over &#x2191;&#x2193;</th>
@@ -39,11 +39,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let user of userList">
-          <td>{{ user.firstName }} {{ user.lastName }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.nationality }}</td>
-          <td>{{ user.birthday | date : "yyyy-MM-dd" }}</td>
-          <td>{{ user.mobileNumber.internationalNumber }}</td>
+          <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
+          <td>{{ user.leadWithDetails.Email }}</td>
+          <td>{{ user.leadWithDetails.Nationality }}</td>
+          <!-- <td>{{ user..leadWithDetails.birthday | date : "yyyy-MM-dd" }}</td> -->
+          <td>{{ user.leadWithDetails.Phone }}</td>
           <td>{{ user.jurisdiction }}</td>
           <td>{{ user.shareholdercount }}</td>
           <td>{{ user.Turnover }}</td>
@@ -69,7 +69,7 @@
           </td>
           <td>{{ user.CustomerStatus }}</td>
           
-          <td>
+<td>
             <button class="green-button">
               View Additional File
             </button>
