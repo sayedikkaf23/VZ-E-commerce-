@@ -302,6 +302,35 @@ export class CustomerCardmanagementComponent implements OnInit {
   navigateLogout(): void {
     this.router.navigate(['/login']); // Navigate to login
   }
+
+  additionalFiles = [
+    { category: 'Utility Bill', name: 'UtilityBill.pdf', url: '/path/to/utility_bill.pdf' },
+    { category: 'Passport Copy', name: 'Passport.pdf', url: '/path/to/passport.pdf' },
+  ];
+  
+  newFile: File | null = null;
+  newFileCategory = '';
+  
+  handleFileUpload(event: any) {
+    this.newFile = event.target.files[0];
+  }
+  
+  addAdditionalFile() {
+    if (this.newFile && this.newFileCategory) {
+      const newFileEntry = {
+        category: this.newFileCategory,
+        name: this.newFile.name,
+        url: `/path/to/${this.newFile.name}`, // Replace with actual upload logic
+      };
+      this.additionalFiles.push(newFileEntry);
+      this.newFile = null;
+      this.newFileCategory = '';
+    }
+  }
+  
+  removeAdditionalFile(file: any) {
+    this.additionalFiles = this.additionalFiles.filter((f) => f !== file);
+  }
 }
 
 
