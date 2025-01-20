@@ -992,7 +992,7 @@ async function payNowSaleforce(req, res) {
       };
   
       // Endpoint URL for the second API call
-      const endpointUrl2 = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/aAWdu0000000njtGAA`;
+      const endpointUrl2 = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${paynowdata.transactionDetails.quotePaymentId}`;
   
       console.log(requestBodySalesforce2,"requestBodySalesforce2")
       // Making the second API call
