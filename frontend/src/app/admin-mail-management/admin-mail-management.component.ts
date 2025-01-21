@@ -15,6 +15,8 @@ export class AdminMailManagementComponent {
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
   loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
+  showFileModal: boolean = false; // Flag to control file modal visibility
+  selectedFiles: any[] = []; // To store selected files for the modal
 
   constructor(private mailManagementService: MailManagementService) {}
 
@@ -68,5 +70,20 @@ export class AdminMailManagementComponent {
 
   closeModal(): void {
     this.showModal = false; // Close the modal
+  }
+  openFileModal(files: any[]): void {
+    if (files && files.length > 0) {
+      this.selectedFiles = files; // Assign files to display in the modal
+      this.showFileModal = true; // Open the file modal
+    } else {
+      this.selectedFiles = []; // Clear previous files
+      this.showFileModal = true; // Still open the modal to show the "No files available" message
+      console.error('No files available for this mail.');
+    }
+  }
+  
+
+  closeFileModal(): void {
+    this.showFileModal = false; // Close the file modal
   }
 }
