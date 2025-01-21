@@ -68,7 +68,9 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges();
     });
 
-   
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
 
     // Retrieve Step 2 data from localStorage
     const storedStep2Data = localStorage.getItem('mailform1');

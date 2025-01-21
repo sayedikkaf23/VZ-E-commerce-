@@ -41,6 +41,7 @@ export class MailsManagement3Component implements OnInit {
   }
 
   ngOnInit(): void {
+    
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }

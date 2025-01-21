@@ -639,35 +639,37 @@
         </div>
 
         <!-- Additional Files Section -->
-     <!-- Additional Files Section -->
-<h6 style="margin-top: 1.5rem; font-weight: bold;">Additional Files</h6>
-<br>
-
-<!-- Only display files if there are any; otherwise display a fallback message -->
-<div
-  *ngIf="(selectedaddAdditionalFile?.length || 0) > 0; else noAdditionalFiles"
-  style="padding: 1rem; border-radius: 4px;"
->
-  <div *ngFor="let file of selectedaddAdditionalFile" style="margin-bottom: 0.75rem;">
-    <strong>{{ file.type }}</strong>
-    <div style="display: flex; align-items: center; gap: 1rem;">
-      <span>{{ file.name }}</span>
-      <a
-        [href]="file.url"
-        target="_blank"
-        style="color: #007bff; text-decoration: underline;"
-      >
-        View
-      </a>
-    </div>
-  </div>
-</div>
-
-<!-- Fallback message for when there are no additional files -->
-<ng-template #noAdditionalFiles>
-  <p>No additional files added.</p>
-</ng-template>
-
+        <h6 style="margin-top: 1.5rem; font-weight: bold;">Additional Files</h6>
+        <br>
+        
+        <!-- Only display files if there are any; otherwise display a fallback message -->
+        <div
+          *ngIf="(selectedaddAdditionalFile?.length || 0) > 0; else noAdditionalFiles"
+          style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; padding: 1rem; border-radius: 4px;"
+        >
+          <div
+            *ngFor="let file of selectedaddAdditionalFile"
+            style="border: 1px solid #ddd; padding: 1rem; border-radius: 4px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);"
+          >
+            <strong style="margin-bottom: 0.5rem; display: block;">{{ file.type }}</strong>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span>{{ file.name }}</span>
+              <a
+                [href]="file.url"
+                target="_blank"
+                style="color: #007bff; text-decoration: underline;"
+              >
+                View
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Fallback message for when there are no additional files -->
+        <ng-template #noAdditionalFiles>
+          <p>No additional files added.</p>
+        </ng-template>
+        
 
         <ng-template #noShareholders>
           <p>No shareholders found.</p>
