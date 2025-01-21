@@ -50,7 +50,9 @@ i: any;
     const mailform = localStorage.getItem('virtualdata');
     const mailform2 = localStorage.getItem('virtualdata1');
     const mailform3 = localStorage.getItem('virtualdata2');
-  
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
     // Redirect if either mailform or mailform2 is missing
     if (!mailform || !mailform2) {
       this.router.navigate(['/home']);

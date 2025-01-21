@@ -68,6 +68,10 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
     // Retrieve countries and nationalities
     this.getnationalityService.getCountries().subscribe((data) => {
       // Map and trim whitespace, sort case-insensitively
