@@ -53,10 +53,12 @@
           </td>
           <td>{{ client.CustomerStatus }}</td>
           <td>
-            <button class="green-button">
-              View Additional File
+            <button class="green-button" (click)="openFileModal(client.additionalUploadedFiles)">
+              View Files
             </button>
           </td>
+          
+          
         </tr>
       </tbody>
     </table>
@@ -103,6 +105,32 @@
       </table>
     </div>
   </div>
+
+  <div class="modal-container" *ngIf="showFileModal">
+    <div class="modal-backdrop" (click)="closeFileModal()"></div>
+    <div class="modal-content">
+      <span class="close-btn" (click)="closeFileModal()">&times;</span>
+      <h5 class="modal-title">Uploaded Files</h5>
+      <div *ngIf="selectedFiles.length > 0; else noFiles">
+        <div class="file-list">
+          <div class="file-item" *ngFor="let file of selectedFiles">
+            <div class="file-details">
+              <p class="file-name"><strong>Name:</strong> {{ file.name }}</p>
+              <p class="file-type"><strong>Type:</strong> {{ file.type }}</p>
+            </div>
+            <div class="file-actions">
+              <a [href]="file.url" target="_blank" class="view-link">View File</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <ng-template #noFiles>
+        <p class="no-files">No files available for this client.</p>
+      </ng-template>
+    </div>
+  </div>
+  
+
 </div>
  
  

@@ -15,7 +15,8 @@ export class VirtualManagementComponent implements OnInit {
   hasCompanyNameData: boolean = false;
   userList: any[] = []; // To store the fetched user data
   loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
-
+  showFileModal: boolean = false; // Flag for file modal
+  selectedFiles: any[] = []; // To store selected files for the modal
   constructor(private virtualManagementService: VirtualManagementService) {}
  
   ngOnInit(): void {
@@ -70,6 +71,20 @@ export class VirtualManagementComponent implements OnInit {
  
   closeModal(): void {
     this.showModal = false; // Close the modal
+  }
+  openFileModal(files: any[]): void {
+    if (files && files.length > 0) {
+      this.selectedFiles = files; // Assign files to display in the modal
+      this.showFileModal = true; // Open the modal
+      console.log('Modal opened with files:', files); // Debugging
+    } else {
+      console.error('No files available for this client.');
+    }
+  }
+  
+
+  closeFileModal(): void {
+    this.showFileModal = false; // Close the file modal
   }
 }
  
