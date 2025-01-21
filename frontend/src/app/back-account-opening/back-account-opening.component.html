@@ -60,12 +60,32 @@
           <td>{{ user.CustomerStatus }}</td>
           
           <td>
-            <button class="green-button">
+            <button class="green-button" (click)="openFileModal(user)">
               View Additional File
             </button>
           </td>
+          
         </tr>
       </tbody>
     </table>
   </div>
+  <div class="modal-container" *ngIf="showFileModal">
+    <div class="modal-backdrop" (click)="closeFileModal()"></div>
+    <div class="modal-content">
+      <span class="close-btn" (click)="closeFileModal()">&times;</span>
+      <h5 class="modal-title">Additional Files</h5>
+      <div *ngIf="selectedAdditionalFiles?.length; else noFiles">
+        <ul class="file-list">
+          <li *ngFor="let file of selectedAdditionalFiles">
+            <strong>{{ file.type }}</strong>: 
+            <a [href]="file.url" target="_blank">{{ file.name }}</a>
+          </li>
+        </ul>
+      </div>
+      <ng-template #noFiles>
+        <p>No additional files available.</p>
+      </ng-template>
+    </div>
+  </div>
+  
 </div>

@@ -12,7 +12,9 @@ export class BackAccountOpeningComponent implements OnInit {
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
   loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
-
+  selectedAdditionalFiles: any[] = []; // To store the additional files for the modal
+  showFileModal: boolean = false; // Control the visibility of the modal
+  
   constructor(private adminAuthService: AdminAuthService) {}
 
   ngOnInit(): void {
@@ -60,4 +62,24 @@ export class BackAccountOpeningComponent implements OnInit {
       }
     );
   }
+  openFileModal(user: any): void {
+    if (user.additionalUploadedFiles && user.additionalUploadedFiles.length > 0) {
+      this.selectedAdditionalFiles = user.additionalUploadedFiles; // Assign files to display in the modal
+      this.showFileModal = true; // Open the modal
+    } else {
+      console.warn('No additional files available for this user.');
+    }
+  }
+  
+  closeFileModal(): void {
+    this.showFileModal = false; // Close the modal
+    this.selectedAdditionalFiles = []; // Clear the files
+  }
+  
+  isImage(fileName: string): boolean {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    return imageExtensions.includes(extension || '');
+  }
+  
 }
