@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserService } from '../service/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 interface Service {
   name: string;
@@ -39,8 +40,8 @@ export class CustomerCardmanagementComponent implements OnInit {
   constructor(
     private userService: UserService,
     private route: ActivatedRoute,
-    private router: Router
-    
+    private router: Router,
+    private toastr: ToastrService,
   ) {
    
   }
@@ -210,15 +211,26 @@ export class CustomerCardmanagementComponent implements OnInit {
                 // originalType: file.type
               });
               console.log('File uploaded successfully:', file.name);
+             
               this.isLoading = false;
             })
             .catch((error) => {
               console.error('File upload failed', error);
+              this.toastr.error(error.message || 'Failed to upload file');
               this.isLoading = false;
             });
         },
         (error) => {
           console.error('Error getting presigned URL', error);
+
+          console.error('Error getting presigned URL:', error);
+
+          // Angular’s HttpClient typically puts the server’s JSON under error.error
+          // e.g., error.error = { error: "File size cannot exceed 1MB" }
+          const errorMsg = error.error?.error || 'An error occurred while getting URL';
+  
+          // Show it in a toast (using ngx-toastr for example)
+          this.toastr.error(errorMsg, 'Error');
           this.isLoading = false;
         }
       );

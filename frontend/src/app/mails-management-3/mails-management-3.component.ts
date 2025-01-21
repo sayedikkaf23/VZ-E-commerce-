@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import AOS from 'aos';
 import { UserService } from '../service/user.service';
 import { FileStorageService } from '../service/files.service';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-mails-management-3',
   templateUrl: './mails-management-3.component.html',
@@ -30,6 +30,7 @@ export class MailsManagement3Component implements OnInit {
     private router: Router,
     private fileStorageService: FileStorageService,
     private userService: UserService,
+    private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.formData = this.fb.group({
@@ -141,11 +142,20 @@ export class MailsManagement3Component implements OnInit {
             this.isLoading = false;
           }).catch((error) => {
             console.error('File upload failed', error);
+            this.toastr.error(error.message || 'Failed to upload file');
             this.isLoading = false;
           });
         },
         (error) => {
           console.error('Error getting presigned URL', error);
+          // console.error('Error getting presigned URL:', error);
+
+          // Angular’s HttpClient typically puts the server’s JSON under error.error
+          // e.g., error.error = { error: "File size cannot exceed 1MB" }
+          const errorMsg = error.error?.error || 'An error occurred while getting URL';
+  
+          // Show it in a toast (using ngx-toastr for example)
+          this.toastr.error(errorMsg, 'Error');
           this.isLoading = false;
         }
       );

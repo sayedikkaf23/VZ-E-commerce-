@@ -3,7 +3,6 @@ const AWS = require('aws-sdk');
 const multer = require('multer');
 require('dotenv').config();
 
-// Configure AWS SDK
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
@@ -12,39 +11,47 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-// Set up multer for handling file uploads in memory (you can change it to diskStorage if needed)
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+// Configure a 1MB size limit
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 1 * 1024 * 1024 }, // 1 MB
+});
 
-// Function to handle file upload to S3 and return the URL
-exports.uploadFileToS3 = async (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' });
-  }
+exports.uploadFileToS3 = (req, res) => {
+  // 1. Run the Multer middleware (single file) inside this function:
+  upload.single('file')(req, res, async (err) => {
+    // 2. If Multer threw an error (ex: too large)
+    if (err) {
+      if (err.code === 'LIMIT_FILE_SIZE') {
+        return res.status(400).json({ error: 'File size cannot exceed 1MB' });
+      }
+      // Some other Multer error
+      return res.status(400).json({ error: err.message });
+    }
 
-  const file = req.file;
-  const fileName = `${Date.now()}-${file.originalname}`;
+    // 3. If no file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
 
-  // Define S3 upload parameters
-  const s3Params = {
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: `uploads/${fileName}`, // Save the file in the "uploads" directory in S3
-    Body: file.buffer, // File content
-    ContentType: file.mimetype, // File type
-    ACL: 'public-read' // Set access to public
-  };
+    // 4. Proceed with S3 upload if no errors so far
+    try {
+      const file = req.file;
+      const fileName = `${Date.now()}-${file.originalname}`;
 
-  try {
-    // Upload the file to S3
-    const data = await s3.upload(s3Params).promise();
+      const s3Params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: `uploads/${fileName}`,
+        Body: file.buffer,
+        ContentType: file.mimetype,
+        ACL: 'public-read'
+      };
 
-    // Return the file URL
-    res.status(200).json({ url: data.Location });
-  } catch (error) {
-    console.error('Error uploading file:', error);
-    res.status(500).json({ error: 'Failed to upload file' });
-  }
+      const data = await s3.upload(s3Params).promise();
+      return res.status(200).json({ url: data.Location });
+    } catch (uploadError) {
+      console.error('Error uploading file:', uploadError);
+      return res.status(500).json({ error: 'Failed to upload file' });
+    }
+  });
 };
-
-// Export the multer upload middleware so it can be used in the route
-exports.multerUpload = upload.single('file'); // 'file' is the field name in the form

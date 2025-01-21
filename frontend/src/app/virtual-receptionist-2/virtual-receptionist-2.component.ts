@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserService } from '../service/user.service';
 import { FileStorageService } from '../service/files.service';
-
+import { ToastrService } from 'ngx-toastr';
 @Component({
   selector: 'app-virtual-receptionist-2',
   templateUrl: './virtual-receptionist-2.component.html',
@@ -34,6 +34,7 @@ export class VirtualReceptionist2Component implements OnInit {
     private router: Router,
     private fileStorageService: FileStorageService,
     private userService: UserService,
+    private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // IMPORTANT: formControl names must match what you will set/read in ngOnInit and onSubmit
@@ -181,11 +182,20 @@ export class VirtualReceptionist2Component implements OnInit {
             this.isLoading = false;
           }).catch((error) => {
             console.error('File upload failed', error);
+            this.toastr.error(error.message || 'Failed to upload file');
             this.isLoading = false;
           });
         },
         (error) => {
           console.error('Error getting presigned URL', error);
+          // console.error('Error getting presigned URL:', error);
+
+          // Angular’s HttpClient typically puts the server’s JSON under error.error
+          // e.g., error.error = { error: "File size cannot exceed 1MB" }
+          const errorMsg = error.error?.error || 'An error occurred while getting URL';
+  
+          // Show it in a toast (using ngx-toastr for example)
+          this.toastr.error(errorMsg, 'Error');
           this.isLoading = false;
         }
       );
