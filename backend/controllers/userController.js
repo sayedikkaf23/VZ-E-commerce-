@@ -696,7 +696,7 @@ exports.getBusinessBank = async (req, res) => {
       const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
 
       // Fetch the corresponding UserDetails document using QuotePaymentId
-      const userDetails = await UserDetails.findOne({ "quotePaymentWithDetails.QuotePaymentId": quotePaymentId });
+      const userDetails = await UserDetails.findOne({ "QuotePaymentId": quotePaymentId });
 
       // Merge PiData and UserDetails
       const mergedData = {
