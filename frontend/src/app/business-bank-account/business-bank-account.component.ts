@@ -13,6 +13,8 @@ export class BusinessBankAccountComponent implements OnInit {
   showModal: boolean = false; // Flag to control modal visibility
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
+  showFileModal: boolean = false; // New flag for file modal
+  selectedAdditionalFiles: any[] = []; // Selected files for the modal
   // Dummy data for shareholders
   dummyShareholders = [
     { name: 'John Doe', id: 'SH001', percentage: 25 },
@@ -70,12 +72,30 @@ export class BusinessBankAccountComponent implements OnInit {
     );
   }
   
-  openModal(data:any): void {
-    this.selectedUserShareholders = data; // Assign dummy data directly
+ openModal(shareholders: any[]): void {
+  if (shareholders && shareholders.length > 0) {
+    this.selectedUserShareholders = shareholders; // Assign the shareholders array directly
     this.showModal = true; // Open the modal
+  } else {
+    console.error("No shareholders found for this user.");
   }
+}
 
-  closeModal(): void {
-    this.showModal = false;
+closeModal(): void {
+  this.showModal = false; // Close the modal
+}
+
+  openFileModal(files: any[]): void {
+    if (files && files.length > 0) {
+      this.selectedAdditionalFiles = files; // Assign the files to display in the modal
+      this.showFileModal = true; // Open the modal
+    } else {
+      console.log('No additional files to display.');
+    }
   }
+  
+  closeFileModal(): void {
+    this.showFileModal = false; // Close the modal
+  }
+  
 }

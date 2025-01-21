@@ -37,11 +37,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let user of userList">
-          <td>{{ user.firstName }} {{ user.lastName }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.nationality }}</td>
-          <td>{{ user.birthday | date: 'yyyy-MM-dd' }}</td>
-          <td>{{ user.resident }}</td>
+          <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
+          <td>{{ user.leadWithDetails.Email }}</td>
+          <td>{{ user.leadWithDetails.Nationality }}</td>
+          <td>{{ user.userDetails.birthday | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ user.userDetails.resident }}</td>
           <td>{{ user.working }}</td>
           <td *ngIf="user.salary">{{ user.salary }}</td>
           <td *ngIf="user.companyname">{{ user.companyname }}</td>
