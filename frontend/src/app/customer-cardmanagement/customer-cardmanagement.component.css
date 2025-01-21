@@ -2870,4 +2870,25 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
     pointer-events: none; /* Prevent interaction with the blurred background */
     opacity: 0.9; /* Optional: Dim the background slightly */
   }
+
+  body {
+    font-size: 13px !important;
+  }
+  table {
+    font-size: 13px !important;
+  }
+  table th,
+  table td {
+    font-size: 13px !important;
+  }
+  .modal-content {
+    font-size: 13px !important;
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font-size: 13px !important;
+  }
+        
   
