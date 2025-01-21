@@ -72,6 +72,10 @@ export class MailsManagement1Component {
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
     // Check if we are in the browser before accessing localStorage
+
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
     if (this.isBrowser) {
       const storedData = localStorage.getItem('mailform');
       if (storedData) {
