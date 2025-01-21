@@ -266,8 +266,10 @@ export class CustomerCardmanagementComponent implements OnInit {
       .subscribe(
         (response) => {
           console.log('Documents submitted successfully!', response);
-
-
+          const email = localStorage.getItem('userEmail') ?? '';
+          this.fetchUserServices(email);
+          
+          this.uploadedFiles = [];
           const modalElement = document.getElementById('uploadDetailsModal');
           if (modalElement) {
             modalElement.classList.remove('show'); // Remove Bootstrap's "show" class
