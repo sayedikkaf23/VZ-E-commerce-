@@ -32,14 +32,14 @@
         </thead>
         <tbody>
           <tr *ngFor="let mail of mailList">
-            <td>{{ mail.firstName }} {{ mail.lastName }}</td>
-            <td>{{ mail.email }}</td>
-            <td>{{ mail.CompanyName }}</td>
-            <td>{{ mail.CompanyIncorporated }}</td>
-            <td>{{ mail.mobileNumber.internationalNumber }}</td>
-            <td>{{ mail.shareholdercount }}</td>
+            <td>{{ mail.leadWithDetails.FirstName }} {{ mail.leadWithDetails.LastName }}</td>
+            <td>{{ mail.leadWithDetails.Email }}</td>
+            <td>{{ mail.userDetails.CompanyName }}</td>
+            <td>{{ mail.userDetails.CompanyIncorporated }}</td>
+            <td>{{ mail.userDetails.mobileNumber.internationalNumber }}</td>
+            <td>{{ mail.userDetails.shareholdercount }}</td>
             <td>
-              <button (click)="openMailDetails(mail.shareholders)" class="btn btn-primary" style="white-space: nowrap;">View Shareholders</button>
+              <button  (click)="openMailDetails(mail.shareholders)" class="btn btn-primary" style="white-space: nowrap;">View Shareholders</button>
             </td>
             <td>{{ mail.screeningDetails?.matchScore }}</td>
             <td>
@@ -61,7 +61,6 @@
         </tbody>
       </table>
     </div>
-  
     <div class="modal-container" *ngIf="showModal">
       <div class="modal-backdrop" (click)="closeModal()"></div>
       <div class="modal-content">
@@ -70,10 +69,11 @@
         <table class="table">
           <thead>
             <tr>
-              <th scope="col">Shareholder Name</th>
-              <th scope="col">Shareholder (%)</th>
-              <th scope="col">Date of Birth</th>
-              <th scope="col">Nationality</th>
+              <th>Shareholder Name</th>
+              <th>Shareholder (%)</th>
+              <th>Date of Birth</th>
+              <th>Nationality</th>
+              <!-- <th>Files</th> -->
             </tr>
           </thead>
           <tbody>
@@ -82,11 +82,17 @@
               <td>{{ detail.shareholderPercentage }}%</td>
               <td>{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
               <td>{{ detail.nationalityshareholder }}</td>
+              <!-- <td>
+                <button class="green-button" (click)="openFileModal(detail.files)">
+                  View Files
+                </button>
+              </td> -->
             </tr>
           </tbody>
         </table>
       </div>
     </div>
+    
 
     <div class="modal-container" *ngIf="showFileModal">
       <div class="modal-backdrop" (click)="closeFileModal()"></div>

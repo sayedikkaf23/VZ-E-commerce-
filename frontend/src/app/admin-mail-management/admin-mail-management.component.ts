@@ -64,8 +64,8 @@ export class AdminMailManagementComponent {
     );
   }
   openMailDetails(details: any): void {
-    this.selectedMailDetails = details; // Assign mail details data directly
-    this.showModal = true; // Open the modal
+    this.selectedMailDetails = details; // Assign selected mail details
+    this.showModal = true; // Open the modal for shareholders
   }
 
   closeModal(): void {
