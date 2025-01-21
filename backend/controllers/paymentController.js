@@ -952,13 +952,13 @@ async function payNowSaleforce(req, res) {
     };
 
     const endpointUrl = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${paynowdata.transactionDetails.quotePaymentId}`;
-    // console.log("url",endpointUrl)
+    console.log("requestBodySalesforce",requestBodySalesforce)
 
     axios
       .put(endpointUrl, requestBodySalesforce, { headers })
       .then((response) => {
         // Handle the response here
-        console.log("Response:", response.data);
+        console.log("Response paid:", response.data);
       })
       .catch((error) => {
         // Handle errors here
