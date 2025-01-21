@@ -23,7 +23,7 @@ export class _HomeComponent {
 
   ngOnInit(): void {
     this.loadServices();
-  
+
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
@@ -40,6 +40,14 @@ export class _HomeComponent {
       'virtualdata2',
       'virtualdata1'
     ];
+
+    const anyKeyExists = keysToRemove.some((key) => localStorage.getItem(key) !== null);
+
+    if (anyKeyExists) {
+      // Set the refresh flag and reload the page
+     
+      location.reload();
+    }
   
     keysToRemove.forEach((key) => {
       localStorage.removeItem(key);
