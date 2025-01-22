@@ -34,8 +34,8 @@ export class BackAccountOpeningComponent implements OnInit {
   }
 
   checkColumnData(): void {
-    this.hasSalaryData = this.userList.some((user) => !!user.salary);
-    this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
+    this.hasSalaryData = this.userList.some((user) => !!user.userDetails.salary);
+    this.hasCompanyNameData = this.userList.some((user) => !!user.userDetails.companyname);
   }
 
   // Method to call checkStatus API and store CaseStatusCode
