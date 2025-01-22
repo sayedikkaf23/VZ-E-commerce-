@@ -69,23 +69,31 @@
       </tbody>
     </table>
   </div>
-  <div class="modal-container" *ngIf="showFileModal">
-    <div class="modal-backdrop" (click)="closeFileModal()"></div>
-    <div class="modal-content">
-      <span class="close-btn" (click)="closeFileModal()">&times;</span>
-      <h5 class="modal-title">Additional Files</h5>
-      <div *ngIf="selectedAdditionalFiles?.length; else noFiles">
-        <ul class="file-list">
-          <li *ngFor="let file of selectedAdditionalFiles">
-            <strong>{{ file.type }}</strong>: 
-            <a [href]="file.url" target="_blank">{{ file.name }}</a>
-          </li>
-        </ul>
+ 
+<!-- new   -->
+<div class="modal-container" *ngIf="showFileModal">
+  <div class="modal-backdrop" (click)="closeFileModal()"></div>
+  <div class="modal-content">
+    <span class="close-btn" (click)="closeFileModal()">&times;</span>
+    <h5 class="modal-title">Additional Files</h5>
+    <div *ngIf="selectedAdditionalFiles?.length; else noFiles">
+      <div class="file-list">
+        <div class="file-item" *ngFor="let file of selectedAdditionalFiles">
+          <div class="file-details">
+            <strong class="file-type">{{ file.type }}</strong>
+            <p class="file-name">{{ file.name }}</p>
+          </div>
+          <div class="file-actions">
+            <a [href]="file.url" target="_blank" class="view-link">View File</a>
+          </div>
+        </div>
       </div>
-      <ng-template #noFiles>
-        <p>No additional files available.</p>
-      </ng-template>
     </div>
+    <ng-template #noFiles>
+      <p class="no-files">No additional files available.</p>
+    </ng-template>
   </div>
+</div>
+  
   
 </div>

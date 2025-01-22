@@ -64,17 +64,18 @@ export class BackAccountOpeningComponent implements OnInit {
   }
   openFileModal(user: any): void {
     if (user.additionalUploadedFiles && user.additionalUploadedFiles.length > 0) {
-      this.selectedAdditionalFiles = user.additionalUploadedFiles; // Assign files to display in the modal
-      this.showFileModal = true; // Open the modal
+      this.selectedAdditionalFiles = user.additionalUploadedFiles; // Populate files
+      this.showFileModal = true; // Show modal
     } else {
-      console.warn('No additional files available for this user.');
+      console.warn('No files available.');
     }
   }
   
   closeFileModal(): void {
-    this.showFileModal = false; // Close the modal
-    this.selectedAdditionalFiles = []; // Clear the files
+    this.showFileModal = false; // Hide modal
+    this.selectedAdditionalFiles = []; // Clear files
   }
+  
   
   isImage(fileName: string): boolean {
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
