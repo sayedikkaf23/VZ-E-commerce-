@@ -43,9 +43,9 @@
             </td>
             <td>{{ mail.screeningDetails?.matchScore }}</td>
             <td>
-              <button class="green-button" (click)="checkStatus(mail)" [disabled]="loadingStatuses[mail.LeadId]">
-                <ng-container *ngIf="!loadingStatuses[mail.LeadId]">Check Status</ng-container>
-                <ng-container *ngIf="loadingStatuses[mail.LeadId]">
+              <button class="green-button" (click)="checkStatus(mail)" [disabled]="loadingStatuses[mail.leadWithDetails.LeadId]">
+                <ng-container *ngIf="!loadingStatuses[mail.leadWithDetails.LeadId]">Check Status</ng-container>
+                <ng-container *ngIf="loadingStatuses[mail.leadWithDetails.LeadId]">
                   <span class="spinner-border spinner-border-sm"></span> Loading...
                 </ng-container>
               </button>
