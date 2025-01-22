@@ -41,12 +41,12 @@ export class BackAccountOpeningComponent implements OnInit {
   // Method to call checkStatus API and store CaseStatusCode
   checkStatus(user: any): void {
     const payload = {
-      CustomerId: user.LeadId,
+      CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
 
     // Set loading state for the user
-    this.loadingStatuses[user.LeadId] = true;
+    this.loadingStatuses[user.leadWithDetails.LeadId] = true;
 
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {

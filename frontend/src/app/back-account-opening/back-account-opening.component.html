@@ -42,17 +42,17 @@
           <td>{{ user.leadWithDetails.Nationality }}</td>
           <td>{{ user.userDetails.birthday | date: 'yyyy-MM-dd' }}</td>
           <td>{{ user.userDetails.resident }}</td>
-          <td>{{ user.working }}</td>
-          <td *ngIf="user.salary">{{ user.salary }}</td>
-          <td *ngIf="user.companyname">{{ user.companyname }}</td>
+          <td>{{ user.userDetails.working }}</td>
+          <td *ngIf="user.userDetails.salary">{{ user.userDetails.salary }}</td>
+          <td *ngIf="user.userDetails.companyname">{{ user.userDetails.companyname }}</td>
 
-          <td>{{ user.Bank }}</td>
+          <td>{{ user.userDetails.Bank }}</td>
           <td>{{ user.screeningDetails?.matchScore }}</td>
 
           <td>
-            <button class="green-button" (click)="checkStatus(user)" [disabled]="loadingStatuses[user.LeadId]">
-              <ng-container *ngIf="!loadingStatuses[user.LeadId]">Check Status</ng-container>
-              <ng-container *ngIf="loadingStatuses[user.LeadId]">
+            <button class="green-button" (click)="checkStatus(user)" [disabled]="loadingStatuses[user.leadWithDetails.LeadId]">
+              <ng-container *ngIf="!loadingStatuses[user.leadWithDetails.LeadId]">Check Status</ng-container>
+              <ng-container *ngIf="loadingStatuses[user.leadWithDetails.LeadId]">
                 <span class="spinner-border spinner-border-sm"></span> Loading...
               </ng-container>
             </button>
