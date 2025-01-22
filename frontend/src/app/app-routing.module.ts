@@ -48,6 +48,7 @@ import { BankTransferSuccessComponent } from './bank-transfer-success/bank-trans
 import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
 import { BanktransferComponent } from './banktransfer/banktransfer.component';
 import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
+import { AdminDocumentTypeComponent } from './admin-document-type/admin-document-type.component';
 
 const routes: Routes = [
 
@@ -289,6 +290,11 @@ const routes: Routes = [
       {
         path: 'admin-virtual-management',
         component: VirtualManagementComponent,
+       
+      },
+      {
+        path: 'admin-document-type',
+        component: AdminDocumentTypeComponent,
        
       },
      

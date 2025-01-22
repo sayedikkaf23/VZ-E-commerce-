@@ -1,0 +1,279 @@
+<div class="content main-content" id="main-content">
+    <div class="page-heading">
+      <div class="row align-items-center justify-content-between">
+        <div class="col-auto">
+          <div class="row align-items-center">
+            <div class="col-auto mb-2">
+              <h2>Document Type</h2>
+            </div>
+          </div>
+        </div>
+        <div class="col-auto">
+          <!-- Optional search field here if needed in future -->
+        </div>
+      </div>
+    </div>
+  
+    <div class="table-responsive overflow-behaviour">
+      <table class="table table-list-data table-hover">
+        <thead class="bg-light">
+          <tr>
+            <th scope="col">Service Name &#x2191;&#x2193;</th>
+            
+            <th scope="col">Document Type &#x2191;&#x2193;</th>
+
+            <th scope="col">Action &#x2191;&#x2193;</th>
+            
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let service of serviceList">
+            <td>{{ service.serviceName }}</td>
+            
+            <td> <button (click)="openDocType(service.serviceName)" class="btn btn-primary" style="white-space: nowrap; background-color: #cf3339 !important;">Add Document Type</button></td>
+            
+            <td> <button (click)="openEditDocType(service.serviceName)" class="btn btn-primary" style="white-space: nowrap; background-color: #cf3339 !important;">Edit</button></td>
+
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Modal -->
+<!-- <div class="modal-container" *ngIf="showModal">
+    <div class="modal-backdrop" (click)="closeModal()"></div>
+    <div class="modal-content">
+      <span class="close-btn" (click)="closeModal()">&times;</span>
+      <h5 class="modal-title">Document Types for "{{ selectedServiceName }}"</h5>
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">Enter the Type of Document</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <input
+                type="text"
+                [(ngModel)]="documentTypeInput"
+                placeholder="Type here..."
+                class="form-control"
+                style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div> -->
+  
+<!-- Add Doc Type Modal -->
+  <div class="modal fade" id="docTypeModal" tabindex="-1" aria-labelledby="docTypeModalLabel" aria-hidden="true" style="z-index: 999; filter: none;">
+    <div class="modal-dialog modal-dialog-centered modal-lg"  >
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="docTypeModalLabel">Add Document Type for {{ selectedServiceName }}</h5>
+          <button
+          type="button"
+          class="btn-close"
+          (click)="closeAddModal()"
+          aria-label="Close"
+        ></button>
+        
+        </div>
+  
+        <!-- Modal Body -->
+        <div class="form-field" style="padding: 6px 15px;">
+            <label for="doctypecount">How many Document types need to be added? <span class="required">*</span></label>
+            <fieldset>
+              <select 
+                name="doctypecount" 
+                id="doctypecount" 
+                class="form-select styled-select" 
+                [(ngModel)]="selectedCount" 
+                (ngModelChange)="updateDocType()"
+              >
+                <option value="" disabled selected>Select the number of Document types needed </option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10+</option>
+              </select>
+            </fieldset>
+        </div>
+
+        
+
+          <!-- Dynamically Rendered Text Boxes -->
+  <div *ngIf="docTypes.length > 0" style="margin-top: 20px; padding: 6px 15px;">
+    <label style="font-weight: bold; display: block; margin-bottom: 10px;">Add Document Names</label>
+    <div 
+      class="text-box-container" 
+      *ngFor="let docType of docTypes; let i = index  trackBy: trackByIndex"
+      style="display: flex; align-items: center; margin-bottom: 10px;"
+    >
+      <!-- Text Box -->
+      <input 
+        type="text" 
+        [(ngModel)]="docTypes[i]" 
+        
+        placeholder="Enter Document Name" 
+        class="styled-textbox"
+        
+      />
+      <!-- Delete Icon -->
+      <span 
+        (click)="deleteDocType(i)" 
+        style="cursor: pointer; color: red; padding-left: 9px;"
+      >
+        <svg 
+          width="20" 
+          height="20" 
+          viewBox="0 0 20 20" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            d="M5 5L15 15" 
+            stroke="currentColor" 
+            stroke-width="2" 
+            stroke-linecap="round"
+          />
+          <path 
+            d="M15 5L5 15" 
+            stroke="currentColor" 
+            stroke-width="2" 
+            stroke-linecap="round"
+          />
+        </svg>
+      </span>
+    </div>
+  </div>
+         
+        
+         <!-- Submit Button -->
+    <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
+      <button
+      class="btn btn-primary" style="white-space: nowrap; background-color: #cf3339 !important;"
+        (click)="submitDocuments()"
+      >
+        Submit
+      </button>
+    </div>
+  
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Edit Doc Type Modal -->
+  <div class="modal fade" id="editDocTypeModal" tabindex="-1" aria-labelledby="editDocTypeModalLabel" aria-hidden="true" style="z-index: 999; filter: none;">
+    <div class="modal-dialog modal-dialog-centered modal-lg"  >
+      <div class="modal-content">
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h5 class="modal-title" id="editDocTypeModalLabel">Update Document Type for {{ selectedServiceName }}</h5>
+          <button
+          type="button"
+          class="btn-close"
+          (click)="closeEditModal()"
+          aria-label="Close"
+        ></button>
+        
+        </div>
+  
+        <!-- Modal Body -->
+        <div class="form-field" style="padding: 6px 15px;">
+            <label for="doctypecount">How many Document types to need to be added? <span class="required">*</span></label>
+            <fieldset>
+              <select 
+                name="doctypecount" 
+                id="doctypecount" 
+                class="form-select styled-select" 
+                [(ngModel)]="selectedCount" 
+                (ngModelChange)="updateDocType()"
+              >
+                <option value="" disabled selected>Select the number of Document types needed</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10+</option>
+              </select>
+            </fieldset>
+        </div>
+
+         <!-- Display editable textboxes for docTypes -->
+  <div *ngIf="docTypes.length > 0" style="margin-top: 20px; padding: 6px 15px;">
+    <label style="font-weight: bold; display: block; margin-bottom: 10px;">Edit Document Names</label>
+    <div 
+      class="text-box-container" 
+      *ngFor="let docType of docTypes; let i = index  trackBy: trackByIndex"
+      style="display: flex; align-items: center; margin-bottom: 10px;"
+    >
+      <!-- Text Box -->
+      
+      <input 
+        type="text" 
+        [(ngModel)]="docTypes[i]" 
+        [value]="docType" 
+        class="styled-textbox"
+        style="flex: 1; padding: 0.6rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;"
+      />
+      <!-- Delete Icon -->
+      <span 
+        (click)="deleteDocType(i)" 
+        style="cursor: pointer; color: red; padding-left: 9px;"
+      >
+        <svg 
+          width="20" 
+          height="20" 
+          viewBox="0 0 20 20" 
+          fill="none" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path 
+            d="M5 5L15 15" 
+            stroke="currentColor" 
+            stroke-width="2" 
+            stroke-linecap="round"
+          />
+          <path 
+            d="M15 5L5 15" 
+            stroke="currentColor" 
+            stroke-width="2" 
+            stroke-linecap="round"
+          />
+        </svg>
+      </span>
+    </div>
+  </div>
+        
+         <!-- Submit Button -->
+    <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
+      <button
+      class="btn btn-primary" style="white-space: nowrap; background-color: #cf3339 !important;"
+        (click)="submitEditDocuments()"
+      >
+        Submit
+      </button>
+    </div>
+  
+      </div>
+    </div>
+  </div>
