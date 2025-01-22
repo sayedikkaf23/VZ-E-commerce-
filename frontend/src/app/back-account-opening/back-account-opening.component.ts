@@ -44,10 +44,10 @@ export class BackAccountOpeningComponent implements OnInit {
       CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
-
+  
     // Set loading state for the user
     this.loadingStatuses[user.leadWithDetails.LeadId] = true;
-
+  
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
         user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
@@ -58,10 +58,11 @@ export class BackAccountOpeningComponent implements OnInit {
       },
       () => {
         // Clear loading state for the user
-        this.loadingStatuses[user.LeadId] = false;
+        this.loadingStatuses[user.leadWithDetails.LeadId] = false; // Corrected key
       }
     );
   }
+  
   openFileModal(user: any): void {
     if (user.additionalUploadedFiles && user.additionalUploadedFiles.length > 0) {
       this.selectedAdditionalFiles = user.additionalUploadedFiles; // Populate files
