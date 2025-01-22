@@ -19,6 +19,19 @@
   background-color: rgba(0, 0, 0, 0.5); /* Optional: add a semi-transparent background to the container */
 }
 
+.modal-header {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  height: auto;
+  border-bottom: 2px solid #ddd;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+}
+
 /* Modal content */
 .modal-content {
   background-color: #fff;

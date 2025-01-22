@@ -1,0 +1,205 @@
+.modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1050;
+    margin: 0;
+    padding: 0;
+  }
+
+  .modal-header {
+    position: sticky;
+    top: 0;
+    background: #fff;
+    height: auto;
+    border-bottom: 2px solid #ddd;
+    z-index: 10;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+  }
+  
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+  }
+  
+  .modal-content {
+    background: #fff;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 600px;
+    width: 90%;
+    z-index: 1051;
+    position: relative;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    max-height: 80vh; /* Prevent modal from exceeding viewport height */
+  }
+  
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #333;
+  }
+  
+  /* Adjustments for Smaller Screens */
+  @media (max-width: 768px) {
+    .modal-content {
+      padding: 15px;
+      max-width: 90%;
+      width: 100%;
+      font-size: 14px;
+    }
+  
+    .close-btn {
+      font-size: 18px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .modal-content {
+      padding: 10px;
+      font-size: 14px;
+      width: 100%;
+      max-width: 100%;
+    }
+  
+    .close-btn {
+      font-size: 16px;
+      top: 8px;
+      right: 8px;
+    }
+  
+    /* Ensure table inside modal fits within screen */
+    .modal-content table {
+      font-size: 12px; /* Adjust table font size */
+    }
+  
+    /* Centering Button */
+    .btn {
+      font-size: 12px;
+      padding: 5px 8px;
+      width: 100%;
+      text-wrap: nowrap;
+    }
+  }
+  
+  /* Ensures modal scrolls well on very small screens */
+  .modal-content::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .modal-content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+  }
+  .green-button {
+    background-color: #299e60; /* Green color */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    white-space: nowrap; /* Prevent text wrapping */
+
+}
+
+.green-button:hover {
+    background-color: #238d4e; /* Darker green on hover */
+}
+
+  /* General scrollbar customization */
+.table-responsive {
+  overflow-y: auto;
+  overflow-x: auto;
+  scrollbar-width: thin; /* For modern browsers */
+  scrollbar-color: #ccc transparent; /* Light grey scrollbar with no track color */
+}
+
+/* Webkit-based browsers (e.g., Chrome, Edge, Safari) */
+.table-responsive::-webkit-scrollbar {
+  height: 6px; /* Thin scrollbar height */
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Scrollbar thumb color */
+  border-radius: 3px; /* Rounded edges for thumb */
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+  background-color: #999; /* Darker on hover */
+}
+
+.table-responsive::-webkit-scrollbar-track {
+  background-color: transparent; /* Transparent track */
+}
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.file-item:hover {
+  background-color: #f1f1f1;
+  border-color: #bbb;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.file-name,
+.file-type {
+  font-size: 14px;
+  margin: 0;
+  color: #333;
+}
+
+.view-link {
+  font-size: 14px;
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.view-link:hover {
+  color: #0056b3;
+}
+
+.no-files {
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  margin-top: 20px;
+}
