@@ -42,12 +42,12 @@ export class VirtualManagementComponent implements OnInit {
   }
   checkStatus(user: any): void {
     const payload = {
-      CustomerId: user.LeadId,
+      CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
 
     // Set loading state for the user
-    this.loadingStatuses[user.LeadId] = true;
+    this.loadingStatuses[user.leadWithDetails.LeadId] = true;
 
     this.virtualManagementService.checkStatus(payload).subscribe(
       (response) => {

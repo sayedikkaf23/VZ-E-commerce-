@@ -32,21 +32,21 @@
       </thead>
       <tbody>
         <tr *ngFor="let client of clientList">
-          <td>{{ client.firstName }} {{ client.lastName }}</td>
-          <td>{{ client.email }}</td>
-          <td>{{ client.CompanyName }}</td>
-          <td>{{ client.CompanyIncorporated }}</td>
-          <td>{{ client.shareholdercount }}</td>
-          <td>{{ client.mobileNumber.internationalNumber }}</td>
+          <td>{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
+          <td>{{ client.leadWithDetails.Email }}</td>
+          <td>{{ client.userDetails.CompanyName }}</td>
+          <td>{{ client.userDetails.CompanyIncorporated }}</td>
+          <td>{{ client.userDetails.shareholdercount }}</td>
+          <td>{{ client.userDetails.mobileNumber.internationalNumber }}</td>
 
           <td>
             <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary" style="text-wrap: nowrap; overflow: hidden;">View Shareholders</button>
           </td>
           <td>{{ client.screeningDetails?.matchScore }}</td>
           <td>
-            <button class="green-button" (click)="checkStatus(client)" [disabled]="loadingStatuses[client.LeadId]">
-              <ng-container *ngIf="!loadingStatuses[client.LeadId]">Check Status</ng-container>
-              <ng-container *ngIf="loadingStatuses[client.LeadId]">
+            <button class="green-button" (click)="checkStatus(client)" [disabled]="loadingStatuses[client.leadWithDetails.LeadId]">
+              <ng-container *ngIf="!loadingStatuses[client.leadWithDetails.LeadId]">Check Status</ng-container>
+              <ng-container *ngIf="loadingStatuses[client.leadWithDetails.LeadId]">
                 <span class="spinner-border spinner-border-sm"></span> Loading...
               </ng-container>
             </button>
