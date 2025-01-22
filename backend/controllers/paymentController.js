@@ -954,18 +954,9 @@ async function payNowSaleforce(req, res) {
     const endpointUrl = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${paynowdata.transactionDetails.quotePaymentId}`;
     console.log("requestBodySalesforce",requestBodySalesforce)
 
-    axios
-      .put(endpointUrl, requestBodySalesforce, { headers })
-      .then((response) => {
-        // Handle the response here
-        console.log("Response paid:", response.data);
-      })
-      .catch((error) => {
-        // Handle errors here
-        console.error("Error:", error);
-      });
+    const response1 = await axios.put(endpointUrl, requestBodySalesforce, { headers });
 
-
+console.log(response1,"response 1 data")
 
       const requestBodySalesforce2 = {
         qp: {
@@ -996,48 +987,37 @@ async function payNowSaleforce(req, res) {
   
       console.log(requestBodySalesforce2,"requestBodySalesforce2")
       // Making the second API call
-       axios.put(endpointUrl2, requestBodySalesforce2, { headers })
-      .then(async (response2) => {
-        console.log("Second API Response:", response2.data);
-        const { invoiceDate, invoiceNumber } = response2.data;
-
-        const updatedDocument = await PiData.updateOne(
-          { _id: PiDataCheck._id }, // Match by the found document's ID
-          {
-            $set: {
-              invoiceDate: invoiceDate, // Extracted from the response
-              invoiceNumber: invoiceNumber, // Extracted from the response
-            },
-          }
-        );
-
-
-
-
-        res.json({
-          message: "Success",
-          response2: response2.data,
-        });
-
-      })
-      .catch((error) => {
-        // Handle errors from both API calls
-        if (error.response) {
-          console.error("Error Response:", error.response.data); // API response error data
-          console.error("Status Code:", error.response.status); // HTTP status code
-        } else if (error.request) {
-          console.error("No Response Received:", error.request); // No response received
-        } else {
-          console.error("Error Message:", error.message); // Other errors
+      const response2 = await axios.put(endpointUrl2, requestBodySalesforce2, { headers });
+console.log(response2,"response 2 data")
+      const { invoiceDate, invoiceNumber } = response2.data;
+    if (PiDataCheck) {
+      await PiData.updateOne(
+        { _id: PiDataCheck._id },
+        {
+          $set: {
+            invoiceDate,
+            invoiceNumber,
+          },
         }
-        console.error("Full Error Object:", error); // Complete error object
-      });
-    
+      );
+    }
 
-    const userEmail = paynowdata.customerDetails.id; // Get the email
-    const username = paynowdata.customerDetails.name; // Get the email
-    const Amount = paynowdata.transactionDetails.amount; // Get the email
-    const planName = PiDataCheck ? PiDataCheck.planname || "" : "";
+    // 12. Mark isPayment = true on PiData if it exists
+    if (PiDataCheck) {
+      await PiData.updateOne(
+        { _id: PiDataCheck._id },
+        { $set: { isPayment: true } }
+      );
+      console.log("isPayment updated to true for:", PiDataCheck._id);
+    } else {
+      console.log("No document found for the given quoteId.");
+    }
+
+    // 13. Handle user creation and email sending
+    const userEmail = paynowdata.customerDetails.id;
+    const username = paynowdata.customerDetails.name;
+    const Amount = paynowdata.transactionDetails.amount;
+    const planName = PiDataCheck?.planname || "";
 
 
     console.log(planName,"planName................",PiDataCheck)
@@ -1255,13 +1235,25 @@ if (PiDataCheck) {
 } else {
   console.log("No document found for the given quoteId.");
 }
-// res.json({ message: "Success" });
+res.json({
+  message: "Success",
+  response2: response2.data,
+});
 
   } catch (error) {
-    console.log(error);
-    res
-      .status(500)
-      .json({ message: "Internal Server Error", error: error.message });
+    console.error("Error in payNowSaleforce:", error);
+    if (error.response) {
+      console.error("Error Response Data:", error.response.data);
+      console.error("Status Code:", error.response.status);
+    } else if (error.request) {
+      console.error("No Response Received:", error.request);
+    } else {
+      console.error("Error Message:", error.message);
+    }
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
   }
 }
 

@@ -301,60 +301,7 @@ const routes: Routes = [
       
     ],
   },
-  {
-    path: 'user',
-    component: UserDashboardLayoutComponent,
-    children: [
-      // {
-      //   path: 'dashboard',
-      //   component: UserDashboardComponent,
-       
-      // },
-      {
-        path: 'PersonalBank-account-opening',
-        component: BackAccountOpeningComponent,
-       
-      },
-      {
-        path: 'admin-settings',
-        component: SettingsComponent,
-       
-      },
-      {
-        path: 'payment-modes',
-        component: PaymentModesManagementComponent,
-       
-      },
-      {
-        path: 'business-bank-account',
-        component: BusinessBankAccountComponent,
-       
-      },
-
-        {
-        path: 'customer-management',
-        component: CustomerManagementComponent,
-       
-      },
-      {
-        path: 'admin-mail-management',
-        component: AdminMailManagementComponent,
-       
-      },
-      {
-        path: 'payment-methord',
-        component:AdminPaymentMethordComponent,
-       
-      },
-      {
-        path: 'admin-virtual-management',
-        component: VirtualManagementComponent,
-       
-      },
-     
-      
-    ],
-  },
+ 
 ];
 
 @NgModule({

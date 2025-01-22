@@ -12,7 +12,9 @@ export class BackAccountOpeningComponent implements OnInit {
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
   loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
-
+  selectedAdditionalFiles: any[] = []; // To store the additional files for the modal
+  showFileModal: boolean = false; // Control the visibility of the modal
+  
   constructor(private adminAuthService: AdminAuthService) {}
 
   ngOnInit(): void {
@@ -32,19 +34,19 @@ export class BackAccountOpeningComponent implements OnInit {
   }
 
   checkColumnData(): void {
-    this.hasSalaryData = this.userList.some((user) => !!user.salary);
-    this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
+    this.hasSalaryData = this.userList.some((user) => !!user.userDetails.salary);
+    this.hasCompanyNameData = this.userList.some((user) => !!user.userDetails.companyname);
   }
 
   // Method to call checkStatus API and store CaseStatusCode
   checkStatus(user: any): void {
     const payload = {
-      CustomerId: user.LeadId,
+      CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
 
     // Set loading state for the user
-    this.loadingStatuses[user.LeadId] = true;
+    this.loadingStatuses[user.leadWithDetails.LeadId] = true;
 
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
@@ -60,4 +62,25 @@ export class BackAccountOpeningComponent implements OnInit {
       }
     );
   }
+  openFileModal(user: any): void {
+    if (user.additionalUploadedFiles && user.additionalUploadedFiles.length > 0) {
+      this.selectedAdditionalFiles = user.additionalUploadedFiles; // Populate files
+      this.showFileModal = true; // Show modal
+    } else {
+      console.warn('No files available.');
+    }
+  }
+  
+  closeFileModal(): void {
+    this.showFileModal = false; // Hide modal
+    this.selectedAdditionalFiles = []; // Clear files
+  }
+  
+  
+  isImage(fileName: string): boolean {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+    const extension = fileName.split('.').pop()?.toLowerCase();
+    return imageExtensions.includes(extension || '');
+  }
+  
 }

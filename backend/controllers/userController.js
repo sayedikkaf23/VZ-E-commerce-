@@ -674,14 +674,41 @@ exports.getAllSubmissions = async (req, res) => {
 };
 exports.getPersonalBank = async (req, res) => {
   try {
-    const personalBankSubmissions = await UserDetails.find({ type: "Personal Bank" }); // Fetch submissions with type "Personal Bank"
-    res.status(200).json(personalBankSubmissions); // Return personal bank submissions as JSON
+    // Fetch documents from the PiData collection with subcategory 'business'
+    const PersonalBankSubmissions = await Pidata.find({ subcategory: "personal" });
+
+    // Prepare an array to store the merged results
+    const mergedResults = [];
+
+    // Loop through each PiData document and find corresponding UserDetails data
+    for (const submission of PersonalBankSubmissions) {
+      const { quotePaymentWithDetails } = submission;
+      const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
+
+      // Fetch the corresponding UserDetails document using QuotePaymentId
+      const userDetails = await UserDetails.findOne({ "QuotePaymentId": quotePaymentId });
+
+      // Merge PiData and UserDetails
+      const mergedData = {
+        ...submission._doc, // Use _doc to get the plain object representation of the document
+        userDetails: userDetails || null, // Add userDetails data or set null if not found
+      };
+
+      mergedResults.push(mergedData);
+    }
+
+    // Return the merged results as a JSON response
+    res.status(200).json(mergedResults);
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: "Error fetching personal bank submissions", details: error.message });
+    // Handle errors and return an appropriate response
+    res.status(500).json({
+      error: "Error fetching business bank submissions",
+      details: error.message,
+    });
   }
 };
+
+
 exports.getBusinessBank = async (req, res) => {
   try {
     // Fetch documents from the PiData collection with subcategory 'business'
@@ -696,7 +723,7 @@ exports.getBusinessBank = async (req, res) => {
       const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
 
       // Fetch the corresponding UserDetails document using QuotePaymentId
-      const userDetails = await UserDetails.findOne({ "quotePaymentWithDetails.QuotePaymentId": quotePaymentId });
+      const userDetails = await UserDetails.findOne({ "QuotePaymentId": quotePaymentId });
 
       // Merge PiData and UserDetails
       const mergedData = {

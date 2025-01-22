@@ -136,3 +136,56 @@
 .table-responsive::-webkit-scrollbar-track {
   background-color: transparent; /* Transparent track */
 }
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.file-item:hover {
+  background-color: #f1f1f1;
+  border-color: #bbb;
+}
+
+.file-details {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.file-name,
+.file-type {
+  font-size: 14px;
+  margin: 0;
+  color: #333;
+}
+
+.view-link {
+  font-size: 14px;
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.view-link:hover {
+  color: #0056b3;
+}
+
+.no-files {
+  text-align: center;
+  font-size: 14px;
+  color: #999;
+  margin-top: 20px;
+}
