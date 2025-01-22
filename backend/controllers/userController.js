@@ -674,7 +674,7 @@ exports.getAllSubmissions = async (req, res) => {
 };
 exports.getPersonalBank = async (req, res) => {
   try {
-    // Fetch documents from the PiData collection with subcategory 'business'
+    // Fetch documents from the PiData collection with subcategory 'personal'
     const PersonalBankSubmissions = await Pidata.find({ subcategory: "personal" });
 
     // Prepare an array to store the merged results
@@ -688,25 +688,28 @@ exports.getPersonalBank = async (req, res) => {
       // Fetch the corresponding UserDetails document using QuotePaymentId
       const userDetails = await UserDetails.findOne({ "QuotePaymentId": quotePaymentId });
 
-      // Merge PiData and UserDetails
-      const mergedData = {
-        ...submission._doc, // Use _doc to get the plain object representation of the document
-        userDetails: userDetails || null, // Add userDetails data or set null if not found
-      };
+      if (userDetails) {
+        // Merge PiData and UserDetails only if userDetails is not null
+        const mergedData = {
+          ...submission._doc, // Use _doc to get the plain object representation of the document
+          userDetails, // Add userDetails data
+        };
 
-      mergedResults.push(mergedData);
+        mergedResults.push(mergedData);
+      }
     }
 
-    // Return the merged results as a JSON response
+    // Return the filtered merged results as a JSON response
     res.status(200).json(mergedResults);
   } catch (error) {
     // Handle errors and return an appropriate response
     res.status(500).json({
-      error: "Error fetching business bank submissions",
+      error: "Error fetching personal bank submissions",
       details: error.message,
     });
   }
 };
+
 
 
 exports.getBusinessBank = async (req, res) => {

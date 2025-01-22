@@ -38,19 +38,19 @@ export class BackAccountOpeningComponent implements OnInit {
   }
 
   checkColumnData(): void {
-    this.hasSalaryData = this.userList.some((user) => !!user.userDetails.salary);
-    this.hasCompanyNameData = this.userList.some((user) => !!user.userDetails.companyname);
+    this.hasSalaryData = this.userList.some((user) => !!user.userDetails?.salary);
+    this.hasCompanyNameData = this.userList.some((user) => !!user.userDetails?.companyname);
   }
 
   // Method to call checkStatus API and store CaseStatusCode
   checkStatus(user: any): void {
     const payload = {
-      CustomerId: user.leadWithDetails.LeadId,
+      CustomerId: user.leadWithDetails?.LeadId,
       CompanyName: 'Virtuzone',
     };
 
     // Set loading state for the user
-    this.loadingStatuses[user.leadWithDetails.LeadId] = true;
+    this.loadingStatuses[user.leadWithDetails?.LeadId] = true;
 
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
