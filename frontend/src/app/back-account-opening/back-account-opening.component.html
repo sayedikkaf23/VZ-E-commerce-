@@ -67,7 +67,35 @@
          
           
         </tr>
-      </tbody>
+        <tbody>
+          <tr *ngFor="let user of userList">
+            <td>{{ user.leadWithDetails?.FirstName }} {{ user.leadWithDetails?.LastName }}</td>
+            <td>{{ user.leadWithDetails?.Email }}</td>
+            <td>{{ user.leadWithDetails?.Nationality }}</td>
+            <td>{{ user.userDetails?.birthday | date: 'yyyy-MM-dd' }}</td>
+            <td>{{ user.userDetails?.resident }}</td>
+            <td>{{ user.userDetails?.working }}</td>
+            <td *ngIf="user.userDetails?.salary">{{ user.userDetails?.salary }}</td>
+            <td *ngIf="user.userDetails?.companyname">{{ user.userDetails?.companyname }}</td>
+            <td>{{ user.userDetails?.Bank }}</td>
+            <td>{{ user.screeningDetails?.matchScore }}</td>
+            <td>
+              <button class="green-button" (click)="checkStatus(user)" [disabled]="loadingStatuses[user.leadWithDetails?.LeadId]">
+                <ng-container *ngIf="!loadingStatuses[user.leadWithDetails?.LeadId]">Check Status</ng-container>
+                <ng-container *ngIf="loadingStatuses[user.leadWithDetails?.LeadId]">
+                  <span class="spinner-border spinner-border-sm"></span> Loading...
+                </ng-container>
+              </button>
+            </td>
+            <td>{{ user.CustomerStatus }}</td>
+            <td>
+              <button class="green-button" (click)="openFileModal(user)">
+                View File
+              </button>
+            </td>
+          </tr>
+        </tbody>
+        
     </table>
   </div>
  
