@@ -1,3 +1,9 @@
+<!-- Common Loader -->
+<div *ngIf="isLoading" class="global-loader">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
 <div class="content">
   <div class="page-heading">
     <div class="row align-items-center justify-content-between">
@@ -44,11 +50,8 @@
           </td>
           <td>{{ client.screeningDetails?.matchScore }}</td>
           <td>
-            <button class="green-button" (click)="checkStatus(client)" [disabled]="loadingStatuses[client.leadWithDetails.LeadId]">
-              <ng-container *ngIf="!loadingStatuses[client.leadWithDetails.LeadId]">Check Status</ng-container>
-              <ng-container *ngIf="loadingStatuses[client.leadWithDetails.LeadId]">
-                <span class="spinner-border spinner-border-sm"></span> Loading...
-              </ng-container>
+            <button class="green-button" (click)="checkStatus(client)" [disabled]="isLoading">
+              Check Status
             </button>
           </td>
           <td>{{ client.CustomerStatus }}</td>

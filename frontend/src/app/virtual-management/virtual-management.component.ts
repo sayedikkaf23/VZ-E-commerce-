@@ -40,29 +40,34 @@ export class VirtualManagementComponent implements OnInit {
     this.hasSalaryData = this.userList.some((user) => !!user.salary);
     this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
   }
+  isLoading: boolean = false; // Global loader state
+
   checkStatus(user: any): void {
     const payload = {
       CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
-
-    // Set loading state for the user
-    this.loadingStatuses[user.leadWithDetails.LeadId] = true;
-
+  
+    // Start the global loader
+    this.isLoading = true;
+  
     this.virtualManagementService.checkStatus(payload).subscribe(
       (response) => {
-        user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
+        // Update user status with the response
+        user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
         console.log('Status check response:', response);
       },
       (error) => {
+        // Handle API error
         console.error('Error checking status:', error);
       },
       () => {
-        // Clear loading state for the user
-        this.loadingStatuses[user.LeadId] = false;
+        // Stop the global loader
+        this.isLoading = false;
       }
     );
   }
+  
   openClientDetails(shareholders: any[]): void {
     console.log(shareholders)
     this.selectedClientDetails = shareholders; // Assign shareholder data to display in the modal

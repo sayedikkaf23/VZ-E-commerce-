@@ -1,3 +1,11 @@
+<!-- Common Loader -->
+<div *ngIf="isLoading" class="global-loader">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+
 <div class="content">
     <div class="page-heading">
       <div class="row align-items-center justify-content-between">
@@ -43,13 +51,11 @@
             </td>
             <td>{{ mail.screeningDetails?.matchScore }}</td>
             <td>
-              <button class="green-button" (click)="checkStatus(mail)" [disabled]="loadingStatuses[mail.leadWithDetails.LeadId]">
-                <ng-container *ngIf="!loadingStatuses[mail.leadWithDetails.LeadId]">Check Status</ng-container>
-                <ng-container *ngIf="loadingStatuses[mail.leadWithDetails.LeadId]">
-                  <span class="spinner-border spinner-border-sm"></span> Loading...
-                </ng-container>
+              <button class="green-button" (click)="checkStatus(mail)" [disabled]="isLoading">
+                Check Status
               </button>
             </td>
+            
             <td>{{ mail.CustomerStatus }}</td>
             <td>
               <button class="green-button" (click)="openFileModal(mail.additionalUploadedFiles)">

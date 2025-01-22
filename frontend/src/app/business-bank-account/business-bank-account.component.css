@@ -230,4 +230,27 @@
     color: #999;
     margin-top: 20px;
   }
+  .global-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background shadow */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .spinner-border {
+    width: 3rem;
+    height: 3rem;
+    color: #eaf1ec; /* Change spinner color (green) */
+  }
+  
+  .spinner-border::after {
+    background-color: #e7f0e9;
+  }
+  
   

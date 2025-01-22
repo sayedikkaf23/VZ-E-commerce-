@@ -1,3 +1,8 @@
+<div *ngIf="isLoading" class="global-loader">
+  <div class="spinner-border" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
 <div class="content">
   <div class="page-heading">
     <div class="row align-items-center justify-content-between">
@@ -30,8 +35,8 @@
           <th scope="col">Match Score &#x2191;&#x2193;</th>
 
         
-          <th scope="col">KYC Status &#x2191;&#x2193;</th>
           <th scope="col">Action &#x2191;&#x2193;</th>
+          <th scope="col">KYC Status &#x2191;&#x2193;</th>
           <th scope="col">View File &#x2191;&#x2193;</th>
 
         </tr>
@@ -51,11 +56,8 @@
           <td>{{ user.screeningDetails?.matchScore }}</td>
 
           <td>
-            <button class="green-button" (click)="checkStatus(user)" [disabled]="loadingStatuses[user.leadWithDetails.LeadId]">
-              <ng-container *ngIf="!loadingStatuses[user.leadWithDetails.LeadId]">Check Status</ng-container>
-              <ng-container *ngIf="loadingStatuses[user.leadWithDetails.LeadId]">
-                <span class="spinner-border spinner-border-sm"></span> Loading...
-              </ng-container>
+            <button class="green-button" (click)="checkStatus(user)" [disabled]="isLoading">
+              Check Status
             </button>
           </td>
           <td>{{ user.CustomerStatus }}</td>

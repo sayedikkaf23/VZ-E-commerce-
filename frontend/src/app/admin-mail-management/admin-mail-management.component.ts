@@ -40,29 +40,34 @@ export class AdminMailManagementComponent {
     this.hasSalaryData = this.userList.some((user) => !!user.salary);
     this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
   }
+  isLoading: boolean = false; // Global loader state
+
   checkStatus(user: any): void {
     const payload = {
       CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
-
-    // Set loading state for the user
-    this.loadingStatuses[user.leadWithDetails.LeadId] = true;
-
+  
+    // Start the global loader
+    this.isLoading = true;
+  
     this.mailManagementService.checkStatus(payload).subscribe(
       (response) => {
-        user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
+        // Update user status with the response
+        user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
         console.log('Status check response:', response);
       },
       (error) => {
+        // Handle API error
         console.error('Error checking status:', error);
       },
       () => {
-        // Clear loading state for the user
-        this.loadingStatuses[user.LeadId] = false;
+        // Stop the global loader
+        this.isLoading = false;
       }
     );
   }
+  
   openMailDetails(details: any): void {
     this.selectedMailDetails = details; // Assign selected mail details
     this.showModal = true; // Open the modal for shareholders

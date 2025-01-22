@@ -15,6 +15,8 @@ export class BusinessBankAccountComponent implements OnInit {
   hasCompanyNameData: boolean = false;
   showFileModal: boolean = false; // New flag for file modal
   selectedAdditionalFiles: any[] = []; // Selected files for the modal
+  isLoading: boolean = false; // Single loader state for all actions
+
   // Dummy data for shareholders
   dummyShareholders = [
     { name: 'John Doe', id: 'SH001', percentage: 25 },
@@ -47,30 +49,38 @@ export class BusinessBankAccountComponent implements OnInit {
     this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
   }
 
-  // Method to call checkStatus API and store CaseStatusCode
   checkStatus(user: any): void {
     const payload = {
       CustomerId: user.LeadId,
       CompanyName: 'Virtuzone',
     };
-
-    // Set loading state for the user
-    this.loadingStatuses[user.LeadId] = true;
-
+  
+    // Start the global loader
+    this.isLoading = true;
+  
+    console.log('Loading started');
+  
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
-        user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
-        console.log('Status check response:', response);
+        // Update user status with the response
+        user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
+        console.log(`API response for user ${user.LeadId}:`, response);
       },
       (error) => {
-        console.error('Error checking status:', error);
+        // Handle API error
+        console.error(`API error for user ${user.LeadId}:`, error);
       },
       () => {
-        // Clear loading state for the user
-        this.loadingStatuses[user.LeadId] = false;
+        // Stop the global loader after API call completes
+        this.isLoading = false;
+        console.log('Loading ended');
       }
     );
   }
+  
+  
+  
+  
   
  openModal(shareholders: any[]): void {
   if (shareholders && shareholders.length > 0) {

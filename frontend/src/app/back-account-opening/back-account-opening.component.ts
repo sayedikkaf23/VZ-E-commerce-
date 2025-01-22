@@ -34,34 +34,38 @@ export class BackAccountOpeningComponent implements OnInit {
   }
 
   checkColumnData(): void {
-    this.hasSalaryData = this.userList.some((user) => !!user.salary);
-    this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
+    this.hasSalaryData = this.userList.some((user) => !!user.userDetails.salary);
+    this.hasCompanyNameData = this.userList.some((user) => !!user.userDetails.companyname);
   }
 
-  // Method to call checkStatus API and store CaseStatusCode
+  isLoading: boolean = false; // Global loading state
+
   checkStatus(user: any): void {
     const payload = {
       CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
   
-    // Set loading state for the user
-    this.loadingStatuses[user.leadWithDetails.LeadId] = true;
+    // Start the global loader
+    this.isLoading = true;
   
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
-        user.CustomerStatus = response.data?.CustomerStatus; // Store CaseStatusCode in user
+        // Store the response in the user object
+        user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
         console.log('Status check response:', response);
       },
       (error) => {
+        // Handle errors
         console.error('Error checking status:', error);
       },
       () => {
-        // Clear loading state for the user
-        this.loadingStatuses[user.leadWithDetails.LeadId] = false; // Corrected key
+        // Stop the global loader after API completion
+        this.isLoading = false;
       }
     );
   }
+  
   
   openFileModal(user: any): void {
     if (user.additionalUploadedFiles && user.additionalUploadedFiles.length > 0) {
