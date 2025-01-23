@@ -24,7 +24,8 @@ export class CustomerCardmanagementComponent implements OnInit {
   isSidebarActive = false;
   userName: string = ''; // Property to store the user's name
   showModal = false;
-  
+  businessBanks: any[] = [];
+personalBanks: any[] = [];
   // Will store the shareholders to display in the modal
   selectedShareholders: any[] = [];
   selectedaddAdditionalFile: any[] = [];
@@ -67,6 +68,8 @@ export class CustomerCardmanagementComponent implements OnInit {
 
   // Fetch Mail Managements
   this.fetchMailManagements();
+  this.fetchBusinessBanks();
+  this.fetchPersonalBanks();
 }
 
 fetchVirtualReceptions(): void {
@@ -95,6 +98,29 @@ fetchMailManagements(): void {
 
 
 
+fetchBusinessBanks(): void {
+  this.documenttypeService.getBusinessBanks().subscribe(
+    (data) => {
+      console.log('Business Banks:', data);
+      this.businessBanks = data; // Store the response
+    },
+    (error) => {
+      console.error('Error fetching business banks:', error);
+    }
+  );
+}
+
+fetchPersonalBanks(): void {
+  this.documenttypeService.getPersonalBanks().subscribe(
+    (data) => {
+      console.log('Personal Banks:', data);
+      this.personalBanks = data; // Store the response
+    },
+    (error) => {
+      console.error('Error fetching personal banks:', error);
+    }
+  );
+}
 
 
   extractNameFromEmail(email: string): string {
