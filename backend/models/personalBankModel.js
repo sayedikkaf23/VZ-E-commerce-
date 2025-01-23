@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const personalBankSchema = new mongoose.Schema({
     isActive: {
         type: Boolean,
-        required: true
+        required: true,
+        default: true
     },
     documentType: {
         type: String,

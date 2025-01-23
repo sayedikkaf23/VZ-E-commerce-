@@ -5,17 +5,21 @@ const personalBankController = require("../controllers/documentTypeController");
 // Signup route
 router.post('/personal-bank', personalBankController.createPersonalBank);
 router.get('/personal-bank', personalBankController.getPersonalBanks);
+router.put('/personal-bank', personalBankController.updatePersonalBank); // Update route
 
 // Business Bank routes
 router.post('/business-bank', personalBankController.createBusinessBank);
 router.get('/business-bank', personalBankController.getBusinessBanks);
+// router.put('/business-bank', personalBankController.updateBusinessBank); // Update route
 
 // Virtual Reception routes
 router.post('/virtual-reception', personalBankController.createVirtualReception);
 router.get('/virtual-reception', personalBankController.getVirtualReceptions);
+router.put('/virtual-reception', personalBankController.updateVirtualReception); // Update route
 
 // Mail Management routes
 router.post('/mail-management', personalBankController.createMailManagement);
 router.get('/mail-management', personalBankController.getMailManagements);
+router.put('/mail-management', personalBankController.updateMailManagement); // Update route
 
 module.exports = router;
