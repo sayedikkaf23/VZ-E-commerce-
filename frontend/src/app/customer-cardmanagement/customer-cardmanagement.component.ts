@@ -3,7 +3,7 @@ import { UserService } from '../service/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
-
+import { DocumenttypeService } from '../service/documenttype.service';
 interface Service {
   name: string;
   description: string;
@@ -24,7 +24,8 @@ export class CustomerCardmanagementComponent implements OnInit {
   isSidebarActive = false;
   userName: string = ''; // Property to store the user's name
   showModal = false;
-  
+  businessBanks: any[] = [];
+personalBanks: any[] = [];
   // Will store the shareholders to display in the modal
   selectedShareholders: any[] = [];
   selectedaddAdditionalFile: any[] = [];
@@ -42,6 +43,8 @@ export class CustomerCardmanagementComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private toastr: ToastrService,
+    private documenttypeService: DocumenttypeService // Add this
+
   ) {
    
   }
@@ -58,7 +61,68 @@ export class CustomerCardmanagementComponent implements OnInit {
     } else {
       console.error('No email found in localStorage.');
     }
-  }
+
+
+ // Fetch Virtual Receptions
+  this.fetchVirtualReceptions();
+
+  // Fetch Mail Managements
+  this.fetchMailManagements();
+  this.fetchBusinessBanks();
+  this.fetchPersonalBanks();
+}
+
+fetchVirtualReceptions(): void {
+  this.documenttypeService.getVirtualReceptions().subscribe(
+    (data) => {
+      console.log('Virtual Receptions:', data);
+      // Do something with the data
+    },
+    (error) => {
+      console.error('Error fetching virtual receptions:', error);
+    }
+  );
+}
+
+fetchMailManagements(): void {
+  this.documenttypeService.getMailManagements().subscribe(
+    (data) => {
+      console.log('Mail Managements:', data);
+      // Do something with the data
+    },
+    (error) => {
+      console.error('Error fetching mail managements:', error);
+    }
+  );
+}
+
+
+
+fetchBusinessBanks(): void {
+  this.documenttypeService.getBusinessBanks().subscribe(
+    (data) => {
+      console.log('Business Banks:', data);
+      this.businessBanks = data; // Store the response
+    },
+    (error) => {
+      console.error('Error fetching business banks:', error);
+    }
+  );
+}
+
+fetchPersonalBanks(): void {
+  this.documenttypeService.getPersonalBanks().subscribe(
+    (data) => {
+      console.log('Personal Banks:', data);
+      this.personalBanks = data; // Store the response
+    },
+    (error) => {
+      console.error('Error fetching personal banks:', error);
+    }
+  );
+}
+
+
   extractNameFromEmail(email: string): string {
     return email.split('@')[0]; // Get the part before the '@' symbol
   }
