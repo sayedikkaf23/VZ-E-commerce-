@@ -19,6 +19,18 @@
   background-color: rgba(0, 0, 0, 0.5); /* Optional: add a semi-transparent background to the container */
 }
 
+/* Modal content */
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  width: 593px; /* Adjust width for better layout */
+  max-width: 90vw; /* Responsive width on smaller screens */
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1001;
+}
+
 .modal-header {
   position: sticky;
   top: 0;
@@ -32,21 +44,6 @@
   margin: 0;
 }
 
-
-/* Modal content */
-.modal-content {
-  background: #fff;
-  margin: 0 auto;
-  padding: 0px !important;
-  border-radius: 5px;
-  max-width: 600px;
-  width: 90%;
-  z-index: 1051;
-  position: relative;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  overflow-y: auto; /* Allow scrolling if content overflows */
-  max-height: 80vh; /* Prevent modal from exceeding viewport height */
-}
 
 /* Close button */
 .close-btn {
@@ -124,126 +121,4 @@
 .table-responsive::-webkit-scrollbar-track {
   background-color: transparent; /* Transparent track */
 }
-/* Modal container */
-.modal-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.7); /* Darker backdrop */
-}
 
-/* Modal backdrop */
-.modal-backdrop {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-}
-
-/* Modal content */
-.modal-content {
-  position: relative;
-  background-color: #fff;
-  padding: 20px;
-  width: 600px;
-  max-width: 90%;
-  border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  z-index: 1001;
-}
-
-/* Close button */
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
-  cursor: pointer;
-  color: #555;
-}
-
-.close-btn:hover {
-  color: #000;
-}
-
-/* Modal title */
-.modal-title {
-  margin-bottom: 20px;
-  font-size: 20px;
-  font-weight: bold;
-  color: #333;
-  text-align: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
-}
-
-/* File list container */
-.file-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  margin-top: 15px;
-}
-
-/* Individual file item */
-.file-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 15px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  background-color: #f9f9f9;
-}
-
-.file-item:hover {
-  background-color: #f1f1f1;
-  border-color: #bbb;
-}
-
-/* File details */
-.file-details {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-
-.file-type {
-  font-size: 14px;
-  font-weight: bold;
-  color: #333;
-}
-
-.file-name {
-  font-size: 13px;
-  color: #666;
-  margin: 0;
-}
-
-/* View file link */
-.view-link {
-  font-size: 14px;
-  font-weight: bold;
-  color: #007bff;
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.view-link:hover {
-  color: #0056b3;
-}
-
-/* No files message */
-.no-files {
-  text-align: center;
-  font-size: 14px;
-  color: #999;
-  margin-top: 20px;
-}
