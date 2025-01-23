@@ -74,21 +74,83 @@ export class AdminDocumentTypeComponent {
 
   openEditDocType(serviceName: string): void {
     this.selectedServiceName = serviceName;
-
-    this.docTypes = this.docTypesMap[serviceName] || [];
+  
+    // Fetch document types based on the service name
+    switch (serviceName) {
+      case 'Bank Account Opening':
+        this.documenttypeService.getPersonalBanks().subscribe(
+          (response: any[]) => {
+            this.docTypes = response.map((item) => item.documentType); // Extract the documentType field
+            this.selectedCount = this.docTypes.length; 
+          },
+          (error) => {
+            console.error('Error fetching Personal Banks:', error);
+            this.docTypes = []; // Fallback in case of an error
+          }
+        );
+        break;
+  
+      // case 'Business Bank':
+      //   this.documenttypeService.getBusinessBanks().subscribe(
+      //     (response: any[]) => {
+      //       this.docTypes = response.map((item) => item.documentType);
+      //     },
+      //     (error) => {
+      //       console.error('Error fetching Business Banks:', error);
+      //       this.docTypes = [];
+      //     }
+      //   );
+      //   break;
+  
+      case 'Virtual Receptionist':
+        this.documenttypeService.getVirtualReceptions().subscribe(
+          (response: any[]) => {
+            this.docTypes = response.map((item) => item.documentType);
+            this.selectedCount = this.docTypes.length; 
+          },
+          (error) => {
+            console.error('Error fetching Virtual Receptions:', error);
+            this.docTypes = [];
+          }
+        );
+        break;
+  
+      case 'Mail Management':
+        this.documenttypeService.getMailManagements().subscribe(
+          (response: any[]) => {
+            this.docTypes = response.map((item) => item.documentType);
+            this.selectedCount = this.docTypes.length; 
+          },
+          (error) => {
+            console.error('Error fetching Mail Managements:', error);
+            this.docTypes = [];
+          }
+        );
+        break;
+  
+      default:
+        console.warn('Unknown service name:', serviceName);
+        this.docTypes = [];
+        this.selectedCount = 0;
+        break;
+    }
+  
+    // Show the modal
     this.showModal = true;
     const modalElement = document.getElementById('editDocTypeModal');
     if (modalElement) {
       modalElement.style.display = 'block'; // Show modal
       modalElement.classList.add('show'); // Add 'show' class
     }
-
+  
     // Add blur effect to the main content
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.classList.add('blurred');
     }
   }
+  
+  
 
   closeAddModal(): void {
     const modalElement = document.getElementById('docTypeModal');
@@ -243,24 +305,80 @@ export class AdminDocumentTypeComponent {
 
   submitEditDocuments(): void {
     if (this.selectedServiceName) {
-      // Update docTypes for the specific service in the map
-      this.docTypesMap[this.selectedServiceName] = [...this.docTypes];
-
+      // Prepare the payload for the update API
+      const updatedData = this.docTypes.map((docType, index) => ({
+        // id: this.docTypesMap[this.selectedServiceName][index]?._id, // Use existing id if available
+        documentType: docType,
+        isActive: true, // Assuming all are active by default
+      }));
+  
+      // Call the appropriate update API based on the selected service name
+      switch (this.selectedServiceName) {
+        case 'Bank Account Opening':
+          this.documenttypeService.updatePersonalBank(updatedData).subscribe(
+            (response) => {
+              console.log('Personal Bank updated successfully:', response);
+            },
+            (error) => {
+              console.error('Error updating Personal Bank:', error);
+            }
+          );
+          break;
+  
+        case 'Business Bank':
+          this.documenttypeService.updateBusinessBank(updatedData).subscribe(
+            (response) => {
+              console.log('Business Bank updated successfully:', response);
+            },
+            (error) => {
+              console.error('Error updating Business Bank:', error);
+            }
+          );
+          break;
+  
+        case 'Virtual Receptionist':
+          this.documenttypeService.updateVirtualReception(updatedData).subscribe(
+            (response) => {
+              console.log('Virtual Reception updated successfully:', response);
+            },
+            (error) => {
+              console.error('Error updating Virtual Reception:', error);
+            }
+          );
+          break;
+  
+        case 'Mail Management':
+          this.documenttypeService.updateMailManagement(updatedData).subscribe(
+            (response) => {
+              console.log('Mail Management updated successfully:', response);
+            },
+            (error) => {
+              console.error('Error updating Mail Management:', error);
+            }
+          );
+          break;
+  
+        default:
+          console.warn('No matching service found for:', this.selectedServiceName);
+          return; // Exit early if no service is matched
+      }
+  
       // Remove blur effect from the main content
       const mainContent = document.getElementById('main-content');
       if (mainContent) {
         mainContent.classList.remove('blurred');
       }
-
+  
       // Close the edit modal
       const editModalElement = document.getElementById('editDocTypeModal');
       if (editModalElement) {
         editModalElement.style.display = 'none'; // Hide the modal
         editModalElement.classList.remove('show'); // Remove "show" class
       }
-
+  
       // Optionally, reset docTypes if needed for next usage
       this.docTypes = [];
     }
   }
+  
 }

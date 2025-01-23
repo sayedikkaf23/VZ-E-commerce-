@@ -149,3 +149,111 @@ exports.getBusinessBanks = async (req, res) => {
 };
 
 
+exports.updateMailManagement = async (req, res) => {
+    try {
+        const updates = req.body; // Expecting an array of objects with id and updates
+
+        if (!Array.isArray(updates)) {
+            return res.status(400).json({ message: "Request body should be an array of updates." });
+        }
+
+        const updatedMailManagements = [];
+        for (const update of updates) {
+            const { id, documentType, isActive } = update;
+
+            if (!id || !documentType) {
+                return res.status(400).json({ message: "Each update must include an id and documentType." });
+            }
+
+            const updatedMailManagement = await MailManagement.findByIdAndUpdate(
+                id,
+                { documentType, isActive: isActive ?? true },
+                { new: true }
+            );
+
+            if (!updatedMailManagement) {
+                return res.status(404).json({ message: `MailManagement with id ${id} not found.` });
+            }
+
+            updatedMailManagements.push(updatedMailManagement);
+        }
+
+        res.status(200).json(updatedMailManagements); // Return all updated documents
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+exports.updatePersonalBank = async (req, res) => {
+    try {
+        const updates = req.body; // Expecting an array of objects with id and updates
+
+        if (!Array.isArray(updates)) {
+            return res.status(400).json({ message: "Request body should be an array of updates." });
+        }
+
+        const updatedPersonalBanks = [];
+        for (const update of updates) {
+            const { id, documentType, isActive } = update;
+
+            if (!id || !documentType) {
+                return res.status(400).json({ message: "Each update must include an id and documentType." });
+            }
+
+            const updatedPersonalBank = await PersonalBank.findByIdAndUpdate(
+                id,
+                { documentType, isActive: isActive ?? true },
+                { new: true }
+            );
+
+            if (!updatedPersonalBank) {
+                return res.status(404).json({ message: `PersonalBank with id ${id} not found.` });
+            }
+
+            updatedPersonalBanks.push(updatedPersonalBank);
+        }
+
+        res.status(200).json(updatedPersonalBanks); // Return all updated documents
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+
+
+exports.updateVirtualReception = async (req, res) => {
+    try {
+        const updates = req.body; // Expecting an array of objects with id and updates
+
+        if (!Array.isArray(updates)) {
+            return res.status(400).json({ message: "Request body should be an array of updates." });
+        }
+
+        const updatedVirtualReceptions = [];
+        for (const update of updates) {
+            const { id, documentType, isActive } = update;
+
+            if (!id || !documentType) {
+                return res.status(400).json({ message: "Each update must include an id and documentType." });
+            }
+
+            const updatedVirtualReception = await VirtualReception.findByIdAndUpdate(
+                id,
+                { documentType, isActive: isActive ?? true },
+                { new: true }
+            );
+
+            if (!updatedVirtualReception) {
+                return res.status(404).json({ message: `VirtualReception with id ${id} not found.` });
+            }
+
+            updatedVirtualReceptions.push(updatedVirtualReception);
+        }
+
+        res.status(200).json(updatedVirtualReceptions); // Return all updated documents
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};

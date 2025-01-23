@@ -219,50 +219,48 @@
         </div>
 
          <!-- Display editable textboxes for docTypes -->
-  <div *ngIf="docTypes.length > 0" style="margin-top: 20px; padding: 6px 15px;">
-    <label style="font-weight: bold; display: block; margin-bottom: 10px;">Edit Document Names</label>
-    <div 
-      class="text-box-container" 
-      *ngFor="let docType of docTypes; let i = index  trackBy: trackByIndex"
-      style="display: flex; align-items: center; margin-bottom: 10px;"
-    >
-      <!-- Text Box -->
-      
-      <input 
-        type="text" 
-        [(ngModel)]="docTypes[i]" 
-        [value]="docType" 
-        class="styled-textbox"
-        style="flex: 1; padding: 0.6rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;"
-      />
-      <!-- Delete Icon -->
-      <span 
-        (click)="deleteDocType(i)" 
-        style="cursor: pointer; color: red; padding-left: 9px;"
-      >
-        <svg 
-          width="20" 
-          height="20" 
-          viewBox="0 0 20 20" 
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path 
-            d="M5 5L15 15" 
-            stroke="currentColor" 
-            stroke-width="2" 
-            stroke-linecap="round"
-          />
-          <path 
-            d="M15 5L5 15" 
-            stroke="currentColor" 
-            stroke-width="2" 
-            stroke-linecap="round"
-          />
-        </svg>
-      </span>
-    </div>
-  </div>
+         <div *ngIf="docTypes.length > 0" style="margin-top: 20px; padding: 6px 15px;">
+          <label style="font-weight: bold; display: block; margin-bottom: 10px;">Edit Document Names</label>
+          <div 
+            class="text-box-container" 
+            *ngFor="let docType of docTypes; let i = index; trackBy: trackByIndex"
+            style="display: flex; align-items: center; margin-bottom: 10px;"
+          >
+            <input 
+              type="text" 
+              [(ngModel)]="docTypes[i]" 
+              [value]="docType" 
+              class="styled-textbox"
+              style="flex: 1; padding: 0.6rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px;"
+            />
+            <span 
+              (click)="deleteDocType(i)" 
+              style="cursor: pointer; color: red; padding-left: 9px;"
+            >
+              <svg 
+                width="20" 
+                height="20" 
+                viewBox="0 0 20 20" 
+                fill="none" 
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path 
+                  d="M5 5L15 15" 
+                  stroke="currentColor" 
+                  stroke-width="2" 
+                  stroke-linecap="round"
+                />
+                <path 
+                  d="M15 5L5 15" 
+                  stroke="currentColor" 
+                  stroke-width="2" 
+                  stroke-linecap="round"
+                />
+              </svg>
+            </span>
+          </div>
+        </div>
+        
         
          <!-- Submit Button -->
     <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
@@ -270,7 +268,7 @@
       class="btn btn-primary" style="white-space: nowrap; background-color: #cf3339 !important;"
         (click)="submitEditDocuments()"
       >
-        Submit
+        Edit
       </button>
     </div>
   

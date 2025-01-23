@@ -18,6 +18,9 @@ export class DocumenttypeService {
   createPersonalBank(data: any): Observable<any> {
     return this.http.post(`${this.url}/documentype/personal-bank`, data);
   }
+  updatePersonalBank(data: any): Observable<any> {
+    return this.http.put(`${this.url}/documentype/personal-bank`, data);
+  }
 
   // Business Bank
   getBusinessBanks(): Observable<any> {
@@ -25,6 +28,9 @@ export class DocumenttypeService {
   }
   createBusinessBank(data: any): Observable<any> {
     return this.http.post(`${this.url}/documentype/business-bank`, data);
+  }
+  updateBusinessBank(data: any): Observable<any> {
+    return this.http.put(`${this.url}/documentype/business-bank`, data);
   }
 
   // Virtual Reception
@@ -34,6 +40,9 @@ export class DocumenttypeService {
   createVirtualReception(data: any): Observable<any> {
     return this.http.post(`${this.url}/documentype/virtual-reception`, data);
   }
+  updateVirtualReception(data: any): Observable<any> {
+    return this.http.put(`${this.url}/documentype/virtual-reception`, data);
+  }
 
   // Mail Management
   getMailManagements(): Observable<any> {
@@ -41,5 +50,8 @@ export class DocumenttypeService {
   }
   createMailManagement(data: any): Observable<any> {
     return this.http.post(`${this.url}/documentype/mail-management`, data);
+  }
+  updateMailManagement(data: any): Observable<any> {
+    return this.http.put(`${this.url}/documentype/mail-management`, data);
   }
 }
