@@ -14,6 +14,7 @@ export class AdminDocumentTypeComponent {
   mailList: any[] = []; // To store fetched mail data
   selectedDocDetails: any[] = []; // To store selected mail details
   showModal: boolean = false; // Flag to control modal visibility
+  docRecords: any[] = []; // Stores full response objects including _id
 
   serviceList: any[] = [];
   documentTypeInput: any;
@@ -80,11 +81,13 @@ export class AdminDocumentTypeComponent {
       case 'Bank Account Opening':
         this.documenttypeService.getPersonalBanks().subscribe(
           (response: any[]) => {
+            this.docRecords = response; // Store the full objects
             this.docTypes = response.map((item) => item.documentType); // Extract the documentType field
             this.selectedCount = this.docTypes.length;
           },
           (error) => {
             console.error('Error fetching Personal Banks:', error);
+            this.docRecords = []; // Fallback in case of an error
             this.docTypes = []; // Fallback in case of an error
           }
         );
@@ -105,12 +108,15 @@ export class AdminDocumentTypeComponent {
       case 'Virtual Receptionist':
         this.documenttypeService.getVirtualReceptions().subscribe(
           (response: any[]) => {
+            this.docRecords = response; // Store the full objects
             this.docTypes = response.map((item) => item.documentType);
             this.selectedCount = this.docTypes.length;
+
           },
           (error) => {
             console.error('Error fetching Virtual Receptions:', error);
             this.docTypes = [];
+            this.docRecords = []; // Fallback in case of an error
           }
         );
         break;
@@ -118,12 +124,14 @@ export class AdminDocumentTypeComponent {
       case 'Mail Management':
         this.documenttypeService.getMailManagements().subscribe(
           (response: any[]) => {
+            this.docRecords = response; // Store the full objects
             this.docTypes = response.map((item) => item.documentType);
             this.selectedCount = this.docTypes.length;
           },
           (error) => {
             console.error('Error fetching Mail Managements:', error);
             this.docTypes = [];
+            this.docRecords = []; // Fallback in case of an error
           }
         );
         break;
@@ -302,88 +310,73 @@ export class AdminDocumentTypeComponent {
   }
 
   submitEditDocuments(): void {
-    if (this.selectedServiceName) {
-      // Prepare the payload for the update API
-      const updatedData = this.docTypes.map((docType, index) => ({
-        // id: this.docTypesMap[this.selectedServiceName][index]?._id, // Use existing id if available
-        documentType: docType,
-        isActive: true, // Assuming all are active by default
-      }));
-
-      // Call the appropriate update API based on the selected service name
-      switch (this.selectedServiceName) {
-        case 'Bank Account Opening':
-          this.documenttypeService.updatePersonalBank(updatedData).subscribe(
-            (response) => {
-              console.log('Personal Bank updated successfully:', response);
-            },
-            (error) => {
-              console.error('Error updating Personal Bank:', error);
-            }
-          );
-          break;
-
-        case 'Business Bank':
-          this.documenttypeService.updateBusinessBank(updatedData).subscribe(
-            (response) => {
-              console.log('Business Bank updated successfully:', response);
-            },
-            (error) => {
-              console.error('Error updating Business Bank:', error);
-            }
-          );
-          break;
-
-        case 'Virtual Receptionist':
-          this.documenttypeService
-            .updateVirtualReception(updatedData)
-            .subscribe(
-              (response) => {
-                console.log(
-                  'Virtual Reception updated successfully:',
-                  response
-                );
-              },
-              (error) => {
-                console.error('Error updating Virtual Reception:', error);
-              }
-            );
-          break;
-
-        case 'Mail Management':
-          this.documenttypeService.updateMailManagement(updatedData).subscribe(
-            (response) => {
-              console.log('Mail Management updated successfully:', response);
-            },
-            (error) => {
-              console.error('Error updating Mail Management:', error);
-            }
-          );
-          break;
-
-        default:
-          console.warn(
-            'No matching service found for:',
-            this.selectedServiceName
-          );
-          return; // Exit early if no service is matched
-      }
-
-      // Remove blur effect from the main content
-      const mainContent = document.getElementById('main-content');
-      if (mainContent) {
-        mainContent.classList.remove('blurred');
-      }
-
-      // Close the edit modal
-      const editModalElement = document.getElementById('editDocTypeModal');
-      if (editModalElement) {
-        editModalElement.style.display = 'none'; // Hide the modal
-        editModalElement.classList.remove('show'); // Remove "show" class
-      }
-
-      // Optionally, reset docTypes if needed for next usage
-      this.docTypes = [];
+    if (!this.selectedServiceName || !this.docRecords.length) {
+      console.warn('No service selected or no document records available.');
+      return;
     }
+  
+    // Build the payload with _id and updated documentType
+    const updatedData = this.docRecords.map((record, index) => ({
+      id: record._id,                // Use the existing _id from the stored records
+      documentType: this.docTypes[index], // Updated or original documentType
+      isActive: record.isActive,     // Include isActive if needed
+    }));
+  
+    // Call the appropriate update API based on the selected service name
+    switch (this.selectedServiceName) {
+      case 'Bank Account Opening':
+        this.documenttypeService.updatePersonalBank(updatedData).subscribe(
+          (response) => {
+            console.log('Personal Bank updated successfully:', response);
+          },
+          (error) => {
+            console.error('Error updating Personal Bank:', error);
+          }
+        );
+        break;
+  
+      case 'Virtual Receptionist':
+        this.documenttypeService.updateVirtualReception(updatedData).subscribe(
+          (response) => {
+            console.log('Virtual Reception updated successfully:', response);
+          },
+          (error) => {
+            console.error('Error updating Virtual Reception:', error);
+          }
+        );
+        break;
+  
+      case 'Mail Management':
+        this.documenttypeService.updateMailManagement(updatedData).subscribe(
+          (response) => {
+            console.log('Mail Management updated successfully:', response);
+          },
+          (error) => {
+            console.error('Error updating Mail Management:', error);
+          }
+        );
+        break;
+  
+      default:
+        console.warn('No matching service found for:', this.selectedServiceName);
+        return;
+    }
+  
+    // Remove blur effect and close the modal
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.classList.remove('blurred');
+    }
+  
+    const editModalElement = document.getElementById('editDocTypeModal');
+    if (editModalElement) {
+      editModalElement.style.display = 'none';
+      editModalElement.classList.remove('show');
+    }
+  
+    // Optionally clear the records and types for next usage
+    this.docRecords = [];
+    this.docTypes = [];
   }
+  
 }
