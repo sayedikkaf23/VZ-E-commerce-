@@ -5,11 +5,25 @@ const { VirtualReception, MailManagement } = require('../models/virtualReception
 // POST method to create a new Virtual Reception document
 exports.createVirtualReception = async (req, res) => {
     try {
-        const virtualReception = new VirtualReception(req.body);
-        const savedVirtualReception = await virtualReception.save();
-        res.status(201).json(savedVirtualReception);
+        const documentTypes = req.body; // Expecting an array directly
+        console.log("Request Body:", req.body); // Debug the incoming request body
+
+        if (!Array.isArray(documentTypes)) {
+            return res.status(400).json({ message: "Request body should be an array." });
+        }
+
+        const savedVirtualReceptions = [];
+        for (const docType of documentTypes) {
+            const virtualReception = new VirtualReception({ documentType: docType, isActive: true });
+
+            // Save each document one by one
+            const savedReception = await virtualReception.save();
+            savedVirtualReceptions.push(savedReception);
+        }
+
+        res.status(201).json(savedVirtualReceptions); // Return all saved documents
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message }); // Use 500 status code for server errors
     }
 };
 
@@ -26,13 +40,27 @@ exports.getVirtualReceptions = async (req, res) => {
 // POST method to create a new Mail Management document
 exports.createMailManagement = async (req, res) => {
     try {
-        const mailManagement = new MailManagement(req.body);
-        const savedMailManagement = await mailManagement.save();
-        res.status(201).json(savedMailManagement);
+        const documentTypes = req.body; // Directly use the array from the request body
+
+        if (!Array.isArray(documentTypes)) {
+            return res.status(400).json({ message: "Request body should be an array." });
+        }
+
+        const savedMailManagements = [];
+        for (const docType of documentTypes) {
+            const mailManagement = new MailManagement({ isActive: true, documentType: docType });
+
+            // Save each document one by one
+            const savedMailManagement = await mailManagement.save();
+            savedMailManagements.push(savedMailManagement);
+        }
+
+        res.status(201).json(savedMailManagements); // Return all saved documents
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message }); // Use 500 status code for server errors
     }
 };
+
 
 // GET method to retrieve all Mail Management documents
 exports.getMailManagements = async (req, res) => {
@@ -48,13 +76,29 @@ exports.getMailManagements = async (req, res) => {
 // POST method to create a new Personal Bank document
 exports.createPersonalBank = async (req, res) => {
     try {
-        const personalBank = new PersonalBank(req.body);
-        const savedPersonalBank = await personalBank.save();
-        res.status(201).json(savedPersonalBank);
+        const documentTypes = req.body; // Directly get the array from the request body
+        console.log("Request Body:", req.body); // Debug the incoming request body
+
+        if (!Array.isArray(documentTypes)) {
+            return res.status(400).json({ message: "Request body should be an array." });
+        }
+
+        const savedBanks = [];
+        for (const docType of documentTypes) {
+            const personalBank = new PersonalBank({ isActive: true, documentType: docType });
+
+            // Save each document one by one
+            const savedBank = await personalBank.save();
+            savedBanks.push(savedBank);
+        }
+
+        res.status(201).json(savedBanks); // Return all saved documents
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message }); // Use 500 status code for server errors
     }
 };
+
+
 
 // GET method to retrieve all Personal Bank documents
 exports.getPersonalBanks = async (req, res) => {
@@ -71,13 +115,28 @@ exports.getPersonalBanks = async (req, res) => {
 // POST method to create a new Business Bank document
 exports.createBusinessBank = async (req, res) => {
     try {
-        const businessBank = new BusinessBank(req.body);
-        const savedBusinessBank = await businessBank.save();
-        res.status(201).json(savedBusinessBank);
+        const documentTypes = req.body; // Directly get the array from the request body
+        console.log("Request Body:", req.body); // Debug the incoming request body
+
+        if (!Array.isArray(documentTypes)) {
+            return res.status(400).json({ message: "Request body should be an array." });
+        }
+
+        const savedBanks = [];
+        for (const docType of documentTypes) {
+            const businessBank = new BusinessBank({ isActive: true, documentType: docType });
+
+            // Save each document one by one
+            const savedBank = await businessBank.save();
+            savedBanks.push(savedBank);
+        }
+
+        res.status(201).json(savedBanks); // Return all saved documents
     } catch (error) {
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ message: error.message }); // Use 500 status code for server errors
     }
 };
+
 
 // GET method to retrieve all Business Bank documents
 exports.getBusinessBanks = async (req, res) => {

@@ -1,59 +1,54 @@
 import { Component } from '@angular/core';
-import { AdminAuthService } from '../service/admin-auth.service'; 
+import { AdminAuthService } from '../service/admin-auth.service';
+import { DocumenttypeService } from '../service/documenttype.service';
 import { UserService } from '../service/user.service';
-
 
 @Component({
   selector: 'app-admin-document-type',
   templateUrl: './admin-document-type.component.html',
-  styleUrl: './admin-document-type.component.css'
+  styleUrl: './admin-document-type.component.css',
 })
 export class AdminDocumentTypeComponent {
-
-
-
-docTypes: string[] = [];
-tempDocTypes: string[] = [];
+  docTypes: string[] = [];
+  tempDocTypes: string[] = [];
   mailList: any[] = []; // To store fetched mail data
   selectedDocDetails: any[] = []; // To store selected mail details
   showModal: boolean = false; // Flag to control modal visibility
- 
+
   serviceList: any[] = [];
-documentTypeInput: any;
+  documentTypeInput: any;
   selectedServiceName: any;
 
   docTypesMap: { [key: string]: string[] } = {};
   selectedCount: number | null = null;
-  
 
-  
-  
-    constructor(private adminAuthService: AdminAuthService, private userService: UserService) {}
-  
-    ngOnInit(): void {
-     
-      this.loadServices();
-    }
+  constructor(
+    private adminAuthService: AdminAuthService,
+    private userService: UserService,
+    private documenttypeService: DocumenttypeService
+  ) {}
 
-    trackByIndex(index: number, item: any): number {
-      return index;
-    }
-    
+  ngOnInit(): void {
+    this.loadServices();
+  }
 
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
 
   loadServices(): void {
     this.userService.getServices().subscribe(
       (data) => {
         // Filter active services and sort by order
-        this.serviceList = data
-          .filter((service: { isActive: any; }) => service.isActive);  // Only include active services
-             // Sort by the order field in ascending order
-  
-            },
-            (error) => {
-              console.error('Error fetching user details:', error);
-            }
-          );
+        this.serviceList = data.filter(
+          (service: { isActive: any }) => service.isActive
+        ); // Only include active services
+        // Sort by the order field in ascending order
+      },
+      (error) => {
+        console.error('Error fetching user details:', error);
+      }
+    );
   }
 
   openDocType(serviceName: string): void {
@@ -70,14 +65,12 @@ documentTypeInput: any;
       modalElement.classList.add('show'); // Add 'show' class
     }
 
-     // Add blur effect to the main content
-  const mainContent = document.getElementById('main-content');
-  if (mainContent) {
-    mainContent.classList.add('blurred');
+    // Add blur effect to the main content
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.classList.add('blurred');
+    }
   }
-
-  }
-
 
   openEditDocType(serviceName: string): void {
     this.selectedServiceName = serviceName;
@@ -90,12 +83,11 @@ documentTypeInput: any;
       modalElement.classList.add('show'); // Add 'show' class
     }
 
-     // Add blur effect to the main content
-  const mainContent = document.getElementById('main-content');
-  if (mainContent) {
-    mainContent.classList.add('blurred');
-  }
-
+    // Add blur effect to the main content
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.classList.add('blurred');
+    }
   }
 
   closeAddModal(): void {
@@ -106,17 +98,16 @@ documentTypeInput: any;
     }
 
     this.selectedCount = null; // Reset the dropdown value
-  this.docTypes = []; // Clear the text box list
+    this.docTypes = []; // Clear the text box list
 
-  // Remove blur effect from the main content
-  const mainContent = document.getElementById('main-content');
-  if (mainContent) {
-    mainContent.classList.remove('blurred');
-  }
+    // Remove blur effect from the main content
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.classList.remove('blurred');
+    }
   }
 
   closeEditModal(): void {
-
     if (this.selectedServiceName) {
       // Reset docTypes to the original values from docTypesMap
       this.docTypes = this.docTypesMap[this.selectedServiceName]
@@ -130,20 +121,23 @@ documentTypeInput: any;
       modalElement.classList.remove('show'); // Remove the "show" class
     }
 
-     // Remove blur effect from the main content
-  const mainContent = document.getElementById('main-content');
-  if (mainContent) {
-    mainContent.classList.remove('blurred');
-  }
+    // Remove blur effect from the main content
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      mainContent.classList.remove('blurred');
+    }
   }
 
-   // Method triggered when dropdown value changes
-   updateDocType(): void {
+  // Method triggered when dropdown value changes
+  updateDocType(): void {
     const count = Number(this.selectedCount) || 0;
 
     // Adjust the docTypes array size based on the selected count
     if (count > this.docTypes.length) {
-      this.docTypes = [...this.docTypes, ...Array(count - this.docTypes.length).fill('')];
+      this.docTypes = [
+        ...this.docTypes,
+        ...Array(count - this.docTypes.length).fill(''),
+      ];
     } else {
       this.docTypes = this.docTypes.slice(0, count);
     }
@@ -163,30 +157,89 @@ documentTypeInput: any;
         this.docTypesMap[this.selectedServiceName] = [];
       }
 
-      // Remove blur effect from the main content
-  const mainContent = document.getElementById('main-content');
-  if (mainContent) {
-    mainContent.classList.remove('blurred');
-  }
-  
       // Append new docTypes to the existing ones
       this.docTypesMap[this.selectedServiceName] = [
         ...this.docTypesMap[this.selectedServiceName],
-        ...this.docTypes
+        ...this.docTypes,
       ];
-  
+
+      console.log(this.docTypesMap, 'docTypesMap');
+
+      // Call the corresponding API based on the selected service name
+      switch (this.selectedServiceName) {
+        case 'Bank Account Opening':
+          this.documenttypeService.createPersonalBank(this.docTypes).subscribe(
+            (response) => {
+              console.log('Bank Account Opening API Response:', response);
+            },
+            (error) => {
+              console.error('Error:', error);
+            }
+          );
+          break;
+
+        // case 'Accounting & VAT':
+        //   this.documenttypeService.createBusinessBank(this.docTypes).subscribe(
+        //     (response) => {
+        //       console.log('Accounting & VAT API Response:', response);
+        //     },
+        //     (error) => {
+        //       console.error('Error:', error);
+        //     }
+        //   );
+        //   break;
+
+        case 'Virtual Receptionist':
+          this.documenttypeService
+            .createVirtualReception(this.docTypes)
+            .subscribe(
+              (response) => {
+                console.log('Virtual Receptionist API Response:', response);
+              },
+              (error) => {
+                console.error('Error:', error);
+              }
+            );
+          break;
+
+        case 'Mail Management':
+          this.documenttypeService
+            .createMailManagement(this.docTypes)
+            .subscribe(
+              (response) => {
+                console.log('Mail Management API Response:', response);
+              },
+              (error) => {
+                console.error('Error:', error);
+              }
+            );
+          break;
+
+        default:
+          console.warn(
+            'No matching service found for:',
+            this.selectedServiceName
+          );
+          break;
+      }
+
       // Clear the current modal input and close it
       this.docTypes = [];
-      this.selectedCount= null;
+      this.selectedCount = null;
 
       const modalElement = document.getElementById('docTypeModal');
       if (modalElement) {
         modalElement.style.display = 'none'; // Close the modal
         modalElement.classList.remove('show'); // Remove "show" class
       }
+
+      // Remove blur effect from the main content
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) {
+        mainContent.classList.remove('blurred');
+      }
     }
   }
-
 
   submitEditDocuments(): void {
     if (this.selectedServiceName) {
@@ -194,22 +247,20 @@ documentTypeInput: any;
       this.docTypesMap[this.selectedServiceName] = [...this.docTypes];
 
       // Remove blur effect from the main content
-  const mainContent = document.getElementById('main-content');
-  if (mainContent) {
-    mainContent.classList.remove('blurred');
-  }
-  
+      const mainContent = document.getElementById('main-content');
+      if (mainContent) {
+        mainContent.classList.remove('blurred');
+      }
+
       // Close the edit modal
       const editModalElement = document.getElementById('editDocTypeModal');
       if (editModalElement) {
         editModalElement.style.display = 'none'; // Hide the modal
         editModalElement.classList.remove('show'); // Remove "show" class
       }
-  
+
       // Optionally, reset docTypes if needed for next usage
       this.docTypes = [];
     }
   }
-
-
 }
