@@ -27,6 +27,7 @@
          
           <th scope="col">KYC Status &#x2191;&#x2193;</th>
           <th scope="col">View File &#x2191;&#x2193;</th>
+          <th scope="col">View Details &#x2191;&#x2193;</th>
 
           </tr>
         </thead>
@@ -54,6 +55,12 @@
             <td>
               <button class="green-button" (click)="openFileModal(mail.additionalUploadedFiles)">
                 View Files
+              </button>
+            </td>
+
+            <td>
+              <button class="green-button" (click)="openDetailsModal(mail)">
+                View Details
               </button>
             </td>
             
@@ -112,6 +119,46 @@
             </div>
           </div>
         </div>
+        <ng-template #noFiles>
+          <p class="no-files">No files available for this mail.</p>
+        </ng-template>
+      </div>
+    </div>
+
+    <div class="modal-container" *ngIf="showDetailsModal">
+      <div class="modal-backdrop" (click)="closeDetailsModal()"></div>
+      <div class="modal-content">
+        <div class="modal-header" >
+          <span class="close-btn" (click)="closeDetailsModal()">&times;</span>
+          <h5 class="modal-title">View Mail Details</h5>
+        </div>
+         
+   <!-- Mail Details -->
+<div *ngIf="selectedMail" style="padding: 10px; background: #f9f9f9; border-radius: 5px;">
+
+  <!-- Loop through the selectedMail object -->
+  <div *ngFor="let key of objectKeys(selectedMail)" style="margin-bottom: 20px;">
+
+    <!-- Check if the value is an object -->
+    <div *ngIf="isObject(selectedMail[key]); else showValue">
+      
+      <!-- If the value is an object, display its keys and values recursively -->
+      <div *ngFor="let subKey of objectKeys(selectedMail[key])" style="margin-left: 20px; padding-left: 20px; border-left: 2px solid #ddd; margin-bottom: 10px;">
+        <p style="margin: 5px 0; font-weight: bold;">{{ subKey }}:</p>
+        <p style="margin: 0; padding-left: 10px; font-size: 14px; color: #333;">{{ selectedMail[key][subKey] || 'N/A' }}</p>
+      </div>
+
+    </div>
+
+    <!-- If it's not an object, just display the value -->
+    <ng-template #showValue>
+      <p style="margin: 10px 0; font-weight: bold;">{{ key }}:</p>
+      <p style="margin: 0; font-size: 14px; color: #333;">{{ selectedMail[key] || 'N/A' }}</p>
+    </ng-template>
+    
+  </div>
+
+</div>
         <ng-template #noFiles>
           <p class="no-files">No files available for this mail.</p>
         </ng-template>

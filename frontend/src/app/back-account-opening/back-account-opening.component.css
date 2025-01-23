@@ -19,16 +19,33 @@
   background-color: rgba(0, 0, 0, 0.5); /* Optional: add a semi-transparent background to the container */
 }
 
+.modal-header {
+  position: sticky;
+  top: 0;
+  background: #fff;
+  height: auto;
+  border-bottom: 2px solid #ddd;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+}
+
+
 /* Modal content */
 .modal-content {
-  background-color: #fff;
-  padding: 20px;
-  width: 593px; /* Adjust width for better layout */
-  max-width: 90vw; /* Responsive width on smaller screens */
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  background: #fff;
+  margin: 0 auto;
+  padding: 0px !important;
+  border-radius: 5px;
+  max-width: 600px;
+  width: 90%;
+  z-index: 1051;
   position: relative;
-  z-index: 1001;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  overflow-y: auto; /* Allow scrolling if content overflows */
+  max-height: 80vh; /* Prevent modal from exceeding viewport height */
 }
 
 /* Close button */

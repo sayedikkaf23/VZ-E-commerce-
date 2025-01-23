@@ -14,6 +14,10 @@ export class BackAccountOpeningComponent implements OnInit {
   loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
   selectedAdditionalFiles: any[] = []; // To store the additional files for the modal
   showFileModal: boolean = false; // Control the visibility of the modal
+
+  selectedUser: { [key: string]: any } | null = null;
+
+  showDetailsModal: boolean = false;
   
   constructor(private adminAuthService: AdminAuthService) {}
 
@@ -81,6 +85,26 @@ export class BackAccountOpeningComponent implements OnInit {
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
     const extension = fileName.split('.').pop()?.toLowerCase();
     return imageExtensions.includes(extension || '');
+  }
+
+  openDetailsModal(details: any): void {
+    this.selectedUser = details; // Assign selected customer details
+    this.showDetailsModal = true; // Open the modal for customer
+    console.log('Opening modal for user:', details);
+  }
+
+  // Helper function to get keys of an object
+  objectKeys(obj: { [key: string]: any } | null): string[] {
+    return obj ? Object.keys(obj) : []; // Return object keys or empty array if null
+  }
+
+  // Helper function to check if a value is an object
+  isObject(value: any): boolean {
+    return value && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  closeDetailsModal(): void {
+    this.showDetailsModal = false; // Close the modal
   }
   
 }
