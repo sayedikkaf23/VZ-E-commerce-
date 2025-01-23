@@ -1,0 +1,94 @@
+.btn.btn-primary:hover {
+    background-color: #a72a2f !important; /* Darker shade for hover */
+    color: #f1f1f1; /* Slightly lighter text color */
+    transform: scale(1.05); /* Slightly enlarges the button */
+    transition: all 0.2s ease-in-out; /* Smooth animation */
+  }
+
+
+  /* Dropdown Styling */
+.styled-select {
+    width: 100%;
+    padding: 0.6rem;
+    font-size: 1rem;
+    color: #555;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+  
+  .styled-select:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    outline: none;
+  }
+  
+  /* Text Box Styling */
+  .styled-textbox {
+    flex: 1;
+    padding: 0.6rem;
+    font-size: 1rem;
+    color: #333;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    
+  }
+  
+  .styled-textbox:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 5px rgba(40, 167, 69, 0.5);
+    outline: none;
+  }
+
+
+  /* Delete Icon Styling */
+.text-box-container span:hover {
+    color: #d9534f;
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+  }
+  
+  /* Responsive Design for Smaller Screens */
+  @media (max-width: 750px) {
+     /* Text Box and Delete Icon in Same Line */
+  .text-box-container {
+    flex-direction: row; /* Ensure horizontal alignment */
+    justify-content: space-between; /* Space between text box and delete icon */
+  }
+
+  .styled-textbox {
+    width: calc(100% - 40px); /* Adjust width to accommodate the delete icon */
+    margin-right: 10px;
+  }
+
+  .text-box-container span {
+    margin-left: 0; /* Reset left margin for proper alignment */
+  }
+
+  /* Dropdown Styling for Smaller Screens */
+  .styled-select {
+    font-size: 0.9rem; /* Reduce font size */
+    
+  }
+
+  .styled-select option {
+    font-size: 0.9rem; /* Adjust dropdown option font size */
+   
+  }
+  
+  }
+
+  .main-content {
+    transition: filter 0.3s ease;
+   
+  }
+  
+  .main-content.blurred {
+    filter: blur(8px);
+    pointer-events: none; /* Disable interactions while blurred */
+    
+  }
+  

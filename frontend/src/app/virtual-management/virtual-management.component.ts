@@ -18,6 +18,11 @@ export class VirtualManagementComponent implements OnInit {
   showFileModal: boolean = false; // Flag for file modal
   selectedFiles: any[] = []; // To store selected files for the modal
   constructor(private virtualManagementService: VirtualManagementService) {}
+
+  selectedUser: { [key: string]: any } | null = null;
+
+  showDetailsModal: boolean = false;
+
  
   ngOnInit(): void {
     this.fetchClientDetails(); // Call the method when the component loads
@@ -91,5 +96,27 @@ export class VirtualManagementComponent implements OnInit {
   closeFileModal(): void {
     this.showFileModal = false; // Close the file modal
   }
+
+
+  openDetailsModal(details: any): void {
+    this.selectedUser= details; // Assign selected user details
+    this.showDetailsModal = true; // Open the modal for user
+  }
+
+  // Helper function to get keys of an object
+  objectKeys(obj: { [key: string]: any } | null): string[] {
+    return obj ? Object.keys(obj) : []; // Return object keys or empty array if null
+  }
+
+  // Helper function to check if a value is an object
+  isObject(value: any): boolean {
+    return value && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  closeDetailsModal(): void {
+    this.showDetailsModal = false; // Close the modal
+  }
+  
+
 }
  

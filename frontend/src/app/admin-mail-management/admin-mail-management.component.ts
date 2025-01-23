@@ -17,6 +17,10 @@ export class AdminMailManagementComponent {
   loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
   showFileModal: boolean = false; // Flag to control file modal visibility
   selectedFiles: any[] = []; // To store selected files for the modal
+  selectedMail: { [key: string]: any } | null = null;
+
+  showDetailsModal: boolean = false;
+  
 
   constructor(private mailManagementService: MailManagementService) {}
 
@@ -73,9 +77,29 @@ export class AdminMailManagementComponent {
     this.showModal = true; // Open the modal for shareholders
   }
 
+  openDetailsModal(details: any): void {
+    this.selectedMail = details; // Assign selected mail details
+    this.showDetailsModal = true; // Open the modal for mail
+  }
+
+  // Helper function to get keys of an object
+  objectKeys(obj: { [key: string]: any } | null): string[] {
+    return obj ? Object.keys(obj) : []; // Return object keys or empty array if null
+  }
+
+  // Helper function to check if a value is an object
+  isObject(value: any): boolean {
+    return value && typeof value === 'object' && !Array.isArray(value);
+  }
+
   closeModal(): void {
     this.showModal = false; // Close the modal
   }
+
+  closeDetailsModal(): void {
+    this.showDetailsModal = false; // Close the modal
+  }
+
   openFileModal(files: any[]): void {
     if (files && files.length > 0) {
       this.selectedFiles = files; // Assign files to display in the modal

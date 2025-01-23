@@ -14,6 +14,10 @@ export class BackAccountOpeningComponent implements OnInit {
   loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
   selectedAdditionalFiles: any[] = []; // To store the additional files for the modal
   showFileModal: boolean = false; // Control the visibility of the modal
+
+  selectedUser: { [key: string]: any } | null = null;
+
+  showDetailsModal: boolean = false;
   
   constructor(private adminAuthService: AdminAuthService) {}
 
@@ -34,37 +38,49 @@ export class BackAccountOpeningComponent implements OnInit {
   }
 
   checkColumnData(): void {
-    this.hasSalaryData = this.userList.some((user) => !!user.userDetails.salary);
-    this.hasCompanyNameData = this.userList.some((user) => !!user.userDetails.companyname);
+    this.hasSalaryData = this.userList.some((user) => !!user.userDetails?.salary);
+    this.hasCompanyNameData = this.userList.some((user) => !!user.userDetails?.companyname);
   }
 
   isLoading: boolean = false; // Global loading state
 
   checkStatus(user: any): void {
+    // Validate that user and LeadId exist
+    if (!user || !user.leadWithDetails?.LeadId) {
+      console.error('Invalid user or missing LeadId:', user);
+      user.CustomerStatus = 'Invalid user data';
+      return;
+    }
+  
     const payload = {
       CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
   
+    console.log('Initiating status check with payload:', payload);
+  
     // Start the global loader
     this.isLoading = true;
   
+    // Call the API to check status
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
-        // Store the response in the user object
+        console.log('API response:', response);
+        // Update user's CustomerStatus with the response
         user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
-        console.log('Status check response:', response);
       },
       (error) => {
-        // Handle errors
-        console.error('Error checking status:', error);
+        console.error('Error during API call:', error);
+        // Set fallback status on error
+        user.CustomerStatus = 'Error fetching status';
       },
       () => {
-        // Stop the global loader after API completion
+        // Stop the global loader when the API call completes
         this.isLoading = false;
       }
     );
   }
+  
   
   
   openFileModal(user: any): void {
@@ -86,6 +102,26 @@ export class BackAccountOpeningComponent implements OnInit {
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
     const extension = fileName.split('.').pop()?.toLowerCase();
     return imageExtensions.includes(extension || '');
+  }
+
+  openDetailsModal(details: any): void {
+    this.selectedUser = details; // Assign selected customer details
+    this.showDetailsModal = true; // Open the modal for customer
+    console.log('Opening modal for user:', details);
+  }
+
+  // Helper function to get keys of an object
+  objectKeys(obj: { [key: string]: any } | null): string[] {
+    return obj ? Object.keys(obj) : []; // Return object keys or empty array if null
+  }
+
+  // Helper function to check if a value is an object
+  isObject(value: any): boolean {
+    return value && typeof value === 'object' && !Array.isArray(value);
+  }
+
+  closeDetailsModal(): void {
+    this.showDetailsModal = false; // Close the modal
   }
   
 }

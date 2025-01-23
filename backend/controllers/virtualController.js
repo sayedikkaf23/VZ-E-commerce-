@@ -368,12 +368,15 @@ exports.getVirtualDetails = async (req, res) => {
       const userDetails = await VirtualDetails.findOne({ "QuotePaymentId": quotePaymentId });
 
       // Merge PiData and UserDetails
-      const mergedData = {
-        ...submission._doc, // Use _doc to get the plain object representation of the document
-        userDetails: userDetails || null, // Add userDetails data or set null if not found
-      };
+      if (userDetails) {
+        // Merge PiData and UserDetails only if userDetails is not null
+        const mergedData = {
+          ...submission._doc, // Use _doc to get the plain object representation of the document
+          userDetails, // Add userDetails data
+        };
 
-      mergedResults.push(mergedData);
+        mergedResults.push(mergedData);
+      }
     }
 
     // Return the merged results as a JSON response
