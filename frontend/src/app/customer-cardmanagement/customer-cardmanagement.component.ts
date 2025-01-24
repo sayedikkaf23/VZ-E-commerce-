@@ -50,7 +50,7 @@ personalBanks: any[] = [];
   }
 
   ngOnInit(): void {
-    console.log('Current Route:', this.route.snapshot.url); // Check the current URL
+    // console.log('Current Route:', this.route.snapshot.url); // Check the current URL
 
     // Retrieve the email from localStorage
     const email = localStorage.getItem('userEmail');
@@ -75,7 +75,7 @@ personalBanks: any[] = [];
 fetchVirtualReceptions(): void {
   this.documenttypeService.getVirtualReceptions().subscribe(
     (data) => {
-      console.log('Virtual Receptions:', data);
+      // console.log('Virtual Receptions:', data);
       // Do something with the data
     },
     (error) => {
@@ -87,7 +87,7 @@ fetchVirtualReceptions(): void {
 fetchMailManagements(): void {
   this.documenttypeService.getMailManagements().subscribe(
     (data) => {
-      console.log('Mail Managements:', data);
+      // console.log('Mail Managements:', data);
       // Do something with the data
     },
     (error) => {
@@ -101,7 +101,7 @@ fetchMailManagements(): void {
 fetchBusinessBanks(): void {
   this.documenttypeService.getBusinessBanks().subscribe(
     (data) => {
-      console.log('Business Banks:', data);
+      // console.log('Business Banks:', data);
       this.businessBanks = data; // Store the response
     },
     (error) => {
@@ -113,7 +113,7 @@ fetchBusinessBanks(): void {
 fetchPersonalBanks(): void {
   this.documenttypeService.getPersonalBanks().subscribe(
     (data) => {
-      console.log('Personal Banks:', data);
+      // console.log('Personal Banks:', data);
       this.personalBanks = data; // Store the response
     },
     (error) => {
@@ -141,7 +141,7 @@ fetchPersonalBanks(): void {
     this.userService.fetchUserServices(payload).subscribe(
       (response) => {
         if (response && response.data) {
-          console.log('Response Data:', response.data);
+          // console.log('Response Data:', response.data);
           this.records = response.data;
         }
       },
@@ -183,7 +183,7 @@ fetchPersonalBanks(): void {
     this.selectedRecord.calculatedVAT = vat;
     this.selectedRecord.calculatedTotalIncludingVAT = totalIncludingVAT;
   
-    console.log(this.selectedRecord);
+    // console.log(this.selectedRecord);
   
     const modalElement = document.getElementById('detailsModal');
     if (modalElement) {
@@ -195,7 +195,7 @@ fetchPersonalBanks(): void {
   
   uploadDetailsModal(record: any): void {
     this.selectedRecord = record; // Store the selected record
-    console.log("Selected Record:", record);
+    // console.log("Selected Record:", record);
   
     // Populate uploadedFiles with additionalUploadedFiles if they exist
     this.additionalFiles = record.additionalUploadedFiles || [];
@@ -237,7 +237,7 @@ fetchPersonalBanks(): void {
   openShareholderModal(shareholders: any[],addAdditionalFile:any[]): void {
     this.selectedShareholders = shareholders;
     this.selectedaddAdditionalFile = addAdditionalFile;
-    console.log( this.selectedaddAdditionalFile)
+    // console.log( this.selectedaddAdditionalFile)
     this.showModal = true;
   }
 
@@ -274,7 +274,7 @@ fetchPersonalBanks(): void {
                 type: this.selectedDocumentType, 
                 // originalType: file.type
               });
-              console.log('File uploaded successfully:', file.name);
+              // console.log('File uploaded successfully:', file.name);
              
               this.isLoading = false;
             })
@@ -321,7 +321,7 @@ fetchPersonalBanks(): void {
       files: this.uploadedFiles
     };
 
-    console.log('Submitting documents:', payload);
+    // console.log('Submitting documents:', payload);
     document.querySelector('.app-wrapper')?.classList.remove('blur-background'); //clears the background blur
 
     // Make a call to your backend to save file info
@@ -329,7 +329,7 @@ fetchPersonalBanks(): void {
     this.userService.updateAdditionalUploadedFiles(payload)
       .subscribe(
         (response) => {
-          console.log('Documents submitted successfully!', response);
+          // console.log('Documents submitted successfully!', response);
           const email = localStorage.getItem('userEmail') ?? '';
           this.fetchUserServices(email);
           

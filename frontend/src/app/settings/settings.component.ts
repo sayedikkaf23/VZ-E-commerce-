@@ -70,7 +70,7 @@ export class SettingsComponent implements OnInit {
     if (this.selectedServiceId) {
       this.adminAuthService.updateService(this.selectedServiceId, serviceData, this.selectedFile).subscribe(
         (response) => {
-          console.log('Service updated successfully:', response);
+          // console.log('Service updated successfully:', response);
           this.getServices(); // Refresh the service list after updating
           this.closeEditModal(); // Close the modal after updating
           this.toastr.success('Service updated successfully!'); // Show success message
@@ -96,7 +96,7 @@ export class SettingsComponent implements OnInit {
       if (result.isConfirmed) {
         this.adminAuthService.deleteService(serviceId).subscribe(
           (response) => {
-            console.log('Service deleted successfully:', response);
+            // console.log('Service deleted successfully:', response);
             this.getServices(); // Refresh the service list after deletion
             this.toastr.success('Service deleted successfully!'); // Show success message
           },

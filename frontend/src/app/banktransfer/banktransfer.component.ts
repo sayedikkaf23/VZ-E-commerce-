@@ -89,7 +89,7 @@ export class BanktransferComponent implements OnInit {
       const element = event.currentTarget as HTMLInputElement;
       let files: FileList | null = element.files;
       if (files) {
-        console.log('Files selected:', files);
+        // console.log('Files selected:', files);
         // Handle the file upload process here, possibly using Angular's HttpClient
       }
     }
@@ -107,7 +107,7 @@ export class BanktransferComponent implements OnInit {
         // this.defaultValue = this.sidebar.piData.partPayment;
         this.fetchPiData(this.quoteId, () => {
 
-          console.log("...ji")
+          // console.log("...ji")
           this.selectChangeHandler({ target: { value: 'AED' } });
         });
       });
@@ -183,8 +183,8 @@ export class BanktransferComponent implements OnInit {
         .subscribe(
           (response: any) => {
             this.toAmount = response.convertedAmount;
-            console.log(response)
-            console.log(`Converted amount: ${this.amountPaid}`);
+            // console.log(response)
+            // console.log(`Converted amount: ${this.amountPaid}`);
           },
           error => {
             console.error('Error during currency conversion', error);
@@ -196,7 +196,7 @@ export class BanktransferComponent implements OnInit {
     //update the ui
     this.selectedToCurrency = event.target.value;
     this.currency_convertingto=this.selectedToCurrency
-    console.log(",",this.selectedToCurrency)
+    // console.log(",",this.selectedToCurrency)
   }
 
   submitForm() {
@@ -212,13 +212,13 @@ export class BanktransferComponent implements OnInit {
       currencyPaid: this.currencyPaid,
       Converted_value:this.toAmount
     };
-    console.log(this.currency_convertingfrom,this.currency_convertingto)
+    // console.log(this.currency_convertingfrom,this.currency_convertingto)
 
     if (this.selectedFiles) {
       this.bankTransferService.sendBankTransferData(this.quoteId, formData, this.selectedFiles).subscribe(
         response => {
           if ('message' in response) {
-            console.log(response)
+            // console.log(response)
             this.router.navigate([`/success/${this.quoteId}`]);
           }
         },
@@ -279,8 +279,8 @@ export class BanktransferComponent implements OnInit {
     if (uploadedFile) {
       const fileData = JSON.parse(uploadedFile);
       // Perform file upload logic here, using fileData.name and fileData.data
-      console.log("Uploaded File Name:", fileData.name);
-      console.log("Uploaded File Content:", fileData.data);
+      // console.log("Uploaded File Name:", fileData.name);
+      // console.log("Uploaded File Content:", fileData.data);
       // Here, you can send the file data to your server using a service or HttpClient
     } else {
       console.error("No file uploaded.");

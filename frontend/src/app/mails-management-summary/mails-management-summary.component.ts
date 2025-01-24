@@ -159,16 +159,16 @@ export class MailsManagementSummaryComponent {
   
     this.userService.mailform(mergedData).subscribe(
       response => {
-        console.log('Data submitted successfully:', response);
+        // console.log('Data submitted successfully:', response);
         // this.toastr.success('Data submitted successfully', 'Success');
   
         // Retrieve quotePaymentId from the response instead of salesforceResponse
         const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
 
-        console.log(quotePaymentId)
+        // console.log(quotePaymentId)
         if (quotePaymentId) {
 
-          console.log("quotePaymentId")
+          // console.log("quotePaymentId")
           localStorage.removeItem('mailform');
           localStorage.removeItem('mailform1');
           localStorage.removeItem('mailform2');

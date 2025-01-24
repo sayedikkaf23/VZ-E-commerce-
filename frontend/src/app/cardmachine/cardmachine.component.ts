@@ -145,8 +145,8 @@ export class CardmachineComponent implements OnInit {
     if (uploadedFile) {
       const fileData = JSON.parse(uploadedFile);
       // Perform file upload logic here, using fileData.name and fileData.data
-      console.log("Uploaded File Name:", fileData.name);
-      console.log("Uploaded File Content:", fileData.data);
+      // console.log("Uploaded File Name:", fileData.name);
+      // console.log("Uploaded File Content:", fileData.data);
       // Here, you can send the file data to your server using a service or HttpClient
     } else {
       console.error("No file uploaded.");

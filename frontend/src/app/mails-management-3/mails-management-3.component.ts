@@ -187,7 +187,7 @@ export class MailsManagement3Component implements OnInit {
 
       Promise.all(uploadPromises)
         .then(() => {
-          console.log(`All files for Shareholder ${index + 1} uploaded successfully`);
+          // console.log(`All files for Shareholder ${index + 1} uploaded successfully`);
           this.isLoading = false;
         })
         .catch(error => {
@@ -246,7 +246,7 @@ export class MailsManagement3Component implements OnInit {
       localStorage.setItem('mailform2', JSON.stringify(dataToSave));
       this.router.navigate(['/mails-management-details']);
     } else {
-      console.log('Please fill all required fields');
+      // console.log('Please fill all required fields');
       // You can also log the form to see exactly which control is invalid
       // console.log('Form Controls', this.formData.controls);
     }

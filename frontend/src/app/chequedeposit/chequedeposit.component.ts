@@ -48,7 +48,7 @@ export class ChequedepositComponent implements OnInit{
     this.onlinePaymentService.getAccountDetails().subscribe(
       (data: any[]) => {
         this.accountDetails = data;
-        console.log("sssssssssssssssssssss", this.accountDetails);
+        // console.log("sssssssssssssssssssss", this.accountDetails);
         // Do something with the fetched account details
       },
       error => {
@@ -73,7 +73,7 @@ export class ChequedepositComponent implements OnInit{
       this.ChequedepositService.sendChequeDepositData(this.quoteId, this.selectedFiles).subscribe(
         response => {
           if ('message' in response) {
-            console.log(response)
+            // console.log(response)
             this.router.navigate([`/success/${this.quoteId}`]);
           }  
         },  
@@ -115,8 +115,8 @@ export class ChequedepositComponent implements OnInit{
     if (uploadedFile) {
       const fileData = JSON.parse(uploadedFile);
       // Perform file upload logic here, using fileData.name and fileData.data
-      console.log("Uploaded File Name:", fileData.name);
-      console.log("Uploaded File Content:", fileData.data);
+      // console.log("Uploaded File Name:", fileData.name);
+      // console.log("Uploaded File Content:", fileData.data);
       // Here, you can send the file data to your server using a service or HttpClient
     } else {
       console.error("No file uploaded.");
@@ -125,7 +125,7 @@ export class ChequedepositComponent implements OnInit{
 
   toggleContent() {
     this.showContent = !this.showContent;
-    console.log( this.showContent)
+    // console.log( this.showContent)
     if (this.showContent) {
       this.showCurrencyContent = false;
       this.showUploadContent = false;
@@ -134,7 +134,7 @@ export class ChequedepositComponent implements OnInit{
 
   toggleCurrencyContent() {
     this.showCurrencyContent = !this.showCurrencyContent;
-    console.log(this.showCurrencyContent);
+    // console.log(this.showCurrencyContent);
   }  
 
   toggleUploadContent() {

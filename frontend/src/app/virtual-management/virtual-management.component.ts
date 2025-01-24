@@ -60,7 +60,7 @@ export class VirtualManagementComponent implements OnInit {
       (response) => {
         // Update user status with the response
         user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
-        console.log('Status check response:', response);
+        // console.log('Status check response:', response);
       },
       (error) => {
         // Handle API error
@@ -74,7 +74,7 @@ export class VirtualManagementComponent implements OnInit {
   }
   
   openClientDetails(shareholders: any[]): void {
-    console.log(shareholders)
+    // console.log(shareholders)
     this.selectedClientDetails = shareholders; // Assign shareholder data to display in the modal
     this.showModal = true; // Open the modal
   }
@@ -86,7 +86,7 @@ export class VirtualManagementComponent implements OnInit {
     if (files && files.length > 0) {
       this.selectedFiles = files; // Assign files to display in the modal
       this.showFileModal = true; // Open the modal
-      console.log('Modal opened with files:', files); // Debugging
+      // console.log('Modal opened with files:', files); // Debugging
     } else {
       console.error('No files available for this client.');
     }

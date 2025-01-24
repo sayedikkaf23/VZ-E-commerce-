@@ -60,7 +60,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   ) {
     // Retrieve Step 1 data from the service when Step 2 initializes
     this.step1Data = this.formDataService.getStep1Data();
-    console.log('Step 1 data:', this.step1Data);
+    // console.log('Step 1 data:', this.step1Data);
   }
 
   ngOnInit(): void {
@@ -148,7 +148,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     
   }
   addShareholder() {
-    console.log('Add shareholder clicked');
+    // console.log('Add shareholder clicked');
     this.shareholders.push({ name: '', phone: '', dob: '', nationality: '' });
     this.cdRef.detectChanges(); // Only if necessary
 }
@@ -265,7 +265,7 @@ trackByShareholder(index: number, shareholder: any): number {
     let isValid = true;
     const missingFields: string[] = [];
 
-console.log(missingFields)
+// console.log(missingFields)
 
     if (!this.formData.companylocation) {
       missingFields.push('Company Location');

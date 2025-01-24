@@ -57,7 +57,7 @@ export class BackAccountOpeningComponent implements OnInit {
       CompanyName: 'Virtuzone',
     };
   
-    console.log('Initiating status check with payload:', payload);
+    // console.log('Initiating status check with payload:', payload);
   
     // Start the global loader
     this.isLoading = true;
@@ -65,7 +65,7 @@ export class BackAccountOpeningComponent implements OnInit {
     // Call the API to check status
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
-        console.log('API response:', response);
+        // console.log('API response:', response);
         // Update user's CustomerStatus with the response
         user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
       },
@@ -107,7 +107,7 @@ export class BackAccountOpeningComponent implements OnInit {
   openDetailsModal(details: any): void {
     this.selectedUser = details; // Assign selected customer details
     this.showDetailsModal = true; // Open the modal for customer
-    console.log('Opening modal for user:', details);
+    // console.log('Opening modal for user:', details);
   }
 
   // Helper function to get keys of an object

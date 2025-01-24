@@ -78,7 +78,7 @@ export class BussinessShowDeatilsComponent {
    
       const mailform = localStorage.getItem('step1Data');
       const mailform2 = localStorage.getItem('mailform2');
-  console.log(mailform2,"sssss")
+  // console.log(mailform2,"sssss")
       // If there is no data in localStorage, navigate away from this page
       if ( !mailform || !mailform2 ) {
         // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
@@ -89,7 +89,7 @@ export class BussinessShowDeatilsComponent {
         this.companyInfo = JSON.parse(mailform2);
         this.shareholders=this.companyInfo.shareholders
         this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
-        console.log(  this.displayShareholders)
+        // console.log(  this.displayShareholders)
         
 
       }

@@ -63,13 +63,13 @@ export class BusinessBankAccountComponent implements OnInit {
     // Start the global loader
     this.isLoading = true;
   
-    console.log('Loading started');
+    // console.log('Loading started');
   
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
         // Update user status with the response
         user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
-        console.log(`API response for user ${user.LeadId}:`, response);
+        // console.log(`API response for user ${user.LeadId}:`, response);
       },
       (error) => {
         // Handle API error
@@ -78,7 +78,7 @@ export class BusinessBankAccountComponent implements OnInit {
       () => {
         // Stop the global loader after API call completes
         this.isLoading = false;
-        console.log('Loading ended');
+        // console.log('Loading ended');
       }
     );
   }
@@ -105,7 +105,7 @@ closeModal(): void {
       this.selectedAdditionalFiles = files; // Assign the files to display in the modal
       this.showFileModal = true; // Open the modal
     } else {
-      console.log('No additional files to display.');
+      // console.log('No additional files to display.');
     }
   }
   

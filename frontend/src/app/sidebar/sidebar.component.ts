@@ -57,7 +57,7 @@ export class SidebarComponent implements OnInit {
   onlinePaymentFunction() {
     this.route.params.subscribe((params) => {
       this.orderId = params['id'];
-      console.log('Order ID:', this.orderId);
+      // console.log('Order ID:', this.orderId);
       // Fetch Pi Data based on orderId
       this.fetchPiData(this.orderId);
     });
@@ -116,7 +116,7 @@ export class SidebarComponent implements OnInit {
     if (orderData) {
       this.onlinePaymentService.createTotalpaySession(orderData).subscribe(
         (response: { redirect_url: string | URL | undefined; }) => {
-          console.log('Totalpay session created:', response);
+          // console.log('Totalpay session created:', response);
           // Redirect the user to the Totalpay payment page
           if (response.redirect_url) {
             window.open(response.redirect_url, '_blank');
@@ -136,9 +136,9 @@ export class SidebarComponent implements OnInit {
   fetchPiData(quoteId: string): void {
     this.onlinePaymentService.getPiDataById(quoteId).subscribe(
       (response: any) => {
-        console.log('Fetched Pi Data:', response);
+        // console.log('Fetched Pi Data:', response);
         this.piData = response; // Assign the fetched data to the piData property
-        console.log(this.piData,"piData")
+        // console.log(this.piData,"piData")
       },
       (error: any) => {
         console.error('Error fetching Pi Data:', error);

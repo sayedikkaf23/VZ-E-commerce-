@@ -24,7 +24,7 @@ export class SuccessComponent implements OnInit {
     this.route.params.subscribe((params) => {
       this.quoteId = params['id'];
       this.amount = params['amount'];
-      console.log('quoteId:', this.quoteId);
+      // console.log('quoteId:', this.quoteId);
     });
 
     this.type = this.route.snapshot.queryParamMap.get('type') || 'online';
@@ -81,7 +81,7 @@ export class SuccessComponent implements OnInit {
             opportunityName: res.salesPersonName,
             opportunityOwnerEmail: res.salesPersonEmail,
           };
-          console.log('this.piData: ', this.piData);
+          // console.log('this.piData: ', this.piData);
         } else {
           this.piData = res;
         }

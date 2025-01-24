@@ -44,7 +44,7 @@ export class ShowDetailsComponent implements AfterViewInit {
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
 
     this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
-    console.log( this.salesforceResponse,"salefoce",this.quoteWithProductDetails)
+    // console.log( this.salesforceResponse,"salefoce",this.quoteWithProductDetails)
     // Ensure this code runs only in the browser environment
     if (this.isBrowser) {
       // Retrieve data from localStorage
@@ -111,7 +111,7 @@ export class ShowDetailsComponent implements AfterViewInit {
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    console.log(scrollPosition); // You can log this to see how far the user has scrolled
+    // console.log(scrollPosition); // You can log this to see how far the user has scrolled
   }
 
   // Function to determine the toast position based on scroll
@@ -199,7 +199,7 @@ export class ShowDetailsComponent implements AfterViewInit {
         // First API call to callSalesforceEndpoint
         this.userService.callSalesforceEndpoint(payload).pipe(
           switchMap((response: any) => {
-            console.log('Salesforce Response:', response);
+            // console.log('Salesforce Response:', response);
             this.dataStorageService.setSalesforceResponse(response);
   
             // Prepare payload for the second API call
@@ -214,7 +214,7 @@ export class ShowDetailsComponent implements AfterViewInit {
             // Call the second API
             return this.userService.callSalesforceQuoteService(quotePayload).pipe(
               switchMap((quoteResponse: any) => {
-                console.log('Quote Service Response:', quoteResponse);
+                // console.log('Quote Service Response:', quoteResponse);
   
                 // Prepare payload for MatchScoreProductService
                 const matchScorePayload = {
@@ -231,7 +231,7 @@ export class ShowDetailsComponent implements AfterViewInit {
           })
         ).subscribe(
           (matchScoreResponse: any) => {
-            console.log('Match Score Service Response:', matchScoreResponse);
+            // console.log('Match Score Service Response:', matchScoreResponse);
             this.isLoading = false; // Hide loader
   
             // Save finalData and matchScoreResponse in localStorage or state management service

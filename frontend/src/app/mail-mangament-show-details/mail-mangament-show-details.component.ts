@@ -51,7 +51,7 @@ export class MailMangamentShowDetailsComponent {
    
       const mailform = localStorage.getItem('step1Data');
       const mailform2 = localStorage.getItem('mailform2');
-  console.log(mailform2,"sssss")
+  // console.log(mailform2,"sssss")
       // If there is no data in localStorage, navigate away from this page
       if ( !mailform || !mailform2 ) {
         // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
@@ -62,7 +62,7 @@ export class MailMangamentShowDetailsComponent {
         this.companyInfo = JSON.parse(mailform2);
         this.shareholders=this.companyInfo.shareholders
         this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
-        console.log(  this.displayShareholders)
+        // console.log(  this.displayShareholders)
 
       }
     }
@@ -115,7 +115,7 @@ export class MailMangamentShowDetailsComponent {
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    console.log(scrollPosition); // You can log this to see how far the user has scrolled
+    // console.log(scrollPosition); // You can log this to see how far the user has scrolled
   }
 
   // Function to determine the toast position based on scroll
@@ -204,7 +204,7 @@ export class MailMangamentShowDetailsComponent {
         // First API call to callSalesforceEndpoint
         this.userService.callSalesforceEndpoint(payload).pipe(
           switchMap((response: any) => {
-            console.log('Salesforce Response:', response);
+            // console.log('Salesforce Response:', response);
             this.dataStorageService.setSalesforceResponse(response);
             // Prepare payload for the second API call
             const quotePayload = {
@@ -217,7 +217,7 @@ export class MailMangamentShowDetailsComponent {
             // Call the second API
             return this.userService.callSalesforceQuoteService(quotePayload).pipe(
               switchMap((quoteResponse: any) => {
-                console.log('Quote Service Response:', quoteResponse);
+                // console.log('Quote Service Response:', quoteResponse);
   
                 // Prepare payload for MatchScoreProductService
                 const matchScorePayload = {
@@ -234,7 +234,7 @@ export class MailMangamentShowDetailsComponent {
           })
         ).subscribe(
           (quoteResponse: any) => {
-            console.log('Quote Service Response:', quoteResponse);
+            // console.log('Quote Service Response:', quoteResponse);
             this.isLoading = false; // Hide loader
   
             // Save finalData in localStorage

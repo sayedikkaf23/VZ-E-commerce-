@@ -58,7 +58,7 @@ export class OnlinepaymentComponent implements OnInit {
           if (this.type === 'online') {
             this.loading = false;
           }
-          console.log(this.availablePaymentMethods);
+          // console.log(this.availablePaymentMethods);
         },
         (error) => {
           console.error('Error fetching available payment methods:', error);
@@ -72,7 +72,7 @@ export class OnlinepaymentComponent implements OnInit {
           if (this.type === 'online') {
             this.loading = false;
           }
-          console.log('onlinepayment', this.onlinepayment);
+          // console.log('onlinepayment', this.onlinepayment);
         },
         (error) => {
           console.error('Error fetching available payment methods:', error);
@@ -92,9 +92,9 @@ export class OnlinepaymentComponent implements OnInit {
       this.loading = true;
 
       this.onlinePaymentService.getQuoteById(this.orderId).subscribe((data) => {
-        console.log('Response from backend:', data);
+        // console.log('Response from backend:', data);
         const isActive = data && data.isActive;
-        console.log(isActive);
+        // console.log(isActive);
 
         if (!isActive) {
           // Display an alert or handle it as needed
@@ -287,14 +287,14 @@ export class OnlinepaymentComponent implements OnInit {
     this.loading = true;
     this.onlinePaymentService.getPayNowDataById(this.orderId).subscribe(
       (response) => {
-        console.log('PayNow Data:', response);
+        // console.log('PayNow Data:', response);
         if (response.totalpayData.redirect_url) {
           // Redirect the user to the payment page
 
-          console.log(
-            'response.totalpayData.redirect_url',
-            response.totalpayData.redirect_url
-          );
+          // console.log(
+          //   'response.totalpayData.redirect_url',
+          //   response.totalpayData.redirect_url
+          // );
           // console.log( " this.router.navigateByUrl",this.router.navigateByUrl)
           window.location.href = response.totalpayData.redirect_url;
           // this.loading = false;
@@ -313,7 +313,7 @@ export class OnlinepaymentComponent implements OnInit {
     this.CashMechinService.sendCashMachinData(this.orderId).subscribe(
       (response) => {
         if ('message' in response) {
-          console.log(response);
+          // console.log(response);
           this.router.navigate([`/cardmachine/${this.orderId}`]);
         }
       },
@@ -328,7 +328,7 @@ export class OnlinepaymentComponent implements OnInit {
     if (orderData) {
       this.onlinePaymentService.createTotalpaySession(orderData).subscribe(
         (response) => {
-          console.log('Totalpay session created:', response);
+          // console.log('Totalpay session created:', response);
           // Redirect the user to the Totalpay payment page
           if (response.redirect_url) {
             window.open(response.redirect_url, '_blank');
@@ -348,7 +348,7 @@ export class OnlinepaymentComponent implements OnInit {
   fetchPiData(sfId: string): void {
     this.onlinePaymentService.getPiDataById(sfId).subscribe(
       (response) => {
-        console.log('Fetched Pi Data:', response);
+        // console.log('Fetched Pi Data:', response);
         this.piData = response; // Assign the fetched data to the piData property
         this.loaded.api = true;
         this.generateHash();
@@ -363,15 +363,15 @@ export class OnlinepaymentComponent implements OnInit {
   handleCashOverCounterClick(quotePaymentId: string, amount: number) {
     // Check if the amount is greater than or equal to 55000
 
-    console.log('quotePaymentId:', amount > 55000);
+    // console.log('quotePaymentId:', amount > 55000);
 
     if (amount < 55000) {
       // Call your function or navigate based on your requirement
-      console.log('Inside if block');
+      // console.log('Inside if block');
       this.router.navigate(['/cashover-counter/', quotePaymentId],{ queryParams: { type: this.type}});
       this.navigateToCustomFunction();
     } else {
-      console.log('Inside else block');
+      // console.log('Inside else block');
       // Navigate to '/cashovercounter/' + quotePaymentId
       this.router.navigate(['/cashovercounter/', quotePaymentId],{ queryParams: { type: this.type}});
     }
@@ -383,18 +383,18 @@ export class OnlinepaymentComponent implements OnInit {
       .subscribe(
         (response: any) => {
           if (response) {
-            console.log('Response:', response);
+            // console.log('Response:', response);
             if (
               response.message ===
               'Cash Over Counter Transfer processed successfully'
             ) {
-              console.log('OrderId:', this.orderId);
+              // console.log('OrderId:', this.orderId);
               this.router.navigate([`/success/${this.orderId}`],{ queryParams: { type: this.type}});
             } else if (
               response.message === 'Cash Over Counter Transfer processed'
             ) {
               // this.router.navigate([`/cashover-counter/${this.orderId}`]);
-              console.log('Salesforce API called successfully ');
+              // console.log('Salesforce API called successfully ');
             }
           } else {
             console.error('No response received from the server.');
@@ -411,7 +411,7 @@ export class OnlinepaymentComponent implements OnInit {
     this.loading = true;
     this.onlinePaymentService.payNowByStripe(this.orderId).subscribe(
       (response) => {
-        console.log('PayNow Data:', response);
+        // console.log('PayNow Data:', response);
         if (response.stripeData.url) {
           // Redirect the user to the payment page
           // console.log("response.stripeData.url",response.stripeData.url)
@@ -434,7 +434,7 @@ export class OnlinepaymentComponent implements OnInit {
     this.loading = true;
     this.onlinePaymentService.PayViaTelr(this.orderId).subscribe(
       (response) => {
-        console.log('PayNow Data:', response);
+        // console.log('PayNow Data:', response);
         if (response.telrData) {
           // Redirect the user to the payment page
           // console.log("response.stripeData.url",response.stripeData.url)
@@ -474,12 +474,12 @@ export class OnlinepaymentComponent implements OnInit {
 
   onNavigate() {
     const quotePaymentId = this.piData?.quotePaymentWithDetails?.QuotePaymentId;
-    console.log('Attempting to navigate with QuotePaymentId:', quotePaymentId);
+    // console.log('Attempting to navigate with QuotePaymentId:', quotePaymentId);
   
     if (quotePaymentId) {
       // Navigate to the route programmatically
       this.router.navigate(['/cashdeposit', quotePaymentId]);
-      console.log('Navigation to /cashdeposit/' + quotePaymentId + ' initiated.');
+      // console.log('Navigation to /cashdeposit/' + quotePaymentId + ' initiated.');
     } else {
       console.error('QuotePaymentId is undefined or invalid.');
       this.showErrorMessage('Payment ID is missing. Cannot proceed with cash deposit.');

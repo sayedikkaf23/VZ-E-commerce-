@@ -59,7 +59,7 @@ export class AdminMailManagementComponent {
       (response) => {
         // Update user status with the response
         user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
-        console.log('Status check response:', response);
+        // console.log('Status check response:', response);
       },
       (error) => {
         // Handle API error

@@ -140,7 +140,7 @@ export class ShowDetails2Component implements AfterViewInit {
       ...this.bankInfo,
       LeadId
     };
-  console.log("bank",finalData)
+  // console.log("bank",finalData)
     this.userService.uploadUserData(finalData).pipe(
       switchMap(response => {
         if (response.message) {

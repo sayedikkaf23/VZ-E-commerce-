@@ -63,7 +63,7 @@ export class _HomeComponent {
           .filter((service: { isActive: any; }) => service.isActive)  // Only include active services
           .sort((a: { order: number; }, b: { order: number; }) => a.order - b.order);   // Sort by the order field in ascending order
   
-        console.log('Services loaded:', this.services);
+        // console.log('Services loaded:', this.services);
         this.cdRef.detectChanges();  // Trigger change detection if needed
       },
       (error) => {
@@ -91,7 +91,7 @@ export class _HomeComponent {
   //   }
   // }
   startNow(check:any): void {
-    console.log(check)
+    // console.log(check)
 // Check the serviceName and navigate accordingly
 if (check == 'Bank Account Opening') {
   this.router.navigate(['/step-1']); // Replace with the actual route for Service A

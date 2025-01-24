@@ -45,7 +45,7 @@ export class AdminLoginComponent implements OnInit {
         },
         (error) => {
           this.toastr.error('Login failed! Please check your credentials.', 'Error'); // Error notification
-          console.log('Login failed', error); 
+          // console.log('Login failed', error); 
         }
       );
     } else {

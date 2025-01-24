@@ -47,7 +47,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.step1Data = this.formDataService.getmailformData();
-    console.log('Step 1 data:', this.step1Data);
+    // console.log('Step 1 data:', this.step1Data);
   }
 
   ngOnInit(): void {

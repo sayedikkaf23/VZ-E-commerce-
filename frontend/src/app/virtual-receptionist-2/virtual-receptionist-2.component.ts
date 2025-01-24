@@ -234,7 +234,7 @@ export class VirtualReceptionist2Component implements OnInit {
       // Wait for all files to finish uploading
       Promise.all(uploadPromises)
         .then(() => {
-          console.log(`All files for Shareholder ${index + 1} uploaded successfully`);
+          // console.log(`All files for Shareholder ${index + 1} uploaded successfully`);
           this.isLoading = false;
         })
         .catch(error => {
@@ -293,7 +293,7 @@ export class VirtualReceptionist2Component implements OnInit {
       // Navigate to the next page
       this.router.navigate(['/virtual-receptionist-details']);
     } else {
-      console.log('Please fill all required fields');
+      // console.log('Please fill all required fields');
       // Optionally log the form to see which control is invalid:
       // console.log(this.formData);
     }

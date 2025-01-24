@@ -74,7 +74,7 @@ i: any;
   
       // Parse mailform3 only if it exists
       const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
-  console.log(additionalShareholderInfo,"additionalShareholderInfo")
+  // console.log(additionalShareholderInfo,"additionalShareholderInfo")
       // Use shareholders from mailform3 if available, otherwise fallback to mailform2
       const mergedShareholders = additionalShareholderInfo.shareholders.length > 0 
         ? additionalShareholderInfo.shareholders 
@@ -96,7 +96,7 @@ i: any;
         ? mergedData.shareholders
         : Object.values(mergedData.shareholders || []);
   
-      console.log("Merged Data:", mergedData, this.displayShareholders);
+      // console.log("Merged Data:", mergedData, this.displayShareholders);
 
 
       //  const tradeLicenseFile = this.companyInfo.companyTradeLicenseFile || [];
@@ -115,7 +115,7 @@ i: any;
    
     }
   
-    console.log(this.displayShareholders, "sas");
+    // console.log(this.displayShareholders, "sas");
   }
   getFileUrl(file: File): string {
     return URL.createObjectURL(file);
@@ -176,7 +176,7 @@ i: any;
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
-    console.log(scrollPosition); // You can log this to see how far the user has scrolled
+    // console.log(scrollPosition); // You can log this to see how far the user has scrolled
   }
 
   // Function to determine the toast position based on scroll
@@ -278,7 +278,7 @@ submitData() {
       // First API call to callSalesforceEndpoint
       this.mailManagementService.callSalesforceEndpoint(payload).pipe(
         switchMap((response: any) => {
-          console.log('Salesforce Response:', response);
+          // console.log('Salesforce Response:', response);
           this.dataStorageService.setSalesforceResponse(response);
           // Prepare payload for the second API call
           const quotePayload = {
@@ -291,7 +291,7 @@ submitData() {
           // Call the second API
           return this.userService.callSalesforceQuoteService(quotePayload).pipe(
             switchMap((quoteResponse: any) => {
-              console.log('Quote Service Response:', quoteResponse);
+              // console.log('Quote Service Response:', quoteResponse);
 
               // Prepare payload for MatchScoreProductService
               const matchScorePayload = {
@@ -308,7 +308,7 @@ submitData() {
         })
       ).subscribe(
         (quoteResponse: any) => {
-          console.log('Quote Service Response:', quoteResponse);
+          // console.log('Quote Service Response:', quoteResponse);
           this.isLoading = false; // Hide loader
 
           // Save finalData in localStorage

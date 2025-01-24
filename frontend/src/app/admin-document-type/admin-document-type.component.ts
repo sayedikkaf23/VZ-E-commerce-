@@ -231,7 +231,7 @@ export class AdminDocumentTypeComponent {
         ...this.docTypes,
       ];
 
-      console.log(this.docTypesMap, 'docTypesMap');
+      // console.log(this.docTypesMap, 'docTypesMap');
 
       // Call the corresponding API based on the selected service name
       switch (this.selectedServiceName) {

@@ -22,7 +22,7 @@ export class BankTransferSuccessComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params: { [x: string]: string }) => {
       this.quoteId = params['id'];
-      console.log(this.quoteId);
+      // console.log(this.quoteId);
     });
 
     // Disable back button

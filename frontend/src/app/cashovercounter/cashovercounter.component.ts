@@ -27,7 +27,7 @@ export class CashovercounterComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.orderId = params['id'];
-      console.log('Order ID:', this.orderId);
+      // console.log('Order ID:', this.orderId);
 
       // Fetch Pi Data based on orderId
       this.fetchPiData(this.orderId);
@@ -48,9 +48,9 @@ export class CashovercounterComponent implements OnInit {
   this.cashovercounterService.sendCashCounterData(this.orderId, formData).subscribe(
       (response: any) => {
         if (response) {
-          console.log('Response:', response);
+          // console.log('Response:', response);
           if (response.message === "Cash Over Counter Transfer processed successfully") {
-            console.log('OrderId:', this.orderId);
+            // console.log('OrderId:', this.orderId);
             this.router.navigate([`/success/${this.orderId}`]);
           } else if(response.message === "Cash Over Counter Transfer processed") {
             this.router.navigate([`/cashcountersuccess/${this.orderId}`]);
@@ -69,7 +69,7 @@ export class CashovercounterComponent implements OnInit {
   fetchPiData(quoteId: string): void {
     this.onlinePaymentService.getPiDataById(quoteId).subscribe(
       (response) => {
-        console.log('Fetched Pi Data:', response);
+        // console.log('Fetched Pi Data:', response);
         this.piData = response;
       },
       (error) => {
@@ -107,8 +107,8 @@ export class CashovercounterComponent implements OnInit {
     if (uploadedFile) {
       const fileData = JSON.parse(uploadedFile);
       // Perform file upload logic here, using fileData.name and fileData.data
-      console.log("Uploaded File Name:", fileData.name);
-      console.log("Uploaded File Content:", fileData.data);
+      // console.log("Uploaded File Name:", fileData.name);
+      // console.log("Uploaded File Content:", fileData.data);
       // Here, you can send the file data to your server using a service or HttpClient
     } else {
       console.error("No file uploaded.");

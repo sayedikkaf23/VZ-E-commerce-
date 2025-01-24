@@ -20,7 +20,7 @@ export class CashoverCounterComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.orderId = params['id'];
-      console.log('Order ID:', this.orderId);
+      // console.log('Order ID:', this.orderId);
 
       // Fetch Pi Data based on orderId
      
