@@ -84,6 +84,10 @@ export class Step1Component implements OnInit {
     }
   }
 
+  get birthdayControl() {
+    return this.personalDetailsForm.get('birthday');
+  }
+
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard
   }
