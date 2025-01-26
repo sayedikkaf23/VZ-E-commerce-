@@ -249,7 +249,7 @@ submitData() {
   // Show a SweetAlert confirmation dialog
   Swal.fire({
     title: 'Confirm Your Data',
-    text: 'Once you proceed to the next step, you won’t be able to edit your information. Please confirm your data.',
+    text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#FA2E52',
@@ -319,7 +319,7 @@ submitData() {
         },
         (error) => {
           // Handle errors from the Salesforce API calls
-          Swal.fire('Error', 'There was an error processing your request. Please try again.', 'error');
+          Swal.fire('Error', 'Not sure about this - some error', 'error');
           console.error(error);
           this.isLoading = false; // Hide loader in case of error
         }

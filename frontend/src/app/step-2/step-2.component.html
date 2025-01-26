@@ -20,7 +20,7 @@
             <h3>Personal Bank Service</h3>
             <div class="form-field">
               <div class="form-field">
-                <label for="resident">Are you a resident of UAE?<span class="required">*</span></label>
+                <label for="resident">Are you a resident of the UAE?<span class="required">*</span></label>
 
                 <fieldset>
                   <select
@@ -30,7 +30,7 @@
                     [(ngModel)]="formData.resident"
                   >
                     <option value="" disabled selected>
-                      Are you a resident of UAE?
+                      Are you a resident of the UAE?
                     </option>
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
@@ -66,10 +66,10 @@
                   <option value="" disabled selected>
                     Select Your Salary 
                   </option>
-                  <option value="0-3000">0-3000</option>
-                  <option value="3000-5000">3000-5000</option>
-                  <option value="5000-10000">5000-10000</option>
-                  <option value="10000+">10000+</option>
+                  <option value="0-3,000">0-3,000</option>
+                  <option value="3,000-5,000">3,000-5,000</option>
+                  <option value="5,000-10,000">5,000-10,000</option>
+                  <option value="10,000+">10,000+</option>
                 </select>
               </fieldset>
             </div>
@@ -102,6 +102,7 @@
                 name="companyname"
                 id="companyname"
                 class="form-input"
+                style="border: 1px solid #CDC9C9;"
                 [(ngModel)]="formData.companyname"
                 placeholder="Please enter company name"
               />
@@ -120,8 +121,9 @@
                   <option value="" disabled selected>
                     Do you wish to apply for?
                   </option>
-                  <option value="DigitalBank">Digital Bank</option>
-                  <option value="TraditionalBank">Traditional Bank</option>
+                  <option value="Digital Bank">Digital Bank</option>
+                  <option value="Traditional Bank">Traditional Bank</option>
+                  <option value="Any of the above">Any of the above</option>
                 </select>
               </fieldset>
             </div>
