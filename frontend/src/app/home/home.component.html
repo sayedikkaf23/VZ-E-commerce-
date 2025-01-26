@@ -66,20 +66,25 @@
                 </svg>
               </div>
               <div class="text text-center">
-                <p>{{ service.description }}</p>
-                <h4><a href="" >{{ service.serviceName }}</a></h4>
-                <a  class="btn"  (click)="startNow(service.serviceName)">
-                  Start Now
-                  <div class="icon">
-                    <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" clip-rule="evenodd"
-                        d="M12.8177 14.1311L0.116871 2.97217L1.19613 0.978516L16.0598 14.0376L1.23097 28.369L0.0820312 26.4395L12.8177 14.1311Z"
-                        fill="currentColor" />
-                    </svg>
+                <div class="custom-mobile-view">
+                  <div class="col mobile-view-text">
+                    <p>{{ service.description }}</p>
+                    <h4><a href="#">{{ service.serviceName }}</a></h4>
                   </div>
-                </a>
+                  <div class="col-auto">
+                      
+                    <button class="btn" (click)="startNow(service.serviceName)" >Start Now
+                      <div class="icon">
+                        <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M12.8177 14.1311L0.116871 2.97217L1.19613 0.978516L16.0598 14.0376L1.23097 28.369L0.0820312 26.4395L12.8177 14.1311Z"
+                            fill="currentColor" />
+                        </svg>
+                      </div>
+                    </button>
+                  </div>
                 
-                
+               </div>
               </div>
             </div>
           </div>
@@ -127,3 +132,4 @@
   <ng-template #noServices>
     <p>No services available. Please try again later.</p>
   </ng-template>
+

@@ -79,5 +79,48 @@ footer {
     .head_text p {
       margin-bottom: 5px;   /* Adjust margin below the subheading */
     }
+
+    .col-6{
+      flex: 0 0 auto;
+      width: 100%;
+    }
+
+    .apply_service_section .box.box-sm .image {
+      height: 135px;
+      border-radius: 10px;
+  }
+  .apply_service_section .box.box-sm > .icon {
+    margin: 10px;
+    height: 28px;
+    width: 40px;
+  }
+
+  .apply_service_section .box.box-sm .text {
+    margin: 15px;
+  }
+
+  .apply_service_section .box.box-sm .text .custom-mobile-view {
+    justify-content: space-between ; /* Apply justify-content-between */
+    align-items: flex-end ;   
+    
+    display: flex ;
+    flex-wrap: wrap ;
+  }
+
+  .apply_service_section .box.box-sm .text h4 {
+    font-size: 18px;
+  }
+
+  .apply_service_section .box.box-sm .text p {
+    font-size: 12px;
+    margin-bottom: 6px;
+  }
+  .mobile-view-text {
+    text-align: left;
+  }
+  
+  
+
+
   }
   
