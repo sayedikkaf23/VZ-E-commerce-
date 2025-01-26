@@ -1,0 +1,30 @@
+/* Navigation Links */
+.header-navbar {
+    display: flex;
+    flex: 1;
+    padding-left: 24px;
+  }
+  
+  .header-navbar .nav-links {
+    display: flex;
+    gap: 20px; /* Space between links */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    align-items: center;
+  }
+  
+  .header-navbar .nav-links li a {
+    text-decoration: none;
+    color: #000; /* Default link color */
+    font-size: 16px;
+    font-weight: 500;
+    transition: color 0.3s;
+  }
+  
+  .header-navbar .nav-links li a:hover {
+    color: #007bff; /* Hover color */
+  }
+
+
+  
