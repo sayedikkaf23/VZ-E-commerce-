@@ -194,5 +194,10 @@ onSubmit() {
         return field;
     }
   }
+
+
+  get birthdayControl() {
+    return this.personalDetailsForm.get('birthday');
+  }
 }
 

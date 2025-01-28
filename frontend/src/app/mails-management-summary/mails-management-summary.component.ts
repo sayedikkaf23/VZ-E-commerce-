@@ -55,8 +55,8 @@ export class MailsManagementSummaryComponent {
     
     if (!this.salesforceResponse) {
       Swal.fire({
-        title: 'Session Terminated',
-        text: 'Your session has expired. You need to fill the form from the start.',
+        title: 'Session Expired',
+        text: 'Your session has expired. Please complete the form again from the beginning.',
         icon: 'warning',
         confirmButtonText: 'OK',
         confirmButtonColor: '#FF5A5F'
