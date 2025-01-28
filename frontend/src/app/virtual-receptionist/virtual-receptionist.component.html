@@ -91,6 +91,7 @@
                     [max]="maxDate"
                     (keydown)="preventManualInput($event)"
                     (click)="openDatePicker($event)"
+                    [ngClass]="{ 'filled': birthdayControl?.value }"
                 />
               </div>
               

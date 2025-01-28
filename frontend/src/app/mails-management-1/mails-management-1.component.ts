@@ -184,5 +184,11 @@ export class MailsManagement1Component {
         return field;
     }
   }
+
+
+  get birthdayControl() {
+    return this.personalDetailsForm.get('birthday');
+  }
+  
 }
 

@@ -151,3 +151,14 @@ opacity: 0.7; /* Slight opacity change on hover for effect */
 .select-padding {
 padding: 35px;
 }
+
+
+/* Default placeholder style */
+.placeholder-input {
+  color: rgba(0, 0, 0, 0.2) !important; /* Light grey for placeholder */
+}
+
+/* Style when input has a value */
+.filled-input {
+  color: rgba(0, 0, 0, 0.507) !important; /* Darker text for filled input */
+}

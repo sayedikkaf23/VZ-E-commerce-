@@ -11,6 +11,10 @@
     
   }
 
+  .step_1_form .form-field input#birthday.filled {
+    color: rgba(0, 0, 0, 0.507); /* Dark color for filled input */
+  }
+
   
    /* Loader Container */
 .loader-container {

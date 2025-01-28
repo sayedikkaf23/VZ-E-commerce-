@@ -2,22 +2,22 @@
   <app-user-header></app-user-header>
 
   <div class="gradient_color">
-    <h3>Step 3</h3>
+    <h3>Step 3 - Let’s get to know you more!</h3>
   </div>
 
   <section class="step_1_section step_2_section">
     <div class="container">
-      <div class="head_text">
+      <!-- <div class="head_text">
         <h3 style="font-size: 20px" data-aos="fade-up">
           Let’s get to know you more!
         </h3>
-        <!-- <p data-aos="fade-up">Virtuzone offers a range of services to further enhance your business well-being.
-                  </p> -->
-      </div>
+         <p data-aos="fade-up">Virtuzone offers a range of services to further enhance your business well-being.
+                  </p> 
+      </div> -->
       <div class="step_1_form step_2_form">
         <form (ngSubmit)="onSubmit()" enctype="multipart/form-data">
           <div class="item">
-            <h3>Business Bank Service</h3>
+            <h3>Business Bank Account Opening</h3>
             <div class="form-field">
               <div class="form-field">
                 <label for="resident">Is your company located in UAE? <span class="required">*</span></label>
@@ -57,14 +57,14 @@
             </div> -->
 
             <div class="form-field">
-              <label for="resident">How many shareholder does your company have?
+              <label for="resident">How many shareholders does your company have?
                 <span class="required">*</span></label>
 
               <fieldset>
                 <select name="shareholdercount" id="shareholdercount" class="form-select"
                   [(ngModel)]="formData.shareholdercount" (ngModelChange)="updateShareholders()">
                   <option value="" disabled selected>
-                    How many shareholder does your company have?
+                    How many shareholders does your company have?
                   </option>
                   <option value="1">1</option>
                   <option value="2">2</option>
@@ -87,15 +87,15 @@
                   <option value="" disabled selected>
                     Turnover of the company (Annually)?
                   </option>
-                  <option value="0-50,000">0-50,000</option>
-                  <option value="50,001-150,000">50,001-150,000</option>
-                  <option value="50,001-150,000">50,001-150,000</option>
-                  <option value="500,000+">500,000+</option>
+                  <option value="AED 0-50,000">AED 0-50,000</option>
+                  <option value="AED 50,001-150,000">AED 50,001-150,000</option>
+                  <option value="AED 50,001-150,000">AED 50,001-150,000</option>
+                  <option value="AED 500,000+">AED 500,000+</option>
                 </select>
               </fieldset>
             </div>
             <div class="shareholder-row shareholder-section"> <!-- Apply new class here -->
-              <h3 style="margin-bottom: 30px;">Shareholder List</h3>
+              <h3 style="margin-bottom: 30px;">Shareholders List</h3>
               <div class="form-group shareholder-details" *ngFor="let shareholder of shareholders; let i = index">
                 <div class="shareholder-inputs"> <!-- Flex container for alignment -->
                   <div class="form-field ">
@@ -118,12 +118,12 @@
                     <!-- Apply new class here -->
                     <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required
                       style="padding: 25px"  (keydown)="preventManualInput($event)"
-                      (click)="openDatePicker($event)" />
+                      (click)="openDatePicker($event)" [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }"/>
                   </div>
                   <div class="form-field">
                     <label class="shareholder-label">Nationality <span class="required">*</span></label>
                     <!-- Apply new class here -->
-                    <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder" [ngModelOptions]="{ standalone: true }">
+                    <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder" [ngModelOptions]="{ standalone: true }" style="border-color: transparent;">
                       <option value="" disabled [ngValue]="null">Select Nationality</option>
                       <option *ngFor="let nationality of nationalities" [value]="nationality">{{ nationality }}</option>
                     </select>

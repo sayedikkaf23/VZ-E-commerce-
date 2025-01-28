@@ -50,6 +50,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
     // console.log('Step 1 data:', this.step1Data);
   }
 
+
   ngOnInit(): void {
     // Load nationality data
     this.getnationalityService.getCountries().subscribe((data) => {
@@ -97,6 +98,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
     }
   }
 
+ 
   ngAfterViewInit() {
     const Tooltip = (window as any).Tooltip;
     if (Tooltip && typeof Tooltip.initAll === 'function') {
