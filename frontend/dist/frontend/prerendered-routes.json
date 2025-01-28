@@ -16,6 +16,7 @@
     "/mails-management-details",
     "/mails-summary",
     "/panel",
+    "/panel/admin-document-type",
     "/panel/admin-mail-management",
     "/panel/admin-settings",
     "/panel/admin-virtual-management",
