@@ -35,8 +35,8 @@
                               <tr *ngFor="let product of matchScoreResponse?.data?.products">
                                 <td>{{ product.productName }}</td>
                                 <td style="text-align: center;">{{ product.productQuantity }}</td>
-                                <td class="currency">{{ product.productUnitPrice | number:'1.0-2' }}</td>
-                                <td class="currency">{{ (product.productUnitPrice * product.productQuantity * 1.05) | number:'1.0-2' }}</td>
+                                <td class="currency">AED {{ product.productUnitPrice | number:'1.0-2' }}</td>
+                                <td class="currency">AED {{ (product.productUnitPrice * product.productQuantity * 1.05) | number:'1.0-2' }}</td>
                             
                               </tr>
                             </tbody>
