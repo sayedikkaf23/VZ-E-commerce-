@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, Renderer2 , OnDestroy} from '@angular/core';
 import { OnlinePaymentService } from '../service/online-payment.service';
 import { ActivatedRoute } from '@angular/router';
 import { CardmachineService } from '../service/cardmachine.service';
@@ -31,6 +31,7 @@ export class OnlinepaymentComponent implements OnInit {
   };
   type: string = '';
   constructor(
+    private renderer: Renderer2,
     private onlinePaymentService: OnlinePaymentService,
     private route: ActivatedRoute,
     private cashovercounterService: CashovercounterService,
@@ -41,6 +42,11 @@ export class OnlinepaymentComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    // Remove top padding from the body
+    this.renderer.setStyle(document.body, 'padding-top', '0px');
+
+
     this.type = (this.route.snapshot.data as any).type;
     this.orderId = this.route.snapshot.paramMap.get('id') || '';
   
