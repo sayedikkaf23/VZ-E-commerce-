@@ -45,6 +45,7 @@ export class OnlinepaymentComponent implements OnInit {
 
     // Remove top padding from the body
     this.renderer.setStyle(document.body, 'padding-top', '0px');
+    this.renderer.setStyle(document.body, 'overflow', 'hidden');
 
 
     this.type = (this.route.snapshot.data as any).type;
@@ -86,6 +87,15 @@ export class OnlinepaymentComponent implements OnInit {
         }
       );
     }, 2000); // Delay in milliseconds
+  }
+
+ 
+  ngOnDestroy(): void {
+    // Optionally restore the padding when navigating away
+    if (typeof window !== 'undefined' && document) {
+      this.renderer.removeStyle(document.body, 'overflow');
+      this.renderer.removeStyle(document.body, 'padding-top');
+    }
   }
   
 
