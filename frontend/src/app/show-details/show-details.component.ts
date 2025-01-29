@@ -243,7 +243,12 @@ export class ShowDetailsComponent implements AfterViewInit {
           },
           (error) => {
             // Handle errors from any of the API calls
-            Swal.fire('Error', 'Not sure about this - some error.', 'error');
+            Swal.fire({
+                       title: 'Error',
+                       text: 'Please retry again',
+                       icon: 'error',
+                       confirmButtonText: 'Retry' 
+                     });
             console.error(error);
             this.isLoading = false; // Hide loader in case of error
           }

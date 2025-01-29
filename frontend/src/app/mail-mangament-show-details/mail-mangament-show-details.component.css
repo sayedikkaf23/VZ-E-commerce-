@@ -72,7 +72,7 @@ table thead th {
 /* Text Styles */
 .loader-text {
   font-size: 14px; /* Smaller font size */
-  font-weight: 500; /* Lighter font weight for a more subtle appearance */
+  font-weight: bold; 
   color: #FF5A5F; /* Match the color of the loader for consistency */
   display: flex;
   align-items: center; /* Vertically center text with the loader */

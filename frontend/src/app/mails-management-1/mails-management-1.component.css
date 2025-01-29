@@ -59,7 +59,7 @@
 .loader-text {
   font-size: 18px;
   color: #333; /* Dark text color */
-  font-weight: 600;
+  font-weight: bold; 
 }
 
 input[readonly] {
