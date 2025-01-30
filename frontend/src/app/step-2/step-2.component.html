@@ -39,7 +39,7 @@
               </div>
             </div>
             <div class="form-field">
-              <label for="working"> Are you Salaried or Self-Employed?<span class="required">*</span></label>
+              <label for="working">Are you Salaried or Self-Employed?<span class="required">*</span></label>
 
               <fieldset>
                 <select
@@ -58,7 +58,7 @@
               </fieldset>
             </div>
             <div class="form-field" *ngIf="formData.working === 'Salaried'">
-              <label for="salary"> Salary (AED) <span class="required">*</span></label>
+              <label for="salary">Salary (AED)<span class="required">*</span></label>
 
               <fieldset>
                 <select name="salary" id="salary" class="form-select"                 [(ngModel)]="formData.salary"

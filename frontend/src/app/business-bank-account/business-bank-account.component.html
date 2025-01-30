@@ -154,43 +154,45 @@
   <!-- View Details -->
   <div class="modal-container" *ngIf="showDetailsModal">
     <div class="modal-backdrop" (click)="closeDetailsModal()"></div>
-    <div class="modal-content"  style=" overflow-y: auto; max-height: 90vh; margin: 0 auto; padding: 0px !important;">
-      <div class="modal-header" >
+    <div class="modal-content" style="overflow-y: auto; max-height: 90vh; margin: 0 auto; padding: 0px !important;">
+      <div class="modal-header">
         <span class="close-btn" (click)="closeDetailsModal()">&times;</span>
         <h5 class="modal-title">Business Bank Details</h5>
       </div>
-       
- <!-- User Details -->
-<div *ngIf="selectedUser" style="padding: 10px; background: #f9f9f9; border-radius: 5px;">
-
-<!-- Loop through the selectedUser object -->
-<div *ngFor="let key of objectKeys(selectedUser)" style="margin-bottom: 20px;">
-
-  <!-- Check if the value is an object -->
-  <div *ngIf="isObject(selectedUser[key]); else showValue">
-    
-    <!-- If the value is an object, display its keys and values recursively -->
-    <div *ngFor="let subKey of objectKeys(selectedUser[key])" style="margin-left: 20px; padding-left: 20px; border-left: 2px solid #ddd; margin-bottom: 10px;">
-      <p style="margin: 5px 0; font-weight: bold;">{{ subKey }}:</p>
-      <p style="margin: 0; padding-left: 10px; font-size: 14px; color: #333;">{{ selectedUser[key][subKey] || 'N/A' }}</p>
-    </div>
-
-  </div>
-
-  <!-- If it's not an object, just display the value -->
-  <ng-template #showValue>
-    <p style="margin: 10px 0; font-weight: bold;">{{ key }}:</p>
-    <p style="margin: 0; font-size: 14px; color: #333;">{{ selectedUser[key] || 'N/A' }}</p>
-  </ng-template>
   
-</div>
-
-</div>
+      <!-- User Details Table -->
+      <div *ngIf="selectedUser" style="padding: 10px; background: #f9f9f9; border-radius: 5px;">
+        <table style="width: 100%; border-collapse: collapse;">
+          <tr>
+            <th style="text-align: left; padding: 8px; background: #ddd;">Field</th>
+            <th style="text-align: left; padding: 8px; background: #ddd;">Value</th>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ccc;">Is Matched</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ccc;">{{ selectedUser['isMatched'] || 'N/A' }}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ccc;">Case ID</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ccc;">{{ selectedUser['caseId'] || 'N/A' }}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px; border-bottom: 1px solid #ccc;">Customer ID</td>
+            <td style="padding: 8px; border-bottom: 1px solid #ccc;">{{ selectedUser['customerId'] || 'N/A' }}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px;">Highest Scoring Result</td>
+            <td style="padding: 8px;">{{ selectedUser['highestScoringResult'] || 'N/A' }}</td>
+          </tr>
+        </table>
+      </div>
+  
       <ng-template #noFiles>
-        <p class="no-files">No files available for this mail.</p>
+        <p class="no-files">No details available for this user.</p>
       </ng-template>
     </div>
   </div>
+  
+  
   
   
 </div>

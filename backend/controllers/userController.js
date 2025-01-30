@@ -307,7 +307,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
     phone: formattedPhone,
     dob,
   };
-  console.log(requestBody,shareholders);
+  // console.log(requestBody,shareholders);
  
   try {
     // Step 1: Authenticate with the external API
@@ -353,7 +353,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
 
     // Extract and use responseData safely
     const responseData = salesforceResponse.data;
-    console.log("Extracted Salesforce Data:", responseData);
+    // console.log("Extracted Salesforce Data:", responseData);
     subcategory = "personal"
     
    
@@ -402,6 +402,10 @@ exports.callSalesforceEndpoint = async (req, res) => {
           },
         }
       );
+
+console.log(screeningResponse,"screeningResponse")
+
+
     } else if (CustomerType == "C") {
       // Call corporate customer screening API
       subcategory = "business"
@@ -465,7 +469,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
       );
     }
 
-    console.log('Screening Response:', screeningResponse.data);
+    // console.log('Screening Response:', screeningResponse.data);
     const { matchScore } = screeningResponse.data;
 
     // Step 5: Create a new Pidata document

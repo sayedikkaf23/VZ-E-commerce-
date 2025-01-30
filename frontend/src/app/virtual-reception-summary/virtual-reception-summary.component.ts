@@ -127,6 +127,10 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     window.addEventListener('popstate', () => {
       history.pushState(null, '', window.location.href);
       this.toastr.error('Back navigation is disabled on this page.', 'Warning');
+      // Reload the page to reset the state
+      setTimeout(() => {
+        window.location.reload();
+      }, 50);
     });
   }
 

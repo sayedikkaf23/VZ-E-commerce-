@@ -17,6 +17,9 @@ export class BusinessBankAccountComponent implements OnInit {
   selectedAdditionalFiles: any[] = []; // Selected files for the modal
   isLoading: boolean = false; // Single loader state for all actions
 
+  selectedUserFields: string[] = ['isMatched', 'caseId', 'customerId', 'highestScoringResult'];
+
+
   // Dummy data for shareholders
   dummyShareholders = [
     { name: 'John Doe', id: 'SH001', percentage: 25 },
@@ -114,6 +117,7 @@ closeModal(): void {
   }
 
   openDetailsModal(details: any): void {
+    console.log('Selected User Data:', details);
     this.selectedUser= details; // Assign selected user details
     this.showDetailsModal = true; // Open the modal for user
   }

@@ -27,4 +27,8 @@
   }
 
 
-  
+  .dropdown a{
+    display: flex;
+    align-items: center;
+    gap: 5px; /* Adjust spacing between text and icon */
+  }

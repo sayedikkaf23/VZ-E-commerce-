@@ -140,6 +140,10 @@ export class BussinessShowDeatilsComponent {
       history.pushState(null, '', this.router.url);
       // Display an optional warning message
       this.toastr.error('Back navigation is disabled on this page.', 'Warning');
+      // Reload the page to reset the state
+      setTimeout(() => {
+        window.location.reload();
+      }, 50);
     });
   }
   
