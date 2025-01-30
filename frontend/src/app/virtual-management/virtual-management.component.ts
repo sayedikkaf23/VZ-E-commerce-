@@ -99,6 +99,7 @@ export class VirtualManagementComponent implements OnInit {
 
 
   openDetailsModal(details: any): void {
+    console.log('Selected User Data:',details);
     this.selectedUser= details; // Assign selected user details
     this.showDetailsModal = true; // Open the modal for user
   }
