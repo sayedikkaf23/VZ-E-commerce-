@@ -125,7 +125,7 @@ const routes: Routes = [
   //   component: CashoverCounterComponent,
   // },
   {
-    path: 'step-1',
+    path: 'backopening-1',
     component: Step1Component,
    
   },

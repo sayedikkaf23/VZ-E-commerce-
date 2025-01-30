@@ -94,7 +94,7 @@ export class _HomeComponent {
     // console.log(check)
 // Check the serviceName and navigate accordingly
 if (check == 'Bank Account Opening') {
-  this.router.navigate(['/step-1']); // Replace with the actual route for Service A
+  this.router.navigate(['/backopening-1']); // Replace with the actual route for Service A
 } else if (check == 'Accounting & VAT') {
   this.router.navigate(['/service-b']); // Replace with the actual route for Service B
 } else if (check == 'Mail Management') {
