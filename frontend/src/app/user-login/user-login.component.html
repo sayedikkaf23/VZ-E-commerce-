@@ -26,7 +26,7 @@
         />
       </div>
 
-      <div class="form-field mt-3" style="position: relative;">
+      <div class="form-field mt-3" style="position: relative; margin-bottom: 0 !important;">
         <input
           style="width: 100%;"
           [type]="passwordVisible ? 'text' : 'password'"
@@ -39,9 +39,12 @@
         </span>
       </div>
 
-      
+      <!-- Forgot Password Link -->
+      <div class="text-end mt-1">
+        <a href="/forgot-password" class="text-danger" style="font-size: small; font-weight: bold;">Forgot Password?</a>
+      </div>
 
-      <div class="form-check mt-3">
+      <!-- <div class="form-check mt-3">
         <input
           class="form-check-input"
           type="checkbox"
@@ -49,7 +52,7 @@
           id="rememberMe"
         />
         <label class="form-check-label" for="rememberMe">Keep me logged in</label>
-      </div>
+      </div> -->
 
       <button
         type="submit"
