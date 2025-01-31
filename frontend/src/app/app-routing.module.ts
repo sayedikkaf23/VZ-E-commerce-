@@ -49,6 +49,7 @@ import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
 import { BanktransferComponent } from './banktransfer/banktransfer.component';
 import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
 import { AdminDocumentTypeComponent } from './admin-document-type/admin-document-type.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 const routes: Routes = [
 
@@ -225,6 +226,11 @@ const routes: Routes = [
   {
     path: 'login',
     component: UserLoginComponent,
+   
+  },
+  {
+    path: 'forgot-password',
+    component: ForgotPasswordComponent,
    
   },
   {
