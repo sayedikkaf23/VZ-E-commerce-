@@ -13,6 +13,7 @@ export class ForgotPasswordComponent {
 
    loginForm: FormGroup;
    passwordVisible: boolean = false;
+   passwordVisible2: boolean = false;
    newPasswordForm: FormGroup;
    showEmailForm = true;
    showOtpModal = false;
@@ -125,6 +126,12 @@ export class ForgotPasswordComponent {
   togglePasswordVisibility(): void {
     this.passwordVisible = !this.passwordVisible;
   }
+
+  togglePasswordVisibility2(): void {
+    this.passwordVisible2 = !this.passwordVisible2;
+  }
+
+  
 
 
 }

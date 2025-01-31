@@ -2241,6 +2241,7 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
       }
       .login-page {
         background: none; /* Disables the background image on mobile */
+        padding: 0 1rem 0 1rem;
       }
 
       
