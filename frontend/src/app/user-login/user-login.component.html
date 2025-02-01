@@ -1,99 +1,52 @@
-<!-- Login Section Container -->
 <section class="login_section">
-  
-    <!-- Decorative Right Shape (Hidden on Small Screens) -->
-    <div class="login_r_shape d-none d-md-block">
-        <img src="assets/customer_protal/images/login_r_shape.png" alt="">
-    </div>
-    
     <div class="wrapper position-relative">
-      
-        <!-- Logo (Hidden on Small Screens) -->
-        <div class="logo">
-            <img src="assets/customer_protal/images/logo.svg" alt="" class="d-md-block d-none">
+      <div class="logo">
+        <img src="assets/customer_protal/images/logo.svg" alt="" class="d-md-block d-none">
+      </div>
+      <div class="row align-items-center g-lg-0 g-md-4 g-0 h-100">
+        <div class="col-md-6 position-relative h-100 order-md-0 order-1">
+          <div class="image">
+            <picture>
+              <source media="(max-width: 767px)" srcset="images/login_img_sm.jpg">
+              <img loading="lazy" src="assets/customer_protal/images/login_img.jpg" alt="Prime Services" title="Prime Services">
+            </picture>
+            <h1>#BeYourOwnBoss</h1>
+          </div>
         </div>
-        
-        <!-- Login Section Layout -->
-        <div class="row align-items-center g-lg-0 g-md-4 g-0 h-100">
-          
-            <!-- Left Column: Image and Branding -->
-            <div class="col-md-6 position-relative h-100 order-md-0 order-1">
-                <div class="image">
-                    
-                    <!-- Responsive Image for Different Screen Sizes -->
-                    <picture>
-                        <source media="(max-width: 767px)" srcset="images/login_img_sm.jpg">
-                        <img loading="lazy" src="assets/customer_protal/images/login_img.jpg" alt="Prime Services" title="Prime Services" width="300" height="180">
-                    </picture>
-  
-                    <!-- Branding Text -->
-                    <h1>#BeYourOwnBoss</h1>
+        <div class="col-md-6 h-100">
+          <div class="form_wrp">
+            <h2>Sign In to <br class="d-none d-md-block"> Your Account</h2>
+            <p>Welcome Back! Sign in with your credentials.</p>
+            <form [formGroup]="loginForm" (ngSubmit)="submit()">
+              <div class="form-field">
+                <input type="email" class="form-control" formControlName="email" placeholder="Email address" required>
+              </div>
+              <div class="form-field password">
+                <input [type]="passwordVisible ? 'text' : 'password'" class="form-control" formControlName="password" placeholder="Password" required>
+                <div class="icon" (click)="togglePasswordVisibility()">
+                  <svg *ngIf="!passwordVisible" class="pass-show" width="21" height="15">
+                    <path d="M19.5765 6.61321C19.8588 7.00906 19.9999 7.20704 19.9999 7.5C19.9999 7.79296 19.8588 7.99094 19.5765 8.38679C18.3079 10.1656 15.0684 14 10.7142 14C6.35991 14 3.12042 10.1656 1.85193 8.38679C1.56962 7.99094 1.42847 7.79296 1.42847 7.5C1.42847 7.20704 1.56962 7.00906 1.85193 6.61321C3.12042 4.83448 6.35991 1 10.7142 1C15.0684 1 18.3079 4.83448 19.5765 6.61321Z" stroke="currentColor" stroke-width="1.3"/>
+                  </svg>
+                  <svg *ngIf="passwordVisible" class="pass-hide" width="19" height="19">
+                    <path d="M2 1L20 19" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
                 </div>
-            </div>
-  
-            <!-- Right Column: Login Form -->
-            <div class="col-md-6 h-100">
-                <div class="form_wrp">
-                    
-                    <!-- Logo for Small Screens -->
-                    <div class="logo position-relative d-block d-md-none">
-                        <img src="assets/customer_protal/images/dark_logo.svg" alt="">
-                    </div>
-  
-                    <!-- Login Form Heading and Description -->
-                    <h2>Sign In to <br class="d-none d-md-block"> Your Account</h2>
-                    <p>Welcome Back! Sign in with your data entered during registration.</p>
-                    
-                    <!-- Login Form -->
-                    <form action="">
-  
-                        <!-- Email Input Field -->
-                        <div class="form-field">
-                            <input type="email" class="form-control" name="" placeholder="Email address">
-                        </div>
-  
-                        <!-- Password Input Field with Toggle Visibility Icon -->
-                        <div class="form-field password">
-                            <input type="password" class="form-control" name="" placeholder="Password">
-                            <div class="icon">
-                                
-                                <!-- Eye Icon for Showing Password -->
-                                <svg class="pass-show" width="21" height="15" viewBox="0 0 21 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M19.5765 6.61321C19.8588 7.00906 19.9999 7.20704 19.9999 7.5C19.9999 7.79296 19.8588 7.99094 19.5765 8.38679C18.3079 10.1656 15.0684 14 10.7142 14C6.35991 14 3.12042 10.1656 1.85193 8.38679C1.56962 7.99094 1.42847 7.79296 1.42847 7.5C1.42847 7.20704 1.56962 7.00906 1.85193 6.61321C3.12042 4.83448 6.35991 1 10.7142 1C15.0684 1 18.3079 4.83448 19.5765 6.61321Z" stroke="currentColor" stroke-width="1.3"/>
-                                    <path d="M13.4999 7.50001C13.4999 5.96146 12.2527 4.71429 10.7142 4.71429C9.17563 4.71429 7.92847 5.96146 7.92847 7.50001C7.92847 9.03856 9.17563 10.2857 10.7142 10.2857C12.2527 10.2857 13.4999 9.03856 13.4999 7.50001Z" stroke="currentColor" stroke-width="1.3"/>
-                                </svg>
-  
-                                <!-- Eye Slash Icon for Hiding Password -->
-                                <svg class="pass-hide d-none" width="19" height="19" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M18.439 13.439C19.3636 12.5212 20.0775 11.6091 20.544 10.955C20.848 10.5287 21 10.3155 21 10C21 9.6845 20.848 9.4713 20.544 9.045C19.1779 7.12944 15.6892 3 11 3C10.0922 3 9.2294 3.15476 8.41827 3.41827M5.74742 4.74742C3.73118 6.1072 2.24215 7.94266 1.45604 9.045C1.15201 9.4713 1 9.6845 1 10C1 10.3155 1.15201 10.5287 1.45604 10.955C2.8221 12.8706 6.31078 17 11 17C12.9908 17 14.7651 16.2557 16.2526 15.2526" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M8.85786 8C8.32783 8.53 8 9.2623 8 10.0711C8 11.6887 9.3113 13 10.9289 13C11.7377 13 12.47 12.6722 13 12.1421" stroke="black" stroke-width="1.5" stroke-linecap="round"/>
-                                    <path d="M2 1L20 19" stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>                                        
-                            </div>
-                        </div>
-  
-                        <!-- Keep Me Logged In Checkbox and Forgot Password Link -->
-                        <div class="row align-items-center justify-content-between">
-                            <div class="col-auto">
-                                <div class="form-check mb-0">
-                                  <input type="checkbox" class="form-check-input" id="keeplogged">
-                                  <label class="form-check-label" for="keeplogged">Keep me logged in</label>
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <a href="#" class="link"><u>Forgot Password?</u></a>
-                            </div>
-                        </div>
-  
-                        <!-- Login Button -->
-                        <button type="submit" class="btn w-100">Login</button>
-                    
-                    </form>
+              </div>
+              <div class="row align-items-center justify-content-between">
+                <div class="col-auto">
+                  <div class="form-check mb-0">
+                    <input type="checkbox" class="form-check-input" id="keeplogged">
+                    <label class="form-check-label" for="keeplogged">Keep me logged in</label>
+                  </div>
                 </div>
-            </div>
-  
+                <div class="col-auto">
+                  <a href="#" class="link"><u>Forgot Password?</u></a>
+                </div>
+              </div>
+              <button type="submit" class="btn w-100">Login</button>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
-  
   </section>
-  
