@@ -1,137 +1,78 @@
-import { Component, QueryList, ViewChildren, ElementRef, ChangeDetectorRef} from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { ToastrService } from 'ngx-toastr'; 
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AdminAuthService } from '../service/admin-auth.service';
+
 
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
-  styleUrl: './forgot-password.component.css'
+  styleUrls: ['./forgot-password.component.css']
 })
-export class ForgotPasswordComponent {
+export class ForgotPasswordComponent implements OnInit {
+  resetRequestForm: FormGroup;
+  newPasswordForm: FormGroup;
 
- 
+  showEmailForm = true;
+  showNewPasswordForm = false;
 
-   loginForm: FormGroup;
-   passwordVisible: boolean = false;
-   passwordVisible2: boolean = false;
-   newPasswordForm: FormGroup;
-   showEmailForm = true;
-   showOtpModal = false;
-   showNewPasswordForm = false;
-    otp: string[] = ['','','',''];
-    enteredOTP: string = '';
+  passwordVisible = false;
+  passwordVisible2 = false;
 
-    @ViewChildren('otpInput') otpInputs!: QueryList<ElementRef>;
-  
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authService: AdminAuthService,
+  ) {
+    this.resetRequestForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]]
+    });
 
-    
-  
-    constructor(
-      private fb: FormBuilder,
-      private toastr: ToastrService,
-      private cdr: ChangeDetectorRef
-    ) {
-      // Initialize the form
-      this.loginForm = this.fb.group({
-        email: ['', [Validators.required, Validators.email]],
-      });
-
-      this.newPasswordForm = this.fb.group({
-        newPassword: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', [Validators.required]]
-      });
-    }
-  
-   
-
-  
-    
-    submit(): void {
-      if (this.loginForm.invalid) {
-        this.toastr.error('Enter a valid email address', 'Error');
-        return;
-      }
-  
-      // If email is valid, open OTP modal
-      this.openOtpModal();
-    }
-
-
-     // Show OTP Modal when NEXT is clicked
-  openOtpModal() {
-    this.showOtpModal = true;
-  }
-  
-
-  // Close OTP Modal
-  closeOtpModal() {
-    this.showOtpModal = false;
+    this.newPasswordForm = this.fb.group({
+      newPassword: ['', [Validators.required]],
+      confirmPassword: ['', [Validators.required]]
+    });
   }
 
-  // Verify OTP (You can add API call here)
-  verifyOtp() {
-  
-    if (this.enteredOTP.length === 4) {
-      this.showOtpModal = false;
+  ngOnInit(): void {
+    // Check if a token is present in the URL (e.g., /reset-password?token=123abc)
+    const token = this.route.snapshot.queryParamMap.get('token');
+
+    // If a token is present, we might show the new password form 
+    // and hide the email form.
+    if (token) {
       this.showEmailForm = false;
       this.showNewPasswordForm = true;
-    }
-
-    console.log("otp - ", this.enteredOTP);
-  }
-
-  ngAfterViewInit(): void {
-    // Automatically set focus to the first field after view initialization
-    const otpInputArray = this.otpInputs.toArray();
-    otpInputArray[0].nativeElement.focus();
-  }
-
-  // Handles input event and focuses the next input field
-  handleInput(event: Event, index: number): void {
-    const inputElement = event.target as HTMLInputElement;
-    
-     // Construct the OTP string dynamically from input fields
-  const otpInputsArray = this.otpInputs.toArray();
-  this.enteredOTP = otpInputsArray.map(input => input.nativeElement.value).join('');
-
-    // If the current input has a value, move focus to the next input field
-    if (inputElement.value.length === 1 && index < this.otp.length - 1) {
-      this.otpInputs.toArray()[index + 1].nativeElement.focus();
+      // Optionally, store token somewhere (service, local variable, etc.)
     }
   }
 
-  // Handles backspace event and moves focus to the previous input field if needed
-  handleBackspace(event: KeyboardEvent, index: number): void {
-    const inputElement = event.target as HTMLInputElement;
-
-    // Move focus to the previous field if the input is empty
-    if (event.key === 'Backspace' && inputElement.value === '') {
-      if (index > 0) {
-        this.otpInputs.toArray()[index - 1].nativeElement.focus();
+  requestResetLink() {
+    if (this.resetRequestForm.invalid) return;
+  
+    const email = this.resetRequestForm.value.email;
+  
+    this.authService.forgotPassword(email).subscribe(
+      (response) => {
+        console.log("Reset link sent:", response);
+        alert("A password reset link has been sent to your email.");
+        this.router.navigate(['/login']); 
+      },
+      (error) => {
+        console.error("Error sending reset link:", error);
+        alert(error?.error?.message || "Failed to send reset link!");
       }
-    }
+    );
   }
-
-  submitNewPassword() {
-    if (this.newPasswordForm.valid) {
-      const { newPassword, confirmPassword } = this.newPasswordForm.value;
-      if (newPassword === confirmPassword) {
-        alert('Password successfully changed!');
-      } else {
-        alert('Passwords do not match!');
-      }
-    }
-  }
-
-  togglePasswordVisibility(): void {
-    this.passwordVisible = !this.passwordVisible;
-  }
-
-  togglePasswordVisibility2(): void {
-    this.passwordVisible2 = !this.passwordVisible2;
-  }
-
   
 
 
+  // Toggle password visibility
+  togglePasswordVisibility() {
+    this.passwordVisible = !this.passwordVisible;
+  }
+  togglePasswordVisibility2() {
+    this.passwordVisible2 = !this.passwordVisible2;
+  }
 }

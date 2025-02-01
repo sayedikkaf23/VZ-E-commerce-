@@ -50,6 +50,8 @@ import { BanktransferComponent } from './banktransfer/banktransfer.component';
 import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
 import { AdminDocumentTypeComponent } from './admin-document-type/admin-document-type.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
+
 
 const routes: Routes = [
 
@@ -73,6 +75,7 @@ const routes: Routes = [
   },
   // { path: 'successful/:id', component: SuccessComponent },
   { path: 'failure/:id', component: FailerComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
   // new
   { path: 'successful/:id', component: SuccessComponent },
   { path: 'success/:id', component: BankTransferSuccessComponent },

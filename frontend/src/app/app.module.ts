@@ -69,6 +69,7 @@ import { BanktransferComponent } from './banktransfer/banktransfer.component';
 import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
 import { AdminDocumentTypeComponent } from './admin-document-type/admin-document-type.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 @NgModule({
   declarations: [
@@ -130,7 +131,8 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
     BanktransferComponent,
     ChequedepositComponent,
     AdminDocumentTypeComponent,
-    ForgotPasswordComponent
+    ForgotPasswordComponent,
+    ResetPasswordComponent
     
   ],
   imports: [

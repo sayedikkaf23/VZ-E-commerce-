@@ -58,4 +58,15 @@ export class AdminAuthService {
   login(data: { email: string; password: string }): Observable<any> {
     return this.http.post(`${this.url}/auth/login`, data); // POST request to /auth/login
   }
+
+
+   // Request password reset link (Forgot Password)
+   forgotPassword(email: string): Observable<any> {
+    return this.http.post(`${this.url}/auth/forgot-password`, { email });
+  }
+
+  // Reset password using the token from the reset link
+  resetPassword(token: string, newPassword: string): Observable<any> {
+    return this.http.post(`${this.url}/auth/reset-password`, { token, newPassword });
+  }
 }
