@@ -38,6 +38,7 @@ personalBanks: any[] = [];
 
   isLoading = false;
 
+
   constructor(
     private userService: UserService,
     private route: ActivatedRoute,
@@ -183,7 +184,7 @@ fetchPersonalBanks(): void {
     this.selectedRecord.calculatedVAT = vat;
     this.selectedRecord.calculatedTotalIncludingVAT = totalIncludingVAT;
   
-    // console.log(this.selectedRecord);
+    console.log(this.selectedRecord);
   
     const modalElement = document.getElementById('detailsModal');
     if (modalElement) {
