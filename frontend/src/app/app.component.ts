@@ -80,7 +80,7 @@ export class AppComponent implements OnInit, OnDestroy {
     if (isPlatformBrowser(this.platformId)) {
       this.removeAssets(); // Remove previous assets before adding new ones
  
-      if (this.currentRoute === '/login') {
+      if (this.currentRoute === '/login' || this.currentRoute === '/user/dashboard') {
         // Load only the required styles for the login page
         this.loadStyle('assets/customer_protal/css/style.css');
         this.loadStyle('assets/customer_protal/css/responsive.css');
