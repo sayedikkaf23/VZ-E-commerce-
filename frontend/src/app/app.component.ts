@@ -2,7 +2,7 @@ import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core
 import { isPlatformBrowser } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs/operators';
-
+ 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -10,7 +10,7 @@ import { filter } from 'rxjs/operators';
 })
 export class AppComponent implements OnInit, OnDestroy {
   title = 'frontend';
-
+ 
   // List of routes where dynamic scripts and styles should be loaded
   specialRoutes: string[] = [
     '/onlinepayment',
@@ -26,7 +26,7 @@ export class AppComponent implements OnInit, OnDestroy {
     '/banktransfer',
     '/chequedeposit',
   ];
-
+ 
   // Arrays to store dynamically added scripts and styles
   dynamicScripts: string[] = [
     'https://code.jquery.com/jquery-2.2.4.min.js',
@@ -36,7 +36,7 @@ export class AppComponent implements OnInit, OnDestroy {
     'https://kit.fontawesome.com/f5e65f7743.js',
     'assets/js/jquery.uploadfile.min.js',
   ];
-
+ 
   dynamicStyles: string[] = [
     'assets/css/bootstrap.min.css',
     'assets/css/simplebar.min.css',
@@ -50,14 +50,14 @@ export class AppComponent implements OnInit, OnDestroy {
     'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
     'https://hayageek.github.io/jQuery-Upload-File/4.0.11/uploadfile.css',
   ];
-
+ 
   currentRoute: string = '';
-
+ 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
     private router: Router
   ) {}
-
+ 
   ngOnInit(): void {
     // Subscribe to router events to dynamically load/remove assets based on the route
     this.router.events
@@ -66,36 +66,43 @@ export class AppComponent implements OnInit, OnDestroy {
         this.currentRoute = event.urlAfterRedirects;
         this.loadAssets();
       });
-
-
-      
   }
-
+ 
   ngOnDestroy(): void {
     // Remove assets when the component is destroyed
     this.removeAssets();
   }
-
+ 
   /**
-   * Load dynamic scripts and styles
+   * Load dynamic scripts and styles based on the route
    */
   private loadAssets(): void {
     if (isPlatformBrowser(this.platformId)) {
+      this.removeAssets(); // Remove previous assets before adding new ones
+ 
+      if (this.currentRoute === '/login') {
+        // Load only the required styles for the login page
+        this.loadStyle('assets/customer_protal/css/style.css');
+        this.loadStyle('assets/customer_protal/css/responsive.css');
+        console.log('Loaded login-specific styles.');
+        return; // Stop further execution to prevent loading other assets
+      }
+ 
       // Check if the current route matches one of the special routes
       const isSpecialRoute = this.specialRoutes.some((route) =>
         this.currentRoute.startsWith(route)
       );
-
+ 
       if (!isSpecialRoute) {
         return;
       }
-
-      // Load scripts and styles
+ 
+      // Load scripts and styles for special routes
       this.dynamicScripts.forEach((src) => this.loadScript(src));
       this.dynamicStyles.forEach((href) => this.loadStyle(href));
     }
   }
-
+ 
   /**
    * Remove dynamic scripts and styles
    */
@@ -105,7 +112,7 @@ export class AppComponent implements OnInit, OnDestroy {
       this.dynamicStyles.forEach((href) => this.removeStyle(href));
     }
   }
-
+ 
   /**
    * Dynamically add a script to the document
    */
@@ -125,7 +132,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     }
   }
-
+ 
   /**
    * Dynamically remove a script from the document
    */
@@ -138,7 +145,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     }
   }
-
+ 
   /**
    * Dynamically add a style to the document
    */
@@ -157,7 +164,7 @@ export class AppComponent implements OnInit, OnDestroy {
       }
     }
   }
-
+ 
   /**
    * Dynamically remove a style from the document
    */
