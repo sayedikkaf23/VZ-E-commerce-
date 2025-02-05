@@ -221,7 +221,7 @@
                                         </a> 
                                         </td>
                                         <td>
-                                        <a href="#uploaddocument"  data-bs-toggle="modal"  class="detail_btn" (click)="uploadDetailsModal(item); $event.preventDefault()">
+                                        <a href="#uploaddocument_step2"  data-bs-toggle="modal"  class="detail_btn" (click)="uploadDetailsModal(item); $event.preventDefault()">
                                             <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path d="M7.00016 1V7.66667M7.00016 1C6.53336 1 5.66118 2.32953 5.3335 2.66667M7.00016 1C7.46696 1 8.33916 2.32953 8.66683 2.66667" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                                                 <path d="M12.3332 9C12.3332 10.6547 11.9878 11 10.3332 11H3.6665C2.01184 11 1.6665 10.6547 1.6665 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -344,8 +344,8 @@
   </div>
   
   <!-- Upload File - Step 2 - Modal -->
-  <div class="modal fade fileupload_modal" id="uploaddocument_step2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="uploaddocumentLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+  <div class="modal fade fileupload_modal" id="uploaddocument_step2" data-bs-keyboard="false" tabindex="-1" aria-labelledby="uploaddocumentLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="uploaddocumentLabel">Upload Document for {{ selectedRecord?.planname }}</h5>
@@ -353,60 +353,50 @@
         </div>
         <div class="modal-body">
             <div class="table-responsive table-sm-box">
-                <table class="table">
+                <table class="table" *ngIf="uploadedFiles.length > 0; else noAdditionalFiles">
                     <thead class="table-light">
                       <tr>
                         <th scope="col">File</th>
                         <th scope="col">Document Type</th>
                         <th scope="col">Size</th>
+                        <th scope="col" class="text-center">View</th>
                         <th scope="col" class="text-center">Delete</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr>
-                        <td>
+                    <tbody *ngIf="uploadedFiles.length > 0">
+                      <ng-container *ngFor="let file of uploadedFiles;">
+                      <tr *ngIf="file.recordId === selectedRecord._id"
+                      >
+                     
+                        <td >
                             <div class="row gx-3 align-items-center flex-md-nowrap">
                                 <div class="col-auto">
                                     <div class="table-thumbnail">
-                                        <img src="images/file.jpg" alt="">
+                                        <img src="assets/images/file.jpg" alt="">
                                     </div>
                                 </div>
                                 <div class="col">
-                                    vz_manual invoice (6).pdf
+                                  {{ file.name }}
+
                                 </div>
                             </div>
                         </td>
-                        <td data-title="Document Type">Passport Copy</td>
-                        <td data-title="Size">1.50mb</td>
-                        <td class="text-center ">
-                            <a href="#" class="btn-icon">
-                                <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M13.3745 3.84271L12.9305 11.0257C12.817 12.8609 12.7603 13.7785 12.3003 14.4383C12.0728 14.7644 11.78 15.0397 11.4404 15.2465C10.7536 15.665 9.83424 15.665 7.99548 15.665C6.15437 15.665 5.2338 15.665 4.5465 15.2458C4.20669 15.0385 3.91379 14.7628 3.68643 14.436C3.22658 13.7753 3.1711 12.8564 3.06016 11.0186L2.62695 3.84271" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                                    <path d="M1.55176 3.84275H14.4488M10.9062 3.84275L10.4171 2.83372C10.0922 2.16345 9.92966 1.82832 9.64944 1.61931C9.58732 1.57294 9.52147 1.5317 9.45262 1.49599C9.1423 1.33499 8.76986 1.33499 8.02499 1.33499C7.26141 1.33499 6.87966 1.33499 6.56417 1.50274C6.49425 1.53992 6.42753 1.58283 6.3647 1.63103C6.08122 1.84851 5.92287 2.1959 5.60616 2.8907L5.17218 3.84275" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                                    <path d="M6.20898 11.7242V7.42523" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                                    <path d="M9.79199 11.7242V7.42523" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                                </svg>
-                                <span class="d-block d-md-none">Delete</span>
-                            </a>
+                        <td data-title="Document Type"> {{ file.type }}
                         </td>
-                      </tr>
-                      <tr>
-                        <td>
-                            <div class="row gx-3 align-items-center flex-md-nowrap">
-                                <div class="col-auto">
-                                    <div class="table-thumbnail">
-                                        <img src="images/file.jpg" alt="">
-                                    </div>
-                                </div>
-                                <div class="col">
-                                    vz_manual invoice (6).pdf
-                                </div>
-                            </div>
-                        </td>
-                        <td data-title="Document Type">Passport Copy</td>
-                        <td data-title="Size">1.50mb</td>
+                        <td data-title="Size"> {{ bytesToSize(file.size) }}</td>
                         <td class="text-center">
-                            <a href="#" class="btn-icon">
+                            <a href="#" onclick="return false;" (click)="viewFile(file.url)"
+                            data-fancybox  class="btn-icon">
+                                <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14.8169 5.31786C15.0341 5.62236 15.1426 5.77464 15.1426 6C15.1426 6.22536 15.0341 6.37764 14.8169 6.68214C13.8411 8.05043 11.3492 11 7.99979 11C4.65035 11 2.15843 8.05043 1.18268 6.68214C0.965512 6.37764 0.856934 6.22536 0.856934 6C0.856934 5.77464 0.965512 5.62236 1.18268 5.31786C2.15843 3.9496 4.65035 1 7.99979 1C11.3492 1 13.8411 3.9496 14.8169 5.31786Z" stroke="white" stroke-width="1.3"/>
+                                    <path d="M10.1426 6C10.1426 4.8165 9.18329 3.85715 7.99979 3.85715C6.81629 3.85715 5.85693 4.8165 5.85693 6C5.85693 7.1835 6.81629 8.14286 7.99979 8.14286C9.18329 8.14286 10.1426 7.1835 10.1426 6Z" stroke="white" stroke-width="1.3"/>
+                                    </svg>
+                                    <span class="d-block d-md-none">File</span>
+                            </a> 
+                        </td>
+                        <td class="text-center ">
+                            <a href="#" onclick="return false;" (click)="removeFile(file)"
+                            class="btn-icon">
                                 <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                     <path d="M13.3745 3.84271L12.9305 11.0257C12.817 12.8609 12.7603 13.7785 12.3003 14.4383C12.0728 14.7644 11.78 15.0397 11.4404 15.2465C10.7536 15.665 9.83424 15.665 7.99548 15.665C6.15437 15.665 5.2338 15.665 4.5465 15.2458C4.20669 15.0385 3.91379 14.7628 3.68643 14.436C3.22658 13.7753 3.1711 12.8564 3.06016 11.0186L2.62695 3.84271" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
                                     <path d="M1.55176 3.84275H14.4488M10.9062 3.84275L10.4171 2.83372C10.0922 2.16345 9.92966 1.82832 9.64944 1.61931C9.58732 1.57294 9.52147 1.5317 9.45262 1.49599C9.1423 1.33499 8.76986 1.33499 8.02499 1.33499C7.26141 1.33499 6.87966 1.33499 6.56417 1.50274C6.49425 1.53992 6.42753 1.58283 6.3647 1.63103C6.08122 1.84851 5.92287 2.1959 5.60616 2.8907L5.17218 3.84275" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
@@ -416,66 +406,79 @@
                                 <span class="d-block d-md-none">Delete</span>
                             </a>
                         </td>
+                      
                       </tr>
+                     
                       
-                      
+                    </ng-container>
+
+                    <ng-template #noAdditionalFiles>
+                      <p>No Additional documents added.</p>
+                    </ng-template>
                       
                     </tbody>
                   </table>
                </div>
 
 
-            <div class="fileupload_wrap add_fileupload_wrap">
-                <div class="row align-items-center">
-                    <div class="col-md-6 mb-3 mb-md-0">
-                        <div class="form-field">
-                            <label for="">Select Document Type</label>
-                            <select class="form-select form-control" aria-label="Default select example">
-                                <option selected>Choose Document type</option>
-                                <option value="1">Passport Copy(Front side)</option>
-                                <option value="2">Passport Copy(Back side)</option>
-                                <option value="3">ID Copy(both sides)</option>
-                                <option value="3">Utility Bill</option>
-                                <option value="3">Salary Slips(past 3 months)</option>
-                                <option value="3">Passport Size Photo</option>
+            </div>
+
+            <div class="modal-footer d-block">
+                
+                <!-- add_fileupload_wrap -->
+                <div class="fileupload_wrap">
+                    <div class="row align-items-center">
+                        <div class="col-md-6 mb-3 mb-md-0">
+                            <div class="form-field">
+                                <label for="">Select Document Type</label>
+                                <select class="form-select form-control" aria-label="Default select example"  [(ngModel)]="selectedDocumentType"
+                            >
+                                <option value="" disabled selected>Choose Document type</option>
+                                <option *ngFor="let option of documentTypeOptions" [value]="option">{{ option }}</option>
+                                
                               </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="image-upload image-upload-lg">
-                            <input type="file" class="d-none" id="img_upload">
-                            <label class="image-edit-btn image-upload-btn" for="img_upload">
-                                <svg width="48" height="35" viewBox="0 0 48 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M37.1478 34.5H29.5954H27.5617H27.1225V24.3697H30.4357C31.2759 24.3697 31.7724 23.4149 31.2759 22.7275L24.831 13.8097C24.4205 13.2369 23.5707 13.2369 23.1602 13.8097L16.7153 22.7275C16.2189 23.4149 16.7058 24.3697 17.5556 24.3697H20.8687V34.5H20.4295H18.3958H9.64037C4.62773 34.2231 0.636719 29.5351 0.636719 24.4556C0.636719 20.9516 2.53675 17.8962 5.35337 16.2445C5.09558 15.5475 4.96191 14.8027 4.96191 14.0198C4.96191 10.4393 7.85492 7.54633 11.4354 7.54633C12.2087 7.54633 12.9535 7.68001 13.6505 7.9378C15.7224 3.54577 20.1908 0.5 25.3848 0.5C32.1065 0.509548 37.6443 5.65586 38.2745 12.2152C43.4399 13.1032 47.364 17.8867 47.364 23.3003C47.364 29.0864 42.8574 34.099 37.1478 34.5Z" fill="#FF2A47"/>
-                                </svg>                                    
-                            </label>
-                            <div class="text">
-                                <h6>Drag and drop files here</h6>
-                                <p>Upload size: Max size upto 1 MB</p>
-                                <a href="#"><u>Browse Files</u></a>
+                        <div class="col-md-6">
+                            <div class="image-upload image-upload-lg">
+                                <input type="file" class="d-none" id="img_upload"  (change)="onFilesSelected($event)"
+                                accept=".pdf,.doc,.docx,.jpg,.png"  />
+                                <label class="image-edit-btn image-upload-btn" for="img_upload">
+                                    <svg width="48" height="35" viewBox="0 0 48 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M37.1478 34.5H29.5954H27.5617H27.1225V24.3697H30.4357C31.2759 24.3697 31.7724 23.4149 31.2759 22.7275L24.831 13.8097C24.4205 13.2369 23.5707 13.2369 23.1602 13.8097L16.7153 22.7275C16.2189 23.4149 16.7058 24.3697 17.5556 24.3697H20.8687V34.5H20.4295H18.3958H9.64037C4.62773 34.2231 0.636719 29.5351 0.636719 24.4556C0.636719 20.9516 2.53675 17.8962 5.35337 16.2445C5.09558 15.5475 4.96191 14.8027 4.96191 14.0198C4.96191 10.4393 7.85492 7.54633 11.4354 7.54633C12.2087 7.54633 12.9535 7.68001 13.6505 7.9378C15.7224 3.54577 20.1908 0.5 25.3848 0.5C32.1065 0.509548 37.6443 5.65586 38.2745 12.2152C43.4399 13.1032 47.364 17.8867 47.364 23.3003C47.364 29.0864 42.8574 34.099 37.1478 34.5Z" fill="#FF2A47"/>
+                                    </svg>                                    
+                                </label>
+                                <div class="text">
+                                    <h6>Drag and drop files here</h6>
+                                    <p>Upload size: Max size upto 1 MB</p>
+                                    <a href="#" 
+                ><u>Browse Files</u></a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <div class="text-end mt-md-2 mt-0 addmore_toggle_wrap d-none">
+                    <a href="#" class="btn btn-sm btn-outline addmore_toggle">
+                        <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 1.5V9.5M9 5.5H1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Add More
+                    </a>
+                </div>
+                <div class="text-center mt-3">
+                    <a href="#" onclick="return false;" (click)="submitDocuments()"
+                     class="btn btn-md" data-bs-dismiss="modal" >Submit Files</a>
+                </div>
+
             </div>
 
-            <div class="text-end mt-md-2 mt-0 addmore_toggle_wrap">
-                <a href="#" class="btn btn-sm btn-outline addmore_toggle">
-                    <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M5 1.5V9.5M9 5.5H1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                     Add More
-                </a>
-            </div>
-            <div class="text-center mt-3">
-                <a href="#" class="btn btn-md">Submit Files</a>
-            </div>
 
-
-        </div>
       </div>
     </div>
   </div>
+
 
   <!-- Modal -->
   <div class="modal fade" id="servicedetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="servicedetailLabel" aria-hidden="true">
@@ -555,7 +558,7 @@
                         >
                             <div class="col-auto">
                                 <div class="image">
-                                    <img src="images/file.jpg" alt="">
+                                    <img src="assets/images/file.jpg" alt="">
                                 </div>
                             </div>
                             <div class="col-auto">
@@ -565,7 +568,7 @@
                                 </div>
                             </div>
                             <div class="col d-flex justify-content-center mt-2 mt-md-0">
-                                <a href="#"
+                                <a href="#" onclick="return false;"
                                  class="btn-icon me-2">
                                     <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9.94961 2.57006L10.6096 1.91007C11.1564 1.36331 12.0429 1.36331 12.5896 1.91007C13.1363 2.45683 13.1363 3.34329 12.5896 3.89005L11.9296 4.55004M9.94961 2.57006L5.51006 7.0096C5.17172 7.348 4.9317 7.77187 4.81565 8.23607L4.33301 10.1667L6.26361 9.684C6.72781 9.568 7.15167 9.32793 7.49007 8.9896L11.9296 4.55004M9.94961 2.57006L11.9296 4.55004" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>

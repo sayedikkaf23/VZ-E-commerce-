@@ -30,7 +30,7 @@ personalBanks: any[] = [];
   selectedShareholders: any[] = [];
   selectedaddAdditionalFile: any[] = [];
   selectedDocumentType: string = ''; // Stores the selected document type
-  uploadedFiles: { name: string; url: string; type: string }[] = []; // Stores uploaded files with their document types
+  uploadedFiles: { name: string; url: string; type: string; recordId: string; size: number; }[] = []; // Stores uploaded files with their document types
 
   documentTypeOptions: string[] = []; // Options for the dropdown
   selectedIndex: number = 0;
@@ -186,12 +186,12 @@ fetchPersonalBanks(): void {
   
     console.log(this.selectedRecord);
   
-    const modalElement = document.getElementById('detailsModal');
-    if (modalElement) {
-      // Use the Bootstrap modal
-      const modal = new (window as any).bootstrap.Modal(modalElement);
-      modal.show();
-    }
+    // const modalElement = document.getElementById('detailsModal');
+    // if (modalElement) {
+    //   // Use the Bootstrap modal
+    //   const modal = new (window as any).bootstrap.Modal(modalElement);
+    //   modal.show();
+    // }
   }
   
   uploadDetailsModal(record: any): void {
@@ -205,11 +205,11 @@ fetchPersonalBanks(): void {
     this.documentTypeOptions = this.getOptions(record.planname, record.subcategory);
   
     // Show the modal (if not using Bootstrap, use your own implementation)
-    const modalElement = document.getElementById('uploadDetailsModal');
-    if (modalElement) {
-      modalElement.style.display = 'block'; // Show modal
-      modalElement.classList.add('show'); // Add 'show' class
-    }
+    // const modalElement = document.getElementById('uploadDetailsModal');
+    // if (modalElement) {
+    //   modalElement.style.display = 'block'; // Show modal
+    //   modalElement.classList.add('show'); // Add 'show' class
+    // }
 
     document.querySelector('.app-wrapper')?.classList.add('blur-background');
   }
@@ -273,9 +273,11 @@ fetchPersonalBanks(): void {
                 name: file.name,
                 url: presignedUrl.split('?')[0], // If you want the actual file URL w/out query
                 type: this.selectedDocumentType, 
+                recordId: this.selectedRecord._id,
+                size: file.size // Add file size here 
                 // originalType: file.type
               });
-              // console.log('File uploaded successfully:', file.name);
+              console.log('File uploaded successfully:', file.name);
              
               this.isLoading = false;
             })
@@ -418,6 +420,21 @@ fetchPersonalBanks(): void {
   removeAdditionalFile(file: any) {
     this.additionalFiles = this.additionalFiles.filter((f) => f !== file);
   }
+
+
+  bytesToSize(bytes: number): string {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) {
+      return '0 Bytes';
+    }
+    const i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)).toString(), 10);
+    if (i === 0) {
+      return bytes + ' ' + sizes[i];
+    }
+    return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
+  }
+
+  
 }
 
 
