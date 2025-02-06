@@ -77,8 +77,12 @@
     section.login_section .wrapper .h-100 {
         height: auto !important;
     }
-    section.login_section .form_wrp {
+    /* section.login_section .form_wrp {
         padding: 0 20px;
+    } */
+
+    section.login_section .form_wrp {
+        padding: 0px 20px;
     }
     section.login_section .logo {
         text-align: center;
