@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { UserService } from '../service/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
@@ -10,12 +10,14 @@ interface Service {
   status: string;
 }
 
+declare var jQuery: any;
+
 @Component({
   selector: 'app-customer-cardmanagement',
   templateUrl: './customer-cardmanagement.component.html',
   styleUrls: ['./customer-cardmanagement.component.css'], // Fix the styleUrls property
 })
-export class CustomerCardmanagementComponent implements OnInit {
+export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
 
 
   services: Service[] = []; // Initialize an empty array for services
@@ -38,7 +40,7 @@ personalBanks: any[] = [];
 
   isLoading = false;
 
-
+ 
   constructor(
     private userService: UserService,
     private route: ActivatedRoute,
@@ -72,6 +74,8 @@ personalBanks: any[] = [];
   this.fetchBusinessBanks();
   this.fetchPersonalBanks();
 }
+
+
 
 fetchVirtualReceptions(): void {
   this.documenttypeService.getVirtualReceptions().subscribe(
@@ -128,13 +132,52 @@ fetchPersonalBanks(): void {
     return email.split('@')[0]; // Get the part before the '@' symbol
   }
   ngAfterViewInit() {
-    document.body.style.paddingTop = '0px';
-    document.documentElement.style.paddingTop = '0px';
+
+    // Toggle 'active' class on navbar toggle button
+  const navbarToggle = document.querySelector('.navbar-toggle');
+  if (navbarToggle) {
+    navbarToggle.addEventListener('click', () => {
+      navbarToggle.classList.toggle('active');
+    });
+  }
+
+     // Toggle sidebar visibility
+ // Ensure 'menu-hide' is NOT present on initial load
+ document.body.classList.remove('menu-hide');
+
+ // Select the sidebar toggle button
+ const sidebarIcon = document.querySelector('.sidebar_icon');
+
+ if (sidebarIcon) {
+   sidebarIcon.addEventListener('click', () => {
+     document.body.classList.toggle('menu-hide');
+   });
+ }
   }
 
   isActive(route: string): boolean {
     return this.router.url === route;
   }
+
+  getFileIcon(fileName: string): string {
+    const extension = fileName.split('.').pop()?.toLowerCase(); // Extract file extension
+
+    switch (extension) {
+        case 'pdf':
+            return 'assets/customer_protal/images/pdf-icon.png';
+        case 'doc':
+        case 'docx':
+            return 'assets/customer_protal/images/doc-icon.png';
+        case 'jpg':
+        case 'jpeg':
+            return 'assets/customer_protal/images/jpg-icon.png';
+        case 'png':
+            return 'assets/customer_protal/images/png-icon.png';
+        default:
+         
+            return 'assets/customer_protal/images/file.jpg'; // Default icon for unknown file types
+    }
+}
 
   fetchUserServices(email: string): void {
     const payload = { email };
