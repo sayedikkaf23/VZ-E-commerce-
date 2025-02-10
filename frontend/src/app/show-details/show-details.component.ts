@@ -190,8 +190,8 @@ export class ShowDetailsComponent implements AfterViewInit {
           dob: finalData.birthday,
           service: "Bank_opening",
           CustomerType: finalData.CustomerType || '',
-          planname:  "Bank Opening",
-          isProfile:  false,
+          planname: "Bank Opening",
+          isProfile: false,
         };
   
         this.isLoading = true; // Show loading indicator if necessary
@@ -199,7 +199,7 @@ export class ShowDetailsComponent implements AfterViewInit {
         // First API call to callSalesforceEndpoint
         this.userService.callSalesforceEndpoint(payload).pipe(
           switchMap((response: any) => {
-            // console.log('Salesforce Response:', response);
+            // Store the Salesforce response if needed
             this.dataStorageService.setSalesforceResponse(response);
   
             // Prepare payload for the second API call
@@ -214,8 +214,6 @@ export class ShowDetailsComponent implements AfterViewInit {
             // Call the second API
             return this.userService.callSalesforceQuoteService(quotePayload).pipe(
               switchMap((quoteResponse: any) => {
-                // console.log('Quote Service Response:', quoteResponse);
-  
                 // Prepare payload for MatchScoreProductService
                 const matchScorePayload = {
                   quotePaymentId: quotePayload.quotePaymentId,
@@ -231,32 +229,36 @@ export class ShowDetailsComponent implements AfterViewInit {
           })
         ).subscribe(
           (matchScoreResponse: any) => {
-            // console.log('Match Score Service Response:', matchScoreResponse);
-            this.isLoading = false; // Hide loader
-  
-            // Save finalData and matchScoreResponse in localStorage or state management service
+            // Successful API calls: hide loader, store final data, and navigate to the summary page
+            this.isLoading = false;
             localStorage.setItem('finalData', JSON.stringify(finalData));
-            // localStorage.setItem('summaryPageData', JSON.stringify(matchScoreResponse));
             this.matchScoreStorageService.setMatchScoreResponse(matchScoreResponse);
-            // Navigate to the summary page
             this.router.navigate(['/ShowDetails-2']); // Replace with your actual route
           },
           (error) => {
-            // Handle errors from any of the API calls
-            Swal.fire({
-                       title: 'Error',
-                       text: 'Please retry again',
-                       icon: 'error',
-                       confirmButtonText: 'Retry' 
-                     });
+            // On error: hide loader and show a SweetAlert with Retry and Cancel options
             console.error(error);
-            this.isLoading = false; // Hide loader in case of error
+            this.isLoading = false;
+            Swal.fire({
+              title: 'Error',
+              text: 'Something went wrong. Would you like to retry?',
+              icon: 'error',
+              showCancelButton: true,
+              confirmButtonText: 'Retry',
+              cancelButtonText: 'Cancel'
+            }).then((retryResult) => {
+              if (retryResult.isConfirmed) {
+                // If the user selects Retry, call submitData() again to reattempt the submission
+                this.submitData();
+              }
+            });
           }
         );
       }
-      // No action needed if the user cancels the confirmation
+      // If the user clicks "Review Data", no further action is taken.
     });
   }
+  
   
   
   
