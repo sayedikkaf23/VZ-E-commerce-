@@ -168,10 +168,10 @@ export class MailMangamentShowDetailsComponent {
 
 
   submitData() {
-    // Combine personalInfo and bankInfo into finalData
+    // Combine personalInfo and companyInfo into finalData
     const finalData = {
       ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.companyInfo // Merge bank information (Step 2 data)
+      ...this.companyInfo   // Merge company information (Step 2 data)
     };
   
     // Show a SweetAlert confirmation dialog
@@ -193,10 +193,10 @@ export class MailMangamentShowDetailsComponent {
           phone: finalData.mobileNumber, // Ensure to map this correctly
           dob: finalData.birthday,
           service: "Bank_opening",
-          CustomerType:  finalData.CustomerType,
-          shareholders:  this.shareholders,
-          planname:  "Bank Opening",
-          isProfile:  false,
+          CustomerType: finalData.CustomerType,
+          shareholders: this.shareholders,
+          planname: "Bank Opening",
+          isProfile: false,
         };
   
         this.isLoading = true; // Show loading indicator if necessary
@@ -204,21 +204,19 @@ export class MailMangamentShowDetailsComponent {
         // First API call to callSalesforceEndpoint
         this.userService.callSalesforceEndpoint(payload).pipe(
           switchMap((response: any) => {
-            // console.log('Salesforce Response:', response);
+            // Save Salesforce response if needed
             this.dataStorageService.setSalesforceResponse(response);
             // Prepare payload for the second API call
             const quotePayload = {
               lead_source: response.data.leadWithDetails.LeadSource,
-              currencyCode: response.data.quotePaymentWithDetails.Currency, // Update this as needed
-              quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has quotePaymentId
-              account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has account_id
+              currencyCode: response.data.quotePaymentWithDetails.Currency, // Update as needed
+              quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has this field
+              account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has this field
               payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
             };
             // Call the second API
             return this.userService.callSalesforceQuoteService(quotePayload).pipe(
               switchMap((quoteResponse: any) => {
-                // console.log('Quote Service Response:', quoteResponse);
-  
                 // Prepare payload for MatchScoreProductService
                 const matchScorePayload = {
                   quotePaymentId: quotePayload.quotePaymentId,
@@ -234,32 +232,39 @@ export class MailMangamentShowDetailsComponent {
           })
         ).subscribe(
           (quoteResponse: any) => {
-            // console.log('Quote Service Response:', quoteResponse);
             this.isLoading = false; // Hide loader
   
-            // Save finalData in localStorage
+            // Save finalData in localStorage if needed
             localStorage.setItem('finalDatabussiness', JSON.stringify(finalData));
-
             this.matchScoreStorageService.setMatchScoreResponse(quoteResponse);
+  
             // Navigate to the next step
             this.router.navigate(['/bussiness-show-details']); // Replace with your actual route
           },
           (error) => {
-            // Handle errors from the Salesforce API calls
-            Swal.fire({
-                                 title: 'Error',
-                                 text: 'Please retry again',
-                                 icon: 'error',
-                                 confirmButtonText: 'Retry' 
-                               });
-            console.error(error);
-            localStorage.clear();
-            this.router.navigate(['/']); // Replace with your actual route
             this.isLoading = false; // Hide loader in case of error
+            console.error("Error during Salesforce API calls:", error);
+            
+            // Show an error SweetAlert with a Retry option
+            Swal.fire({
+              title: 'Error',
+              text: 'Something went wrong. Would you like to retry?',
+              icon: 'error',
+              showCancelButton: true,
+              confirmButtonText: 'Retry',
+              cancelButtonText: 'Cancel'
+            }).then((result) => {
+              if (result.isConfirmed) {
+                // Call submitData() again to retry the process
+                this.submitData();
+              } else {
+                // Optionally handle the cancel action, e.g., remain on the page or perform other actions
+              }
+            });
           }
         );
       }
-      // No action needed if the user cancels the confirmation
+      // If the user clicks "Review Data", do nothing so they can make corrections.
     });
   }
   
