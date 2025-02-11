@@ -242,8 +242,7 @@ i: any;
 
 
 submitData() {
-  // Combine personalInfo and bankInfo into finalData
-
+  // Retrieve the merged data from localStorage
   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
 
   // Show a SweetAlert confirmation dialog
@@ -257,81 +256,86 @@ submitData() {
     cancelButtonText: 'Review Data'
   }).then((result) => {
     if (result.isConfirmed) {
+      // Build the payload from the merged data
       const payload = {
         firstName: mergedData.firstName,
         lastName: mergedData.lastName,
         email: mergedData.email,
         nationality: mergedData.nationality,
-        phone: mergedData.mobileNumber, // Ensure to map this correctly
+        phone: mergedData.mobileNumber, // Ensure this is mapped correctly
         dob: mergedData.birthday,
         service: "virtual_reception",
-        CustomerType:'C',
-        shareholders:   this.displayShareholders,
-        planname:  "Mail Management",
-        isProfile:  false,
-        // tradeLicenseFileName: this.tradeLicenseFileName,
+        CustomerType: 'C',
+        shareholders: this.displayShareholders,
+        planname: "Mail Management",
+        isProfile: false,
+        // tradeLicenseFileName: this.tradeLicenseFileName, // Uncomment if needed
         tradeLicenseFileUrl: this.tradeLicenseFileurl,
       };
 
-      this.isLoading = true; // Show loading indicator if necessary
+      this.isLoading = true; // Show loading indicator
 
-      // First API call to callSalesforceEndpoint
+      // First API call: callSalesforceEndpoint
       this.mailManagementService.callSalesforceEndpoint(payload).pipe(
         switchMap((response: any) => {
-          // console.log('Salesforce Response:', response);
+          // Store the Salesforce response if necessary
           this.dataStorageService.setSalesforceResponse(response);
+
           // Prepare payload for the second API call
           const quotePayload = {
             lead_source: response.data.leadWithDetails.LeadSource,
-            currencyCode: response.data.quotePaymentWithDetails.Currency, // Update this as needed
-            quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has quotePaymentId
-            account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has account_id
+            currencyCode: response.data.quotePaymentWithDetails.Currency,
+            quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId,
+            account_id: response.data.quotePaymentWithDetails.AccountId,
             payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
           };
-          // Call the second API
+
+          // Second API call: callSalesforceQuoteService
           return this.userService.callSalesforceQuoteService(quotePayload).pipe(
             switchMap((quoteResponse: any) => {
-              // console.log('Quote Service Response:', quoteResponse);
-
-              // Prepare payload for MatchScoreProductService
+              // Prepare payload for the third API call
               const matchScorePayload = {
                 quotePaymentId: quotePayload.quotePaymentId,
                 accountId: quotePayload.account_id,
-                leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
-                matchScore: response.screeningmatchScore.matchScore, // Adjust based on response structure
+                leadId: response.data.leadWithDetails.LeadId,
+                matchScore: response.screeningmatchScore.matchScore, // Adjust if necessary
               };
 
-              // Call the third API
+              // Third API call: MatchScoreProductService
               return this.userService.MatchScoreProductService(matchScorePayload);
             })
           );
         })
       ).subscribe(
         (quoteResponse: any) => {
-          // console.log('Quote Service Response:', quoteResponse);
-          this.isLoading = false; // Hide loader
-
-          // Save finalData in localStorage
+          // Success: Hide the loader, store final data, and navigate to the summary page
+          this.isLoading = false;
           localStorage.setItem('finalDataMail', JSON.stringify(mergedData));
           this.matchScoreStorageService.setMatchScoreResponse(quoteResponse);
-          // Navigate to the next step
           this.router.navigate(['/mails-summary']); // Replace with your actual route
         },
         (error) => {
-          // Handle errors from the Salesforce API calls
+          // On error: Hide the loader and show a SweetAlert with a Retry option
+          console.error(error);
+          this.isLoading = false;
+
           Swal.fire({
             title: 'Error',
-            text: 'Please retry again',
+            text: 'Something went wrong. Would you like to retry?',
             icon: 'error',
-            confirmButtonText: 'Retry' 
+            showCancelButton: true,
+            confirmButtonText: 'Retry',
+            cancelButtonText: 'Cancel'
+          }).then((retryResult) => {
+            if (retryResult.isConfirmed) {
+              // If the user clicks Retry, call submitData() again to reattempt the submission
+              this.submitData();
+            }
           });
-          
-          console.error(error);
-          this.isLoading = false; // Hide loader in case of error
         }
       );
     }
-    // No action needed if the user cancels the confirmation
+    // If the user selects "Review Data" (cancel), do nothing so they can make adjustments.
   });
 }
 

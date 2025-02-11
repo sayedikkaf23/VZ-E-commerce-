@@ -299,7 +299,6 @@ html .form-check .form-check-input {
 
 .admin_body{
     --sidebar_width : 300px;
-    padding-left: var(--sidebar_width);
     transition: all 0.4s;
 }
 .side_bar {
@@ -308,7 +307,7 @@ html .form-check .form-check-input {
     left: 0;
     max-width: var(--sidebar_width);
     height: 100%;
-    width: 100%;
+    width: var(--sidebar_width);
     background-color: var(--white);
     transition: all 0.4s;
     transform: translateX(0);
@@ -909,4 +908,21 @@ body.menu-hide .sidebar_icon a svg {
 }
 body.menu-hide section.content_area {
     border-radius: 0;
+}
+
+/* Default padding only when sidebar is visible */
+body:not(.menu-hide) .admin_body {
+    padding-left: var(--sidebar_width);
+}
+
+/* Remove extra padding for hidden sidebar */
+body.menu-hide .admin_body {
+    padding-left: 0;
+}
+
+/* Ensure small screens have no left padding */
+@media (max-width: 991px) {
+    .admin_body {
+        padding-left: 0 !important;
+    }
 }

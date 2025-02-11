@@ -138,17 +138,27 @@ fetchPersonalBanks(): void {
     return email.split('@')[0]; // Get the part before the '@' symbol
   }
   ngAfterViewInit() {
-    document.body.style.paddingTop = '0px';
-    document.documentElement.style.paddingTop = '0px';
 
-    jQuery('.navbar-toggle').click(function () {
-      jQuery('.navbar-toggle').toggleClass('active');
+    // Toggle 'active' class on navbar toggle button
+  const navbarToggle = document.querySelector('.navbar-toggle');
+  if (navbarToggle) {
+    navbarToggle.addEventListener('click', () => {
+      navbarToggle.classList.toggle('active');
     });
+  }
 
-    jQuery('.sidebar_icon').click(function () {
-      jQuery('body').toggleClass('menu-hide');
-    });
+     // Toggle sidebar visibility
+ // Ensure 'menu-hide' is NOT present on initial load
+ document.body.classList.remove('menu-hide');
 
+ // Select the sidebar toggle button
+ const sidebarIcon = document.querySelector('.sidebar_icon');
+
+ if (sidebarIcon) {
+   sidebarIcon.addEventListener('click', () => {
+     document.body.classList.toggle('menu-hide');
+   });
+ }
   }
 
   isActive(route: string): boolean {
