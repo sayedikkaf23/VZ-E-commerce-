@@ -11,20 +11,12 @@ interface Service {
 }
 
 declare var jQuery: any;
-
 @Component({
-  selector: 'app-customer-cardmanagement',
-  templateUrl: './customer-cardmanagement.component.html',
-  styleUrls: ['./customer-cardmanagement.component.css'], // Fix the styleUrls property
+  selector: 'app-past-service',
+  templateUrl: './past-service.component.html',
+  styleUrl: './past-service.component.css'
 })
-export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
-
-  paginatedRecords: any[] = [];  // Data for the current page
-  currentPage: number = 1;
-  itemsPerPage: number = 10;      // Number of records per page
-  totalPages: number = 0;
-  filteredRecords: any[] = [];   // Records filtered by search
-  searchTerm: string = '';
+export class PastServiceComponent {
 
   services: Service[] = []; // Initialize an empty array for services
   records: any[] = [];
@@ -175,61 +167,21 @@ fetchPersonalBanks(): void {
     }
 }
 
-fetchUserServices(email: string): void {
-  const payload = { email };
-  this.userService.fetchUserServices(payload).subscribe(
-    (response: any) => {
-      if (response && response.data) {
-        this.records = response.data;
-        this.filteredRecords = this.records;
-        this.totalPages = Math.ceil(this.filteredRecords.length / this.itemsPerPage);
-        this.setPage(1);
+  fetchUserServices(email: string): void {
+    const payload = { email };
+
+    this.userService.fetchUserServices(payload).subscribe(
+      (response) => {
+        if (response && response.data) {
+          // console.log('Response Data:', response.data);
+          this.records = response.data;
+        }
+      },
+      (error) => {
+        console.error('Error fetching user services:', error);
       }
-    },
-    (error: any) => {
-      console.error('Error fetching user services:', error);
-    }
-  );
-}
-searchRecords(): void {
-  if (this.searchTerm.trim() === '') {
-    this.filteredRecords = this.records;
-  } else {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredRecords = this.records.filter(record =>
-      (record.planname && record.planname.toLowerCase().includes(term)) ||
-      (record.invoiceNumber && record.invoiceNumber.toString().toLowerCase().includes(term))
     );
   }
-  this.totalPages = Math.ceil(this.filteredRecords.length / this.itemsPerPage);
-  this.setPage(1);
-}
-
-setPage(page: number): void {
-  if (page < 1 || page > this.totalPages) return;
-  this.currentPage = page;
-  const startIndex = (page - 1) * this.itemsPerPage;
-  const endIndex = startIndex + this.itemsPerPage;
-  this.paginatedRecords = this.filteredRecords.slice(startIndex, endIndex);
-}
-
-// Change items per page and reset to the first page
-changeItemsPerPage(value: number): void {
-  this.itemsPerPage = value;
-  this.totalPages = Math.ceil(this.records.length / this.itemsPerPage);
-  this.setPage(1);
-}
-
-// Getter to calculate the starting entry number for the current page
-get startEntry(): number {
-  return this.records.length > 0 ? (this.currentPage - 1) * this.itemsPerPage + 1 : 0;
-}
-
-// Getter to calculate the ending entry number for the current page
-get endEntry(): number {
-  return Math.min(this.currentPage * this.itemsPerPage, this.records.length);
-}
-
 
   toggleSidebar(): void {
     this.isSidebarActive = !this.isSidebarActive;
@@ -512,16 +464,16 @@ get endEntry(): number {
     }
     return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
   }
+
   goToPastService(): void {
     this.router.navigate(['/user/pastservice']);
     console.log("clicked")
   }
   goToDashbordService(): void {
     this.router.navigate(['user/dashboard']);
-  }
-  
-  
+  } 
 }
+
 
 
 

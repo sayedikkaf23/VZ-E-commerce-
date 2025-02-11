@@ -256,7 +256,7 @@ submitData() {
         service: "virtual_reception",
         CustomerType:'C',
         shareholders:   this.displayShareholders,
-        planname:  "Virtual Reception",
+        planname:  "Virtual Receptionist",
         isProfile:  false,
         tradeLicenseFileUrl: this.tradeLicenseFileurl,
       };

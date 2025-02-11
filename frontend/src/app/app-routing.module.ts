@@ -49,7 +49,7 @@ import { CashdepositComponent } from './cashdeposit/cashdeposit.component';
 import { BanktransferComponent } from './banktransfer/banktransfer.component';
 import { ChequedepositComponent } from './chequedeposit/chequedeposit.component';
 import { AdminDocumentTypeComponent } from './admin-document-type/admin-document-type.component';
-
+import { PastServiceComponent } from './past-service/past-service.component';
 const routes: Routes = [
 
   {
@@ -102,6 +102,11 @@ const routes: Routes = [
   {
     path: 'user/dashboard',
     component: CustomerCardmanagementComponent,
+   
+  },
+  {
+    path: 'user/pastservice',
+    component: PastServiceComponent,
    
   },
   //new payment
