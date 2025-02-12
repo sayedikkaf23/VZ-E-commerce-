@@ -32,8 +32,9 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   isSidebarActive = false;
   userName: string = ''; // Property to store the user's name
   showModal = false;
-  businessBanks: any[] = [];
-personalBanks: any[] = [];
+  mailManagemnt: any[] = [];
+  virtualReceptionist: any[] = [];
+bankOpening: any[] = [];
   // Will store the shareholders to display in the modal
   selectedShareholders: any[] = [];
   selectedaddAdditionalFile: any[] = [];
@@ -86,7 +87,9 @@ personalBanks: any[] = [];
 fetchVirtualReceptions(): void {
   this.documenttypeService.getVirtualReceptions().subscribe(
     (data) => {
-      // console.log('Virtual Receptions:', data);
+      console.log('Virtual Receptions:', data);
+      this.virtualReceptionist = data.map((item: any) => item.documentType);
+      console.log('Virtual Receptions doctypes:', this.virtualReceptionist);
       // Do something with the data
     },
     (error) => {
@@ -99,6 +102,7 @@ fetchMailManagements(): void {
   this.documenttypeService.getMailManagements().subscribe(
     (data) => {
       // console.log('Mail Managements:', data);
+      this.mailManagemnt = data.map((item: any) => item.documentType);
       // Do something with the data
     },
     (error) => {
@@ -113,7 +117,7 @@ fetchBusinessBanks(): void {
   this.documenttypeService.getBusinessBanks().subscribe(
     (data) => {
       // console.log('Business Banks:', data);
-      this.businessBanks = data; // Store the response
+      // this.businessBanks = data; // Store the response
     },
     (error) => {
       console.error('Error fetching business banks:', error);
@@ -125,7 +129,7 @@ fetchPersonalBanks(): void {
   this.documenttypeService.getPersonalBanks().subscribe(
     (data) => {
       // console.log('Personal Banks:', data);
-      this.personalBanks = data; // Store the response
+      this.bankOpening = data.map((item: any) => item.documentType); // Store the response
     },
     (error) => {
       console.error('Error fetching personal banks:', error);
@@ -306,12 +310,12 @@ get endEntry(): number {
 
   // Dynamic options based on planname
   getOptions(planname: string, subcategory: string): string[] {
-    if (planname === 'Mail Management' || planname === 'Virtual Reception' ) {
-      return ['Trade License', 'Certificate of Incorporation', 'MAO/AOA', 'Shareholder Documents(passport,ID,utility bills)'];
-    } else if (subcategory === 'personal') {
-      return ['Passport Copy(Front side)','Passport Copy(Back side)', 'ID Copy(both sides)', 'Utility Bill', 'Salary Slips(past 3 months)', 'Passport Size Photo'];
-    } else if (subcategory === 'business') {
-      return ['Trade License', 'Certificate of Incorporation', 'MAO/AOA', 'Shareholder Documents(passport,ID,utility bills)'];
+    if ( planname === 'Virtual Reception' ) {
+      return this.virtualReceptionist.length ? this.virtualReceptionist : ['Loading...'];
+    } else if (planname === 'Mail Management') {
+      return this.mailManagemnt.length ? this.mailManagemnt : ['Loading...'];
+    } else if (planname === 'Bank Opening') {
+      return this.bankOpening.length ? this.bankOpening : ['Loading...'];
     } else {
       return ['General Document', 'Other'];
     }

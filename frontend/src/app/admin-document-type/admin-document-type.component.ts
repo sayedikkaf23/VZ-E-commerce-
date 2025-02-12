@@ -75,7 +75,7 @@ export class AdminDocumentTypeComponent {
 
   openEditDocType(serviceName: string): void {
     this.selectedServiceName = serviceName;
-
+  
     // Fetch document types based on the service name
     switch (serviceName) {
       case 'Bank Account Opening':
@@ -213,7 +213,10 @@ export class AdminDocumentTypeComponent {
 
   // Method to delete a specific document type
   deleteDocType(index: number): void {
-    this.docTypes.splice(index, 1); // Remove the specific item
+    if (index > -1) {
+      this.docTypes.splice(index, 1); // Remove from docTypes array
+      this.docRecords.splice(index, 1); // Also remove the corresponding record from docRecords
+    }
     this.selectedCount = this.docTypes.length; // Update the count accordingly
   }
 
@@ -321,14 +324,18 @@ export class AdminDocumentTypeComponent {
       documentType: this.docTypes[index], // Updated or original documentType
       isActive: record.isActive,     // Include isActive if needed
     }));
-  
+    // .filter(item => item.id && item.documentType); // Remove entries where `documentType` is missing
+    console.log('Updated docTypes:', this.docTypes);
+    console.log('updatedData before sending:', JSON.stringify(updatedData, null, 2));
+
+
     // Call the appropriate update API based on the selected service name
     switch (this.selectedServiceName) {
       case 'Bank Account Opening':
         this.documenttypeService.updatePersonalBank(updatedData).subscribe(
           (response) => {
             console.log('Personal Bank updated successfully:', response);
-          },
+                      },
           (error) => {
             console.error('Error updating Personal Bank:', error);
           }
