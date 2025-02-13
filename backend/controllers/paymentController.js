@@ -1137,20 +1137,20 @@ console.log(response2,"response 2 data")
     const verifyMailOptions = {
       from: "mishalnunu@gmail.com", // Sender address
       to: userEmail, // Receiver email address
-      subject: "Welcome to Virtuzone! Let’s Get Started",
+      subject: "Welcome to Virtuzone – Let's Get Started!",
       html: `
   <div>
     <p style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: #000;">
         Hi ${username},<br><br>
-        Welcome to Virtuzone! 🎉 Thank you for signing up.<br><br>
-        As part of Virtuzone, you’ll have access to:<br>
+       Welcome to Virtuzone!<br>
+       We noticed you've started filling out your details – that’s a great first step. Now, it’s time to complete your journey and access everything for your business to run seamlessly.<br><br>
+       With Virtuzone, you'll get:<br>
         <ul>
-            <li><strong>Expert Professional Services: https://ecommerce.yeepeey.com/
-            <li><strong>Seamless Onboarding Process</strong></li>
-            <li><strong>Dedicated Support Team</strong></li>
+            <li><strong>Expert guidance every step of the way.</strong></li>
+            <li><strong>Fast and easy access to all our business services.</strong></li>
+            <li><strong>A dedicated team ready to help you succeed</strong></li>
         </ul><br>
-        We’re here to guide you through every step.<br><br>
-        If you need assistance, feel free to reach out.<br><br>
+        Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br><br>
         Best regards,<br>
         <strong>The Virtuzone Team</strong><br>
      
