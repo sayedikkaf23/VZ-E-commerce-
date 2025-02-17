@@ -242,11 +242,7 @@ submitData() {
         phone: mergedData.mobileNumber, // Ensure to map this correctly
         dob: mergedData.birthday,
         service: "virtual_reception",
-        CustomerType: 'C',
-        shareholders: this.displayShareholders,
-        planname: "Virtual Reception",
-        isProfile: false,
-        tradeLicenseFileUrl: this.tradeLicenseFileurl,
+      
       };
 
       this.isLoading = true; // Show loading indicator if necessary
