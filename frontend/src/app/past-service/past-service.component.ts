@@ -11,20 +11,12 @@ interface Service {
 }
 
 declare var jQuery: any;
-
 @Component({
-  selector: 'app-customer-cardmanagement',
-  templateUrl: './customer-cardmanagement.component.html',
-  styleUrls: ['./customer-cardmanagement.component.css'], // Fix the styleUrls property
+  selector: 'app-past-service',
+  templateUrl: './past-service.component.html',
+  styleUrl: './past-service.component.css'
 })
-export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
-
-  paginatedRecords: any[] = [];  // Data for the current page
-  currentPage: number = 1;
-  itemsPerPage: number = 10;      // Number of records per page
-  totalPages: number = 0;
-  filteredRecords: any[] = [];   // Records filtered by search
-  searchTerm: string = '';
+export class PastServiceComponent {
 
   services: Service[] = []; // Initialize an empty array for services
   records: any[] = [];
@@ -32,9 +24,8 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   isSidebarActive = false;
   userName: string = ''; // Property to store the user's name
   showModal = false;
-  mailManagemnt: any[] = [];
-  virtualReceptionist: any[] = [];
-bankOpening: any[] = [];
+  businessBanks: any[] = [];
+personalBanks: any[] = [];
   // Will store the shareholders to display in the modal
   selectedShareholders: any[] = [];
   selectedaddAdditionalFile: any[] = [];
@@ -87,9 +78,7 @@ bankOpening: any[] = [];
 fetchVirtualReceptions(): void {
   this.documenttypeService.getVirtualReceptions().subscribe(
     (data) => {
-      console.log('Virtual Receptions:', data);
-      this.virtualReceptionist = data.map((item: any) => item.documentType);
-      console.log('Virtual Receptions doctypes:', this.virtualReceptionist);
+      // console.log('Virtual Receptions:', data);
       // Do something with the data
     },
     (error) => {
@@ -102,7 +91,6 @@ fetchMailManagements(): void {
   this.documenttypeService.getMailManagements().subscribe(
     (data) => {
       // console.log('Mail Managements:', data);
-      this.mailManagemnt = data.map((item: any) => item.documentType);
       // Do something with the data
     },
     (error) => {
@@ -117,7 +105,7 @@ fetchBusinessBanks(): void {
   this.documenttypeService.getBusinessBanks().subscribe(
     (data) => {
       // console.log('Business Banks:', data);
-      // this.businessBanks = data; // Store the response
+      this.businessBanks = data; // Store the response
     },
     (error) => {
       console.error('Error fetching business banks:', error);
@@ -129,7 +117,7 @@ fetchPersonalBanks(): void {
   this.documenttypeService.getPersonalBanks().subscribe(
     (data) => {
       // console.log('Personal Banks:', data);
-      this.bankOpening = data.map((item: any) => item.documentType); // Store the response
+      this.personalBanks = data; // Store the response
     },
     (error) => {
       console.error('Error fetching personal banks:', error);
@@ -142,27 +130,17 @@ fetchPersonalBanks(): void {
     return email.split('@')[0]; // Get the part before the '@' symbol
   }
   ngAfterViewInit() {
+    document.body.style.paddingTop = '0px';
+    document.documentElement.style.paddingTop = '0px';
 
-    // Toggle 'active' class on navbar toggle button
-  const navbarToggle = document.querySelector('.navbar-toggle');
-  if (navbarToggle) {
-    navbarToggle.addEventListener('click', () => {
-      navbarToggle.classList.toggle('active');
+    jQuery('.navbar-toggle').click(function () {
+      jQuery('.navbar-toggle').toggleClass('active');
     });
-  }
 
-     // Toggle sidebar visibility
- // Ensure 'menu-hide' is NOT present on initial load
- document.body.classList.remove('menu-hide');
+    jQuery('.sidebar_icon').click(function () {
+      jQuery('body').toggleClass('menu-hide');
+    });
 
- // Select the sidebar toggle button
- const sidebarIcon = document.querySelector('.sidebar_icon');
-
- if (sidebarIcon) {
-   sidebarIcon.addEventListener('click', () => {
-     document.body.classList.toggle('menu-hide');
-   });
- }
   }
 
   isActive(route: string): boolean {
@@ -189,61 +167,21 @@ fetchPersonalBanks(): void {
     }
 }
 
-fetchUserServices(email: string): void {
-  const payload = { email };
-  this.userService.fetchUserServices(payload).subscribe(
-    (response: any) => {
-      if (response && response.data) {
-        this.records = response.data;
-        this.filteredRecords = this.records;
-        this.totalPages = Math.ceil(this.filteredRecords.length / this.itemsPerPage);
-        this.setPage(1);
+  fetchUserServices(email: string): void {
+    const payload = { email };
+
+    this.userService.fetchUserServices(payload).subscribe(
+      (response) => {
+        if (response && response.data) {
+          // console.log('Response Data:', response.data);
+          this.records = response.data;
+        }
+      },
+      (error) => {
+        console.error('Error fetching user services:', error);
       }
-    },
-    (error: any) => {
-      console.error('Error fetching user services:', error);
-    }
-  );
-}
-searchRecords(): void {
-  if (this.searchTerm.trim() === '') {
-    this.filteredRecords = this.records;
-  } else {
-    const term = this.searchTerm.toLowerCase();
-    this.filteredRecords = this.records.filter(record =>
-      (record.planname && record.planname.toLowerCase().includes(term)) ||
-      (record.invoiceNumber && record.invoiceNumber.toString().toLowerCase().includes(term))
     );
   }
-  this.totalPages = Math.ceil(this.filteredRecords.length / this.itemsPerPage);
-  this.setPage(1);
-}
-
-setPage(page: number): void {
-  if (page < 1 || page > this.totalPages) return;
-  this.currentPage = page;
-  const startIndex = (page - 1) * this.itemsPerPage;
-  const endIndex = startIndex + this.itemsPerPage;
-  this.paginatedRecords = this.filteredRecords.slice(startIndex, endIndex);
-}
-
-// Change items per page and reset to the first page
-changeItemsPerPage(value: number): void {
-  this.itemsPerPage = value;
-  this.totalPages = Math.ceil(this.records.length / this.itemsPerPage);
-  this.setPage(1);
-}
-
-// Getter to calculate the starting entry number for the current page
-get startEntry(): number {
-  return this.records.length > 0 ? (this.currentPage - 1) * this.itemsPerPage + 1 : 0;
-}
-
-// Getter to calculate the ending entry number for the current page
-get endEntry(): number {
-  return Math.min(this.currentPage * this.itemsPerPage, this.records.length);
-}
-
 
   toggleSidebar(): void {
     this.isSidebarActive = !this.isSidebarActive;
@@ -310,12 +248,12 @@ get endEntry(): number {
 
   // Dynamic options based on planname
   getOptions(planname: string, subcategory: string): string[] {
-    if ( planname === 'Virtual Reception' ) {
-      return this.virtualReceptionist.length ? this.virtualReceptionist : ['Loading...'];
-    } else if (planname === 'Mail Management') {
-      return this.mailManagemnt.length ? this.mailManagemnt : ['Loading...'];
-    } else if (planname === 'Bank Opening') {
-      return this.bankOpening.length ? this.bankOpening : ['Loading...'];
+    if (planname === 'Mail Management' || planname === 'Virtual Reception' ) {
+      return ['Trade License', 'Certificate of Incorporation', 'MAO/AOA', 'Shareholder Documents(passport,ID,utility bills)'];
+    } else if (subcategory === 'personal') {
+      return ['Passport Copy(Front side)','Passport Copy(Back side)', 'ID Copy(both sides)', 'Utility Bill', 'Salary Slips(past 3 months)', 'Passport Size Photo'];
+    } else if (subcategory === 'business') {
+      return ['Trade License', 'Certificate of Incorporation', 'MAO/AOA', 'Shareholder Documents(passport,ID,utility bills)'];
     } else {
       return ['General Document', 'Other'];
     }
@@ -526,16 +464,16 @@ get endEntry(): number {
     }
     return (bytes / Math.pow(1024, i)).toFixed(1) + ' ' + sizes[i];
   }
+
   goToPastService(): void {
     this.router.navigate(['/user/pastservice']);
     console.log("clicked")
   }
   goToDashbordService(): void {
     this.router.navigate(['user/dashboard']);
-  }
-  
-  
+  } 
 }
+
 
 
 

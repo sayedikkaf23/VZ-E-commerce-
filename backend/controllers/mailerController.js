@@ -17,7 +17,7 @@ const sendEmail = (email, quoteId,username) => {
   const mailOptions = {
     from: "mishalnunu@gmail.com",
     to: email,
-    subject: "Almost There! Finalize Your Virtuzone Registration",
+    subject: "You’re Almost There – Finalize Your Virtuzone Registration!",
     html: `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
      
    
@@ -28,7 +28,7 @@ const sendEmail = (email, quoteId,username) => {
           Hi ${username},<br><br>
 
           It looks like you reached the payment page but haven’t completed the process yet.<br>
-          We’ve saved your details, and you’re just one step away from activating your professional services with Virtuzone.<br><br>
+         We’ve saved your details, and you’re just one step away from activating your professional services with Virtuzone.<br><br>
 
           <strong>
             <a href="https://ecommerce.yeepeey.com/onlinepayment/${quoteId}" target="_blank" style="color: #0000EE; text-decoration: underline;">
@@ -173,17 +173,19 @@ const sendProfileEmail = (email, quoteId, username) => {
   const mailOptions = {
     from: "mishalnunu@gmail.com",
     to: email,
-    subject: "Complete Your Registration and Get Started!",
+    subject: "We Miss You - Complete Your Virtuzone Registration!",
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <p style="font-size: 16px; color: #000;">
           Hi ${username},<br><br>
 
-          We noticed you started the registration process but haven’t completed it yet. Finish your registration today to access personalized professional services and expert guidance.<br><br>
+         We noticed you started your journey with Virtuzone but haven’t completed it yet. We get it – other priorities get in the way. Let us help you with the nitty gritty, so you can focus on the bigger picture!<br>
+Don’t worry – we’ve saved all your details so you can pick up right where you left off.
+<br><br>
 
         
 
-          If you need help, our team is here for you.<br><br>
+         Need assistance? We’re happy to help!<br><br>
 
           Best regards,<br>
           The Virtuzone Team

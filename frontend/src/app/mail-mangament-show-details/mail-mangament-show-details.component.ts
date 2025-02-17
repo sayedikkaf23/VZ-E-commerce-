@@ -195,7 +195,7 @@ export class MailMangamentShowDetailsComponent {
           service: "Bank_opening",
           CustomerType: finalData.CustomerType,
           shareholders: this.shareholders,
-          planname: "Bank Opening",
+          planname: "Bank Account Opening",
           isProfile: false,
         };
   

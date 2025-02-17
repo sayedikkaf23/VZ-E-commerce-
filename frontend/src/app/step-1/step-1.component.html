@@ -56,11 +56,13 @@
               <label for="nationality">Nationality<span class="required">*</span></label>
               <select class="form-select" formControlName="nationality">
                 <option value="" disabled selected>Select Nationality</option>
-                <option *ngFor="let nationality of nationalities" [value]="nationality">
-                  {{ nationality }}
+                <option *ngFor="let nationality of nationalities" [value]="nationality.country">
+                  {{ nationality.common }}
                 </option>
               </select>
             </div>
+            
+            
             
             
             <!-- <div class="form-field">

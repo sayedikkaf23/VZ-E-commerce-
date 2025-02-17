@@ -10,6 +10,10 @@ import { UserService } from '../service/user.service';
 import { GetnationalityService } from '../service/getnationality.service';
 import { DataStorageService } from '../service/data-storage.service';
 
+ interface Nationality {
+  common: string;
+  country: string;
+}
 
 @Component({
   selector: 'app-step-1',
@@ -18,7 +22,7 @@ import { DataStorageService } from '../service/data-storage.service';
 })
 export class Step1Component implements OnInit {
   personalDetailsForm: FormGroup;
-  nationalities: string[] = []; // Initialize as an empty array
+  nationalities: Nationality[] = [];
   selectedNationality: string = '';
   SearchCountryField = SearchCountryField;  // Assign to use in template
   CountryISO = CountryISO;  
@@ -65,9 +69,14 @@ export class Step1Component implements OnInit {
     this.maxDate = `${year}-${month}-${day}`;
 
     this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+      this.nationalities = data.map((country: any) => ({
+        common: country.name.common,
+        country: country.name.country
+      }));
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
+    
+    
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects
     //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);

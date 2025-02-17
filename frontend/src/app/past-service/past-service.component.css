@@ -1,0 +1,13 @@
+@media (max-width: 768px) {
+
+    .form-field select {
+        max-width: 240px; 
+        margin: 0 auto; /* Center the select element horizontally */
+      }
+
+    .form-field select option { 
+        /* Styles for options on smaller screens */
+        font-size: 0.8rem; 
+        padding: 0.25rem 0.5rem; 
+      }
+  }
