@@ -9,6 +9,10 @@ import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser
 import { UserService } from '../service/user.service';
 import { GetnationalityService } from '../service/getnationality.service';
 import { DataStorageService } from '../service/data-storage.service';
+interface Nationality {
+  common: string;
+  country: string;
+}
 
 @Component({
   selector: 'app-virtual-receptionist',
@@ -17,7 +21,7 @@ import { DataStorageService } from '../service/data-storage.service';
 })
 export class VirtualReceptionistComponent {
   personalDetailsForm: FormGroup;
-  nationalities: string[] = []; // Initialize as an empty array
+  nationalities: Nationality[] = [];
   selectedNationality: string = '';
   SearchCountryField = SearchCountryField;  // Assign to use in template
   CountryISO = CountryISO;
@@ -66,8 +70,12 @@ export class VirtualReceptionistComponent {
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
     this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
+        this.nationalities = data.map((country: any) => ({
+          common: country.name.common,
+          country: country.name.country
+        }));
+       
+            this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects

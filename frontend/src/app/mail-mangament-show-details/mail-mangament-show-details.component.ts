@@ -185,13 +185,16 @@ export class MailMangamentShowDetailsComponent {
       cancelButtonText: 'Review Data'
     }).then((result) => {
       if (result.isConfirmed) {
+        const birthday = new Date(finalData.birthday);
+        const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
+        
         const payload = {
           firstName: finalData.firstName,
           lastName: finalData.lastName,
           email: finalData.email,
           nationality: finalData.nationality,
           phone: finalData.mobileNumber, // Ensure to map this correctly
-          dob: finalData.birthday,
+          dob: formattedBirthday,
           service: "Bank_opening",
           CustomerType: finalData.CustomerType,
           shareholders: this.shareholders,
