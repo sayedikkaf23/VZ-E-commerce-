@@ -62,10 +62,15 @@ export class MailsManagement1Component {
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
+
     this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+this.nationalities = data.map((country: { name: { common: any; country: any } }) => ({
+  common: country.name.common,
+  country: country.name.country
+}));
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
+
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects
     //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
