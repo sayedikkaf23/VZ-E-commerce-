@@ -79,8 +79,8 @@ export class AppComponent implements OnInit, OnDestroy {
   private loadAssets(): void {
     if (isPlatformBrowser(this.platformId)) {
       this.removeAssets(); // Remove previous assets before adding new ones
- 
-      if (this.currentRoute === '/login' || this.currentRoute === '/user/dashboard' || this.currentRoute ==='/user/pastservice') {
+      const currentPath = this.currentRoute.split('?')[0]; // Extract path without query params
+      if (this.currentRoute === '/login' || this.currentRoute === '/user/dashboard' || this.currentRoute ==='/user/pastservice' || this.currentRoute ==='/forgot-password' || currentPath ==='/reset-password') {
         // Load only the required styles for the login page
         this.loadStyle('assets/customer_protal/css/style.css');
         this.loadStyle('assets/customer_protal/css/responsive.css');
