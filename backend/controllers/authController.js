@@ -93,7 +93,7 @@ exports.forgotPassword = async (req, res) => {
       await user.save();
   
       // Send reset link via email
-      const resetUrl = `http://localhost:4200/reset-password?token=${resetToken}`;
+      const resetUrl = `https://virtuzone.yeepeey.com/reset-password?token=${resetToken}`;
   
       const transporter = nodemailer.createTransport({
         service: "Gmail",
