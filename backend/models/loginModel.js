@@ -10,6 +10,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    // We store OTP and an expiration time in the database.
+  resetPasswordToken: String,
+  resetPasswordExpires: Date,
 });
 
 module.exports = mongoose.model("User", userSchema);
