@@ -1,5 +1,11 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, AfterViewInit, Inject, PLATFORM_ID, HostListener } from '@angular/core';
+import {
+  Component,
+  AfterViewInit,
+  Inject,
+  PLATFORM_ID,
+  HostListener,
+} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr'; // For toast notifications
 import { UserService } from '../service/user.service';
@@ -14,25 +20,24 @@ import { MatchScoreStorageService } from '../service/matchscore-storage.service'
 
 declare var $: any;
 
-
 @Component({
   selector: 'app-virtual-receptionist-details',
   templateUrl: './virtual-receptionist-details.component.html',
-  styleUrl: './virtual-receptionist-details.component.css'
+  styleUrl: './virtual-receptionist-details.component.css',
 })
 export class VirtualReceptionistDetailsComponent {
   isLoading = false;
 
   showAll = false;
-  displayShareholders :any= [];
+  displayShareholders: any = [];
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
- companyInfo: any = {}; // To store bank service information (Step 2 data)
- shareholders :any= [];
- uploadedFiles: File[][] = []; // Initialize as an empty array
-i: any;
+  companyInfo: any = {}; // To store bank service information (Step 2 data)
+  shareholders: any = [];
+  uploadedFiles: File[][] = []; // Initialize as an empty array
+  i: any;
   tradeLicenseFileurl: any;
- constructor(
+  constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
     private router: Router,
@@ -60,40 +65,43 @@ i: any;
       // Parse data from localStorage
       this.personalInfo = JSON.parse(mailform);
       this.companyInfo = JSON.parse(mailform2);
-  
+
       // Extract shareholders from mailform2 in case mailform3 is missing
       let shareholdersFromMailform2 = this.companyInfo.shareholders || [];
-  
+
       // Parse mailform3 only if it exists
-      const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
-  
+      const additionalShareholderInfo = mailform3
+        ? JSON.parse(mailform3)
+        : { companyTradeLicense: '', shareholders: [] };
+
       // Use shareholders from mailform3 if available, otherwise fallback to mailform2
-      const mergedShareholders = additionalShareholderInfo.shareholders.length > 0 
-        ? additionalShareholderInfo.shareholders 
-        : shareholdersFromMailform2;
-  
+      const mergedShareholders =
+        additionalShareholderInfo.shareholders.length > 0
+          ? additionalShareholderInfo.shareholders
+          : shareholdersFromMailform2;
+
       // Merge all data into a single object
       const mergedData = {
         ...this.personalInfo,
         ...this.companyInfo,
         companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-        shareholders: mergedShareholders
+        shareholders: mergedShareholders,
       };
-  
+
       // Store merged data in localStorage for the final step
       localStorage.setItem('mergedData', JSON.stringify(mergedData));
-     
+
       // Assign displayShareholders
       this.displayShareholders = Array.isArray(mergedData.shareholders)
         ? mergedData.shareholders
         : Object.values(mergedData.shareholders || []);
-  
 
-        this.tradeLicenseFileurl  = additionalShareholderInfo.companyTradeLicenseFile[0].url;
+      this.tradeLicenseFileurl =
+        additionalShareholderInfo.companyTradeLicenseFile[0].url;
 
       // console.log("Merged Data:", mergedData, this.displayShareholders);
     }
-  
+
     // console.log(this.displayShareholders, "sas");
   }
   getFileUrl(file: File): string {
@@ -110,7 +118,8 @@ i: any;
     setTimeout(() => URL.revokeObjectURL(imageUrl), 1000); // Revoke URL after 1 second
   }
   ngAfterViewInit(): void {
-    if (this.isBrowser) {  // Ensure AOS and jQuery code runs only in the browser
+    if (this.isBrowser) {
+      // Ensure AOS and jQuery code runs only in the browser
       AOS.init();
 
       $(window).scroll(function () {
@@ -147,26 +156,34 @@ i: any;
   // Call this function when there's an error
   showError(errorMessage: string): void {
     this.toastr.error(errorMessage || 'Error submitting data', 'Error', {
-      positionClass: this.getToastPosition()
+      positionClass: this.getToastPosition(),
     });
   }
 
   // Dynamically adjust the toastr position based on user scrolling
   @HostListener('window:scroll', ['$event'])
   onScroll(): void {
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    const scrollPosition =
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop ||
+      0;
     // console.log(scrollPosition); // You can log this to see how far the user has scrolled
   }
 
   // Function to determine the toast position based on scroll
   getToastPosition(): string {
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    const scrollPosition =
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop ||
+      0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left'; // Adjust based on scroll
   }
   // submitData() {
   //   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
   //   const formData = new FormData();
-  
+
   //   // Append general data fields, excluding shareholders
   //   for (const key in mergedData) {
   //     if (mergedData.hasOwnProperty(key) && key !== 'shareholders') {
@@ -174,7 +191,7 @@ i: any;
   //       formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
   //     }
   //   }
-  
+
   //   // Append each shareholder's data and their actual File objects
   //   mergedData.shareholders.forEach((shareholder: any, index: number) => {
   //     // Append shareholder metadata fields, excluding files
@@ -183,7 +200,7 @@ i: any;
   //         formData.append(`shareholders[${index}][${field}]`, shareholder[field]);
   //       }
   //     }
-  
+
   //     // Retrieve actual files from `fileStorageService`
   //     const files = this.fileStorageService.getFiles(index);
   //     if (files.length > 0) {
@@ -194,12 +211,12 @@ i: any;
   //       console.warn(`No files found for shareholder index ${index}`);
   //     }
   //   });
-  
+
   //   // Log FormData to verify structure
   //   formData.forEach((value, key) => {
   //     console.log(`${key}:`, value);
   //   });
-  
+
   //   // Send the data to backend
   //   this.userService.virtualform(formData).subscribe(
   //     response => {
@@ -213,118 +230,133 @@ i: any;
   //     }
   //   );
   // }
-  
-  
-  
-  
-// VirtualReceptionist2Component.ts
 
-submitData() {
-  // Combine personalInfo and bankInfo into finalData
-  const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+  // VirtualReceptionist2Component.ts
 
-  // Show a SweetAlert confirmation dialog
-  Swal.fire({
-    title: 'Confirm Your Data',
-    text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#FA2E52',
-    confirmButtonText: 'Yes, I confirm',
-    cancelButtonText: 'Review Data'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      const payload = {
-        firstName: mergedData.firstName,
-        lastName: mergedData.lastName,
-        email: mergedData.email,
-        nationality: mergedData.nationality,
-        phone: mergedData.mobileNumber, // Ensure to map this correctly
-        dob: mergedData.birthday,
-        service: "virtual_reception",
-        CustomerType: 'C',
-        shareholders: this.displayShareholders,
-        planname: "Virtual Receptionist",
-        isProfile: false,
-        tradeLicenseFileUrl: this.tradeLicenseFileurl,
-      };
+  submitData() {
+    // Combine personalInfo and bankInfo into finalData
+    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
 
-      this.isLoading = true; // Show loading indicator if necessary
+    // Show a SweetAlert confirmation dialog
+    Swal.fire({
+      title: 'Confirm Your Data',
+      text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#FA2E52',
+      confirmButtonText: 'Yes, I confirm',
+      cancelButtonText: 'Review Data',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const birthday = new Date(mergedData.birthday);
+        const formattedBirthday = `${(birthday.getMonth() + 1)
+          .toString()
+          .padStart(2, '0')}/${birthday
+          .getDate()
+          .toString()
+          .padStart(2, '0')}/${birthday.getFullYear()}`;
 
-      // First API call to callSalesforceEndpoint
-      this.virtualManagementService.callSalesforceEndpoint(payload).pipe(
-        switchMap((response: any) => {
-          // Store the Salesforce response if needed
-          this.dataStorageService.setSalesforceResponse(response);
+        const payload = {
+          firstName: mergedData.firstName,
+          lastName: mergedData.lastName,
+          email: mergedData.email,
+          nationality: mergedData.nationality,
+          phone: mergedData.mobileNumber, // Ensure to map this correctly
+          dob: formattedBirthday,
+          service: 'virtual_reception',
+          CustomerType: 'C',
+          shareholders: this.displayShareholders,
+          planname: 'Virtual Receptionist',
+          isProfile: false,
+          tradeLicenseFileUrl: this.tradeLicenseFileurl,
+        };
 
-          // Prepare payload for the second API call
-          const quotePayload = {
-            lead_source: response.data.leadWithDetails.LeadSource,
-            currencyCode: response.data.quotePaymentWithDetails.Currency,
-            quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId,
-            account_id: response.data.quotePaymentWithDetails.AccountId,
-            payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
-          };
+        this.isLoading = true; // Show loading indicator if necessary
 
-          // Call the second API
-          return this.userService.callSalesforceQuoteService(quotePayload).pipe(
-            switchMap((quoteResponse: any) => {
-              // Prepare payload for the third API call
-              const matchScorePayload = {
-                quotePaymentId: quotePayload.quotePaymentId,
-                accountId: quotePayload.account_id,
-                leadId: response.data.leadWithDetails.LeadId,
-                matchScore: response.screeningmatchScore.matchScore,
+        // First API call to callSalesforceEndpoint
+        this.virtualManagementService
+          .callSalesforceEndpoint(payload)
+          .pipe(
+            switchMap((response: any) => {
+              // Store the Salesforce response if needed
+              this.dataStorageService.setSalesforceResponse(response);
+
+              // Prepare payload for the second API call
+              const quotePayload = {
+                lead_source: response.data.leadWithDetails.LeadSource,
+                currencyCode: response.data.quotePaymentWithDetails.Currency,
+                quotePaymentId:
+                  response.data.quotePaymentWithDetails.QuotePaymentId,
+                account_id: response.data.quotePaymentWithDetails.AccountId,
+                payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`,
               };
 
-              // Call the third API
-              return this.userService.MatchScoreProductService(matchScorePayload);
+              // Call the second API
+              return this.userService
+                .callSalesforceQuoteService(quotePayload)
+                .pipe(
+                  switchMap((quoteResponse: any) => {
+                    // Prepare payload for the third API call
+                    const matchScorePayload = {
+                      quotePaymentId: quotePayload.quotePaymentId,
+                      accountId: quotePayload.account_id,
+                      leadId: response.data.leadWithDetails.LeadId,
+                      matchScore: response.screeningmatchScore.matchScore,
+                    };
+
+                    // Call the third API
+                    return this.userService.MatchScoreProductService(
+                      matchScorePayload
+                    );
+                  })
+                );
             })
-          );
-        })
-      ).subscribe(
-        (quoteResponse: any) => {
-          // Successful API calls: hide loader, store final data, and navigate to the summary page
-          this.isLoading = false;
-          localStorage.setItem('finalDataVirtual', JSON.stringify(mergedData));
-          this.matchScoreStorageService.setMatchScoreResponse(quoteResponse);
-          this.router.navigate(['/virtual-summary']); // Replace with your actual route
-        },
-        (error) => {
-          // On error: hide loader and show a SweetAlert with Retry and Cancel options
-          this.isLoading = false;
-          console.error(error);
-          Swal.fire({
-            title: 'Error',
-            text: 'Something went wrong. Would you like to retry?',
-            icon: 'error',
-            showCancelButton: true,
-            confirmButtonText: 'Retry',
-            cancelButtonText: 'Cancel'
-          }).then((retryResult) => {
-            if (retryResult.isConfirmed) {
-              // If the user clicks Retry, re-call submitData() to reattempt the submission
-              this.submitData();
+          )
+          .subscribe(
+            (quoteResponse: any) => {
+              // Successful API calls: hide loader, store final data, and navigate to the summary page
+              this.isLoading = false;
+              localStorage.setItem(
+                'finalDataVirtual',
+                JSON.stringify(mergedData)
+              );
+              this.matchScoreStorageService.setMatchScoreResponse(
+                quoteResponse
+              );
+              this.router.navigate(['/virtual-summary']); // Replace with your actual route
+            },
+            (error) => {
+              // On error: hide loader and show a SweetAlert with Retry and Cancel options
+              this.isLoading = false;
+              console.error(error);
+              Swal.fire({
+                title: 'Error',
+                text: 'Something went wrong. Would you like to retry?',
+                icon: 'error',
+                showCancelButton: true,
+                confirmButtonText: 'Retry',
+                cancelButtonText: 'Cancel',
+              }).then((retryResult) => {
+                if (retryResult.isConfirmed) {
+                  // If the user clicks Retry, re-call submitData() to reattempt the submission
+                  this.submitData();
+                }
+              });
             }
-          });
-        }
-      );
-    }
-    // No action needed if the user cancels the confirmation (they can review their data)
-  });
-}
+          );
+      }
+      // No action needed if the user cancels the confirmation (they can review their data)
+    });
+  }
 
-
-
-
-isImageFile(url: string): boolean {
-  return url.match(/\.(jpeg|jpg|gif|png)$/) !== null;
-}
-
+  isImageFile(url: string): boolean {
+    return url.match(/\.(jpeg|jpg|gif|png)$/) !== null;
+  }
 
   toggleView() {
     this.showAll = !this.showAll;
-    this.displayShareholders = this.showAll ? this.shareholders : this.shareholders.slice(0, 5);
+    this.displayShareholders = this.showAll
+      ? this.shareholders
+      : this.shareholders.slice(0, 5);
   }
 }
-

@@ -1,5 +1,7 @@
 const fileUpload = require('../middleware/fileUpload'); // Import the multer middleware
 const MailDetails = require('../models/mailManagement'); // Import the model
+const Nationality = require('../models/nationalityModel');
+
 const axios = require("axios");
 require('dotenv').config();
 

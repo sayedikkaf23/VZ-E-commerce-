@@ -257,13 +257,16 @@ submitData() {
   }).then((result) => {
     if (result.isConfirmed) {
       // Build the payload from the merged data
+      const birthday = new Date(mergedData.birthday);
+      const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
+      
       const payload = {
         firstName: mergedData.firstName,
         lastName: mergedData.lastName,
         email: mergedData.email,
         nationality: mergedData.nationality,
         phone: mergedData.mobileNumber, // Ensure this is mapped correctly
-        dob: mergedData.birthday,
+        dob: formattedBirthday,
         service: "virtual_reception",
         CustomerType: 'C',
         shareholders: this.displayShareholders,

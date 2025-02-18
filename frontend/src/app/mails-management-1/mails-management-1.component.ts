@@ -9,18 +9,21 @@ import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser
 import { UserService } from '../service/user.service';
 import { GetnationalityService } from '../service/getnationality.service';
 import { DataStorageService } from '../service/data-storage.service';
+interface Nationality {
+  common: string;
+  country: string;
+}
 
 @Component({
   selector: 'app-mails-management-1',
   templateUrl: './mails-management-1.component.html',
-  styleUrl: './mails-management-1.component.css'
+  styleUrl: './mails-management-1.component.css',
 })
 export class MailsManagement1Component {
-
   personalDetailsForm: FormGroup;
-  nationalities: string[] = []; // Initialize as an empty array
+  nationalities: Nationality[] = [];
   selectedNationality: string = '';
-  SearchCountryField = SearchCountryField;  // Assign to use in template
+  SearchCountryField = SearchCountryField; // Assign to use in template
   CountryISO = CountryISO;
   isBrowser: boolean;
   isLoading = false;
@@ -34,7 +37,7 @@ export class MailsManagement1Component {
     private toastr: ToastrService,
     private userService: UserService,
     private getnationalityService: GetnationalityService,
-    private dataStorageService: DataStorageService ,// Inject the service
+    private dataStorageService: DataStorageService, // Inject the service
 
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
   ) {
@@ -56,7 +59,7 @@ export class MailsManagement1Component {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
-    
+
     const today = new Date();
     const year = today.getFullYear() - 18;
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
@@ -64,13 +67,15 @@ export class MailsManagement1Component {
     this.maxDate = `${year}-${month}-${day}`;
 
     this.getnationalityService.getNationality().subscribe((data) => {
-this.nationalities = data.map((country: { name: { common: any; country: any } }) => ({
-  common: country.name.common,
-  country: country.name.country
-}));
+        this.nationalities = data.map((country: any) => ({
+          common: country.name.common,
+          country: country.name.country
+        }));
+       
+      
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
-
+ 
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects
     //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
@@ -91,32 +96,29 @@ this.nationalities = data.map((country: { name: { common: any; country: any } })
   }
 
   onSubmit() {
+    // Check if 'mailform', 'mailform1', and 'mailform2' exist in localStorage
+    if (this.isBrowser) {
+      const mailform = localStorage.getItem('mailform');
 
-   // Check if 'mailform', 'mailform1', and 'mailform2' exist in localStorage
-  if (this.isBrowser) {
-    const mailform = localStorage.getItem('mailform');
-    
-    const mailform1 = localStorage.getItem('mailform1');
+      const mailform1 = localStorage.getItem('mailform1');
 
-    if (mailform && mailform1) {
-      // Update 'mailform' with current form values
-      const updatedMailForm = {
-        ...JSON.parse(mailform),
-        ...this.personalDetailsForm.value,
-      };
+      if (mailform && mailform1) {
+        // Update 'mailform' with current form values
+        const updatedMailForm = {
+          ...JSON.parse(mailform),
+          ...this.personalDetailsForm.value,
+        };
 
-      localStorage.setItem('mailform', JSON.stringify(updatedMailForm)); // Save updated 'mailform'
+        localStorage.setItem('mailform', JSON.stringify(updatedMailForm)); // Save updated 'mailform'
 
-      this.router.navigate(['/mails-management-details']);
-      return; // Exit early to avoid further execution
+        this.router.navigate(['/mails-management-details']);
+        return; // Exit early to avoid further execution
+      }
     }
-  }
-
-
 
     if (this.personalDetailsForm.valid) {
       const formData = this.personalDetailsForm.value;
-  
+
       if (this.isBrowser) {
         if (localStorage.getItem('mailform2')) {
           this.router.navigate(['/mails-management-details']);
@@ -128,23 +130,24 @@ this.nationalities = data.map((country: { name: { common: any; country: any } })
         localStorage.setItem('mailform', JSON.stringify(formData));
       }
     } else {
-
       const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
-      if (mobileNumberControl?.errors?.['validatePhoneNumber']) { // Correct key here
-        this.toastr.error('Enter a valid mobile number for the selected country.', 'Validation Error');
+      if (mobileNumberControl?.errors?.['validatePhoneNumber']) {
+        // Correct key here
+        this.toastr.error(
+          'Enter a valid mobile number for the selected country.',
+          'Validation Error'
+        );
       }
-  
 
       // Use the updated showSingleValidationError method for better feedback
       this.showSingleValidationError(this.personalDetailsForm);
     }
   }
-  
-  
+
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard
   }
-  
+
   openDatePicker(event: Event): void {
     const input = event.target as HTMLInputElement;
     input.showPicker(); // Explicitly trigger the date picker
@@ -156,21 +159,31 @@ this.nationalities = data.map((country: { name: { common: any; country: any } })
       const control = formGroup.get(field);
       if (control && control.invalid) {
         if (control.errors?.['required']) {
-          this.toastr.error(`${this.getFieldName(field)} is required.`, 'Validation Error');
+          this.toastr.error(
+            `${this.getFieldName(field)} is required.`,
+            'Validation Error'
+          );
           return; // Stop the loop after showing the first error
         } else if (control.errors?.['minlength']) {
           const minLength = control.errors['minlength'].requiredLength;
-          this.toastr.error(`${this.getFieldName(field)} must be at least ${minLength} characters long.`, 'Validation Error');
+          this.toastr.error(
+            `${this.getFieldName(
+              field
+            )} must be at least ${minLength} characters long.`,
+            'Validation Error'
+          );
           return; // Stop the loop after showing the first error
         } else if (control.errors?.['email']) {
-          this.toastr.error(`Please provide a valid ${this.getFieldName(field)}.`, 'Validation Error');
+          this.toastr.error(
+            `Please provide a valid ${this.getFieldName(field)}.`,
+            'Validation Error'
+          );
           return; // Stop the loop after showing the first error
         }
       }
     }
   }
-  
-  
+
   getFieldName(field: string): string {
     switch (field) {
       case 'firstName':
@@ -190,10 +203,7 @@ this.nationalities = data.map((country: { name: { common: any; country: any } })
     }
   }
 
-
   get birthdayControl() {
     return this.personalDetailsForm.get('birthday');
   }
-  
 }
-
