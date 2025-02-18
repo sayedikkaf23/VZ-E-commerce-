@@ -60,5 +60,13 @@ export class UserLoginComponent {
       this.toastr.warning('Please fill in all required fields!', 'Warning'); // Show validation warning
     }
   }
+  forgotPassword() {
+    const email = this.loginForm.get('email')?.value;
+    if (email) {
+      localStorage.setItem('forgotEmail', email); // Save email in local storage
+    }
+    this.router.navigate(['/forgot-password']); // Redirect to Forgot Password page
+  }
+  
   
 }
