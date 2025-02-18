@@ -102,12 +102,21 @@ exports.callSalesforceEndpoint = async (req, res) => {
   const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders ,isProfile,planname,tradeLicenseFileUrl} = req.body;
   const formattedPhone = phone.internationalNumber || phone.number || ""; // Format phone number
 
+
+  const nationalities = await Nationality.find();
+
+  const matchingNationality = nationalities.find(
+    (item) => item.Country.toLowerCase() === nationality.toLowerCase()
+  );
+  
+
+  const standardizedNationality = matchingNationality ? matchingNationality.Value : nationality;
   // Construct the JSON body to send to Salesforce
   const requestBody = {
     firstName,
     lastName,
     email,
-    nationality,
+    nationality:standardizedNationality,
     phone: formattedPhone,
     dob,
   };
