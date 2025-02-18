@@ -27,7 +27,7 @@
                 <div class="icon" (click)="togglePasswordVisibility()">
                   <i *ngIf="!passwordVisible" class="fas fa-eye-slash pass-hide"></i>  <i *ngIf="passwordVisible" class="fas fa-eye pass-show "></i> </div>
               </div>
-              <div class="row align-items-center justify-content-between">
+              <div class="row align-items-center justify-content-between" style="position: relative;">
                 <div class="col-auto">
                   <!-- <div class="form-check mb-0">
                     <input type="checkbox" class="form-check-input" id="keeplogged">
@@ -38,7 +38,7 @@
                   <a href="#" onclick="return false;" (click)="forgotPassword()"  class="link"><u>Forgot Password?</u></a>
                 </div>
               </div>
-              <button type="submit" class="btn w-100">Login</button>
+              <button type="submit" style="position: relative;" class="btn w-100">Login</button>
             </form>
           </div>
         </div>

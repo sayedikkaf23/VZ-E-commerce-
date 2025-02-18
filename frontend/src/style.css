@@ -1334,4 +1334,16 @@ ngx-intl-tel-input .iti {
     background-color: #299e60 !important; /* Green background for success */
   }
   
+
+  /* Center Toastr messages when screen width is ≤ 768px */
+@media (max-width: 768px) {
+    #toast-container .custom-toast {
+        top: 1% !important;        /* Adjust top position */
+        right: 1% !important;      /* Adjust right position */
+        transform: translate(0, 0) !important;  /* Remove any centering */
+        left: auto !important;     /* Make sure right alignment is disabled */
+        width: auto !important;     /* Auto width for the toast */
+        text-align: left !important;  /* Align text to the left */
+    }
+}
   
