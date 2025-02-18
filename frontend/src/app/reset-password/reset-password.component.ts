@@ -37,16 +37,20 @@ export class ResetPasswordComponent {
   }
 
   onSubmit() {
-    if (this.resetPasswordForm.valid) {
-      const { newPassword, confirmPassword } = this.resetPasswordForm.value;
-
-       // Check if either newPassword or confirmPassword is empty
-    if (!newPassword || !confirmPassword) {
-      this.toastr.warning('Both password fields are required!', 'Warning');
+    if (this.resetPasswordForm.invalid) {
+      this.toastr.warning('Please fill in all required fields!', 'Warning');
       return;
     }
-      if (newPassword !== confirmPassword) {
+      const { newPassword, confirmPassword } = this.resetPasswordForm.value;
 
+    
+        // Trim spaces and check if the fields are empty
+  if (!newPassword?.trim() || !confirmPassword?.trim()) {
+    this.toastr.warning('Both password fields are required!', 'Warning');
+    return;
+  }
+
+      if (newPassword !== confirmPassword) {
         // alert('Passwords do not match!');
         this.toastr.warning('Passwords do not match!', 'Warning');
         return;
@@ -74,7 +78,7 @@ export class ResetPasswordComponent {
           );
         }
       );
-    }
+    
   }
 
   togglePasswordVisibility() {
