@@ -52,7 +52,7 @@ export class ResetPasswordComponent {
 
       if (newPassword !== confirmPassword) {
         // alert('Passwords do not match!');
-        this.toastr.warning('Passwords do not match!', 'Warning');
+        this.toastr.warning("Password doesn't match!", 'Warning');
         return;
       }
 
