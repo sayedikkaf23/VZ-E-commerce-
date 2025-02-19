@@ -221,3 +221,39 @@
 .spinner-border::after {
   background-color: #e7f0e9;
 }
+
+.search-container {
+  display: flex; /* Arranges input and button side-by-side */
+  border:none; /* Light grey border for the container */
+  border-radius: 20px; /* Match container radius to button radius */ /* Corrected border-radius value to 20px for consistency with rounded button */
+  overflow: hidden; /* Ensures rounded corners are applied properly */
+}
+
+.search-container input[type="text"] {
+  padding: 8px 12px; /* Comfortable padding inside the input */
+  border:  1px solid #ccc;; /* Removes default input border */
+  flex-grow: 1; /* Allows input to take up available space */
+  font-size: 1rem; /* Sets a decent font size */
+  border-radius: 20px 0 0 20px; /* Rounded corners on the left side of input */
+}
+
+.search-container .search-button {
+  background-color: #e9eaeb; /* Light grey background */
+  color: #495057; /* Dark grey text */
+  border: 1px solid #ccc; /* Keep a border for definition */
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: bold;
+  border-left: none; /* Remove the left separator - integrate with the container's border */
+  border-radius: 0 20px 20px 0; /*  Larger border-radius for rounded ends (pill shape) - Corrected radius values for right side only and to 20px */
+  margin-left: -1px; /* Adjust position to visually connect with input if needed */
+}
+
+.search-container .search-button:hover {
+  background-color: #99cafb; /* Lighter grey on hover */
+}
+
+.search-container .search-button i {
+  margin-right: 5px;
+}

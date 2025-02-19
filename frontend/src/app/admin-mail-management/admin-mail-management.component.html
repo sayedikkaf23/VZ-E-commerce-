@@ -14,6 +14,10 @@
             <div class="col-auto mb-2">
               <h2>Mail Management</h2>
             </div>
+            <div class="search-container mt-3">
+              <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
+              <button class="search-button" (click)="onSearch()"><i class="fas fa-search"></i> SEARCH</button>
+            </div>
           </div>
         </div>
       </div>
@@ -40,7 +44,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let mail of mailList">
+          <tr *ngFor="let mail of filteredMailList">
             <td>{{ mail.leadWithDetails.FirstName }} {{ mail.leadWithDetails.LastName }}</td>
             <td>{{ mail.leadWithDetails.Email }}</td>
             <td>{{ mail.userDetails.CompanyName }}</td>

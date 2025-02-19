@@ -12,6 +12,10 @@
           <div class="col-auto mb-2">
             <h2>Virtual Management</h2>
           </div>
+          <div class="search-container mt-3">
+            <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
+            <button class="search-button" (click)="onSearch()"><i class="fas fa-search"></i> SEARCH</button>
+          </div>
         </div>
       </div>
     </div>
@@ -39,7 +43,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let client of clientList">
+        <tr *ngFor="let client of filteredClientList">
           <td>{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
           <td>{{ client.leadWithDetails.Email }}</td>
           <td>{{ client.userDetails.CompanyName }}</td>

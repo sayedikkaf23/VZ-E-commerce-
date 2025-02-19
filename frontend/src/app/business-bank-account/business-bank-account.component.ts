@@ -16,6 +16,8 @@ export class BusinessBankAccountComponent implements OnInit {
   showFileModal: boolean = false; // New flag for file modal
   selectedAdditionalFiles: any[] = []; // Selected files for the modal
   isLoading: boolean = false; // Single loader state for all actions
+  searchTerm: string = '';  
+  filteredUserList: any[] = []; // Filtered user data
 
   selectedUserFields: string[] = ['isMatched', 'caseId', 'customerId', 'highestScoringResult'];
 
@@ -44,7 +46,7 @@ export class BusinessBankAccountComponent implements OnInit {
       (response) => {
         this.userList = response; // Assign the API response to the userList array
         this.checkColumnData(); // Check columns only after data is loaded
-
+        this.filteredUserList = [...this.userList];
       },
       (error) => {
         console.error('Error fetching user details:', error);
@@ -85,7 +87,29 @@ export class BusinessBankAccountComponent implements OnInit {
       }
     );
   }
+
+  onSearch() {
+    this.searchTerm = this.searchTerm.trim().toLowerCase();
   
+    if (this.searchTerm) {
+      this.filteredUserList = this.userList.filter(user =>
+        (`${user?.leadWithDetails?.FirstName.trim().toLowerCase() || ''} ${user?.leadWithDetails?.LastName.trim().toLowerCase() || ''}`).includes(this.searchTerm) ||
+        (user?.leadWithDetails?.FirstName || '').toLowerCase().includes(this.searchTerm) ||
+        (user?.leadWithDetails?.LastName || '').toLowerCase().includes(this.searchTerm) ||
+        (user?.leadWithDetails?.Email || '').toLowerCase().includes(this.searchTerm) ||
+        (user?.leadWithDetails?.Nationality || '').toLowerCase().includes(this.searchTerm) ||
+        (user?.userDetails?.birthday || '').includes(this.searchTerm) || // Match date format
+        (user?.leadWithDetails?.Phone || '').includes(this.searchTerm) || // Match mobile number
+        (user?.jurisdiction || '').toLowerCase().includes(this.searchTerm) ||
+        (user?.userDetails?.shareholdercount?.toString() || '').includes(this.searchTerm) ||
+        (user?.userDetails?.Turnover?.toString() || '').toLowerCase().includes(this.searchTerm) ||
+        (user?.screeningDetails?.matchScore?.toString() || '').includes(this.searchTerm) ||
+        (user?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
+      );
+    } else {
+      this.filteredUserList = [...this.userList]; // Reset list if search is empty
+    }
+  }
   
   
   

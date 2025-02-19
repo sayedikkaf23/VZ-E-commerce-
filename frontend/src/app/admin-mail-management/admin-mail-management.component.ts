@@ -18,6 +18,8 @@ export class AdminMailManagementComponent {
   showFileModal: boolean = false; // Flag to control file modal visibility
   selectedFiles: any[] = []; // To store selected files for the modal
   selectedMail: { [key: string]: any } | null = null;
+  searchTerm: string = '';  
+  filteredMailList: any[] = []; // Filtered user data
 
   showDetailsModal: boolean = false;
   
@@ -32,7 +34,9 @@ export class AdminMailManagementComponent {
     this.mailManagementService.getVirtaulData().subscribe(
       (response) => {
         this.mailList = response; // Assign the API response to the mailList array
+        this.filteredMailList = [...this.mailList];
         this.checkColumnData(); // Check columns only after data is loaded
+        
       },
       (error) => {
         console.error('Error fetching mail details:', error);
@@ -115,4 +119,26 @@ export class AdminMailManagementComponent {
   closeFileModal(): void {
     this.showFileModal = false; // Close the file modal
   }
+
+  onSearch() {
+    this.searchTerm = this.searchTerm.trim().toLowerCase();
+  
+    if (this.searchTerm) {
+      this.filteredMailList = this.mailList.filter(mail =>
+        (`${mail?.leadWithDetails?.FirstName.trim().toLowerCase() || ''} ${mail?.leadWithDetails?.LastName.trim().toLowerCase() || ''}`).includes(this.searchTerm) ||
+        (mail?.leadWithDetails?.FirstName || '').toLowerCase().includes(this.searchTerm) ||
+        (mail?.leadWithDetails?.LastName || '').toLowerCase().includes(this.searchTerm) ||
+        (mail?.leadWithDetails?.Email || '').toLowerCase().includes(this.searchTerm) ||
+        (mail?.userDetails?.CompanyName || '').toLowerCase().includes(this.searchTerm) ||
+        (mail?.userDetails?.CompanyIncorporated || '').toLowerCase().includes(this.searchTerm) ||
+        (mail?.userDetails?.mobileNumber?.internationalNumber || '').includes(this.searchTerm) ||
+        (mail?.userDetails?.shareholdercount?.toString() || '').includes(this.searchTerm) ||
+        (mail?.screeningDetails?.matchScore?.toString() || '').includes(this.searchTerm) ||
+        (mail?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
+      );
+    } else {
+      this.filteredMailList = [...this.mailList]; // Reset list if search is empty
+    }
+  }
+  
 }

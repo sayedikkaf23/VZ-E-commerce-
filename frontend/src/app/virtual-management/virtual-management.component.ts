@@ -17,6 +17,8 @@ export class VirtualManagementComponent implements OnInit {
   loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
   showFileModal: boolean = false; // Flag for file modal
   selectedFiles: any[] = []; // To store selected files for the modal
+  searchTerm: string = '';  
+  filteredClientList: any[] = []; // Filtered user data
   constructor(private virtualManagementService: VirtualManagementService) {}
 
   selectedUser: { [key: string]: any } | null = null;
@@ -33,7 +35,7 @@ export class VirtualManagementComponent implements OnInit {
       (response) => {
         this.clientList = response; // Assign the API response to the clientList array
         this.checkColumnData(); // Check columns only after data is loaded
-
+        this.filteredClientList = [...this.clientList]; // Initialize filtered list
       },
       (error) => {
         console.error('Error fetching client details:', error);
@@ -117,6 +119,28 @@ export class VirtualManagementComponent implements OnInit {
   closeDetailsModal(): void {
     this.showDetailsModal = false; // Close the modal
   }
+
+  onSearch() {
+    this.searchTerm = this.searchTerm.trim().toLowerCase();
+  
+    if (this.searchTerm) {
+      this.filteredClientList = this.clientList.filter(client =>
+        (`${client?.leadWithDetails?.FirstName.trim().toLowerCase() || ''} ${client?.leadWithDetails?.LastName.trim().toLowerCase() || ''}`).includes(this.searchTerm) ||
+        (client?.leadWithDetails?.FirstName || '').toLowerCase().includes(this.searchTerm) ||
+        (client?.leadWithDetails?.LastName || '').toLowerCase().includes(this.searchTerm) ||
+        (client?.leadWithDetails?.Email || '').toLowerCase().includes(this.searchTerm) ||
+        (client?.userDetails?.CompanyName || '').toLowerCase().includes(this.searchTerm) ||
+        (client?.userDetails?.CompanyIncorporated || '').toLowerCase().includes(this.searchTerm) ||
+        (client?.userDetails?.shareholdercount?.toString() || '').includes(this.searchTerm) ||
+        (client?.userDetails?.mobileNumber?.internationalNumber || '').includes(this.searchTerm) ||
+        (client?.screeningDetails?.matchScore?.toString() || '').includes(this.searchTerm) ||
+        (client?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
+      );
+    } else {
+      this.filteredClientList = [...this.clientList]; // Reset list if search is empty
+    }
+  }
+  
   
 
 }

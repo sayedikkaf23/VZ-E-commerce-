@@ -11,6 +11,10 @@
           <div class="col-auto mb-2">
             <h2>Personal Bank Account</h2>
           </div>
+          <div class="search-container mt-3">
+            <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
+            <button class="search-button" (click)="onSearch()"><i class="fas fa-search"></i> SEARCH</button>
+          </div>
         </div>
       </div>
       <div class="col-auto">
@@ -43,7 +47,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of userList">
+        <tr *ngFor="let user of filteredUserList">
           <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
           <td>{{ user.leadWithDetails.Email }}</td>
           <td>{{ user.leadWithDetails.Nationality }}</td>
@@ -75,34 +79,7 @@
          
           
         </tr>
-        <tbody>
-          <tr *ngFor="let user of userList">
-            <td>{{ user.leadWithDetails?.FirstName }} {{ user.leadWithDetails?.LastName }}</td>
-            <td>{{ user.leadWithDetails?.Email }}</td>
-            <td>{{ user.leadWithDetails?.Nationality }}</td>
-            <td>{{ user.userDetails?.birthday | date: 'yyyy-MM-dd' }}</td>
-            <td>{{ user.userDetails?.resident }}</td>
-            <td>{{ user.userDetails?.working }}</td>
-            <td *ngIf="user.userDetails?.salary">{{ user.userDetails?.salary }}</td>
-            <td *ngIf="user.userDetails?.companyname">{{ user.userDetails?.companyname }}</td>
-            <td>{{ user.userDetails?.Bank }}</td>
-            <td>{{ user.screeningDetails?.matchScore }}</td>
-            <td>
-              <button class="green-button" (click)="checkStatus(user)" [disabled]="isLoading">
-                Check Status
-              </button>
-            </td>
-            
-            <!-- Display User Status -->
-            <td>
-              {{ user.CustomerStatus || 'No status available' }}
-            </td>
-            <td>
-              <button class="green-button" (click)="openFileModal(user)">
-                View File
-              </button>
-            </td>
-          </tr>
+       
         </tbody>
         
     </table>

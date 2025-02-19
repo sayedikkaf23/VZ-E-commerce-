@@ -8,6 +8,7 @@ import { ToastrService } from 'ngx-toastr'; // Import ToastrService
   styleUrls: ['./back-account-opening.component.css'],
 })
 export class BackAccountOpeningComponent implements OnInit {
+
   userList: any[] = []; // To store the fetched user data
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
@@ -18,6 +19,8 @@ export class BackAccountOpeningComponent implements OnInit {
   selectedUser: { [key: string]: any } | null = null;
 
   showDetailsModal: boolean = false;
+  searchTerm: string = '';  
+  filteredUserList: any[] = []; // Filtered user data
   
   constructor(private adminAuthService: AdminAuthService) {}
 
@@ -29,6 +32,7 @@ export class BackAccountOpeningComponent implements OnInit {
     this.adminAuthService.getPersonalBank().subscribe(
       (response) => {
         this.userList = response; // Assign the API response to the userList array
+        this.filteredUserList = [...this.userList];
         this.checkColumnData(); // Check columns only after data is loaded
       },
       (error) => {
@@ -123,5 +127,41 @@ export class BackAccountOpeningComponent implements OnInit {
   closeDetailsModal(): void {
     this.showDetailsModal = false; // Close the modal
   }
+
+  onSearch() {
+    console.log("before : ", this.filteredUserList);
+    this.searchTerm = this.searchTerm.trim();
+   
+  
+    if (this.searchTerm) {
+      this.filteredUserList = this.userList.filter(user =>
+        (user?.leadWithDetails?.FirstName || '').includes(this.searchTerm) ||
+        (`${user?.leadWithDetails?.FirstName || ''} ${user?.leadWithDetails?.LastName || ''}`).trim().includes(this.searchTerm) ||
+        (user?.leadWithDetails?.LastName || '').includes(this.searchTerm) ||
+        (user?.leadWithDetails?.Email || '').toLowerCase().includes(this.searchTerm) ||
+        (user?.leadWithDetails?.Nationality || '').includes(this.searchTerm) ||
+        (user?.userDetails?.birthday || '').includes(this.searchTerm) || // Match date
+        (user?.userDetails?.resident || '').includes(this.searchTerm) ||
+        (user?.userDetails?.working || '').includes(this.searchTerm) ||
+        (user?.userDetails?.salary?.toString() || '').includes(this.searchTerm) ||
+        (user?.userDetails?.companyname || '').includes(this.searchTerm) ||
+        (user?.userDetails?.Bank || '').includes(this.searchTerm) ||
+        (user?.screeningDetails?.matchScore?.toString() || '').includes(this.searchTerm) ||
+        (user?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
+      );
+    
+      console.log("after : ", this.filteredUserList);
+
+       // Console log userDetails for each user in the filtered list
+       console.group("Filtered User Details:"); // Optional: Group console messages for better readability
+       this.filteredUserList.forEach(user => {
+         console.log("User Details: ", user.userDetails);
+       });
+       console.groupEnd(); // Optional: End the console group
+    } else {
+      this.filteredUserList =  [...this.userList]; // Reset to full list if search is empty
+    }
+  }
+  
   
 }
