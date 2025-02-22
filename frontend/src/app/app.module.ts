@@ -71,6 +71,7 @@ import { AdminDocumentTypeComponent } from './admin-document-type/admin-document
 import { PastServiceComponent } from './past-service/past-service.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { HelpCenterComponent } from './help-center/help-center.component';
 
 @NgModule({
   declarations: [
@@ -134,7 +135,8 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
     AdminDocumentTypeComponent,
     PastServiceComponent,
     ForgotPasswordComponent,
-    ResetPasswordComponent
+    ResetPasswordComponent,
+    HelpCenterComponent
     
   ],
   imports: [

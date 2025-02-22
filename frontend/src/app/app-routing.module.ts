@@ -52,6 +52,7 @@ import { AdminDocumentTypeComponent } from './admin-document-type/admin-document
 import { PastServiceComponent } from './past-service/past-service.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
+import { HelpCenterComponent } from './help-center/help-center.component';
 const routes: Routes = [
 
   {
@@ -109,6 +110,11 @@ const routes: Routes = [
   {
     path: 'user/pastservice',
     component: PastServiceComponent,
+   
+  },
+  {
+    path: 'user/helpcenter',
+    component: HelpCenterComponent
    
   },
   //new payment
