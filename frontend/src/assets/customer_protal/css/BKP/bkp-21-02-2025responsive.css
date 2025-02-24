@@ -276,26 +276,6 @@
         padding: 14px;
         border-radius: 8px;
     }
-    .help_centr_title {
-        margin-bottom: 10px;
-        font-size: 18px;
-        margin-top: 10px;
-    }
-    .help_centr_box {
-        padding: 14px;
-        border-radius: 8px;
-    }
-    .help_centr_box ul li {
-        margin-bottom: 12px;
-        padding-bottom: 12px;
-    }
-    .help_centr_box ul li .icon {
-        height: 32px;
-        width: 32px;
-    }
-    .help_centr_box ul li h4, .help_centr_box ul li a {
-        font-size: 16px;
-    }
 }
 
 @media (max-width:767px) {
