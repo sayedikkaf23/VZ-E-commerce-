@@ -534,7 +534,11 @@ get endEntry(): number {
     this.router.navigate(['user/dashboard']);
   }
   
-  
+  goToHelp(): void {
+    this.router.navigate(['/user/helpcenter']);
+    console.log("clicked");
+  }
+
 }
 
 

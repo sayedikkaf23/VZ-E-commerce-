@@ -13,6 +13,10 @@ export class HelpCenterComponent {
     this.router.navigate(['/user/pastservice']);
     console.log("clicked");
   }
+  goToHelp(): void {
+    this.router.navigate(['/user/helpcenter']);
+    console.log("clicked");
+  }
 
   goToDashbordService(): void {
     this.router.navigate(['user/dashboard']);
