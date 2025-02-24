@@ -56,7 +56,6 @@ body {
     font-size: 16px;
     color: var(--text);
     background-color: var(--white);
-    padding: 0;
 }
 a {
     color: var(--dark);
@@ -510,7 +509,7 @@ table.table thead th:last-child{
 }
 .content_wrap .pagination .page-item{
     margin-left: 6px;
-
+    
 }
 .content_wrap .show_entries_text{
     gap: 15px;
@@ -912,48 +911,4 @@ body.menu-hide .sidebar_icon a svg {
 }
 body.menu-hide section.content_area {
     border-radius: 0;
-}
-.help_centr_box {
-    background-color: var(--white);
-    box-shadow: 0px 4px 4px 0px #00000008;
-    padding: 22px;
-    border-radius: 14px;
-    overflow: hidden;
-    position: relative;
-}
-.help_centr_title{
-    margin-bottom: 12px;
-    font-weight: 700;
-    font-size: 22px;
-    color: var(--dark);
-}
-.help_centr_box ul li {
-    position: relative;
-    margin-bottom: 18px;
-    border-bottom: 1px solid #1212120F;
-    padding-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-.help_centr_box ul li:last-child{
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border: 0;
-}
-.help_centr_box ul li .icon {
-    background: var(--primary);
-    color: var(--white);
-    height: 38px;
-    width: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50px;
-}
-.help_centr_box ul li h4,
-.help_centr_box ul li a {
-    font-size: 18px;
-    font-weight: 700;
-    margin: 0;
 }
