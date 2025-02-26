@@ -21,5 +21,9 @@ export class HelpCenterComponent {
   goToDashbordService(): void {
     this.router.navigate(['user/dashboard']);
   }
+  navigateLogout(): void {
+    this.router.navigate(['/login']); // Navigate to login
+  }
+
   
 }

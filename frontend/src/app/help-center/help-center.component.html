@@ -43,7 +43,7 @@
                         </a>    
                     </li>  -->
 
-                    <li>
+                    <!-- <li>
                         <a (click)="goToHelp()">
                             <span class="icon">
                                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,9 +57,9 @@
                                 Settings
                             </span>
                         </a>    
-                    </li>
+                    </li> -->
 
-                    <li >
+                    <li class="active">
                         <a  (click)="goToHelp()">
                             <span class="icon">
                                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -141,11 +141,11 @@
                                         <img src="assets/customer_protal/images/profile-image.png" alt="">
                                     </a>
                                     <ul class="profile_menu">
-                                        <li>
+                                        <!-- <li>
                                             <a>My Account</a>
-                                        </li>
+                                        </li> -->
                                         <li>
-                                            <a >Logout</a>
+                                            <a  (click)="navigateLogout(); $event.preventDefault()">Logout</a>
                                         </li>
                                     </ul>
                                 </div>
