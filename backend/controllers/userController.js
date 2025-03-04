@@ -8,6 +8,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const crypto = require('crypto');
 const axios = require("axios");
+const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
+const MailDetails = require('../models/mailManagement'); // Import the model
 require('dotenv').config(); 
 
 
@@ -678,12 +680,23 @@ exports.MatchScoreProductService = async (req, res) => {
 
 exports.getAllSubmissions = async (req, res) => {
   try {
-    const allSubmissions = await UserDetails.find(); // Fetch all user submissions
-    res.status(200).json(allSubmissions); // Return all submissions as JSON
+    // Fetch data from all three collections in parallel
+    const [allSubmissions, virtualData, mailData] = await Promise.all([
+      UserDetails.find(),      // from UserDetails model
+      VirtualDetails.find(),   // from VirtualReceptionist model
+      MailDetails.find()       // from MailManagement model
+    ]);
+
+    // allSubmissions is already an array from UserDetails.
+    // Simply push in the other results (virtualData, mailData).
+    allSubmissions.push(...virtualData, ...mailData);
+
+    // Now 'allSubmissions' includes documents from all three collections
+    res.status(200).json(allSubmissions);
   } catch (error) {
     res
       .status(500)
-      .json({ error: "Error fetching submissions", details: error.message });
+      .json({ error: 'Error fetching submissions', details: error.message });
   }
 };
 exports.getPersonalBank = async (req, res) => {
@@ -1156,6 +1169,56 @@ exports.updateAdditionalUploadedFiles = async (req, res) => {
   } catch (err) {
     console.error("Error updating files:", err.message || err);
     return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.dashboard = async (req, res) => {
+  try {
+    // Retrieve counts in parallel
+    const [
+      virtualReceptionCount,
+      mailManagementCount,
+      bankOpeningCount,
+      personalCount,
+      businessCount,
+      userCount,
+      virtualDetailsCount,
+      mailDetailsCount
+    ] = await Promise.all([
+      Pidata.countDocuments({ planname: 'Virtual Receptionist' }),
+      Pidata.countDocuments({ planname: 'Mail Management' }),
+      Pidata.countDocuments({ planname: 'Bank Account Opening' }),
+      Pidata.countDocuments({ subcategory: 'personal' }),
+      Pidata.countDocuments({ subcategory: 'business' }),
+      UserDetails.countDocuments(),
+      VirtualDetails.countDocuments(),
+      MailDetails.countDocuments()
+    ]);
+
+    // Sum the user counts
+    const totalUser = userCount + virtualDetailsCount + mailDetailsCount;
+
+    // Return the counts + the totalUser in a single response
+    return res.json({
+      // Pidata-based counts
+      virtualReceptionCount,
+      mailManagementCount,
+      bankOpeningCount,
+      personalCount,
+      businessCount,
+
+      // Individual model counts
+     
+
+      // The combined count
+      totalUser
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: 'Something went wrong',
+      error: error.message
+    });
   }
 };
 
