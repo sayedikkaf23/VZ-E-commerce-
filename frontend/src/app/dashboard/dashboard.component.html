@@ -79,7 +79,7 @@
       <div class="row">
         <div class="col">
           <div class="darshboard-counter">
-            <h6>{{ "Total Sales" }}</h6>
+            <h6>{{ "Total Customer" }}</h6>
             <h3>
               <!-- {{ total_sales_report | number : "2.2-2" }} -->
               2
@@ -128,7 +128,7 @@
   
         <div class="col">
           <div class="darshboard-counter">
-            <h6>{{ "POS Cancelled" }}</h6>
+            <h6>{{ "Total Peronal Account" }}</h6>
             <h3>
               {{ total_sum_cancelled_orders | number : "2.2-2" }}
               5
@@ -176,7 +176,7 @@
         </div>
         <div class="col">
           <div class="darshboard-counter">
-            <h6>{{ "Total Customers" }}</h6>
+            <h6>{{ "Total Business Account" }}</h6>
             <h3>
               {{ total_customers }}
               7
@@ -224,7 +224,55 @@
         </div>
         <div class="col">
           <div class="darshboard-counter">
-            <h6>{{ "Total Suppliers" }}</h6>
+            <h6>{{ "Total Virtual Management" }}</h6>
+            <h3>
+              {{ total_suppliers }}
+              9
+            </h3>
+            <div class="icon" style="color: #bf1b80">
+              <svg
+                width="54"
+                height="68"
+                viewBox="0 0 54 68"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect y="44" width="6" height="24" rx="3" fill="currentColor" />
+                <rect x="16" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="16"
+                  y="34"
+                  width="6"
+                  height="34"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="32" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="32"
+                  y="19"
+                  width="6"
+                  height="49"
+                  rx="3"
+                  fill="currentColor"
+                />
+                <rect x="48" width="6" height="68" rx="3" fill="#F4F6FB" />
+                <rect
+                  x="48"
+                  y="30.2222"
+                  width="6"
+                  height="37.7778"
+                  rx="3"
+                  fill="currentColor"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+           <div class="col">
+          <div class="darshboard-counter">
+            <h6>{{ "Total Mail Management" }}</h6>
             <h3>
               {{ total_suppliers }}
               9
