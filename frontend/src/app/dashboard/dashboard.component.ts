@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { UserService } from '../service/user.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -35,8 +36,35 @@ export class DashboardComponent implements OnInit {
   total_partially_paid_invoices: any = 0;
   total_cancelled_invoices: any = 0;
   total_return_invoices: any = 0;
+  virtualReceptionCount: number = 0;
+  mailManagementCount: number = 0;
+  bankOpeningCount: number = 0;
+  personalCount: number = 0;
+  businessCount: number = 0;
+  totalUser: number = 0;
+
+  constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    // throw new Error('Method not implemented.');
+    this.loadDashboardData();
   }
+
+  loadDashboardData(): void {
+    this.userService.getUserDashboard().subscribe(
+      (response) => {
+        if (response) {
+          this.virtualReceptionCount = response.virtualReceptionCount;
+          this.mailManagementCount = response.mailManagementCount;
+          this.bankOpeningCount = response.bankOpeningCount;
+          this.personalCount = response.personalCount;
+          this.businessCount = response.businessCount;
+          this.totalUser = response.totalUser;
+        }
+      },
+      (error) => {
+        console.error('Error fetching dashboard data', error);
+      }
+    );
+  }
+  
 }

@@ -76,5 +76,9 @@ export class UserService {  // Changed the service name to UserService
   resetPassword(token: string, newPassword: string): Observable<any> {
     return this.http.post(`${this.url}/auth/reset-password`, { token, newPassword });
   }
+  getUserDashboard(): Observable<any> {
+    return this.http.get(`${this.url}/user/dashboard`);
+  }
+  
   
 }
