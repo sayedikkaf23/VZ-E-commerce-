@@ -306,7 +306,7 @@ const routes: Routes = [
        
       },
       {
-        path: 'payment-methord',
+        path: 'payment-method',
         component:AdminPaymentMethordComponent,
        
       },
