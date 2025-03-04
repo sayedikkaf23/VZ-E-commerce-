@@ -49,7 +49,6 @@ app.use(express.json());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, '../frontend/dist/frontend/browser')));
 app.use('/uploads', express.static('uploads'));
 
 app.use('/user', userRouter);
@@ -86,6 +85,7 @@ conn.login(process.env.SALESFORCE_USERNAME, process.env.SALESFORCE_PASSWORD, fun
     }
   });
 });
+app.use(express.static(path.join(__dirname, '../frontend/dist/frontend/browser')));
 
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '../frontend/dist/frontend/browser', 'index.csr.html'));
