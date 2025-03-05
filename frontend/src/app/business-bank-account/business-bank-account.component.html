@@ -26,82 +26,95 @@
   </div>
 
   <div class="table-responsive overflow-behaviour">
-    <table class="table table-list-data table-hover">
-      <thead class="bg-light">
-        <tr>
-          <th scope="col">Name &#x2191;&#x2193;</th>
-          <th scope="col">Email &#x2191;&#x2193;</th>
-          <th scope="col">Nationality &#x2191;&#x2193;</th>
-          <th scope="col">Birthday &#x2191;&#x2193;</th>
-          <th scope="col">Mobile Number &#x2191;&#x2193; </th>
-          <th scope="col">Jurisdiction &#x2191;&#x2193;</th>
-          <th scope="col">Shareholder Count &#x2191;&#x2193;</th>
-          <th scope="col">Turn Over &#x2191;&#x2193;</th>
-          <th scope="col">Actions &#x2191;&#x2193;</th>
-
-          <th scope="col">Match Score &#x2191;&#x2193;</th>
-
-          <th scope="col">Actions &#x2191;&#x2193;</th>
-
-          <th scope="col">KYC Status &#x2191;&#x2193;</th>
-          <th scope="col">View File &#x2191;&#x2193;</th>
-
-          <th scope="col">Business Bank Details &#x2191;&#x2193;</th>
-
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let user of filteredUserList">
-          <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
-          <td>{{ user.leadWithDetails.Email }}</td>
-          <td>{{ user.leadWithDetails.Nationality }}</td>
-          <td>{{ user.userDetails.birthday | date : "yyyy-MM-dd" }}</td>
-          <td>{{ user.leadWithDetails.Phone }}</td>
-          <td>{{ user.jurisdiction }}</td>
-          <td>{{ user.userDetails.shareholdercount }}</td>
-          <td>{{ user.userDetails.Turnover }}</td>
-          <td>
-            <button
-              (click)="openModal(user.userDetails.shareholders)"
-              class="btn btn-primary"
-              style="white-space: nowrap;"
-            >
-              View Details
-            </button>
-          </td>
-          
-          <td>{{ user.screeningDetails?.matchScore }}</td>
-
-          <td>
-            <button
-              class="green-button"
-              (click)="checkStatus(user)"
-              [disabled]="isLoading" 
-            >
-              Check Status
-            </button>
-          </td>
-          
-          
-          
-          <td>{{ user.CustomerStatus }}</td>
-          
-          <td>
-            <button class="green-button" (click)="openFileModal(user.additionalUploadedFiles)">
-              View Additional File
-            </button>
-          </td>
-
-          <td>
-            <button class="green-button" (click)="openDetailsModal(user)">
-              View Details
-            </button>
-          </td>
-          
-          
-        </tr>
-      </tbody>
-    </table>
+    <div class="table-responsive overflow-behaviour">
+      <table class="table table-list-data table-hover">
+        <thead class="bg-light">
+          <tr>
+            <th scope="col">Name &#x2191;&#x2193;</th>
+            <th scope="col">Email &#x2191;&#x2193;</th>
+            <th scope="col">Nationality &#x2191;&#x2193;</th>
+            <th scope="col">Birthday &#x2191;&#x2193;</th>
+            <th scope="col">Mobile Number &#x2191;&#x2193;</th>
+            <th scope="col">Jurisdiction &#x2191;&#x2193;</th>
+            <th scope="col">Shareholder Count &#x2191;&#x2193;</th>
+            <th scope="col">Turn Over &#x2191;&#x2193;</th>
+            <th scope="col">Actions &#x2191;&#x2193;</th>
+            <th scope="col">Match Score &#x2191;&#x2193;</th>
+            <th scope="col">Actions &#x2191;&#x2193;</th>
+            <th scope="col">KYC Status &#x2191;&#x2193;</th>
+            <th scope="col">View File &#x2191;&#x2193;</th>
+            <th scope="col">Business Bank Details &#x2191;&#x2193;</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Replace filteredUserList with paginatedUserList() -->
+          <tr *ngFor="let user of paginatedUserList()">
+            <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
+            <td>{{ user.leadWithDetails.Email }}</td>
+            <td>{{ user.leadWithDetails.Nationality }}</td>
+            <td>{{ user.userDetails.birthday | date : "yyyy-MM-dd" }}</td>
+            <td>{{ user.leadWithDetails.Phone }}</td>
+            <td>{{ user.jurisdiction }}</td>
+            <td>{{ user.userDetails.shareholdercount }}</td>
+            <td>{{ user.userDetails.Turnover }}</td>
+            <td>
+              <button
+                (click)="openModal(user.userDetails.shareholders)"
+                class="btn btn-primary"
+                style="white-space: nowrap;"
+              >
+                View Details
+              </button>
+            </td>
+            <td>{{ user.screeningDetails?.matchScore }}</td>
+            <td>
+              <button
+                class="green-button"
+                (click)="checkStatus(user)"
+                [disabled]="isLoading" 
+              >
+                Check Status
+              </button>
+            </td>
+            <td>{{ user.CustomerStatus }}</td>
+            <td>
+              <button class="green-button" (click)="openFileModal(user.additionalUploadedFiles)">
+                View Additional File
+              </button>
+            </td>
+            <td>
+              <button class="green-button" (click)="openDetailsModal(user)">
+                View Details
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  
+    <!-- Pagination Controls -->
+    <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
+      <ul class="pagination custom-pagination">
+        <li class="page-item" [class.disabled]="currentPage === 1">
+          <a class="page-link" (click)="previousPage()" aria-label="Previous">
+            <span aria-hidden="true">&laquo;</span>
+          </a>
+        </li>
+        <li
+          class="page-item"
+          *ngFor="let page of totalPagesArray"
+          [class.active]="page === currentPage"
+        >
+          <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+        </li>
+        <li class="page-item" [class.disabled]="currentPage === totalPages">
+          <a class="page-link" (click)="nextPage()" aria-label="Next">
+            <span aria-hidden="true">&raquo;</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  
   </div>
 
   <div class="modal-container" *ngIf="showModal">

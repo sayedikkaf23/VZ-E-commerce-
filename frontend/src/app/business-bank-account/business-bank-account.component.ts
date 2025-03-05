@@ -18,6 +18,8 @@ export class BusinessBankAccountComponent implements OnInit {
   isLoading: boolean = false; // Single loader state for all actions
   searchTerm: string = '';  
   filteredUserList: any[] = []; // Filtered user data
+  currentPage: number = 1;
+  itemsPerPage: number = 10; // Adjust the items per page as neede
 
   selectedUserFields: string[] = ['isMatched', 'caseId', 'customerId', 'highestScoringResult'];
 
@@ -88,28 +90,67 @@ export class BusinessBankAccountComponent implements OnInit {
     );
   }
 
-  onSearch() {
-    this.searchTerm = this.searchTerm.trim().toLowerCase();
-  
-    if (this.searchTerm) {
-      this.filteredUserList = this.userList.filter(user =>
-        (`${user?.leadWithDetails?.FirstName.trim().toLowerCase() || ''} ${user?.leadWithDetails?.LastName.trim().toLowerCase() || ''}`).includes(this.searchTerm) ||
-        (user?.leadWithDetails?.FirstName || '').toLowerCase().includes(this.searchTerm) ||
-        (user?.leadWithDetails?.LastName || '').toLowerCase().includes(this.searchTerm) ||
-        (user?.leadWithDetails?.Email || '').toLowerCase().includes(this.searchTerm) ||
-        (user?.leadWithDetails?.Nationality || '').toLowerCase().includes(this.searchTerm) ||
-        (user?.userDetails?.birthday || '').includes(this.searchTerm) || // Match date format
-        (user?.leadWithDetails?.Phone || '').includes(this.searchTerm) || // Match mobile number
-        (user?.jurisdiction || '').toLowerCase().includes(this.searchTerm) ||
-        (user?.userDetails?.shareholdercount?.toString() || '').includes(this.searchTerm) ||
-        (user?.userDetails?.Turnover?.toString() || '').toLowerCase().includes(this.searchTerm) ||
-        (user?.screeningDetails?.matchScore?.toString() || '').includes(this.searchTerm) ||
-        (user?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
-      );
-    } else {
-      this.filteredUserList = [...this.userList]; // Reset list if search is empty
-    }
+// 1) Return only the users for the current page
+paginatedUserList(): any[] {
+  const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+  return this.filteredUserList.slice(startIndex, startIndex + this.itemsPerPage);
+}
+
+// 2) Calculate total pages
+get totalPages(): number {
+  return Math.ceil(this.filteredUserList.length / this.itemsPerPage);
+}
+
+// 3) Create an array of pages for the template
+get totalPagesArray(): number[] {
+  return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+}
+
+// 4) Navigate to the previous page
+previousPage(): void {
+  if (this.currentPage > 1) {
+    this.currentPage--;
   }
+}
+
+// 5) Navigate to the next page
+nextPage(): void {
+  if (this.currentPage < this.totalPages) {
+    this.currentPage++;
+  }
+}
+
+// 6) Jump to a specific page
+goToPage(page: number): void {
+  this.currentPage = page;
+}
+
+onSearch(): void {
+  this.searchTerm = this.searchTerm.trim().toLowerCase();
+  if (this.searchTerm) {
+    this.filteredUserList = this.userList.filter(user =>
+      (`${user?.leadWithDetails?.FirstName?.trim().toLowerCase() || ''} ${user?.leadWithDetails?.LastName?.trim().toLowerCase() || ''}`)
+        .includes(this.searchTerm) ||
+      (user?.leadWithDetails?.FirstName || '').toLowerCase().includes(this.searchTerm) ||
+      (user?.leadWithDetails?.LastName || '').toLowerCase().includes(this.searchTerm) ||
+      (user?.leadWithDetails?.Email || '').toLowerCase().includes(this.searchTerm) ||
+      (user?.leadWithDetails?.Nationality || '').toLowerCase().includes(this.searchTerm) ||
+      (user?.userDetails?.birthday || '').includes(this.searchTerm) ||
+      (user?.leadWithDetails?.Phone || '').includes(this.searchTerm) ||
+      (user?.jurisdiction || '').toLowerCase().includes(this.searchTerm) ||
+      (user?.userDetails?.shareholdercount?.toString() || '').includes(this.searchTerm) ||
+      (user?.userDetails?.Turnover?.toString() || '').toLowerCase().includes(this.searchTerm) ||
+      (user?.screeningDetails?.matchScore?.toString() || '').includes(this.searchTerm) ||
+      (user?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
+    );
+  } else {
+    this.filteredUserList = [...this.userList];
+  }
+
+  // Reset to first page after search
+  this.currentPage = 1;
+}
+
   
   
   

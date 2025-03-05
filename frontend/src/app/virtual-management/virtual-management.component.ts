@@ -19,6 +19,9 @@ export class VirtualManagementComponent implements OnInit {
   selectedFiles: any[] = []; // To store selected files for the modal
   searchTerm: string = '';  
   filteredClientList: any[] = []; // Filtered user data
+  currentPage: number = 1;
+  itemsPerPage: number = 5; // Adjust as needed
+
   constructor(private virtualManagementService: VirtualManagementService) {}
 
   selectedUser: { [key: string]: any } | null = null;
@@ -120,12 +123,12 @@ export class VirtualManagementComponent implements OnInit {
     this.showDetailsModal = false; // Close the modal
   }
 
-  onSearch() {
+  onSearch(): void {
     this.searchTerm = this.searchTerm.trim().toLowerCase();
-  
     if (this.searchTerm) {
       this.filteredClientList = this.clientList.filter(client =>
-        (`${client?.leadWithDetails?.FirstName.trim().toLowerCase() || ''} ${client?.leadWithDetails?.LastName.trim().toLowerCase() || ''}`).includes(this.searchTerm) ||
+        (`${client?.leadWithDetails?.FirstName.trim().toLowerCase() || ''} ${client?.leadWithDetails?.LastName.trim().toLowerCase() || ''}`)
+          .includes(this.searchTerm) ||
         (client?.leadWithDetails?.FirstName || '').toLowerCase().includes(this.searchTerm) ||
         (client?.leadWithDetails?.LastName || '').toLowerCase().includes(this.searchTerm) ||
         (client?.leadWithDetails?.Email || '').toLowerCase().includes(this.searchTerm) ||
@@ -137,11 +140,45 @@ export class VirtualManagementComponent implements OnInit {
         (client?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
       );
     } else {
-      this.filteredClientList = [...this.clientList]; // Reset list if search is empty
+      this.filteredClientList = [...this.clientList];
+    }
+    // Reset pagination to first page after a search
+    this.currentPage = 1;
+  }
+
+  // --------------------------
+  // Pagination Helper Methods
+  // --------------------------
+  paginatedClientList(): any[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredClientList.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredClientList.length / this.itemsPerPage);
+  }
+
+  get totalPagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
     }
   }
-  
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = page;
+  }
+}
   
 
-}
+
  

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminAuthService } from '../service/admin-auth.service';
-import { ToastrService } from 'ngx-toastr'; // Import ToastrService
+import { ToastrService } from 'ngx-toastr'; // Import if needed
 
 @Component({
   selector: 'app-back-account-opening',
@@ -8,32 +8,35 @@ import { ToastrService } from 'ngx-toastr'; // Import ToastrService
   styleUrls: ['./back-account-opening.component.css'],
 })
 export class BackAccountOpeningComponent implements OnInit {
-
   userList: any[] = []; // To store the fetched user data
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
-  loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
-  selectedAdditionalFiles: any[] = []; // To store the additional files for the modal
-  showFileModal: boolean = false; // Control the visibility of the modal
-
+  loadingStatuses: { [key: string]: boolean } = {};
+  selectedAdditionalFiles: any[] = [];
+  showFileModal: boolean = false;
   selectedUser: { [key: string]: any } | null = null;
-
   showDetailsModal: boolean = false;
-  searchTerm: string = '';  
-  filteredUserList: any[] = []; // Filtered user data
+  searchTerm: string = '';
+  filteredUserList: any[] = [];
   
+  // Pagination properties
+  currentPage: number = 1;
+  itemsPerPage: number = 10; // Change this to the number of items per page
+
+  isLoading: boolean = false; // Global loading state
+
   constructor(private adminAuthService: AdminAuthService) {}
 
   ngOnInit(): void {
-    this.fetchUserDetails(); // Call the method when the component loads
+    this.fetchUserDetails();
   }
 
   fetchUserDetails(): void {
     this.adminAuthService.getPersonalBank().subscribe(
       (response) => {
-        this.userList = response; // Assign the API response to the userList array
+        this.userList = response;
         this.filteredUserList = [...this.userList];
-        this.checkColumnData(); // Check columns only after data is loaded
+        this.checkColumnData();
       },
       (error) => {
         console.error('Error fetching user details:', error);
@@ -46,62 +49,80 @@ export class BackAccountOpeningComponent implements OnInit {
     this.hasCompanyNameData = this.userList.some((user) => !!user.userDetails?.companyname);
   }
 
-  isLoading: boolean = false; // Global loading state
+  // Pagination helper: returns the subset of users for the current page
+  paginatedUserList(): any[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredUserList.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  // Compute total pages based on the length of the filtered list
+  get totalPages(): number {
+    return Math.ceil(this.filteredUserList.length / this.itemsPerPage);
+  }
+
+  // Generate an array of page numbers for display
+  get totalPagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  goToPage(page: number): void {
+    this.currentPage = page;
+  }
 
   checkStatus(user: any): void {
-    // Validate that user and LeadId exist
     if (!user || !user.leadWithDetails?.LeadId) {
       console.error('Invalid user or missing LeadId:', user);
       user.CustomerStatus = 'Invalid user data';
       return;
     }
-  
+
     const payload = {
       CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
-  
-    // console.log('Initiating status check with payload:', payload);
-  
-    // Start the global loader
+
     this.isLoading = true;
-  
-    // Call the API to check status
+
     this.adminAuthService.checkStatus(payload).subscribe(
       (response) => {
-        // console.log('API response:', response);
-        // Update user's CustomerStatus with the response
         user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
       },
       (error) => {
         console.error('Error during API call:', error);
-        // Set fallback status on error
         user.CustomerStatus = 'Error fetching status';
       },
       () => {
-        // Stop the global loader when the API call completes
         this.isLoading = false;
       }
     );
   }
-  
-  
-  
+
   openFileModal(user: any): void {
     if (user.additionalUploadedFiles && user.additionalUploadedFiles.length > 0) {
-      this.selectedAdditionalFiles = user.additionalUploadedFiles; // Populate files
-      this.showFileModal = true; // Show modal
+      this.selectedAdditionalFiles = user.additionalUploadedFiles;
+      this.showFileModal = true;
     } else {
       console.warn('No files available.');
     }
   }
-  
+
   closeFileModal(): void {
-    this.showFileModal = false; // Hide modal
-    this.selectedAdditionalFiles = []; // Clear files
+    this.showFileModal = false;
+    this.selectedAdditionalFiles = [];
   }
-  
-  
+
   isImage(fileName: string): boolean {
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
     const extension = fileName.split('.').pop()?.toLowerCase();
@@ -109,38 +130,34 @@ export class BackAccountOpeningComponent implements OnInit {
   }
 
   openDetailsModal(details: any): void {
-    this.selectedUser = details; // Assign selected customer details
-    this.showDetailsModal = true; // Open the modal for customer
-    // console.log('Opening modal for user:', details);
+    this.selectedUser = details;
+    this.showDetailsModal = true;
   }
 
-  // Helper function to get keys of an object
   objectKeys(obj: { [key: string]: any } | null): string[] {
-    return obj ? Object.keys(obj) : []; // Return object keys or empty array if null
+    return obj ? Object.keys(obj) : [];
   }
 
-  // Helper function to check if a value is an object
   isObject(value: any): boolean {
     return value && typeof value === 'object' && !Array.isArray(value);
   }
 
   closeDetailsModal(): void {
-    this.showDetailsModal = false; // Close the modal
+    this.showDetailsModal = false;
   }
 
-  onSearch() {
-    console.log("before : ", this.filteredUserList);
+  onSearch(): void {
     this.searchTerm = this.searchTerm.trim();
-   
-  
+
     if (this.searchTerm) {
       this.filteredUserList = this.userList.filter(user =>
         (user?.leadWithDetails?.FirstName || '').includes(this.searchTerm) ||
-        (`${user?.leadWithDetails?.FirstName || ''} ${user?.leadWithDetails?.LastName || ''}`).trim().includes(this.searchTerm) ||
+        (`${user?.leadWithDetails?.FirstName || ''} ${user?.leadWithDetails?.LastName || ''}`)
+          .trim().includes(this.searchTerm) ||
         (user?.leadWithDetails?.LastName || '').includes(this.searchTerm) ||
         (user?.leadWithDetails?.Email || '').toLowerCase().includes(this.searchTerm) ||
         (user?.leadWithDetails?.Nationality || '').includes(this.searchTerm) ||
-        (user?.userDetails?.birthday || '').includes(this.searchTerm) || // Match date
+        (user?.userDetails?.birthday || '').includes(this.searchTerm) ||
         (user?.userDetails?.resident || '').includes(this.searchTerm) ||
         (user?.userDetails?.working || '').includes(this.searchTerm) ||
         (user?.userDetails?.salary?.toString() || '').includes(this.searchTerm) ||
@@ -149,19 +166,11 @@ export class BackAccountOpeningComponent implements OnInit {
         (user?.screeningDetails?.matchScore?.toString() || '').includes(this.searchTerm) ||
         (user?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
       );
-    
-      console.log("after : ", this.filteredUserList);
-
-       // Console log userDetails for each user in the filtered list
-       console.group("Filtered User Details:"); // Optional: Group console messages for better readability
-       this.filteredUserList.forEach(user => {
-         console.log("User Details: ", user.userDetails);
-       });
-       console.groupEnd(); // Optional: End the console group
     } else {
-      this.filteredUserList =  [...this.userList]; // Reset to full list if search is empty
+      this.filteredUserList = [...this.userList];
     }
+
+    // Reset to first page after filtering
+    this.currentPage = 1;
   }
-  
-  
 }
