@@ -25,26 +25,15 @@
             <th scope="col">Name &#x2191;&#x2193;</th>
             <th scope="col">Email &#x2191;&#x2193;</th>
             <th scope="col">Nationality &#x2191;&#x2193;</th>
-            <!-- <th scope="col">Birthday &#x2191;&#x2193;</th> -->
-            <!-- <th scope="col">Resident &#x2191;&#x2193;</th> -->
-            <!-- <th scope="col">Working &#x2191;&#x2193;</th> -->
-            <!-- <th scope="col">Salary &#x2191;&#x2193;</th> -->
-            <!-- <th scope="col">Company Name &#x2191;&#x2193;</th> -->
-            <!-- <th scope="col">Bank &#x2191;&#x2193;</th> -->
             <th scope="col">User Details &#x2191;&#x2193;</th>
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let user of filteredUserList">
+          <!-- Use paginatedUserList() for the current page's data -->
+          <tr *ngFor="let user of paginatedUserList()">
             <td>{{ user.firstName }} {{ user.lastName }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.nationality }}</td>
-            <!-- <td>{{ user.birthday | date: 'yyyy-MM-dd' }}</td> -->
-            <!-- <td>{{ user.resident }}</td> -->
-            <!-- <td>{{ user.working }}</td> -->
-            <!-- <td>{{ user.salary }}</td> -->
-            <!-- <td>{{ user.companyname }}</td> -->
-            <!-- <td>{{ user.Bank }}</td> -->
             <td>
               <button class="green-button" (click)="openDetailsModal(user)">
                 View Details
@@ -54,6 +43,28 @@
         </tbody>
       </table>
     </div>
+    
+<nav *ngIf="totalPages > 1" class="d-flex  justify-content-end  mt-3" >
+  <ul class="pagination custom-pagination" >
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <a class="page-link" (click)="previousPage()" aria-label="Previous">
+        <span aria-hidden="true">&laquo;</span>
+      </a>
+    </li>
+    <li class="page-item"
+        *ngFor="let page of totalPagesArray"
+        [class.active]="page === currentPage">
+      <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+    </li>
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <a class="page-link" (click)="nextPage()" aria-label="Next">
+        <span aria-hidden="true">&raquo;</span>
+      </a>
+    </li>
+  </ul>
+</nav>
+
+
   </div>
   
   <div class="modal-container" *ngIf="showDetailsModal">
