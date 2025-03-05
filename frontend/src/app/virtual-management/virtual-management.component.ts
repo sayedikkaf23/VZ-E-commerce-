@@ -20,7 +20,7 @@ export class VirtualManagementComponent implements OnInit {
   searchTerm: string = '';  
   filteredClientList: any[] = []; // Filtered user data
   currentPage: number = 1;
-  itemsPerPage: number = 5; // Adjust as needed
+  itemsPerPage: number = 10; // Adjust as needed
 
   constructor(private virtualManagementService: VirtualManagementService) {}
 

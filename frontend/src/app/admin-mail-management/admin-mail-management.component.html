@@ -23,61 +23,80 @@
       </div>
     </div>
   
-    <div class="table-responsive overflow-behaviour">
-      <table class="table table-list-data table-hover">
-        <thead class="bg-light">
-          <tr>
-            <th scope="col">Sender Name &#x2191;&#x2193;</th>
-            <th scope="col">Email &#x2191;&#x2193;</th>
-            <th scope="col">Company Name &#x2191;&#x2193;</th>
-            <th scope="col">Incorporation Country &#x2191;&#x2193;</th>
-            <th scope="col">Mobile Number &#x2191;&#x2193;</th>
-            <th scope="col">Shareholder Count &#x2191;&#x2193;</th>
-            <th scope="col">Actions &#x2191;&#x2193;</th>
-            <th scope="col">Match Score &#x2191;&#x2193;</th>
+   
+  <!-- Table Displaying Mail Data -->
+  <div class="table-responsive overflow-behaviour">
+    <table class="table table-list-data table-hover">
+      <thead class="bg-light">
+        <tr>
+          <th scope="col">Sender Name &#x2191;&#x2193;</th>
+          <th scope="col">Email &#x2191;&#x2193;</th>
+          <th scope="col">Company Name &#x2191;&#x2193;</th>
+          <th scope="col">Incorporation Country &#x2191;&#x2193;</th>
+          <th scope="col">Mobile Number &#x2191;&#x2193;</th>
+          <th scope="col">Shareholder Count &#x2191;&#x2193;</th>
+          <th scope="col">Actions &#x2191;&#x2193;</th>
+          <th scope="col">Match Score &#x2191;&#x2193;</th>
           <th scope="col">Action &#x2191;&#x2193;</th>
-         
           <th scope="col">KYC Status &#x2191;&#x2193;</th>
           <th scope="col">View File &#x2191;&#x2193;</th>
           <th scope="col">View Details &#x2191;&#x2193;</th>
-
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let mail of filteredMailList">
-            <td>{{ mail.leadWithDetails.FirstName }} {{ mail.leadWithDetails.LastName }}</td>
-            <td>{{ mail.leadWithDetails.Email }}</td>
-            <td>{{ mail.userDetails.CompanyName }}</td>
-            <td>{{ mail.userDetails.CompanyIncorporated }}</td>
-            <td>{{ mail.userDetails.mobileNumber.internationalNumber }}</td>
-            <td>{{ mail.userDetails.shareholdercount }}</td>
-            <td>
-              <button  (click)="openMailDetails(mail.shareholders)" class="btn btn-primary" style="white-space: nowrap;">View Shareholders</button>
-            </td>
-            <td>{{ mail.screeningDetails?.matchScore }}</td>
-            <td>
-              <button class="green-button" (click)="checkStatus(mail)" [disabled]="isLoading">
-                Check Status
-              </button>
-            </td>
-            
-            <td>{{ mail.CustomerStatus }}</td>
-            <td>
-              <button class="green-button" (click)="openFileModal(mail.additionalUploadedFiles)">
-                View Files
-              </button>
-            </td>
-
-            <td>
-              <button class="green-button" (click)="openDetailsModal(mail)">
-                View Details
-              </button>
-            </td>
-            
-          </tr>
-        </tbody>
-      </table>
-    </div>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Render mails for current page -->
+        <tr *ngFor="let mail of paginatedMailList()">
+          <td>{{ mail.leadWithDetails.FirstName }} {{ mail.leadWithDetails.LastName }}</td>
+          <td>{{ mail.leadWithDetails.Email }}</td>
+          <td>{{ mail.userDetails.CompanyName }}</td>
+          <td>{{ mail.userDetails.CompanyIncorporated }}</td>
+          <td>{{ mail.userDetails.mobileNumber.internationalNumber }}</td>
+          <td>{{ mail.userDetails.shareholdercount }}</td>
+          <td>
+            <button (click)="openMailDetails(mail.shareholders)" class="btn btn-primary" style="white-space: nowrap;">
+              View Shareholders
+            </button>
+          </td>
+          <td>{{ mail.screeningDetails?.matchScore }}</td>
+          <td>
+            <button class="green-button" (click)="checkStatus(mail)" [disabled]="isLoading">
+              Check Status
+            </button>
+          </td>
+          <td>{{ mail.CustomerStatus }}</td>
+          <td>
+            <button class="green-button" (click)="openFileModal(mail.additionalUploadedFiles)">
+              View Files
+            </button>
+          </td>
+          <td>
+            <button class="green-button" (click)="openDetailsModal(mail)">
+              View Details
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  
+  <!-- Pagination Controls -->
+  <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
+    <ul class="pagination custom-pagination">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="previousPage()" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li class="page-item" *ngFor="let page of totalPagesArray" [class.active]="page === currentPage">
+        <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" (click)="nextPage()" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
     <div class="modal-container" *ngIf="showModal">
       <div class="modal-backdrop" (click)="closeModal()"></div>
       <div class="modal-content">

@@ -22,7 +22,9 @@ export class AdminMailManagementComponent {
   filteredMailList: any[] = []; // Filtered user data
 
   showDetailsModal: boolean = false;
-  
+  currentPage: number = 1;
+  itemsPerPage: number = 10; // Adjust as needed
+
 
   constructor(private mailManagementService: MailManagementService) {}
 
@@ -120,12 +122,12 @@ export class AdminMailManagementComponent {
     this.showFileModal = false; // Close the file modal
   }
 
-  onSearch() {
+  onSearch(): void {
     this.searchTerm = this.searchTerm.trim().toLowerCase();
-  
     if (this.searchTerm) {
       this.filteredMailList = this.mailList.filter(mail =>
-        (`${mail?.leadWithDetails?.FirstName.trim().toLowerCase() || ''} ${mail?.leadWithDetails?.LastName.trim().toLowerCase() || ''}`).includes(this.searchTerm) ||
+        (`${mail?.leadWithDetails?.FirstName.trim().toLowerCase() || ''} ${mail?.leadWithDetails?.LastName.trim().toLowerCase() || ''}`)
+          .includes(this.searchTerm) ||
         (mail?.leadWithDetails?.FirstName || '').toLowerCase().includes(this.searchTerm) ||
         (mail?.leadWithDetails?.LastName || '').toLowerCase().includes(this.searchTerm) ||
         (mail?.leadWithDetails?.Email || '').toLowerCase().includes(this.searchTerm) ||
@@ -137,8 +139,50 @@ export class AdminMailManagementComponent {
         (mail?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
       );
     } else {
-      this.filteredMailList = [...this.mailList]; // Reset list if search is empty
+      // Reset filtered list if search term is empty
+      this.filteredMailList = [...this.mailList];
     }
+    // Reset pagination to first page after search
+    this.currentPage = 1;
+  }
+
+  // ----------------------------
+  // Pagination Helper Methods
+  // ----------------------------
+
+  // Returns the mail records for the current page
+  paginatedMailList(): any[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    return this.filteredMailList.slice(startIndex, startIndex + this.itemsPerPage);
+  }
+
+  // Total number of pages based on the filtered list and items per page
+  get totalPages(): number {
+    return Math.ceil(this.filteredMailList.length / this.itemsPerPage);
+  }
+
+  // Create an array for pagination links (e.g., [1, 2, 3, ...])
+  get totalPagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  // Navigate to the previous page
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
+  }
+
+  // Navigate to the next page
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  // Jump to a specific page
+  goToPage(page: number): void {
+    this.currentPage = page;
   }
   
 }

@@ -1,3 +1,42 @@
+
+.custom-pagination {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.custom-pagination .page-item {
+  margin: 0 5px;
+}
+
+.custom-pagination .page-item .page-link {
+  border: none;
+  background-color: transparent;
+  color: #b3bbc5 !important;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+.custom-pagination .page-item .page-link:hover {
+  background-color: #f2f2f2 !important;
+  color: #cf3339 !important;
+}
+
+.custom-pagination .page-item.active .page-link {
+  background-color: #cf3339 !important;
+  color: #fff !important;
+  cursor: default;
+}
+
+.custom-pagination .page-item.disabled .page-link {
+  color: #ccc !important;
+  cursor: not-allowed;
+}
+
 /* Override Bootstrap's modal backdrop */
 .modal-backdrop {
   background-color: rgba(0, 0, 0, 0.5) !important; /* Darken background overlay */

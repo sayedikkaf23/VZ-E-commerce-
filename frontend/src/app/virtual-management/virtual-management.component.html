@@ -21,7 +21,8 @@
     </div>
   </div>
  
-  <div class="table-responsive overflow-behaviour">
+   <!-- Table Displaying Virtual Management Clients -->
+   <div class="table-responsive overflow-behaviour">
     <table class="table table-list-data table-hover">
       <thead class="bg-light">
         <tr>
@@ -34,25 +35,24 @@
           <th scope="col">Actions</th>
           <th scope="col">Match Score &#x2191;&#x2193;</th>
           <th scope="col">Action &#x2191;&#x2193;</th>
-         
           <th scope="col">KYC Status &#x2191;&#x2193;</th>
           <th scope="col">View File &#x2191;&#x2193;</th>
-
           <th scope="col">View Details &#x2191;&#x2193;</th>
-
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let client of filteredClientList">
+        <!-- Use paginatedClientList() to display only current page items -->
+        <tr *ngFor="let client of paginatedClientList()">
           <td>{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
           <td>{{ client.leadWithDetails.Email }}</td>
           <td>{{ client.userDetails.CompanyName }}</td>
           <td>{{ client.userDetails.CompanyIncorporated }}</td>
           <td>{{ client.userDetails.shareholdercount }}</td>
           <td>{{ client.userDetails.mobileNumber.internationalNumber }}</td>
-
           <td>
-            <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary" style="text-wrap: nowrap; overflow: hidden;">View Shareholders</button>
+            <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary" style="white-space: nowrap; overflow: hidden;">
+              View Shareholders
+            </button>
           </td>
           <td>{{ client.screeningDetails?.matchScore }}</td>
           <td>
@@ -66,19 +66,34 @@
               View Files
             </button>
           </td>
-
           <td>
             <button class="green-button" (click)="openDetailsModal(client)">
               View Details
             </button>
           </td>
-          
-          
         </tr>
       </tbody>
     </table>
   </div>
- 
+
+  <!-- Pagination Controls -->
+  <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
+    <ul class="pagination custom-pagination">
+      <li class="page-item" [class.disabled]="currentPage === 1">
+        <a class="page-link" (click)="previousPage()" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+      <li class="page-item" *ngFor="let page of totalPagesArray" [class.active]="page === currentPage">
+        <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+      </li>
+      <li class="page-item" [class.disabled]="currentPage === totalPages">
+        <a class="page-link" (click)="nextPage()" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
   <!-- Modal for Shareholder Details -->
   <div class="modal-container" *ngIf="showModal">
     <div class="modal-backdrop" (click)="closeModal()"></div>
