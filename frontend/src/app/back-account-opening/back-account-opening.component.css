@@ -121,31 +121,7 @@
   z-index: 999; /* Ensure it’s behind the modal but above other elements */
 }
 
-/* Modal container */
-.modal-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw; /* Full viewport width */
-  height: 100vh; /* Full viewport height */
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.5); /* Optional: add a semi-transparent background to the container */
-}
 
-/* Modal content */
-.modal-content {
-  background-color: #fff;
-  padding: 20px;
-  width: 593px; /* Adjust width for better layout */
-  max-width: 90vw; /* Responsive width on smaller screens */
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 1001;
-}
 
 .modal-header {
   position: sticky;
@@ -238,6 +214,7 @@
   background-color: transparent; /* Transparent track */
 }
 
+
 /* Modal backdrop */
 .modal-backdrop {
   position: absolute;
@@ -246,17 +223,31 @@
   width: 100%;
   height: 100%;
 }
-
-/* Modal content */
 .modal-content {
-  position: relative;
-  background-color: #fff;
+  width: auto;
+  max-width: 600px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  background: white;
   padding: 20px;
-  width: 600px;
-  max-width: 90%;
   border-radius: 10px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  z-index: 1001;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
 }
 
 /* Close button */

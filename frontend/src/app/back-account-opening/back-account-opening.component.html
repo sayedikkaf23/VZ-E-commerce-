@@ -32,18 +32,19 @@
     <table class="table table-list-data table-hover">
       <thead class="bg-light">
         <tr>
-          <th scope="col">Name &#x2191;&#x2193;</th>
-          <th scope="col">Email &#x2191;&#x2193;</th>
-          <th scope="col">Employment Status &#x2191;&#x2193;</th>
-          <th scope="col">Salary &#x2191;&#x2193;</th>
-          <th scope="col">Bank Type &#x2191;&#x2193;</th>
-          <th scope="col">Compliance Score &#x2191;&#x2193;</th>
-          <th scope="col">Compliance Status &#x2191;&#x2193;</th>
-          <!-- <th scope="col">Action &#x2191;&#x2193;</th> -->
+          <th scope="col">Name</th>
+          <th scope="col">Email</th>
+          <th scope="col">Employment Status</th>
+          <th scope="col">Salary</th>
+          <th scope="col">Bank Type</th>
+          <th scope="col">Compliance Score</th>
+          <th scope="col">Compliance Status</th>
+          <th scope="col">View Product</th>
+          <th scope="col">View Document</th>
+
         </tr>
       </thead>
       <tbody>
-        <!-- Loop over the paginated list instead of the full filtered list -->
         <tr *ngFor="let user of paginatedUserList()">
           <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
           <td>{{ user.leadWithDetails.Email }}</td>
@@ -52,15 +53,73 @@
           <td>{{ user.userDetails.Bank }}</td>
           <td>{{ user.screeningDetails?.matchScore }}</td>
           <td>{{ user.kycStatus }}</td>
-          <!-- <td>
-            <button class="green-button" (click)="checkStatus(user)" [disabled]="isLoading">
-              Check Status
-            </button>
-          </td> -->
+          <td>
+            <button class="green-button" (click)="openProductModal(user)">View Products</button>
+            
+          </td>
+          <td>
+            <button class="green-button" (click)="openDocumentModal(user)">View Documents</button>            
+          </td>
         </tr>
       </tbody>
     </table>
   </div>
+  
+  <div *ngIf="showProductModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Products</h3>
+        <span class="close-btn" (click)="closeProductModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of selectedProducts">
+              <td>{{ product.productName }}</td>
+              <td>{{ product.productQuantity }}</td>
+              <td>{{ product.productUnitPrice }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="green-button" (click)="closeProductModal()">Close</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Documents Modal -->
+  <div *ngIf="showDocumentModal" class="modal-overlay">
+    <div class="modal-content" style="width: 50% !important;">
+      <div class="modal-header">
+        <h3 class="modal-title">Documents</h3>
+        <span class="close-btn" (click)="closeDocumentModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <ul class="file-list">
+          <li *ngFor="let document of selectedDocuments" class="file-item">
+            <div class="file-details">
+              <span class="file-type">Document</span>
+              <p class="file-name">{{ document.name }}</p>
+            </div>
+            <a [href]="document.url" target="_blank" class="view-link">View</a>
+          </li>
+          <li *ngIf="!selectedDocuments.length" class="no-files">No documents available</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="green-button" (click)="closeDocumentModal()">Close</button>
+      </div>
+    </div>
+  </div>
+  
   
   <!-- Pagination Controls -->
   <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
