@@ -35,7 +35,7 @@
             <th scope="col">Shareholder Count &#x2191;&#x2193;</th>
             <th scope="col">Actions &#x2191;&#x2193;</th>
             <th scope="col">Match Score &#x2191;&#x2193;</th>
-          <th scope="col">Action &#x2191;&#x2193;</th>
+          <!-- <th scope="col">Action &#x2191;&#x2193;</th> -->
          
           <th scope="col">KYC Status &#x2191;&#x2193;</th>
           <th scope="col">View File &#x2191;&#x2193;</th>
@@ -55,13 +55,13 @@
               <button  (click)="openMailDetails(mail.shareholders)" class="btn btn-primary" style="white-space: nowrap;">View Shareholders</button>
             </td>
             <td>{{ mail.screeningDetails?.matchScore }}</td>
-            <td>
+            <!-- <td>
               <button class="green-button" (click)="checkStatus(mail)" [disabled]="isLoading">
                 Check Status
               </button>
-            </td>
+            </td> -->
             
-            <td>{{ mail.CustomerStatus }}</td>
+            <td>{{ mail.kycStatus }}</td>
             <td>
               <button class="green-button" (click)="openFileModal(mail.additionalUploadedFiles)">
                 View Files

@@ -34,19 +34,19 @@
           <th scope="col">Nationality &#x2191;&#x2193;</th>
           <th scope="col">Birthday &#x2191;&#x2193;</th>
           <th scope="col">Mobile Number &#x2191;&#x2193; </th>
-          <th scope="col">Jurisdiction &#x2191;&#x2193;</th>
+          <!-- <th scope="col">Jurisdiction &#x2191;&#x2193;</th> -->
           <th scope="col">Shareholder Count &#x2191;&#x2193;</th>
           <th scope="col">Turn Over &#x2191;&#x2193;</th>
           <th scope="col">Actions &#x2191;&#x2193;</th>
 
           <th scope="col">Match Score &#x2191;&#x2193;</th>
 
-          <th scope="col">Actions &#x2191;&#x2193;</th>
+          <!-- <th scope="col">Actions &#x2191;&#x2193;</th> -->
 
           <th scope="col">KYC Status &#x2191;&#x2193;</th>
           <th scope="col">View File &#x2191;&#x2193;</th>
 
-          <th scope="col">Business Bank Details &#x2191;&#x2193;</th>
+          <!-- <th scope="col">Business Bank Details &#x2191;&#x2193;</th> -->
 
         </tr>
       </thead>
@@ -57,7 +57,7 @@
           <td>{{ user.leadWithDetails.Nationality }}</td>
           <td>{{ user.userDetails.birthday | date : "yyyy-MM-dd" }}</td>
           <td>{{ user.leadWithDetails.Phone }}</td>
-          <td>{{ user.jurisdiction }}</td>
+          <!-- <td>{{ user.jurisdiction }}</td> -->
           <td>{{ user.userDetails.shareholdercount }}</td>
           <td>{{ user.userDetails.Turnover }}</td>
           <td>
@@ -72,7 +72,7 @@
           
           <td>{{ user.screeningDetails?.matchScore }}</td>
 
-          <td>
+          <!-- <td>
             <button
               class="green-button"
               (click)="checkStatus(user)"
@@ -80,11 +80,11 @@
             >
               Check Status
             </button>
-          </td>
+          </td> -->
           
           
           
-          <td>{{ user.CustomerStatus }}</td>
+          <td>{{ user.kycStatus }}</td>
           
           <td>
             <button class="green-button" (click)="openFileModal(user.additionalUploadedFiles)">
@@ -92,12 +92,12 @@
             </button>
           </td>
 
-          <td>
+          <!-- <td>
             <button class="green-button" (click)="openDetailsModal(user)">
               View Details
             </button>
           </td>
-          
+           -->
           
         </tr>
       </tbody>

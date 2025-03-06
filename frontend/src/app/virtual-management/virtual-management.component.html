@@ -33,7 +33,7 @@
           <th scope="col">Mobile Number</th>
           <th scope="col">Actions</th>
           <th scope="col">Match Score &#x2191;&#x2193;</th>
-          <th scope="col">Action &#x2191;&#x2193;</th>
+          <!-- <th scope="col">Action &#x2191;&#x2193;</th> -->
          
           <th scope="col">KYC Status &#x2191;&#x2193;</th>
           <th scope="col">View File &#x2191;&#x2193;</th>
@@ -55,12 +55,12 @@
             <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary" style="text-wrap: nowrap; overflow: hidden;">View Shareholders</button>
           </td>
           <td>{{ client.screeningDetails?.matchScore }}</td>
-          <td>
+          <!-- <td>
             <button class="green-button" (click)="checkStatus(client)" [disabled]="isLoading">
               Check Status
             </button>
-          </td>
-          <td>{{ client.CustomerStatus }}</td>
+          </td> -->
+          <td>{{ client.kycStatus }}</td>
           <td>
             <button class="green-button" (click)="openFileModal(client.additionalUploadedFiles)">
               View Files
