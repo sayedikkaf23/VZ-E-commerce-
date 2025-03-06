@@ -37,7 +37,7 @@
           <tr>
             <th scope="col">Name</th>
             <th scope="col">Email</th>
-            <th scope="col">Employment Status</th>
+            <!-- <th scope="col">Employment Status</th> -->
             <th scope="col">Turn Over</th>
             <th scope="col">Bank Type</th>
             <th scope="col">Compliance Score</th>
@@ -50,7 +50,7 @@
           <tr *ngFor="let user of userList">
             <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
             <td>{{ user.leadWithDetails.Email }}</td>
-            <td>{{ user.quoteWithProductDetails?.status }}</td>
+            <!-- <td>{{ user.quoteWithProductDetails?.status }}</td> -->
             <td>{{ user.userDetails.Turnover }}</td>
             <td>{{ user.salesPersonDetails?.salesPersonName }}</td>
             <td>{{ user.screeningDetails?.matchScore }}</td>
