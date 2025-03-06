@@ -194,6 +194,31 @@ onDateFilter(): void {
   }
   this.currentPage = 1; // Reset Pagination
 }
+
+selectedProducts: any[] = [];
+selectedDocuments: any[] = [];
+showProductModal: boolean = false;
+showDocumentModal: boolean = false;
+openProductModal(user: any): void {
+  this.selectedProducts = user.salesforceResponseMatchScreening?.products || [];
+  this.showProductModal = true;
+}
+
+closeProductModal(): void {
+  this.showProductModal = false;
+  this.selectedProducts = [];
+}
+
+openDocumentModal(user: any): void {
+  this.selectedDocuments = user.additionalUploadedFiles || [];
+  this.showDocumentModal = true;
+}
+
+closeDocumentModal(): void {
+  this.showDocumentModal = false;
+  this.selectedDocuments = [];
+}
+
 }
   
 

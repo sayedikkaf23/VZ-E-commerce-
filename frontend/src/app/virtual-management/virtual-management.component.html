@@ -31,58 +31,43 @@
     <table class="table table-list-data table-hover">
       <thead class="bg-light">
         <tr>
-          <th scope="col">Client Name</th>
+          <th scope="col">Name</th>
           <th scope="col">Email</th>
-          <th scope="col">Company</th>
-          <th scope="col">Incorporation Country</th>
-          <th scope="col">Shareholder Count</th>
-          <th scope="col">Mobile Number</th>
-          <th scope="col">Actions</th>
-          <th scope="col">Match Score &#x2191;&#x2193;</th>
-<<<<<<< HEAD
-          <th scope="col">Action &#x2191;&#x2193;</th>
-=======
-          <!-- <th scope="col">Action &#x2191;&#x2193;</th> -->
-         
->>>>>>> 6f8fb6e01d6f7af30724b1b760e18abfc543a98e
-          <th scope="col">KYC Status &#x2191;&#x2193;</th>
-          <th scope="col">View File &#x2191;&#x2193;</th>
-          <th scope="col">View Details &#x2191;&#x2193;</th>
+          <!-- <th scope="col">Employment Status</th> -->
+          <!-- <th scope="col">Salary</th> -->
+          <!-- <th scope="col">Bank Type</th> -->
+          <th scope="col">Compliance Score</th>
+          <th scope="col">Compliance Status</th>
+          <th scope="col">View Products</th>
+          <th scope="col">View Documents</th>
+          <th scope="col">Shareholder</th>
         </tr>
       </thead>
+      
       <tbody>
-        <!-- Use paginatedClientList() to display only current page items -->
         <tr *ngFor="let client of paginatedClientList()">
           <td>{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
           <td>{{ client.leadWithDetails.Email }}</td>
-          <td>{{ client.userDetails.CompanyName }}</td>
-          <td>{{ client.userDetails.CompanyIncorporated }}</td>
-          <td>{{ client.userDetails.shareholdercount }}</td>
-          <td>{{ client.userDetails.mobileNumber.internationalNumber }}</td>
+          <!-- <td>{{ client.userDetails?.EmploymentStatus || 'N/A' }}</td> -->
+          <!-- <td>{{ client.userDetails?.salary || 'N/A' }}</td> -->
+          <!-- <td>{{ client.userDetails?.bankType || 'N/A' }}</td> -->
+          <td>{{ client.screeningDetails?.matchScore !== null && client.screeningDetails?.matchScore !== undefined ? client.screeningDetails.matchScore : 'N/A' }}</td>
+          <td>{{ client.kycStatus || 'N/A' }}</td>
           <td>
-            <button (click)="openClientDetails(client.shareholders)" class="btn btn-primary" style="white-space: nowrap; overflow: hidden;">
+            <button class="green-button" (click)="openProductModal(client)">View Products</button>
+            
+          </td>
+          <td>
+            <button class="green-button" (click)="openDocumentModal(client)">View Documents</button>            
+          </td>
+          <td>
+            <button class="green-button" (click)="openClientDetails(client.shareholders)">
               View Shareholders
-            </button>
-          </td>
-          <td>{{ client.screeningDetails?.matchScore }}</td>
-          <!-- <td>
-            <button class="green-button" (click)="checkStatus(client)" [disabled]="isLoading">
-              Check Status
-            </button>
-          </td> -->
-          <td>{{ client.kycStatus }}</td>
-          <td>
-            <button class="green-button" (click)="openFileModal(client.additionalUploadedFiles)">
-              View Files
-            </button>
-          </td>
-          <td>
-            <button class="green-button" (click)="openDetailsModal(client)">
-              View Details
             </button>
           </td>
         </tr>
       </tbody>
+      
     </table>
   </div>
 
@@ -104,6 +89,62 @@
       </li>
     </ul>
   </nav>
+
+
+  <div *ngIf="showProductModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Products</h3>
+        <span class="close-btn" (click)="closeProductModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Product Name</th>
+              <th>Quantity</th>
+              <th>Unit Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let product of selectedProducts">
+              <td>{{ product.productName }}</td>
+              <td>{{ product.productQuantity }}</td>
+              <td>{{ product.productUnitPrice }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="green-button" (click)="closeProductModal()">Close</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Documents Modal -->
+  <div *ngIf="showDocumentModal" class="modal-overlay">
+    <div class="modal-content" style="width: 50% !important;">
+      <div class="modal-header">
+        <h3 class="modal-title">Documents</h3>
+        <span class="close-btn" (click)="closeDocumentModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <ul class="file-list">
+          <li *ngFor="let document of selectedDocuments" class="file-item">
+            <div class="file-details">
+              <span class="file-type">Document</span>
+              <p class="file-name">{{ document.name }}</p>
+            </div>
+            <a [href]="document.url" target="_blank" class="view-link">View</a>
+          </li>
+          <li *ngIf="!selectedDocuments.length" class="no-files">No documents available</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="green-button" (click)="closeDocumentModal()">Close</button>
+      </div>
+    </div>
+  </div>
   <!-- Modal for Shareholder Details -->
   <div class="modal-container" *ngIf="showModal">
     <div class="modal-backdrop" (click)="closeModal()"></div>
@@ -170,47 +211,7 @@
     </div>
   </div>
 
-  <!-- View Details -->
-  <div class="modal-container" *ngIf="showDetailsModal">
-    <div class="modal-backdrop" (click)="closeDetailsModal()"></div>
-    <div class="modal-content"  style=" overflow-y: auto; max-height: 90vh; margin: 0 auto; padding: 0px !important;">
-      <div class="modal-header" >
-        <span class="close-btn" (click)="closeDetailsModal()">&times;</span>
-        <h5 class="modal-title">User Details</h5>
-      </div>
-       
- <!-- User Details -->
-<div *ngIf="selectedUser" style="padding: 10px; background: #f9f9f9; border-radius: 5px;">
-
-<!-- Loop through the selectedUser object -->
-<div *ngFor="let key of objectKeys(selectedUser)" style="margin-bottom: 20px;">
-
-  <!-- Check if the value is an object -->
-  <div *ngIf="isObject(selectedUser[key]); else showValue">
-    
-    <!-- If the value is an object, display its keys and values recursively -->
-    <div *ngFor="let subKey of objectKeys(selectedUser[key])" style="margin-left: 20px; padding-left: 20px; border-left: 2px solid #ddd; margin-bottom: 10px;">
-      <p style="margin: 5px 0; font-weight: bold;">{{ subKey }}:</p>
-      <p style="margin: 0; padding-left: 10px; font-size: 14px; color: #333;">{{ selectedUser[key][subKey] || 'N/A' }}</p>
-    </div>
-
-  </div>
-
-  <!-- If it's not an object, just display the value -->
-  <ng-template #showValue>
-    <p style="margin: 10px 0; font-weight: bold;">{{ key }}:</p>
-    <p style="margin: 0; font-size: 14px; color: #333;">{{ selectedUser[key] || 'N/A' }}</p>
-  </ng-template>
-  
-</div>
-
-</div>
-      <ng-template #noFiles>
-        <p class="no-files">No files available for this mail.</p>
-      </ng-template>
-    </div>
-  </div>
-  
+ 
 
 </div>
  
