@@ -6,11 +6,15 @@
           <div class="col-auto mb-2">
             <h2>Customer Management</h2>
           </div>
-          <div class="search-container mt-3">
+          <div class="search-container">
             <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
-            <button class="search-button" (click)="onSearch()">
-              <i class="fas fa-search"></i> SEARCH
-            </button>
+            <button class="search-button" (click)="onSearch()">SEARCH</button>
+          
+            <div class="date-filter-container">
+              <input type="date" placeholder="From Date" [(ngModel)]="fromDate">
+              <input type="date" placeholder="To Date" [(ngModel)]="toDate">
+              <button class="filter-button" (click)="onDateFilter()">FILTER BY DATE</button>
+            </div>
           </div>
         </div>
       </div>
@@ -22,6 +26,7 @@
 
   <div class="table-responsive overflow-behaviour">
     <table class="table table-list-data table-hover">
+      <!-- Table headers -->
       <thead class="bg-light">
         <tr>
           <th scope="col">Name &#x2191;&#x2193;</th>
@@ -33,8 +38,8 @@
           <th scope="col">User Details &#x2191;&#x2193;</th>
         </tr>
       </thead>
+      <!-- Table body with filtered data -->
       <tbody>
-        <!-- Use paginatedUserList() for the current page's data -->
         <tr *ngFor="let user of paginatedUserList()">
           <td>{{ user.firstName }} {{ user.lastName }}</td>
           <td>{{ user.email }}</td>
@@ -51,8 +56,8 @@
       </tbody>
     </table>
   </div>
-  
-  <!-- Pagination Controls -->
+
+  <!-- Pagination controls -->
   <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
     <ul class="pagination custom-pagination">
       <li class="page-item" [class.disabled]="currentPage === 1">
@@ -70,36 +75,4 @@
       </li>
     </ul>
   </nav>
-</div>
-
-<!-- Modal for Viewing Customer Details -->
-<div class="modal-container" *ngIf="showDetailsModal">
-  <div class="modal-backdrop" (click)="closeDetailsModal()"></div>
-  <div class="modal-content">
-    <div class="modal-header">
-      <span class="close-btn" (click)="closeDetailsModal()">&times;</span>
-      <h5 class="modal-title">View Customer Details</h5>
-    </div>
-    <!-- Customer Details -->
-    <div *ngIf="selectedCustomer" style="padding: 10px; background: #f9f9f9; border-radius: 5px;">
-      <!-- Loop through the selectedCustomer object -->
-      <div *ngFor="let key of objectKeys(selectedCustomer)" style="margin-bottom: 20px;">
-        <!-- Check if the value is an object -->
-        <div *ngIf="isObject(selectedCustomer[key]); else showValue">
-          <!-- If the value is an object, display its keys and values recursively -->
-          <div *ngFor="let subKey of objectKeys(selectedCustomer[key])" style="margin-left: 20px; padding-left: 20px; border-left: 2px solid #ddd; margin-bottom: 10px;">
-            <p style="margin: 5px 0; font-weight: bold;">{{ subKey }}:</p>
-            <p style="margin: 0; padding-left: 10px; font-size: 14px; color: #333;">
-              {{ selectedCustomer[key][subKey] || 'N/A' }}
-            </p>
-          </div>
-        </div>
-        <!-- If it's not an object, just display the value -->
-        <ng-template #showValue>
-          <p style="margin: 10px 0; font-weight: bold;">{{ key }}:</p>
-          <p style="margin: 0; font-size: 14px; color: #333;">{{ selectedCustomer[key] || 'N/A' }}</p>
-        </ng-template>
-      </div>
-    </div>
-  </div>
 </div>

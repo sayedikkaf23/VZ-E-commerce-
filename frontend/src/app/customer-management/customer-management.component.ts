@@ -1,34 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminAuthService } from '../service/admin-auth.service'; 
+
 @Component({
   selector: 'app-customer-management',
   templateUrl: './customer-management.component.html',
-  styleUrl: './customer-management.component.css'
+  styleUrls: ['./customer-management.component.css']
 })
 export class CustomerManagementComponent implements OnInit {
-  userList: any[] = [];             // All user data
-  filteredUserList: any[] = [];       // User data after filtering/search
-
-  // Pagination variables
+  userList: any[] = [];
+  filteredUserList: any[] = [];
   currentPage: number = 1;
-  itemsPerPage: number = 10;          // Adjust as needed
-
-  // Modal and search variables
+  itemsPerPage: number = 10;
   selectedCustomer: { [key: string]: any } | null = null;
   showDetailsModal: boolean = false;
-  searchTerm: string = '';  
+  searchTerm: string = '';
+  fromDate: string = '';
+  toDate: string = '';
 
   constructor(private adminAuthService: AdminAuthService) {}
 
   ngOnInit(): void {
-    this.fetchUserDetails(); // Call the method when the component loads
+    this.fetchUserDetails();
   }
 
   fetchUserDetails(): void {
     this.adminAuthService.getUserDetails().subscribe(
       (response) => {
         this.userList = response;
-        this.filteredUserList = [...this.userList]; // Initialize filtered list
+        this.filteredUserList = [...this.userList];
       },
       (error) => {
         console.error('Error fetching user details:', error);
@@ -36,18 +35,15 @@ export class CustomerManagementComponent implements OnInit {
     );
   }
 
-  // Pagination helper: returns the subset of users for the current page
   paginatedUserList(): any[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredUserList.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
-  // Calculate the total number of pages based on filtered user count
   get totalPages(): number {
     return Math.ceil(this.filteredUserList.length / this.itemsPerPage);
   }
 
-  // Generate an array of page numbers for display in the template
   get totalPagesArray(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
@@ -68,25 +64,43 @@ export class CustomerManagementComponent implements OnInit {
     this.currentPage = page;
   }
 
-  // Updated search to reset to first page on filter change
-  onSearch() {
-    this.searchTerm = this.searchTerm.trim();
+  onSearch(): void {
+    this.searchTerm = this.searchTerm.trim().toLowerCase();
     if (this.searchTerm) {
       this.filteredUserList = this.userList.filter(user =>
-        (`${user?.firstName || ''} ${user?.lastName || ''}`).trim().includes(this.searchTerm) ||
-        user.firstName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        user.lastName.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        user.nationality.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        (`${user?.firstName || ''} ${user?.lastName || ''}`).trim().toLowerCase().includes(this.searchTerm) ||
+        user.email.toLowerCase().includes(this.searchTerm) ||
+        user.nationality.toLowerCase().includes(this.searchTerm) ||
         (user.birthday && user.birthday.includes(this.searchTerm))
       );
     } else {
-      this.filteredUserList = [...this.userList]; // Reset to full list if search is empty
+      this.filteredUserList = [...this.userList];
     }
-    this.currentPage = 1; // Reset page to first on new search
+    this.currentPage = 1;
   }
+  onDateFilter(): void {
+    if (this.fromDate && this.toDate) {
+      const fromDateObj = new Date(this.fromDate);
+      const toDateObj = new Date(this.toDate);
+  
+      // Adjust times to compare entire days
+      fromDateObj.setHours(0, 0, 0, 0);
+      toDateObj.setHours(23, 59, 59, 999);
+  
+      this.filteredUserList = this.userList.filter(user => {
+        const userDate = new Date(user.createdAt);
+        return userDate >= fromDateObj && userDate <= toDateObj;
+      });
+  
+      this.currentPage = 1;
+    } else {
+      console.log("Please select both From and To dates.");
+      // Optionally reset filtered list to full list if needed
+      // this.filteredUserList = [...this.userList];
+    }
+  }
+  
 
-  // Modal functions and helper functions remain unchanged
   openDetailsModal(details: any): void {
     this.selectedCustomer = details;
     this.showDetailsModal = true;

@@ -21,7 +21,7 @@ export class BackAccountOpeningComponent implements OnInit {
   
   // Pagination properties
   currentPage: number = 1;
-  itemsPerPage: number = 10; // Change this to the number of items per page
+  itemsPerPage: number = 10; 
 
   isLoading: boolean = false; // Global loading state
 
