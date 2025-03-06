@@ -177,6 +177,23 @@ export class VirtualManagementComponent implements OnInit {
   goToPage(page: number): void {
     this.currentPage = page;
   }
+
+  fromDate: string = '';
+toDate: string = '';
+
+onDateFilter(): void {
+  if (this.fromDate && this.toDate) {
+    this.filteredClientList = this.userList.filter((user) => {
+      const createdDate = new Date(user.createdAt);
+      const startDate = new Date(this.fromDate);
+      const endDate = new Date(this.toDate);
+      return createdDate >= startDate && createdDate <= endDate;
+    });
+  } else {
+    this.filteredClientList = [...this.userList];
+  }
+  this.currentPage = 1; // Reset Pagination
+}
 }
   
 

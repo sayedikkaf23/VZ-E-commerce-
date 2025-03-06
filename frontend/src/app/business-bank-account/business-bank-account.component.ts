@@ -22,7 +22,10 @@ export class BusinessBankAccountComponent implements OnInit {
   itemsPerPage: number = 10; // Adjust the items per page as neede
 
   selectedUserFields: string[] = ['isMatched', 'caseId', 'customerId', 'highestScoringResult'];
-
+  selectedProducts: any[] = [];
+  selectedDocuments: any[] = [];
+  showProductModal: boolean = false;
+  showDocumentModal: boolean = false;
 
   // Dummy data for shareholders
   dummyShareholders = [
@@ -201,5 +204,40 @@ closeModal(): void {
     this.showDetailsModal = false; // Close the modal
   }
   
-  
+  openProductModal(user: any): void {
+    this.selectedProducts = user.salesforceResponseMatchScreening?.products || [];
+    this.showProductModal = true;
+  }
+
+  closeProductModal(): void {
+    this.showProductModal = false;
+    this.selectedProducts = [];
+  }
+
+  openDocumentModal(user: any): void {
+    this.selectedDocuments = user.additionalUploadedFiles || [];
+    this.showDocumentModal = true;
+  }
+
+  closeDocumentModal(): void {
+    this.showDocumentModal = false;
+    this.selectedDocuments = [];
+  }
+
+  fromDate: string = '';
+toDate: string = '';
+
+onDateFilter(): void {
+  if (this.fromDate && this.toDate) {
+    this.filteredUserList = this.userList.filter((user) => {
+      const createdDate = new Date(user.createdAt);
+      const startDate = new Date(this.fromDate);
+      const endDate = new Date(this.toDate);
+      return createdDate >= startDate && createdDate <= endDate;
+    });
+  } else {
+    this.filteredUserList = [...this.userList];
+  }
+  this.currentPage = 1; // Reset Pagination
+}
 }

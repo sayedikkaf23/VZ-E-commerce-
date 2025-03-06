@@ -15,10 +15,11 @@
             <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
             <button class="search-button" (click)="onSearch()"><i class="fas fa-search"></i> SEARCH</button>
             <div class="date-filter-container">
-              <input type="date" placeholder="From Date" >
-              <input type="date" placeholder="To Date" >
-              <button class="filter-button" >FILTER BY DATE</button>
+              <input type="date" placeholder="From Date" [(ngModel)]="fromDate">
+              <input type="date" placeholder="To Date" [(ngModel)]="toDate">
+              <button class="filter-button" (click)="onDateFilter()">FILTER BY DATE</button>
             </div>
+            
           </div>
         </div>
       </div>

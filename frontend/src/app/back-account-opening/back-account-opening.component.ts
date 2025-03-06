@@ -98,4 +98,21 @@ export class BackAccountOpeningComponent implements OnInit {
     }
     this.currentPage = 1;
   }
+  fromDate: string = '';
+toDate: string = '';
+
+onDateFilter(): void {
+  if (this.fromDate && this.toDate) {
+    this.filteredUserList = this.userList.filter((user) => {
+      const createdDate = new Date(user.createdAt);
+      const startDate = new Date(this.fromDate);
+      const endDate = new Date(this.toDate);
+      return createdDate >= startDate && createdDate <= endDate;
+    });
+  } else {
+    this.filteredUserList = [...this.userList];
+  }
+  this.currentPage = 1; // Reset Pagination
+}
+
 }
