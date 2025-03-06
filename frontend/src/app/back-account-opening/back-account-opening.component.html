@@ -14,6 +14,11 @@
           <div class="search-container mt-3">
             <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
             <button class="search-button" (click)="onSearch()"><i class="fas fa-search"></i> SEARCH</button>
+            <div class="date-filter-container">
+              <input type="date" placeholder="From Date" >
+              <input type="date" placeholder="To Date" >
+              <button class="filter-button" >FILTER BY DATE</button>
+            </div>
           </div>
         </div>
       </div>

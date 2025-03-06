@@ -1,3 +1,80 @@
+.search-container {
+  display: flex;
+  flex-wrap: wrap; /* Responsive for smaller screens */
+  align-items: center; 
+  justify-content: space-between; 
+  padding: 20px;
+  
+  border-radius: 10px;  
+}
+
+.search-container input[type="text"] {
+  width: 280px; 
+  padding: 10px;
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.search-container input[type="text"]:focus {
+  border: 1px solid #3b82f6; /* Blue focus */
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.search-button {
+  padding: 10px 20px;
+  background: #3b82f6; 
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.search-button:hover {
+  background: #2563eb; 
+  transform: scale(1.05);
+}
+
+.date-filter-container {
+  display: flex;
+  margin-left: 30px;
+
+  gap: 15px;
+  align-items: center;
+  flex-wrap: wrap; /* Responsive on small screens */
+}
+
+.date-filter-container input {
+  width: 150px; 
+  padding: 5px;
+  border: 1px solid #ced4da; 
+  border-radius: 8px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.date-filter-container input:focus {
+  border: 1px solid #3b82f6; 
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+}
+
+.filter-button {
+  padding: 5px 10px;
+  background: #cf3339; /* Green color for Filter */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.filter-button:hover {
+  background: #cf3339;
+  transform: scale(1.05);
+}
+
+
 .custom-pagination {
   margin: 0;
   padding: 0;
@@ -121,7 +198,7 @@
   top: 100%;
 }
 .green-button {
-  background-color: #299e60; /* Green color */
+  background-color: #cf3339; /* Green color */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -133,7 +210,7 @@
 }
 
 .green-button:hover {
-  background-color: #238d4e; /* Darker green on hover */
+  background-color: #cf3339; /* Darker green on hover */
 }
 /* General scrollbar customization */
 .table-responsive {
