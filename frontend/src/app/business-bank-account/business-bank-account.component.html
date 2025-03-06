@@ -44,6 +44,8 @@
             <th scope="col">Compliance Status</th>
             <th scope="col">View Products</th>
             <th scope="col">View Documents</th>
+            <th scope="col">Action</th>
+
           </tr>
         </thead>
         <tbody>
@@ -61,6 +63,10 @@
             </td>
             <td>
               <button class="green-button" (click)="openDocumentModal(user)">View Documents</button>            
+            </td>
+           
+            <td>
+              <button class="green-button" (click)="openShareholderModal(user)">Shareholder Details</button>
             </td>
           </tr>
         </tbody>
@@ -150,31 +156,40 @@
   
   </div>
 
-  <div class="modal-container" *ngIf="showModal">
-    <div class="modal-backdrop" (click)="closeModal()"></div>
+  
+  
+  <div class="modal-overlay" *ngIf="showShareholderModal">
     <div class="modal-content">
-      <span class="close-btn" (click)="closeModal()">&times;</span>
-      <h5 class="modal-title">Shareholder Details</h5>
-      <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">Shareholder Name</th>
-            <th scope="col">Shareholder (%)</th>
-            <th scope="col">Date of Birth</th>
-            <th scope="col">Nationality</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let shareholder of selectedUserShareholders">
-            <td>{{ shareholder.name }}</td>
-            <td>{{ shareholder.shareholderPercentage }}%</td>
-            <td>{{ shareholder.dob | date: 'yyyy-MM-dd' }}</td>
-            <td>{{ shareholder.nationalityshareholder }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="modal-header">
+        <h3 class="modal-title">Shareholder Details</h3>
+        <span class="close-btn" (click)="closeShareholderModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Shareholder Name</th>
+              <th>Percentage</th>
+              <th>Date of Birth</th>
+              <th>Nationality</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let shareholder of selectedShareholders">
+              <td>{{ shareholder.name }}</td>
+              <td>{{ shareholder.shareholderPercentage }}%</td>
+              <td>{{ shareholder.dob | date: 'yyyy-MM-dd' }}</td>
+              <td>{{ shareholder.nationalityshareholder }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="green-button" (click)="closeShareholderModal()">Close</button>
+      </div>
     </div>
   </div>
+  
   
 
   <div class="modal-container" *ngIf="showFileModal">

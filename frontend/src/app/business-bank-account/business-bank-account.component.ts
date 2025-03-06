@@ -26,6 +26,8 @@ export class BusinessBankAccountComponent implements OnInit {
   selectedDocuments: any[] = [];
   showProductModal: boolean = false;
   showDocumentModal: boolean = false;
+  user: any; // Replace 'any' with the correct type if you have one
+
 
   // Dummy data for shareholders
   dummyShareholders = [
@@ -240,4 +242,21 @@ onDateFilter(): void {
   }
   this.currentPage = 1; // Reset Pagination
 }
+showShareholderModal: boolean = false;
+selectedShareholders: any[] = [];
+
+openShareholderModal(user: any): void {
+  if (user?.userDetails?.shareholders && user.userDetails.shareholders.length > 0) {
+    this.selectedShareholders = user.userDetails.shareholders;
+    this.showShareholderModal = true;
+  } else {
+    console.log('No Shareholders Found');
+  }
+}
+
+closeShareholderModal(): void {
+  this.showShareholderModal = false;
+  this.selectedShareholders = [];
+}
+
 }
