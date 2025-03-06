@@ -364,8 +364,24 @@ exports.callSalesforceEndpoint = async (req, res) => {
 exports.getVirtualDetails = async (req, res) => {
   try {
     // Fetch documents from the PiData collection with subcategory 'business'
-    const VirtualDetailsSubmissions = await Pidata.find({ planname: "Virtual Reception" });
+    const VirtualDetailsSubmissions = await Pidata.find({ planname: "Virtual Receptionist" });
 
+
+      const authResponse = await axios.post(
+          `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
+          {
+            username: "VirtuUAT",
+            password: "VirtuApiuat@123",
+            CompanyName: "Virtuzone",
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+    
+        const authToken = authResponse.data.token; // Assuming token is here
     // Prepare an array to store the merged results
     const mergedResults = [];
 
@@ -379,14 +395,39 @@ exports.getVirtualDetails = async (req, res) => {
 
       // Merge PiData and UserDetails
       if (userDetails) {
-        // Merge PiData and UserDetails only if userDetails is not null
-        const mergedData = {
-          ...submission._doc, // Use _doc to get the plain object representation of the document
-          userDetails, // Add userDetails data
-        };
-
-        mergedResults.push(mergedData);
-      }
+           let kycStatus = null;
+           try {
+             // Call the status API with the CustomerId
+             const statusResponse = await axios.post(
+               `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
+               {
+                 CustomerId: submission?.leadWithDetails?.LeadId, // Use safe optional chaining
+                 CompanyName: "Virtuzone",
+               },
+               {
+                 headers: {
+                   "Content-Type": "application/json",
+                   Authorization: `Bearer ${authToken}`,
+                 },
+               }
+             );
+   console.log(statusResponse,"statusResponse")
+             // Extract KYC status from response
+             kycStatus = statusResponse.data?.CustomerStatus || "Unknown"; 
+   
+           } catch (statusError) {
+             console.error("Error fetching KYC status:", statusError.message);
+           }
+   
+           // Merge PiData, UserDetails, and KYC status
+           const mergedData = {
+             ...submission._doc, // Plain object representation
+             userDetails,
+             kycStatus, // Add KYC status
+           };
+   
+           mergedResults.push(mergedData);
+         }
     }
 
     // Return the merged results as a JSON response

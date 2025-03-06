@@ -699,10 +699,29 @@ exports.getAllSubmissions = async (req, res) => {
       .json({ error: 'Error fetching submissions', details: error.message });
   }
 };
+
+
 exports.getPersonalBank = async (req, res) => {
   try {
     // Fetch documents from the PiData collection with subcategory 'personal'
     const PersonalBankSubmissions = await Pidata.find({ subcategory: "personal" });
+
+    // Authenticate API to get the token
+    const authResponse = await axios.post(
+      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
+      {
+        username: "VirtuUAT",
+        password: "VirtuApiuat@123",
+        CompanyName: "Virtuzone",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const authToken = authResponse.data.token; // Assuming token is here
 
     // Prepare an array to store the merged results
     const mergedResults = [];
@@ -713,23 +732,48 @@ exports.getPersonalBank = async (req, res) => {
       const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
 
       // Fetch the corresponding UserDetails document using QuotePaymentId
-      const userDetails = await UserDetails.findOne({ "QuotePaymentId": quotePaymentId });
+      const userDetails = await UserDetails.findOne({ QuotePaymentId: quotePaymentId });
 
       if (userDetails) {
-        // Merge PiData and UserDetails only if userDetails is not null
+        let kycStatus = null;
+        try {
+          // Call the status API with the CustomerId
+          const statusResponse = await axios.post(
+            `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
+            {
+              CustomerId: submission?.leadWithDetails?.LeadId, // Use safe optional chaining
+              CompanyName: "Virtuzone",
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+console.log(statusResponse,"statusResponse")
+          // Extract KYC status from response
+          kycStatus = statusResponse.data?.CustomerStatus || "Unknown"; 
+
+        } catch (statusError) {
+          console.error("Error fetching KYC status:", statusError.message);
+        }
+
+        // Merge PiData, UserDetails, and KYC status
         const mergedData = {
-          ...submission._doc, // Use _doc to get the plain object representation of the document
-          userDetails, // Add userDetails data
+          ...submission._doc, // Plain object representation
+          userDetails,
+          kycStatus, // Add KYC status
         };
 
         mergedResults.push(mergedData);
       }
     }
 
-    // Return the filtered merged results as a JSON response
+    // Return the merged results as JSON
     res.status(200).json(mergedResults);
   } catch (error) {
-    // Handle errors and return an appropriate response
+    console.error("Error fetching personal bank submissions:", error);
     res.status(500).json({
       error: "Error fetching personal bank submissions",
       details: error.message,
@@ -739,10 +783,29 @@ exports.getPersonalBank = async (req, res) => {
 
 
 
+
 exports.getBusinessBank = async (req, res) => {
   try {
     // Fetch documents from the PiData collection with subcategory 'business'
     const businessBankSubmissions = await Pidata.find({ subcategory: "business" });
+
+
+
+    const authResponse = await axios.post(
+      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
+      {
+        username: "VirtuUAT",
+        password: "VirtuApiuat@123",
+        CompanyName: "Virtuzone",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    const authToken = authResponse.data.token; // Assuming token is here
 
     // Prepare an array to store the merged results
     const mergedResults = [];
@@ -755,12 +818,36 @@ exports.getBusinessBank = async (req, res) => {
       // Fetch the corresponding UserDetails document using QuotePaymentId
       const userDetails = await UserDetails.findOne({ "QuotePaymentId": quotePaymentId });
 
-      // Merge PiData and UserDetails
       if (userDetails) {
-        // Merge PiData and UserDetails only if userDetails is not null
+        let kycStatus = null;
+        try {
+          // Call the status API with the CustomerId
+          const statusResponse = await axios.post(
+            `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
+            {
+              CustomerId: submission?.leadWithDetails?.LeadId, // Use safe optional chaining
+              CompanyName: "Virtuzone",
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+console.log(statusResponse,"statusResponse")
+          // Extract KYC status from response
+          kycStatus = statusResponse.data?.CustomerStatus || "Unknown"; 
+
+        } catch (statusError) {
+          console.error("Error fetching KYC status:", statusError.message);
+        }
+
+        // Merge PiData, UserDetails, and KYC status
         const mergedData = {
-          ...submission._doc, // Use _doc to get the plain object representation of the document
-          userDetails, // Add userDetails data
+          ...submission._doc, // Plain object representation
+          userDetails,
+          kycStatus, // Add KYC status
         };
 
         mergedResults.push(mergedData);
