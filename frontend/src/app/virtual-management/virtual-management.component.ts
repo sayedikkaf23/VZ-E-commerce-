@@ -186,17 +186,17 @@ export class VirtualManagementComponent implements OnInit {
       const startDate = new Date(this.fromDate);
       const endDate = new Date(this.toDate);
       endDate.setHours(23, 59, 59, 999);
-
+  
       this.filteredClientList = this.clientList.filter((client) => {
-        const createdDate = new Date(client.leadWithDetails?.createdAt);
+        const createdDate = new Date(client.leadWithDetails?.CreatedDate);
         return createdDate >= startDate && createdDate <= endDate;
       });
     } else {
-      this.filteredClientList = [...this.clientList]; 
+      this.filteredClientList = [...this.clientList];
     }
     this.currentPage = 1; 
   }
-
+  
 
   selectedProducts: any[] = [];
   selectedDocuments: any[] = [];

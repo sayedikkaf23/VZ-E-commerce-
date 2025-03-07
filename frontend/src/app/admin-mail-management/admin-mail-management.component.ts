@@ -194,17 +194,22 @@ onDateFilter(): void {
     const startDate = new Date(this.fromDate);
     const endDate = new Date(this.toDate);
 
-    // Filter `mailList` based on created date between From Date and To Date
+    // Set time to 00:00:00 to include the whole day
+    startDate.setHours(0, 0, 0, 0);
+    endDate.setHours(23, 59, 59, 999);
+
     this.filteredMailList = this.mailList.filter((mail) => {
       const createdDate = new Date(mail.createdAt);
       return createdDate >= startDate && createdDate <= endDate;
     });
   } else {
-    // Reset to original list if dates are not selected
+    // Reset the list if no dates are selected
     this.filteredMailList = [...this.mailList];
   }
+  
   this.currentPage = 1; // Reset Pagination
 }
+
 
   
 selectedProducts: any[] = [];
