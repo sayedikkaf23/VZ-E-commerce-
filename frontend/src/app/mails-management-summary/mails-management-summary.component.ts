@@ -8,6 +8,7 @@ import { DataStorageService } from '../service/data-storage.service';
 import AOS from 'aos';
 import Swal from 'sweetalert2';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
+import { map, switchMap } from 'rxjs';
 
 declare var $: any;
 
@@ -157,40 +158,59 @@ export class MailsManagementSummaryComponent {
       });
     });
   }
-
   submitData() {
     const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
   
-    this.userService.mailform(mergedData).subscribe(
-      response => {
-        // console.log('Data submitted successfully:', response);
-        // this.toastr.success('Data submitted successfully', 'Success');
+    // Extract LeadId safely
+    const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
+    if (!LeadId) {
+      console.error("LeadId is missing from mergedData");
+      this.toastr.error("Lead ID not found, submission failed.");
+      return;
+    }
   
+    this.userService.mailform(mergedData).pipe(
+      switchMap(response => {
         // Retrieve quotePaymentId from the response instead of salesforceResponse
         const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
-
-        // console.log(quotePaymentId)
-        if (quotePaymentId) {
-
-          // console.log("quotePaymentId")
-          localStorage.removeItem('mailform');
-          localStorage.removeItem('mailform1');
-          localStorage.removeItem('mailform2');
-          // localStorage.clear();
-          this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
-          // const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
-          // window.location.href = paymentUrl; // Redirect to payment URL
+  
+        if (!quotePaymentId) {
+          throw new Error('Quote Payment ID is missing');
+        }
+  
+        // Clear localStorage
+        localStorage.removeItem('mailform');
+        localStorage.removeItem('mailform1');
+        localStorage.removeItem('mailform2');
+  
+        const checkStatusData = {
+          CustomerId: LeadId,
+          CompanyName: "Virtuzone"
+        };
+  
+        return this.userService.checkStatus(checkStatusData).pipe(
+          map((checkStatusResponse: any) => ({ checkStatusResponse, quotePaymentId }))
+        );
+      })
+    ).subscribe(
+      (result: any) => {
+        console.log("Check Status Response:", result.checkStatusResponse);
+  
+        if (result.checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+          this.router.navigate([`/onlinepayment/${result.quotePaymentId}`]);
         } else {
-          console.error('Quote Payment ID not found');
-          this.toastr.error('Quote Payment ID not found', 'Error');
+          window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
+          this.router.navigate(['/']);
         }
       },
-      error => {
+      (error) => {
         console.error('Error submitting data:', error);
-        this.showError(error.error.message || 'An error occurred');
+        this.toastr.error(error.message || 'An error occurred', 'Error');
       }
     );
   }
+  
+  
   
 
   showError(errorMessage: string): void {
