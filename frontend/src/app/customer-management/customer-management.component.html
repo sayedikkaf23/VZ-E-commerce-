@@ -35,6 +35,9 @@
           <th scope="col">Nationality &#x2191;&#x2193;</th>
           <th scope="col">Created Date &#x2191;&#x2193;</th>
           <th scope="col">Updated Date &#x2191;&#x2193;</th>
+          <th scope="col">Quote Payment ID &#x2191;&#x2193;</th>
+          <th scope="col">Action</th>
+
           <!-- <th scope="col">User Details &#x2191;&#x2193;</th> -->
         </tr>
       </thead>
@@ -47,6 +50,14 @@
           <td>{{ user.nationality }}</td>
           <td>{{ user.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
           <td>{{ user.updatedAt | date:'yyyy-MM-dd HH:mm' }}</td>
+          <td>{{ user.QuotePaymentId }}</td>
+          <td>
+            <button 
+              [ngClass]="getButtonClass(user.status)" 
+              (click)="handleUserAction(user)">
+              {{ getButtonLabel(user.status) }}
+            </button>
+          </td>
           <!-- <td>
             <button class="green-button" (click)="openDetailsModal(user)">
               View Details

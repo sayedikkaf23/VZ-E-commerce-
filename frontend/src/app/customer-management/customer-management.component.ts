@@ -117,4 +117,42 @@ export class CustomerManagementComponent implements OnInit {
   closeDetailsModal(): void {
     this.showDetailsModal = false;
   }
+  handleUserAction(user: any): void {
+    if (user.status === 'Pending') {
+      user.status = 'Approved';
+      alert(`User ${user.firstName} Approved`);
+    } else if (user.status === 'Approved') {
+      user.status = 'Rejected';
+      alert(`User ${user.firstName} Rejected`);
+    } else if (user.status === 'Rejected') {
+      alert(`User ${user.firstName} Status is Rejected`);
+    }
+  }
+  
+  getButtonLabel(status: string): string {
+    switch (status) {
+      case 'Pending':
+        return 'Approve';
+      case 'Approved':
+        return 'Reject';
+      case 'Rejected':
+        return 'Check Status';
+      default:
+        return 'Approve';
+    }
+  }
+  
+  getButtonClass(status: string): string {
+    switch (status) {
+      case 'Pending':
+        return 'green-button';
+      case 'Approved':
+        return 'red-button';
+      case 'Rejected':
+        return 'blue-button';
+      default:
+        return 'green-button';
+    }
+  }
+  
 }
