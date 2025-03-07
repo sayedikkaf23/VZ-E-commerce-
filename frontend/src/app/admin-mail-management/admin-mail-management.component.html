@@ -116,10 +116,15 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button class="green-button" (click)="closeProductModal()">Close</button>
+        <p>Total Amount: <strong style="font-weight: bold; color: rgb(235, 55, 55);">{{ salesforceResponseMatchScreening?.totalAmount }}</strong></p>
+        <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55);">{{ salesforceResponseMatchScreening?.totalVAT }}</strong></p>
+        <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55);">{{ salesforceResponseMatchScreening?.total_including_Vat }}</strong></p>
       </div>
     </div>
   </div>
+  
+  
+  
   
   <!-- Documents Modal -->
   <div *ngIf="showDocumentModal" class="modal-overlay">

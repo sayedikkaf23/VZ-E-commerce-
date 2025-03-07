@@ -211,18 +211,21 @@ onDateFilter(): void {
 }
 
 
-  
+salesforceResponseMatchScreening: any = {}; // Declare this at the top
+
+
 selectedProducts: any[] = [];
 selectedDocuments: any[] = [];
 showProductModal: boolean = false;
 showDocumentModal: boolean = false;
 openProductModal(user: any): void {
   console.log('Product Modal Opened', user); // Debug
-  this.selectedProducts = user.salesforceResponseMatchScreening?.products || [];
+  this.salesforceResponseMatchScreening = user.salesforceResponseMatchScreening; // ✅ Store the full object
+  this.selectedProducts = this.salesforceResponseMatchScreening?.products || [];
   console.log('Products:', this.selectedProducts); // Debug
   this.showProductModal = true; 
-  
 }
+
 
 openDocumentModal(user: any): void {
   console.log('Document Modal Opened', user); // Debug

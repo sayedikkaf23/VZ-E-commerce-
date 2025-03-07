@@ -205,10 +205,14 @@ closeModal(): void {
   closeDetailsModal(): void {
     this.showDetailsModal = false; // Close the modal
   }
-  
+  salesforceResponseMatchScreening: any = {}; // Declare this at the top
+
   openProductModal(user: any): void {
-    this.selectedProducts = user.salesforceResponseMatchScreening?.products || [];
-    this.showProductModal = true;
+    console.log('Product Modal Opened', user); // Debug
+    this.salesforceResponseMatchScreening = user.salesforceResponseMatchScreening; // ✅ Store the full object
+    this.selectedProducts = this.salesforceResponseMatchScreening?.products || [];
+    console.log('Products:', this.selectedProducts); // Debug
+    this.showProductModal = true; 
   }
 
   closeProductModal(): void {

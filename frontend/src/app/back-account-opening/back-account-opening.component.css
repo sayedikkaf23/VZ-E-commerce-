@@ -396,3 +396,38 @@
 .search-container .search-button i {
   margin-right: 5px;
 }
+.modal-footer {
+  display: flex;
+  flex-direction: column; /* Stack items on small screens */
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-top: 2px solid #ddd;
+  gap: 15px; /* Space between items */
+}
+
+.footer-summary {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Auto-responsive layout */
+  gap: 15px; /* Space between items */
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.summary-item.total {
+  background: #cf3339; /* Highlight Total with Red */
+  color: white;
+  font-weight: bold;
+  text-transform: uppercase;
+}
