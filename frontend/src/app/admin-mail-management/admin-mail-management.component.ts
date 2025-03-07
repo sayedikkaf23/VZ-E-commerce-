@@ -191,17 +191,21 @@ toDate: string = '';
 
 onDateFilter(): void {
   if (this.fromDate && this.toDate) {
-    this.filteredMailList = this.userList.filter((user) => {
-      const createdDate = new Date(user.createdAt);
-      const startDate = new Date(this.fromDate);
-      const endDate = new Date(this.toDate);
+    const startDate = new Date(this.fromDate);
+    const endDate = new Date(this.toDate);
+
+    // Filter `mailList` based on created date between From Date and To Date
+    this.filteredMailList = this.mailList.filter((mail) => {
+      const createdDate = new Date(mail.createdAt);
       return createdDate >= startDate && createdDate <= endDate;
     });
   } else {
-    this.filteredMailList = [...this.userList];
+    // Reset to original list if dates are not selected
+    this.filteredMailList = [...this.mailList];
   }
   this.currentPage = 1; // Reset Pagination
 }
+
   
 selectedProducts: any[] = [];
 selectedDocuments: any[] = [];

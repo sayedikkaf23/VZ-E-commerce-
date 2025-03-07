@@ -17,22 +17,22 @@ export class VirtualManagementComponent implements OnInit {
   loadingStatuses: { [key: string]: boolean } = {}; // To track loading state for each user
   showFileModal: boolean = false; // Flag for file modal
   selectedFiles: any[] = []; // To store selected files for the modal
-  searchTerm: string = '';  
+  searchTerm: string = '';
   filteredClientList: any[] = []; // Filtered user data
   currentPage: number = 1;
   itemsPerPage: number = 10; // Adjust as needed
 
-  constructor(private virtualManagementService: VirtualManagementService) {}
+  constructor(private virtualManagementService: VirtualManagementService) { }
 
   selectedUser: { [key: string]: any } | null = null;
 
   showDetailsModal: boolean = false;
 
- 
+
   ngOnInit(): void {
     this.fetchClientDetails(); // Call the method when the component loads
   }
- 
+
   fetchClientDetails(): void {
     this.virtualManagementService.getVirtaulData().subscribe(
       (response) => {
@@ -45,7 +45,7 @@ export class VirtualManagementComponent implements OnInit {
       }
     );
   }
-  
+
   checkColumnData(): void {
     this.hasSalaryData = this.userList.some((user) => !!user.salary);
     this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
@@ -57,10 +57,10 @@ export class VirtualManagementComponent implements OnInit {
       CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
-  
+
     // Start the global loader
     this.isLoading = true;
-  
+
     this.virtualManagementService.checkStatus(payload).subscribe(
       (response) => {
         // Update user status with the response
@@ -77,13 +77,13 @@ export class VirtualManagementComponent implements OnInit {
       }
     );
   }
-  
+
   openClientDetails(shareholders: any[]): void {
     // console.log(shareholders)
     this.selectedClientDetails = shareholders; // Assign shareholder data to display in the modal
     this.showModal = true; // Open the modal
   }
- 
+
   closeModal(): void {
     this.showModal = false; // Close the modal
   }
@@ -96,7 +96,7 @@ export class VirtualManagementComponent implements OnInit {
       console.error('No files available for this client.');
     }
   }
-  
+
 
   closeFileModal(): void {
     this.showFileModal = false; // Close the file modal
@@ -104,8 +104,8 @@ export class VirtualManagementComponent implements OnInit {
 
 
   openDetailsModal(details: any): void {
-    console.log('Selected User Data:',details);
-    this.selectedUser= details; // Assign selected user details
+    console.log('Selected User Data:', details);
+    this.selectedUser = details; // Assign selected user details
     this.showDetailsModal = true; // Open the modal for user
   }
 
@@ -179,48 +179,50 @@ export class VirtualManagementComponent implements OnInit {
   }
 
   fromDate: string = '';
-toDate: string = '';
+  toDate: string = '';
 
-onDateFilter(): void {
-  if (this.fromDate && this.toDate) {
-    this.filteredClientList = this.userList.filter((user) => {
-      const createdDate = new Date(user.createdAt);
+  onDateFilter(): void {
+    if (this.fromDate && this.toDate) {
       const startDate = new Date(this.fromDate);
       const endDate = new Date(this.toDate);
-      return createdDate >= startDate && createdDate <= endDate;
-    });
-  } else {
-    this.filteredClientList = [...this.userList];
+      endDate.setHours(23, 59, 59, 999);
+
+      this.filteredClientList = this.clientList.filter((client) => {
+        const createdDate = new Date(client.leadWithDetails?.createdAt);
+        return createdDate >= startDate && createdDate <= endDate;
+      });
+    } else {
+      this.filteredClientList = [...this.clientList]; 
+    }
+    this.currentPage = 1; 
   }
-  this.currentPage = 1; // Reset Pagination
+
+
+  selectedProducts: any[] = [];
+  selectedDocuments: any[] = [];
+  showProductModal: boolean = false;
+  showDocumentModal: boolean = false;
+  openProductModal(user: any): void {
+    this.selectedProducts = user.salesforceResponseMatchScreening?.products || [];
+    this.showProductModal = true;
+  }
+
+  closeProductModal(): void {
+    this.showProductModal = false;
+    this.selectedProducts = [];
+  }
+
+  openDocumentModal(user: any): void {
+    this.selectedDocuments = user.additionalUploadedFiles || [];
+    this.showDocumentModal = true;
+  }
+
+  closeDocumentModal(): void {
+    this.showDocumentModal = false;
+    this.selectedDocuments = [];
+  }
+
 }
 
-selectedProducts: any[] = [];
-selectedDocuments: any[] = [];
-showProductModal: boolean = false;
-showDocumentModal: boolean = false;
-openProductModal(user: any): void {
-  this.selectedProducts = user.salesforceResponseMatchScreening?.products || [];
-  this.showProductModal = true;
-}
-
-closeProductModal(): void {
-  this.showProductModal = false;
-  this.selectedProducts = [];
-}
-
-openDocumentModal(user: any): void {
-  this.selectedDocuments = user.additionalUploadedFiles || [];
-  this.showDocumentModal = true;
-}
-
-closeDocumentModal(): void {
-  this.showDocumentModal = false;
-  this.selectedDocuments = [];
-}
-
-}
-  
 
 
- 
