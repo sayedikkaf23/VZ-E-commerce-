@@ -129,54 +129,65 @@ export class ShowDetails2Component implements AfterViewInit {
   }
   
   submitData() {
-
     if (!this.salesforceResponse || !this.salesforceResponse.data || !this.salesforceResponse.data.leadWithDetails) {
       console.error("salesforceResponse.data.leadWithDetails is not ready or missing");
       return;
     }
-    
+  
     const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
     if (!LeadId) {
       console.error("LeadId is not found in salesforceResponse.data.leadWithDetails");
+      return;
     }
+  
     const finalData = {
       ...this.personalInfo,
       ...this.bankInfo,
       LeadId
     };
-  // console.log("bank",finalData)
+  
     this.userService.uploadUserData(finalData).pipe(
       switchMap(response => {
         if (response.message) {
           // Clear stored data
           localStorage.removeItem('step1Data');
           localStorage.removeItem('step2Data');
-          // localStorage.clear();
-
-          const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
   
-          if (quotePaymentId) {
-            // Redirect to payment URL
-            this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
-            // window.location.href = paymentUrl;
-            return of(null);
-          } else {
-            // Handle missing Quote Payment ID
-            throw new Error('Quote Payment ID not found');
-          }
+          const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
+          
+          // Call checkStatus API after successful data submission
+          const checkStatusData = {
+            CustomerId:LeadId, // Ensure customerId exists in personalInfo
+            CompanyName: "Virtuzone" // Ensure companyName exists in personalInfo
+          };
+  
+          return this.userService.checkStatus(checkStatusData).pipe(
+            switchMap(checkStatusResponse => {
+              console.log("Check Status Response:", checkStatusResponse);
+  
+              if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+                // Redirect to payment URL
+                this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+                return of(null);
+              } else {
+                window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
+                this.router.navigate(['/']);
+                return of(null);
+              }
+            })
+          );
         } else {
-          // Handle failed data submission
           throw new Error('Data submission failed');
         }
       })
     ).subscribe(
       () => {},
       error => {
-        // Display error notification
         this.toastr.error(error.message || 'An error occurred', 'Error');
         console.error(error);
       }
     );
   }
+  
   
 }

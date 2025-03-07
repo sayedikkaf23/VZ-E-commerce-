@@ -212,14 +212,26 @@ export class BussinessShowDeatilsComponent {
           localStorage.removeItem('finalData');
           // localStorage.clear();
           const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
-
-          if (quotePaymentId) {
-            this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
-            // window.location.href = paymentUrl;
-            return of(null);
-          } else {
-            throw new Error('Quote Payment ID not found');
-          }
+          const checkStatusData = {
+            CustomerId:LeadId, // Ensure customerId exists in personalInfo
+            CompanyName: "Virtuzone" // Ensure companyName exists in personalInfo
+          };
+  
+          return this.userService.checkStatus(checkStatusData).pipe(
+            switchMap(checkStatusResponse => {
+              console.log("Check Status Response:", checkStatusResponse);
+  
+              if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+                // Redirect to payment URL
+                this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+                return of(null);
+              } else {
+                window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
+                this.router.navigate(['/']);
+                return of(null);
+              }
+            })
+          );
         } else {
           throw new Error('Data submission failed');
         }

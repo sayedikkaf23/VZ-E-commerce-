@@ -687,12 +687,16 @@ exports.getAllSubmissions = async (req, res) => {
       MailDetails.find()       // from MailManagement model
     ]);
 
-    // allSubmissions is already an array from UserDetails.
-    // Simply push in the other results (virtualData, mailData).
-    allSubmissions.push(...virtualData, ...mailData);
+    // Combine all data into one array
+    let combinedSubmissions = [...allSubmissions, ...virtualData, ...mailData];
 
-    // Now 'allSubmissions' includes documents from all three collections
-    res.status(200).json(allSubmissions);
+    // Remove duplicates based on email
+    const uniqueSubmissions = Array.from(
+      new Map(combinedSubmissions.map(item => [item.email, item])).values()
+    );
+
+    // Send the filtered unique submissions
+    res.status(200).json(uniqueSubmissions);
   } catch (error) {
     res
       .status(500)

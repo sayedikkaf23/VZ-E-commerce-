@@ -80,5 +80,7 @@ export class UserService {  // Changed the service name to UserService
     return this.http.get(`${this.url}/user/dashboard`);
   }
   
-  
+  checkStatus(data: { CustomerId: string; CompanyName: string }): Observable<any> {
+    return this.http.post(`${this.url}/user/checkStatus`, data); // POST request to check status
+  }
 }
