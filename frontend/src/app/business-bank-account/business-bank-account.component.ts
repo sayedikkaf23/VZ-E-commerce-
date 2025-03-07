@@ -231,17 +231,20 @@ toDate: string = '';
 
 onDateFilter(): void {
   if (this.fromDate && this.toDate) {
-    this.filteredUserList = this.userList.filter((user) => {
-      const createdDate = new Date(user.createdAt);
-      const startDate = new Date(this.fromDate);
-      const endDate = new Date(this.toDate);
-      return createdDate >= startDate && createdDate <= endDate;
+    const startDate = new Date(this.fromDate);
+    const endDate = new Date(this.toDate);
+
+    this.filteredUserList = this.userList.filter(user => {
+      const userCreatedAt = new Date(user.createdAt); // Assuming createdAt is the date field in your user data
+      return userCreatedAt >= startDate && userCreatedAt <= endDate;
     });
   } else {
-    this.filteredUserList = [...this.userList];
+    this.filteredUserList = [...this.userList]; // Reset to original list if no dates selected
   }
-  this.currentPage = 1; // Reset Pagination
+
+  this.currentPage = 1; // Reset pagination to first page after filtering
 }
+
 showShareholderModal: boolean = false;
 selectedShareholders: any[] = [];
 

@@ -183,17 +183,21 @@ toDate: string = '';
 
 onDateFilter(): void {
   if (this.fromDate && this.toDate) {
-    this.filteredClientList = this.userList.filter((user) => {
-      const createdDate = new Date(user.createdAt);
-      const startDate = new Date(this.fromDate);
-      const endDate = new Date(this.toDate);
+    const startDate = new Date(this.fromDate);
+    const endDate = new Date(this.toDate);
+    // Set time to end of day to include the whole day in filter
+    endDate.setHours(23, 59, 59, 999);
+
+    this.filteredClientList = this.clientList.filter((client) => {
+      const createdDate = new Date(client.leadWithDetails?.createdAt);
       return createdDate >= startDate && createdDate <= endDate;
     });
   } else {
-    this.filteredClientList = [...this.userList];
+    this.filteredClientList = [...this.clientList]; // Reset to full list if no date selected
   }
-  this.currentPage = 1; // Reset Pagination
+  this.currentPage = 1; // Reset pagination after filtering
 }
+
 
 selectedProducts: any[] = [];
 selectedDocuments: any[] = [];
