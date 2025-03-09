@@ -136,9 +136,10 @@ export class CustomerManagementComponent implements OnInit {
       text: `Do you want to update the user's status to ${newStatus}?`,
       icon: 'question',
       showCancelButton: true,
+      confirmButtonText: '<i class="fa fa-check"></i> Yes, update it!',
+      cancelButtonText: '<i class="fa fa-times"></i> No, cancel',
        confirmButtonColor: '#FF5A5F',
-      confirmButtonText: 'Yes, update it!',
-      cancelButtonText: 'No, cancel'
+     
     }).then((result) => {
       if (result.isConfirmed) {
         const requestData = {
@@ -152,7 +153,9 @@ export class CustomerManagementComponent implements OnInit {
             Swal.fire({
               title: 'Status Updated!',
               text: `User's KYC status has been updated to ${newStatus}.`,
-              icon: 'success'
+              icon: 'success',
+              confirmButtonColor: '#FF5A5F',
+
             });
             user.kycStatus = newStatus; // Update UI immediately
           },
@@ -161,7 +164,9 @@ export class CustomerManagementComponent implements OnInit {
             Swal.fire({
               title: 'Update Failed!',
               text: 'Failed to update user status. Please try again later.',
-              icon: 'error'
+              icon: 'error',
+              confirmButtonColor: '#FF5A5F',
+
             });
           }
         );
