@@ -68,16 +68,11 @@ export class CustomerManagementComponent implements OnInit {
     this.searchTerm = this.searchTerm.trim().toLowerCase();
     if (this.searchTerm) {
       this.filteredUserList = this.userList.filter(user =>
-        // Search by first and last name from leadWithDetails
         (`${user.leadWithDetails.FirstName || ''} ${user.leadWithDetails.LastName || ''}`)
           .trim().toLowerCase().includes(this.searchTerm) ||
-        // Search by email from leadWithDetails
         (user.leadWithDetails.Email && user.leadWithDetails.Email.toLowerCase().includes(this.searchTerm)) ||
-        // Search by nationality from leadWithDetails
         (user.leadWithDetails.Nationality && user.leadWithDetails.Nationality.toLowerCase().includes(this.searchTerm)) ||
-        // Optionally search birthday if it exists
         (user.birthday && user.birthday.includes(this.searchTerm)) ||
-        // Search by Quote Payment ID from quotePaymentWithDetails
         (user.quotePaymentWithDetails && user.quotePaymentWithDetails.QuotePaymentId && 
          user.quotePaymentWithDetails.QuotePaymentId.toLowerCase().includes(this.searchTerm))
       );

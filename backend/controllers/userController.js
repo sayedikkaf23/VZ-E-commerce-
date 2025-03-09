@@ -681,7 +681,6 @@ exports.MatchScoreProductService = async (req, res) => {
 exports.getAllSubmissions = async (req, res) => {
   try {
     const pidata = await Pidata.find(); // Fetch data from Pidata model
- 
     res.status(200).json(pidata); // Send only Pidata data to the frontend
   } catch (error) {
     res
