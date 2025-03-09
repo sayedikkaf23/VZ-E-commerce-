@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminAuthService } from '../service/admin-auth.service';
- 
+
 @Component({
   selector: 'app-customer-management',
   templateUrl: './customer-management.component.html',
@@ -16,13 +16,13 @@ export class CustomerManagementComponent implements OnInit {
   searchTerm: string = '';
   fromDate: string = '';
   toDate: string = '';
- 
-  constructor(private adminAuthService: AdminAuthService) {}
- 
+
+  constructor(private adminAuthService: AdminAuthService) { }
+
   ngOnInit(): void {
     this.fetchUserDetails();
   }
- 
+
   fetchUserDetails(): void {
     this.adminAuthService.getUserDetails().subscribe(
       (response) => {
@@ -34,36 +34,36 @@ export class CustomerManagementComponent implements OnInit {
       }
     );
   }
- 
+
   paginatedUserList(): any[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return this.filteredUserList.slice(startIndex, startIndex + this.itemsPerPage);
   }
- 
+
   get totalPages(): number {
     return Math.ceil(this.filteredUserList.length / this.itemsPerPage);
   }
- 
+
   get totalPagesArray(): number[] {
     return Array.from({ length: this.totalPages }, (_, i) => i + 1);
   }
- 
+
   previousPage(): void {
     if (this.currentPage > 1) {
       this.currentPage--;
     }
   }
- 
+
   nextPage(): void {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
     }
   }
- 
+
   goToPage(page: number): void {
     this.currentPage = page;
   }
- 
+
   onSearch(): void {
     this.searchTerm = this.searchTerm.trim().toLowerCase();
     if (this.searchTerm) {
@@ -73,29 +73,29 @@ export class CustomerManagementComponent implements OnInit {
         (user.leadWithDetails.Email && user.leadWithDetails.Email.toLowerCase().includes(this.searchTerm)) ||
         (user.leadWithDetails.Nationality && user.leadWithDetails.Nationality.toLowerCase().includes(this.searchTerm)) ||
         (user.birthday && user.birthday.includes(this.searchTerm)) ||
-        (user.quotePaymentWithDetails && user.quotePaymentWithDetails.QuotePaymentId && 
-         user.quotePaymentWithDetails.QuotePaymentId.toLowerCase().includes(this.searchTerm))
+        (user.quotePaymentWithDetails && user.quotePaymentWithDetails.QuotePaymentId &&
+          user.quotePaymentWithDetails.QuotePaymentId.toLowerCase().includes(this.searchTerm))
       );
     } else {
       this.filteredUserList = [...this.userList];
     }
     this.currentPage = 1;
   }
-  
+
   onDateFilter(): void {
     if (this.fromDate && this.toDate) {
       const fromDateObj = new Date(this.fromDate);
       const toDateObj = new Date(this.toDate);
- 
+
       // Adjust times to compare entire days
       fromDateObj.setHours(0, 0, 0, 0);
       toDateObj.setHours(23, 59, 59, 999);
- 
+
       this.filteredUserList = this.userList.filter(user => {
         const userDate = new Date(user.createdAt);
         return userDate >= fromDateObj && userDate <= toDateObj;
       });
- 
+
       this.currentPage = 1;
     } else {
       console.log("Please select both From and To dates.");
@@ -103,34 +103,34 @@ export class CustomerManagementComponent implements OnInit {
       // this.filteredUserList = [...this.userList];
     }
   }
- 
- 
+
+
   openDetailsModal(details: any): void {
     this.selectedCustomer = details;
     this.showDetailsModal = true;
   }
- 
+
   objectKeys(obj: { [key: string]: any } | null): string[] {
     return obj ? Object.keys(obj) : [];
   }
- 
+
   isObject(value: any): boolean {
     return value && typeof value === 'object' && !Array.isArray(value);
   }
- 
+
   closeDetailsModal(): void {
     this.showDetailsModal = false;
   }
   handleUserAction(user: any): void {
     let newStatus = '';
- 
+
     if (user.kycStatus === 'Pending' || user.kycStatus === 'Rejected') {
       newStatus = 'Approved'; // Allow both Pending and Rejected users to be approved
     } else if (user.kycStatus === 'Auto Approved' || user.kycStatus === 'Approved') {
       newStatus = 'Rejected';
     }
- 
- 
+
+
     // Show confirmation before making API call
     if (confirm(`Are you sure you want to update  status to ${newStatus}?`)) {
       const requestData = {
@@ -138,7 +138,7 @@ export class CustomerManagementComponent implements OnInit {
         kycStatus: newStatus,
         QuotePaymentId: user.quotePaymentWithDetails.QuotePaymentId, // Add QuotePaymentId if required by the API
       };
- 
+
       this.adminAuthService.updateKycStatus(requestData).subscribe(
         (response) => {
           alert(`User status updated to ${newStatus}`);
@@ -151,7 +151,7 @@ export class CustomerManagementComponent implements OnInit {
       );
     }
   }
- 
+
   getButtonLabel(status: string): string {
     switch (status) {
       case 'Pending':
@@ -166,7 +166,7 @@ export class CustomerManagementComponent implements OnInit {
         return 'Approve';
     }
   }
- 
+
   getButtonClass(status: string): string {
     switch (status) {
       case 'Pending':
@@ -179,7 +179,6 @@ export class CustomerManagementComponent implements OnInit {
         return 'green-button';
     }
   }
- 
+
 }
- 
- 
+
