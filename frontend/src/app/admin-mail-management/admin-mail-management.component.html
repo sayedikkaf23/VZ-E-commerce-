@@ -34,16 +34,18 @@
     <table class="table table-list-data table-hover">
       <thead class="bg-light">
         <tr>
-          <th scope="col">Name</th>
-          <th scope="col">Email</th>
+          <th scope="col">Name &#x2191;&#x2193;</th>
+          <th scope="col">Email &#x2191;&#x2193;</th>
           <!-- <th scope="col">Employment Status</th> -->
           <!-- <th scope="col">Salary</th> -->
           <!-- <th scope="col">Bank Type</th> -->
-          <th scope="col">Compliance Score</th>
-          <th scope="col">Compliance Status</th>
-          <th scope="col">View Products</th>
-          <th scope="col">View Documents</th>
-          <th scope="col">Shareholder</th>
+          <th scope="col">Phone Number &#x2191;&#x2193;</th>
+          <th scope="col">Quote Payment ID &#x2191;&#x2193;</th>
+          <th scope="col">Compliance Score &#x2191;&#x2193;</th>
+          <th scope="col">Compliance Status &#x2191;&#x2193;</th>
+          <th scope="col">View Products &#x2191;&#x2193;</th>
+          <th scope="col">View Documents &#x2191;&#x2193;</th>
+          <th scope="col">Shareholder &#x2191;&#x2193;</th>
         </tr>
       </thead>
       <tbody>
@@ -51,6 +53,9 @@
         <tr *ngFor="let mail of paginatedMailList()">
           <td>{{ mail.leadWithDetails.FirstName }} {{ mail.leadWithDetails.LastName }}</td>
           <td>{{ mail.leadWithDetails.Email }}</td>
+          <td>{{ mail.leadWithDetails.Phone }}</td>
+          <td>{{ mail.quotePaymentWithDetails.QuotePaymentId }}</td>
+
           <!-- <td>{{ client.userDetails?.EmploymentStatus || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.salary || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.bankType || 'N/A' }}</td> -->
@@ -104,6 +109,8 @@
               <th>Product Name</th>
               <th>Quantity</th>
               <th>Unit Price</th>
+          
+
             </tr>
           </thead>
           <tbody>
@@ -111,6 +118,8 @@
               <td>{{ product.productName }}</td>
               <td>{{ product.productQuantity }}</td>
               <td>{{ product.productUnitPrice }}</td>
+             
+
             </tr>
           </tbody>
         </table>

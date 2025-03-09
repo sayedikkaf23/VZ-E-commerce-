@@ -26,5 +26,5 @@ router.post('/checkStatus', userController.checkStatus);
 router.post('/MatchScoreProductService', userController.MatchScoreProductService);
 router.post('/updateAdditionalUploadedFiles', userController.updateAdditionalUploadedFiles);
 router.get('/dashboard', userController.dashboard);
-
+router.post('/updateKycStatus', userController.updateKycStatus);
 module.exports = router;

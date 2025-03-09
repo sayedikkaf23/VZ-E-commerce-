@@ -147,6 +147,8 @@ onSearch(): void {
       (user?.userDetails?.Turnover?.toString() || '').toLowerCase().includes(this.searchTerm) ||
       (user?.screeningDetails?.matchScore?.toString() || '').includes(this.searchTerm) ||
       (user?.CustomerStatus || '').toLowerCase().includes(this.searchTerm)
+      (user?.quotePaymentWithDetails?.QuotePaymentId || '').toLowerCase().includes(this.searchTerm)
+
     );
   } else {
     this.filteredUserList = [...this.userList];

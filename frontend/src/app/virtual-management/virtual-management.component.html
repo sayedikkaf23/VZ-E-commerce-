@@ -33,6 +33,8 @@
         <tr>
           <th scope="col">Name</th>
           <th scope="col">Email</th>
+          <th scope="col">Phone Number &#x2191;&#x2193;</th>
+          <th scope="col">Quote Payment ID &#x2191;&#x2193;</th>
           <!-- <th scope="col">Employment Status</th> -->
           <!-- <th scope="col">Salary</th> -->
           <!-- <th scope="col">Bank Type</th> -->
@@ -48,6 +50,8 @@
         <tr *ngFor="let client of paginatedClientList()">
           <td>{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
           <td>{{ client.leadWithDetails.Email }}</td>
+          <td>{{ client.leadWithDetails.Phone }}</td>
+          <td>{{ client.quotePaymentWithDetails.QuotePaymentId }}</td>
           <!-- <td>{{ client.userDetails?.EmploymentStatus || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.salary || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.bankType || 'N/A' }}</td> -->

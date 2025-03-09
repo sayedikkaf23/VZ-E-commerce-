@@ -33,9 +33,13 @@
           <th scope="col">Email &#x2191;&#x2193;</th>
           <th scope="col">Phone Number &#x2191;&#x2193;</th>
           <th scope="col">Nationality &#x2191;&#x2193;</th>
+          <th scope="col">Quote Payment ID &#x2191;&#x2193;</th>
+          <th scope="col">Services &#x2191;&#x2193;</th>
+          <th scope="col">Complaince Status &#x2191;&#x2193;</th>
+
+
           <th scope="col">Created Date &#x2191;&#x2193;</th>
           <th scope="col">Updated Date &#x2191;&#x2193;</th>
-          <th scope="col">Quote Payment ID &#x2191;&#x2193;</th>
           <th scope="col">Action</th>
 
           <!-- <th scope="col">User Details &#x2191;&#x2193;</th> -->
@@ -44,18 +48,21 @@
       <!-- Table body with filtered data -->
       <tbody>
         <tr *ngFor="let user of paginatedUserList()">
-          <td>{{ user.firstName }} {{ user.lastName }}</td>
-          <td>{{ user.email }}</td>
-          <td>{{ user.mobileNumber?.internationalNumber }}</td>
-          <td>{{ user.nationality }}</td>
+          <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
+          <td>{{ user.leadWithDetails.Email }}</td>
+          <td>{{ user.leadWithDetails.Phone }}</td>
+          <td>{{ user.leadWithDetails.Nationality }}</td>
+          <td>{{ user.quotePaymentWithDetails.QuotePaymentId }}</td>
+          <td>{{ user.planname }}</td>
+          <td>{{ user.kycStatus}}</td>
+
           <td>{{ user.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
           <td>{{ user.updatedAt | date:'yyyy-MM-dd HH:mm' }}</td>
-          <td>{{ user.QuotePaymentId }}</td>
           <td>
-            <button 
-              [ngClass]="getButtonClass(user.status)" 
+            <button
+             class="green-button"
               (click)="handleUserAction(user)">
-              {{ getButtonLabel(user.status) }}
+              {{ getButtonLabel(user.kycStatus) }}
             </button>
           </td>
           <!-- <td>

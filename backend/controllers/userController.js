@@ -680,36 +680,23 @@ exports.MatchScoreProductService = async (req, res) => {
 
 exports.getAllSubmissions = async (req, res) => {
   try {
-    // Fetch data from all three collections in parallel
-    const [allSubmissions, virtualData, mailData] = await Promise.all([
-      UserDetails.find(),      // from UserDetails model
-      VirtualDetails.find(),   // from VirtualReceptionist model
-      MailDetails.find()       // from MailManagement model
-    ]);
-
-    // Combine all data into one array
-    let combinedSubmissions = [...allSubmissions, ...virtualData, ...mailData];
-
-    // Remove duplicates based on email
-    const uniqueSubmissions = Array.from(
-      new Map(combinedSubmissions.map(item => [item.email, item])).values()
-    );
-
-    // Send the filtered unique submissions
-    res.status(200).json(uniqueSubmissions);
+    const pidata = await Pidata.find(); // Fetch data from Pidata model
+ 
+    res.status(200).json(pidata); // Send only Pidata data to the frontend
   } catch (error) {
     res
       .status(500)
-      .json({ error: 'Error fetching submissions', details: error.message });
+      .json({ error: 'Error fetching Pidata', details: error.message });
   }
 };
+ 
 
 
 exports.getPersonalBank = async (req, res) => {
   try {
     // Fetch documents from the PiData collection with subcategory 'personal'
     const PersonalBankSubmissions = await Pidata.find({ subcategory: "personal" });
-
+ 
     // Authenticate API to get the token
     const authResponse = await axios.post(
       `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
@@ -724,20 +711,20 @@ exports.getPersonalBank = async (req, res) => {
         },
       }
     );
-
+ 
     const authToken = authResponse.data.token; // Assuming token is here
-
+ 
     // Prepare an array to store the merged results
     const mergedResults = [];
-
+ 
     // Loop through each PiData document and find corresponding UserDetails data
     for (const submission of PersonalBankSubmissions) {
       const { quotePaymentWithDetails } = submission;
       const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
-
+ 
       // Fetch the corresponding UserDetails document using QuotePaymentId
       const userDetails = await UserDetails.findOne({ QuotePaymentId: quotePaymentId });
-
+ 
       if (userDetails) {
         let kycStatus = null;
         try {
@@ -757,23 +744,27 @@ exports.getPersonalBank = async (req, res) => {
           );
 console.log(statusResponse,"statusResponse")
           // Extract KYC status from response
-          kycStatus = statusResponse.data?.CustomerStatus || "Unknown"; 
-
+          kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+          await Pidata.updateOne(
+            { _id: submission._id }, // Find by ID
+            { $set: { kycStatus } } // Update kycStatus field
+          );
+ 
         } catch (statusError) {
           console.error("Error fetching KYC status:", statusError.message);
         }
-
+ 
         // Merge PiData, UserDetails, and KYC status
         const mergedData = {
           ...submission._doc, // Plain object representation
           userDetails,
           kycStatus, // Add KYC status
         };
-
+ 
         mergedResults.push(mergedData);
       }
     }
-
+ 
     // Return the merged results as JSON
     res.status(200).json(mergedResults);
   } catch (error) {
@@ -787,14 +778,13 @@ console.log(statusResponse,"statusResponse")
 
 
 
-
 exports.getBusinessBank = async (req, res) => {
   try {
     // Fetch documents from the PiData collection with subcategory 'business'
     const businessBankSubmissions = await Pidata.find({ subcategory: "business" });
-
-
-
+ 
+ 
+ 
     const authResponse = await axios.post(
       `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
       {
@@ -808,20 +798,20 @@ exports.getBusinessBank = async (req, res) => {
         },
       }
     );
-
+ 
     const authToken = authResponse.data.token; // Assuming token is here
-
+ 
     // Prepare an array to store the merged results
     const mergedResults = [];
-
+ 
     // Loop through each PiData document and find corresponding UserDetails data
     for (const submission of businessBankSubmissions) {
       const { quotePaymentWithDetails } = submission;
       const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
-
+ 
       // Fetch the corresponding UserDetails document using QuotePaymentId
       const userDetails = await UserDetails.findOne({ "QuotePaymentId": quotePaymentId });
-
+ 
       if (userDetails) {
         let kycStatus = null;
         try {
@@ -841,25 +831,28 @@ exports.getBusinessBank = async (req, res) => {
           );
 console.log(statusResponse,"statusResponse")
           // Extract KYC status from response
-          kycStatus = statusResponse.data?.CustomerStatus || "Unknown"; 
-
+          kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+          await Pidata.updateOne(
+            { _id: submission._id }, // Find by ID
+            { $set: { kycStatus } } // Update kycStatus field
+          );
         } catch (statusError) {
           console.error("Error fetching KYC status:", statusError.message);
         }
-
+ 
         // Merge PiData, UserDetails, and KYC status
         const mergedData = {
           ...submission._doc, // Plain object representation
           userDetails,
           kycStatus, // Add KYC status
         };
-
+ 
         mergedResults.push(mergedData);
       }
-
+ 
       // mergedResults.push(mergedData);
     }
-
+ 
     // Return the merged results as a JSON response
     res.status(200).json(mergedResults);
   } catch (error) {
@@ -870,6 +863,7 @@ console.log(statusResponse,"statusResponse")
     });
   }
 };
+ 
 
 
 exports.submitService = async (req, res) => {
@@ -1313,6 +1307,40 @@ exports.dashboard = async (req, res) => {
   }
 };
 
+exports.updateKycStatus = async (req, res) => {
+  try {
+    const { id, kycStatus } = req.body;
+ 
+    // Validate input
+    if (!id || !["Approved", "Rejected"].includes(kycStatus)) {
+      return res.status(400).json({
+        error: "Invalid request. Provide a valid id and kycStatus (Approved/Rejected).",
+      });
+    }
+ 
+    // Find and update the Pidata document
+    const updatedDocument = await Pidata.findByIdAndUpdate(
+      id,
+      { $set: { kycStatus } },
+      { new: true } // Return the updated document
+    );
+ 
+    if (!updatedDocument) {
+      return res.status(404).json({ error: "Record not found" });
+    }
+ 
+    res.status(200).json({
+      message: `KYC status updated successfully to ${kycStatus}`,
+      data: updatedDocument,
+    });
+  } catch (error) {
+    console.error("Error updating KYC status:", error);
+    res.status(500).json({
+      error: "Error updating KYC status",
+      details: error.message,
+    });
+  }
+};
 
 
 

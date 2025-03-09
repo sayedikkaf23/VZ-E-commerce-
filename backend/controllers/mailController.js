@@ -370,8 +370,8 @@ exports.getMailDetails = async (req, res) => {
   try {
     // Fetch documents from the PiData collection with subcategory 'business'
     const MailDetailsSubmissions = await Pidata.find({ planname: "Mail Management" });
-
-
+ 
+ 
     const authResponse = await axios.post(
       `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
       {
@@ -385,19 +385,19 @@ exports.getMailDetails = async (req, res) => {
         },
       }
     );
-
+ 
     const authToken = authResponse.data.token; // Assuming token is here
     // Prepare an array to store the merged results
     const mergedResults = [];
-
+ 
     // Loop through each PiData document and find corresponding UserDetails data
     for (const submission of MailDetailsSubmissions) {
       const { quotePaymentWithDetails } = submission;
       const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
-
+ 
       // Fetch the corresponding UserDetails document using QuotePaymentId
       const userDetails = await MailDetails.findOne({ "QuotePaymentId": quotePaymentId });
-
+ 
       // Merge PiData and UserDetails
       if (userDetails) {
         let kycStatus = null;
@@ -418,23 +418,27 @@ exports.getMailDetails = async (req, res) => {
           );
 console.log(statusResponse,"statusResponse")
           // Extract KYC status from response
-          kycStatus = statusResponse.data?.CustomerStatus || "Unknown"; 
-
+          kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+          await Pidata.updateOne(
+            { _id: submission._id }, // Find by ID
+            { $set: { kycStatus } } // Update kycStatus field
+          );
+ 
         } catch (statusError) {
           console.error("Error fetching KYC status:", statusError.message);
         }
-
+ 
         // Merge PiData, UserDetails, and KYC status
         const mergedData = {
           ...submission._doc, // Plain object representation
           userDetails,
           kycStatus, // Add KYC status
         };
-
+ 
         mergedResults.push(mergedData);
       }
     }
-
+ 
     // Return the merged results as a JSON response
     res.status(200).json(mergedResults);
   } catch (error) {

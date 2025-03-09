@@ -1,13 +1,13 @@
 const mongoose = require('mongoose');
-
-
-
+ 
+ 
+ 
 const screeningDetailsSchema = new mongoose.Schema({
   // screeningId: { type: String },
   matchScore: { type: Number }
 });
-
-
+ 
+ 
 const shareholderSchema = new mongoose.Schema({
   name: { type: String },
   shareholderPercentage: { type: Number },
@@ -22,7 +22,7 @@ const shareholderSchema = new mongoose.Schema({
     }
   ]
 });
-
+ 
 const responseSchema = new mongoose.Schema({
   products: [
     {
@@ -40,8 +40,8 @@ const responseSchema = new mongoose.Schema({
   accountId: { type: String },
   quotePayementId: { type: String }
 });
-
-
+ 
+ 
 const pidataSchema = new mongoose.Schema(
   {
     leadWithDetails: {
@@ -112,6 +112,7 @@ const pidataSchema = new mongoose.Schema(
     salesforceResponseMatchScreening: responseSchema,
     invoiceDate: { type: String },
     invoiceNumber: { type: String },
+    kycStatus: { type: String ,default: 'Pending'},
     shareholders: [shareholderSchema],
     salesPersonDetails: {
       salesPersonEmail: { type: String },
@@ -130,6 +131,6 @@ const pidataSchema = new mongoose.Schema(
     timestamps: true, // <<--- This adds createdAt and updatedAt
   }
 );
-
-
+ 
+ 
 module.exports = mongoose.model('Pidata', pidataSchema);

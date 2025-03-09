@@ -365,8 +365,8 @@ exports.getVirtualDetails = async (req, res) => {
   try {
     // Fetch documents from the PiData collection with subcategory 'business'
     const VirtualDetailsSubmissions = await Pidata.find({ planname: "Virtual Receptionist" });
-
-
+ 
+ 
       const authResponse = await axios.post(
           `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
           {
@@ -380,19 +380,19 @@ exports.getVirtualDetails = async (req, res) => {
             },
           }
         );
-    
+   
         const authToken = authResponse.data.token; // Assuming token is here
     // Prepare an array to store the merged results
     const mergedResults = [];
-
+ 
     // Loop through each PiData document and find corresponding UserDetails data
     for (const submission of VirtualDetailsSubmissions) {
       const { quotePaymentWithDetails } = submission;
       const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
-
+ 
       // Fetch the corresponding UserDetails document using QuotePaymentId
       const userDetails = await VirtualDetails.findOne({ "QuotePaymentId": quotePaymentId });
-
+ 
       // Merge PiData and UserDetails
       if (userDetails) {
            let kycStatus = null;
@@ -413,7 +413,11 @@ exports.getVirtualDetails = async (req, res) => {
              );
    console.log(statusResponse,"statusResponse")
              // Extract KYC status from response
-             kycStatus = statusResponse.data?.CustomerStatus || "Unknown"; 
+             kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+             await Pidata.updateOne(
+              { _id: submission._id }, // Find by ID
+              { $set: { kycStatus } } // Update kycStatus field
+            );
    
            } catch (statusError) {
              console.error("Error fetching KYC status:", statusError.message);
@@ -429,7 +433,7 @@ exports.getVirtualDetails = async (req, res) => {
            mergedResults.push(mergedData);
          }
     }
-
+ 
     // Return the merged results as a JSON response
     res.status(200).json(mergedResults);
   } catch (error) {
@@ -440,3 +444,4 @@ exports.getVirtualDetails = async (req, res) => {
     });
   }
 };
+ 

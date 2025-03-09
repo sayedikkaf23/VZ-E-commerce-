@@ -58,4 +58,7 @@ export class AdminAuthService {
   login(data: { email: string; password: string }): Observable<any> {
     return this.http.post(`${this.url}/auth/login`, data); // POST request to /auth/login
   }
+  updateKycStatus(data: { id: string; kycStatus: string ,QuotePaymentId:string}): Observable<any> {
+    return this.http.post(`${this.url}/user/updateKycStatus`, data); // POST request to check status
+  }
 }
