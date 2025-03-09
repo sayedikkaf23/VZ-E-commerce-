@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AdminAuthService } from '../service/admin-auth.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-customer-management',
@@ -123,33 +124,49 @@ export class CustomerManagementComponent implements OnInit {
   }
   handleUserAction(user: any): void {
     let newStatus = '';
-
+  
     if (user.kycStatus === 'Pending' || user.kycStatus === 'Rejected') {
       newStatus = 'Approved'; // Allow both Pending and Rejected users to be approved
     } else if (user.kycStatus === 'Auto Approved' || user.kycStatus === 'Approved') {
       newStatus = 'Rejected';
     }
-
-
-    // Show confirmation before making API call
-    if (confirm(`Are you sure you want to update  status to ${newStatus}?`)) {
-      const requestData = {
-        id: user._id, // Ensure you are passing the correct ID field
-        kycStatus: newStatus,
-        QuotePaymentId: user.quotePaymentWithDetails.QuotePaymentId, // Add QuotePaymentId if required by the API
-      };
-
-      this.adminAuthService.updateKycStatus(requestData).subscribe(
-        (response) => {
-          alert(`User status updated to ${newStatus}`);
-          user.kycStatus = newStatus; // Update UI immediately
-        },
-        (error) => {
-          console.error('Error updating KYC status:', error);
-          alert('Failed to update status. Please try again.');
-        }
-      );
-    }
+  
+    Swal.fire({
+      title: 'Update KYC Status',
+      text: `Do you want to update the user's status to ${newStatus}?`,
+      icon: 'question',
+      showCancelButton: true,
+       confirmButtonColor: '#FF5A5F',
+      confirmButtonText: 'Yes, update it!',
+      cancelButtonText: 'No, cancel'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const requestData = {
+          id: user._id, // Ensure you are passing the correct ID field
+          kycStatus: newStatus,
+          QuotePaymentId: user.quotePaymentWithDetails?.QuotePaymentId, // Include QuotePaymentId if required by the API
+        };
+  
+        this.adminAuthService.updateKycStatus(requestData).subscribe(
+          (response) => {
+            Swal.fire({
+              title: 'Status Updated!',
+              text: `User's KYC status has been updated to ${newStatus}.`,
+              icon: 'success'
+            });
+            user.kycStatus = newStatus; // Update UI immediately
+          },
+          (error) => {
+            console.error('Error updating KYC status:', error);
+            Swal.fire({
+              title: 'Update Failed!',
+              text: 'Failed to update user status. Please try again later.',
+              icon: 'error'
+            });
+          }
+        );
+      }
+    });
   }
 
   getButtonLabel(status: string): string {
