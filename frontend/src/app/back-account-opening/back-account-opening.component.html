@@ -2,7 +2,7 @@
 <div *ngIf="isLoading" class="red-loader">
   <div class="red-spinner"></div>
 </div>
-
+ 
 <div class="content">
   <div class="page-heading">
     <div class="row align-items-center justify-content-between">
@@ -19,7 +19,7 @@
               <input type="date" placeholder="To Date" [(ngModel)]="toDate">
               <button class="filter-button" (click)="onDateFilter()">FILTER BY DATE</button>
             </div>
-            
+           
           </div>
         </div>
       </div>
@@ -28,7 +28,7 @@
       </div>
     </div>
   </div>
-
+ 
   <div class="table-responsive overflow-behaviour">
     <table class="table table-list-data table-hover">
       <thead class="bg-light">
@@ -36,40 +36,77 @@
           <th scope="col">Name</th>
           <th scope="col">Email</th>
           <th scope="col">Employment Status</th>
-          <th scope="col">Salary</th>
+          <th scope="col">Salary/Company Name</th>
           <th scope="col">Bank Type</th>
-          <!-- <th scope="col">Phone Number </th> -->
-          <th scope="col">Quote Payment ID </th>
+          <th scope="col">Quote Payment ID</th>
           <th scope="col">Compliance Score</th>
           <th scope="col">Compliance Status</th>
           <th scope="col">View Product</th>
           <th scope="col">View Document</th>
-
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of paginatedUserList()">
-          <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
-          <td>{{ user.leadWithDetails.Email }}</td>
-          <td>{{ user.userDetails.working }}</td>
-          <td>{{ user.userDetails.salary }}</td>
-          <td>{{ user.userDetails.Bank }}</td>
-          <!-- <td>{{ mail.leadWithDetails.Phone }}</td> -->
-          <td>{{ user.quotePaymentWithDetails.QuotePaymentId }}</td>
+        <tr *ngFor="let user of filteredUserList">
+          <td>{{ user.leadWithDetails?.FirstName }} {{ user.leadWithDetails?.LastName }}</td>
+          <td>{{ user.leadWithDetails?.Email }}</td>
+          <td>{{ user.userDetails?.working }}</td>
+          <td>
+            {{
+              user.userDetails?.working === 'Salaried'
+                ? user.userDetails?.salary
+                : user.userDetails?.working === 'Self Employed'
+                  ? user.userDetails?.companyname
+                  : 'NA'
+            }}
+          </td>
+         
+          <td>{{ user.userDetails?.Bank }}</td>
+          <td>{{ user.quotePaymentWithDetails?.QuotePaymentId }}</td>
           <td>{{ user.screeningDetails?.matchScore }}</td>
           <td>{{ user.kycStatus }}</td>
           <td>
-            <button class="green-button" (click)="openProductModal(user)">View Products</button>
-            
+            <button class="green-button" (click)="openProductModal(user)">
+              View Products
+            </button>
           </td>
           <td>
-            <button class="green-button" (click)="openDocumentModal(user)">View Documents</button>            
+            <button class="green-button" (click)="openDocumentModal(user)">
+              View Documents
+            </button>
           </td>
         </tr>
       </tbody>
     </table>
   </div>
-  
+ 
+  <!-- PAGINATION CONTROLS -->
+  <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
+    <ul class="pagination custom-pagination">
+      <!-- Previous -->
+      <li class="page-item" [class.disabled]="currentPage === 1 || isLoading">
+        <a class="page-link" (click)="previousPage()" aria-label="Previous">
+          <span aria-hidden="true">&laquo;</span>
+        </a>
+      </li>
+ 
+      <!-- Page Numbers -->
+      <li class="page-item"
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          [class.active]="(i + 1) === currentPage"
+          [class.disabled]="isLoading">
+        <a class="page-link" (click)="goToPage(i + 1)">{{ i + 1 }}</a>
+      </li>
+ 
+      <!-- Next -->
+      <li class="page-item" [class.disabled]="currentPage === totalPages || isLoading">
+        <a class="page-link" (click)="nextPage()" aria-label="Next">
+          <span aria-hidden="true">&raquo;</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+ 
+ 
   <div *ngIf="showProductModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
@@ -101,7 +138,7 @@
       </div>
     </div>
   </div>
-  
+ 
   <!-- Documents Modal -->
   <div *ngIf="showDocumentModal" class="modal-overlay">
     <div class="modal-content" style="width: 50% !important;">
@@ -126,27 +163,10 @@
       </div>
     </div>
   </div>
-  
-  
+ 
+ 
   <!-- Pagination Controls -->
-  <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
-    <ul class="pagination custom-pagination">
-      <li class="page-item" [class.disabled]="currentPage === 1">
-        <a class="page-link" (click)="previousPage()" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
-      </li>
-      <li class="page-item"
-          *ngFor="let page of totalPagesArray"
-          [class.active]="page === currentPage">
-        <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
-      </li>
-      <li class="page-item" [class.disabled]="currentPage === totalPages">
-        <a class="page-link" (click)="nextPage()" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
-      </li>
-    </ul>
-  </nav>
-  
+ 
+ 
 </div>
+ 

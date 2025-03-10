@@ -18,14 +18,25 @@ export class AdminAuthService {
   adminLogin(data: { email: string; password: string }): Observable<any> {
     return this.http.post(`${this.url}/user/login`, data); // Sending email and password as JSON
   }
-  getUserDetails(): Observable<any> {
-    return this.http.get(`${this.url}/user/submissions`); // GET request to fetch submissions
+  getUserDetails(page: number, limit: number, searchTerm?: string): Observable<any> {
+    const params: any = {
+      page: page.toString(),
+      limit: limit.toString(),
+    };
+    if (searchTerm) {
+      params.searchTerm = searchTerm;
+    }
+ 
+    return this.http.get<any>(`${this.url}/user/submissions`, { params });
   }
-  getBusinessBank(): Observable<any> {
-    return this.http.get(`${this.url}/user/getBusinessBank`); // GET request to fetch submissions
+  getBusinessBank(page: number, limit: number): Observable<any> {
+    const params = { page: page.toString(), limit: limit.toString() };
+    return this.http.get<any>(`${this.url}/user/getBusinessBank`, { params });
   }
-  getPersonalBank(): Observable<any> {
-    return this.http.get(`${this.url}/user/getPersonalBank`); // GET request to fetch submissions
+  getPersonalBank(page: number, limit: number): Observable<any> {
+    const params = { page: page.toString(), limit: limit.toString() };
+    return this.http.get<any>( `${this.url}/user/getPersonalBank`, { params });
+    // Adjust path as needed for your route
   }
   getServices(): Observable<any> {
     return this.http.get(`${this.url}/user/services`); // GET request to fetch user services

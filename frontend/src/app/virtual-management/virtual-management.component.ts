@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { VirtualManagementService } from '../service/virtual-management.service';
 import { ToastrService } from 'ngx-toastr'; // Import ToastrService
-
+ 
 @Component({
   selector: 'app-virtual-management',
   templateUrl: './virtual-management.component.html',
@@ -21,50 +21,64 @@ export class VirtualManagementComponent implements OnInit {
   filteredClientList: any[] = []; // Filtered user data
   currentPage: number = 1;
   itemsPerPage: number = 10; // Adjust as needed
-
+  totalRecords: number = 0;
+  totalPages: number = 0;
+ 
   constructor(private virtualManagementService: VirtualManagementService) { }
-
+ 
   selectedUser: { [key: string]: any } | null = null;
-
+ 
   showDetailsModal: boolean = false;
-
-
+ 
+ 
   ngOnInit(): void {
-    this.fetchClientDetails(); // Call the method when the component loads
+    this.fetchClientDetails(this.currentPage, this.itemsPerPage);
   }
-
-  fetchClientDetails(): void {
-    this.isLoading = true
-    this.virtualManagementService.getVirtaulData().subscribe(
-      (response) => {
-        this.clientList = response; // Assign the API response to the clientList array
-        this.checkColumnData(); // Check columns only after data is loaded
-        this.filteredClientList = [...this.clientList]; // Initialize filtered list
+ 
+  fetchClientDetails(page: number, limit: number): void {
+    this.isLoading = true;
+    this.virtualManagementService.getVirtaulData(page, limit).subscribe({
+      next: (response) => {
+        /*
+          We expect response to be in shape:
+          {
+            data: [...pageOfData...],
+            totalRecords: number,
+            totalPages: number,
+            currentPage: number,
+            pageSize: number
+          }
+        */
+        this.clientList = response.data;
+        this.filteredClientList = [...this.clientList]; // for additional filtering
+        this.totalRecords = response.totalRecords;
+        this.totalPages = response.totalPages;
+        this.currentPage = page;
       },
-      (error) => {
+      error: (error) => {
         console.error('Error fetching client details:', error);
-        this.isLoading = false; 
-
       },
-    
-    );
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
   }
-
+ 
   checkColumnData(): void {
     this.hasSalaryData = this.userList.some((user) => !!user.salary);
     this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
   }
   isLoading: boolean = false; // Global loader state
-
+ 
   checkStatus(user: any): void {
     const payload = {
       CustomerId: user.leadWithDetails.LeadId,
       CompanyName: 'Virtuzone',
     };
-
+ 
     // Start the global loader
     this.isLoading = true;
-
+ 
     this.virtualManagementService.checkStatus(payload).subscribe(
       (response) => {
         // Update user status with the response
@@ -81,13 +95,13 @@ export class VirtualManagementComponent implements OnInit {
       }
     );
   }
-
+ 
   openClientDetails(shareholders: any[]): void {
     // console.log(shareholders)
     this.selectedClientDetails = shareholders; // Assign shareholder data to display in the modal
     this.showModal = true; // Open the modal
   }
-
+ 
   closeModal(): void {
     this.showModal = false; // Close the modal
   }
@@ -100,33 +114,33 @@ export class VirtualManagementComponent implements OnInit {
       console.error('No files available for this client.');
     }
   }
-
-
+ 
+ 
   closeFileModal(): void {
     this.showFileModal = false; // Close the file modal
   }
-
-
+ 
+ 
   openDetailsModal(details: any): void {
     console.log('Selected User Data:', details);
     this.selectedUser = details; // Assign selected user details
     this.showDetailsModal = true; // Open the modal for user
   }
-
+ 
   // Helper function to get keys of an object
   objectKeys(obj: { [key: string]: any } | null): string[] {
     return obj ? Object.keys(obj) : []; // Return object keys or empty array if null
   }
-
+ 
   // Helper function to check if a value is an object
   isObject(value: any): boolean {
     return value && typeof value === 'object' && !Array.isArray(value);
   }
-
+ 
   closeDetailsModal(): void {
     this.showDetailsModal = false; // Close the modal
   }
-
+ 
   onSearch(): void {
     this.searchTerm = this.searchTerm.trim().toLowerCase();
     if (this.searchTerm) {
@@ -149,48 +163,40 @@ export class VirtualManagementComponent implements OnInit {
     // Reset pagination to first page after a search
     this.currentPage = 1;
   }
-
+ 
   // --------------------------
   // Pagination Helper Methods
   // --------------------------
-  paginatedClientList(): any[] {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    return this.filteredClientList.slice(startIndex, startIndex + this.itemsPerPage);
-  }
-
-  get totalPages(): number {
-    return Math.ceil(this.filteredClientList.length / this.itemsPerPage);
-  }
-
-  get totalPagesArray(): number[] {
-    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
-  }
-
-  previousPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-    }
-  }
-
+ 
+  // NAVIGATION
   nextPage(): void {
-    if (this.currentPage < this.totalPages) {
-      this.currentPage++;
+    if (this.currentPage < this.totalPages && !this.isLoading) {
+      this.fetchClientDetails(this.currentPage + 1, this.itemsPerPage);
     }
   }
-
-  goToPage(page: number): void {
-    this.currentPage = page;
+ 
+  previousPage(): void {
+    if (this.currentPage > 1 && !this.isLoading) {
+      this.fetchClientDetails(this.currentPage - 1, this.itemsPerPage);
+    }
   }
-
+ 
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages && !this.isLoading) {
+      this.fetchClientDetails(page, this.itemsPerPage);
+    }
+  }
+ 
+ 
   fromDate: string = '';
   toDate: string = '';
-
+ 
   onDateFilter(): void {
     if (this.fromDate && this.toDate) {
       const startDate = new Date(this.fromDate);
       const endDate = new Date(this.toDate);
       endDate.setHours(23, 59, 59, 999);
-  
+ 
       this.filteredClientList = this.clientList.filter((client) => {
         const createdDate = new Date(client.leadWithDetails?.CreatedDate);
         return createdDate >= startDate && createdDate <= endDate;
@@ -198,40 +204,40 @@ export class VirtualManagementComponent implements OnInit {
     } else {
       this.filteredClientList = [...this.clientList];
     }
-    this.currentPage = 1; 
+    this.currentPage = 1;
   }
-  
-
+ 
+ 
   selectedProducts: any[] = [];
   selectedDocuments: any[] = [];
   showProductModal: boolean = false;
   showDocumentModal: boolean = false;
   salesforceResponseMatchScreening: any = {}; // Declare this at the top
-
+ 
   openProductModal(user: any): void {
     console.log('Product Modal Opened', user); // Debug
     this.salesforceResponseMatchScreening = user.salesforceResponseMatchScreening; // ✅ Store the full object
     this.selectedProducts = this.salesforceResponseMatchScreening?.products || [];
     console.log('Products:', this.selectedProducts); // Debug
-    this.showProductModal = true; 
+    this.showProductModal = true;
   }
-
+ 
   closeProductModal(): void {
     this.showProductModal = false;
     this.selectedProducts = [];
   }
-
+ 
   openDocumentModal(user: any): void {
     this.selectedDocuments = user.additionalUploadedFiles || [];
     this.showDocumentModal = true;
   }
-
+ 
   closeDocumentModal(): void {
     this.showDocumentModal = false;
     this.selectedDocuments = [];
   }
-
+ 
 }
-
-
-
+ 
+ 
+ 

@@ -2,7 +2,7 @@
 <div *ngIf="isLoading" class="red-loader">
   <div class="red-spinner"></div>
 </div>
-
+ 
 <div class="content">
   <div class="page-heading">
     <div class="row align-items-center justify-content-between">
@@ -44,9 +44,9 @@
           <th scope="col">Shareholder</th>
         </tr>
       </thead>
-      
+     
       <tbody>
-        <tr *ngFor="let client of paginatedClientList()">
+        <tr *ngFor="let client of filteredClientList">
           <td>{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
           <td>{{ client.leadWithDetails.Email }}</td>
           <td>{{ client.leadWithDetails.Phone }}</td>
@@ -58,7 +58,7 @@
           <td>{{ client.kycStatus || 'N/A' }}</td>
           <td>
             <button class="green-button" (click)="openProductModal(client)">View Products</button>
-            
+           
           </td>
           <td>
             <button class="green-button" (click)="openDocumentModal(client)">View Documents</button>            
@@ -70,10 +70,10 @@
           </td>
         </tr>
       </tbody>
-      
+     
     </table>
   </div>
-
+ 
   <!-- Pagination Controls -->
   <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
     <ul class="pagination custom-pagination">
@@ -82,8 +82,10 @@
           <span aria-hidden="true">&laquo;</span>
         </a>
       </li>
-      <li class="page-item" *ngFor="let page of totalPagesArray" [class.active]="page === currentPage">
-        <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+      <li class="page-item"
+          *ngFor="let page of [].constructor(totalPages); let i=index"
+          [class.active]="(i+1) === currentPage">
+        <a class="page-link" (click)="goToPage(i+1)">{{ i+1 }}</a>
       </li>
       <li class="page-item" [class.disabled]="currentPage === totalPages">
         <a class="page-link" (click)="nextPage()" aria-label="Next">
@@ -92,8 +94,9 @@
       </li>
     </ul>
   </nav>
-
-
+ 
+ 
+ 
   <div *ngIf="showProductModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
@@ -125,7 +128,7 @@
       </div>
     </div>
   </div>
-  
+ 
   <!-- Documents Modal -->
   <div *ngIf="showDocumentModal" class="modal-overlay">
     <div class="modal-content" style="width: 50% !important;">
@@ -191,7 +194,7 @@
       </table>
     </div>
   </div>
-
+ 
   <div class="modal-container" *ngIf="showFileModal">
     <div class="modal-backdrop" (click)="closeFileModal()"></div>
     <div class="modal-content">
@@ -215,9 +218,7 @@
       </ng-template>
     </div>
   </div>
-
  
-
+ 
+ 
 </div>
- 
- 

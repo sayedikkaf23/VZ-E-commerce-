@@ -1,9 +1,8 @@
-
 <!-- Red Loader -->
 <div *ngIf="isLoading" class="red-loader">
   <div class="red-spinner"></div>
 </div>
-
+ 
 <div class="content">
   <div class="page-heading">
     <div class="row align-items-center justify-content-between">
@@ -15,7 +14,7 @@
           <div class="search-container">
             <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
             <button class="search-button" (click)="onSearch()">SEARCH</button>
-          
+         
             <div class="date-filter-container">
               <input type="date" placeholder="From Date" [(ngModel)]="fromDate">
               <input type="date" placeholder="To Date" [(ngModel)]="toDate">
@@ -29,7 +28,7 @@
       </div>
     </div>
   </div>
-
+ 
   <div class="table-responsive overflow-behaviour">
     <table class="table table-list-data table-hover">
       <!-- Table headers -->
@@ -42,18 +41,19 @@
           <th scope="col">Quote Payment ID &#x2191;&#x2193;</th>
           <th scope="col">Services &#x2191;&#x2193;</th>
           <th scope="col">Complaince Status &#x2191;&#x2193;</th>
-
-
+ 
+ 
           <th scope="col">Created Date &#x2191;&#x2193;</th>
           <th scope="col">Updated Date &#x2191;&#x2193;</th>
           <th scope="col">Action</th>
-
+ 
           <!-- <th scope="col">User Details &#x2191;&#x2193;</th> -->
         </tr>
       </thead>
       <!-- Table body with filtered data -->
       <tbody>
-        <tr *ngFor="let user of paginatedUserList()">
+        <tr *ngFor="let user of userList">
+ 
           <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
           <td>{{ user.leadWithDetails.Email }}</td>
           <td>{{ user.leadWithDetails.Phone }}</td>
@@ -61,20 +61,21 @@
           <td>{{ user.quotePaymentWithDetails.QuotePaymentId }}</td>
           <td>{{ user.planname }}</td>
           <td>{{ user.kycStatus}}</td>
-
+ 
           <td>{{ user.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
           <td>{{ user.updatedAt | date:'yyyy-MM-dd HH:mm' }}</td>
           <td style="position: relative;">
             <button class="three-dot-menu" (click)="openMenu($event, user)">
               &#x22EE;
             </button>
-            <div class="dropdown-menu" *ngIf="activeUser === user">
+            <div class="dropdown-menu" *ngIf="activeUser === user && user.kycStatus !== 'Auto Approved' && user.kycStatus !== 'Approved' && user.kycStatus !== 'Rejected'">
               <button (click)="handleUserAction(user, 'Approve')">Approve</button>
               <button (click)="handleUserAction(user, 'Reject')">Reject</button>
-              <button (click)="handleUserAction(user, 'Check Status')">Check Status</button>
+              <button (click)="checkUserStatus(user)">Check Status</button>
             </div>
           </td>
-          
+           
+         
           <!-- <td>
             <button class="green-button" (click)="openDetailsModal(user)">
               View Details
@@ -84,23 +85,28 @@
       </tbody>
     </table>
   </div>
-
+ 
   <!-- Pagination controls -->
   <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
     <ul class="pagination custom-pagination">
-      <li class="page-item" [class.disabled]="currentPage === 1">
-        <a class="page-link" (click)="previousPage()" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
+      <!-- Previous Button -->
+      <li class="page-item" [class.disabled]="currentPage === 1 || isLoading">
+        <a class="page-link" (click)="previousPage()">&laquo;</a>
       </li>
-      <li class="page-item" *ngFor="let page of totalPagesArray" [class.active]="page === currentPage">
-        <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+ 
+      <!-- Numeric Page Links -->
+      <li class="page-item"
+          *ngFor="let page of [].constructor(totalPages); let i = index"
+          [class.active]="(i+1) === currentPage"
+          [class.disabled]="isLoading">
+        <a class="page-link" (click)="goToPage(i+1)">{{ i+1 }}</a>
       </li>
-      <li class="page-item" [class.disabled]="currentPage === totalPages">
-        <a class="page-link" (click)="nextPage()" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
+ 
+      <!-- Next Button -->
+      <li class="page-item" [class.disabled]="currentPage === totalPages || isLoading">
+        <a class="page-link" (click)="nextPage()">&raquo;</a>
       </li>
     </ul>
   </nav>
+ 
 </div>

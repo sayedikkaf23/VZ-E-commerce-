@@ -363,85 +363,103 @@ exports.callSalesforceEndpoint = async (req, res) => {
 // };
 exports.getVirtualDetails = async (req, res) => {
   try {
-    // Fetch documents from the PiData collection with subcategory 'business'
-    const VirtualDetailsSubmissions = await Pidata.find({ planname: "Virtual Receptionist" });
+    // 1) Parse page & limit from query, defaulting to page=1, limit=10
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
  
+    // 2) Count how many documents match planname: "Virtual Receptionist"
+    const totalRecords = await Pidata.countDocuments({ planname: "Virtual Receptionist" });
+    const totalPages = Math.ceil(totalRecords / limit);
  
-      const authResponse = await axios.post(
-          `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
-          {
-            username: "VirtuUAT",
-            password: "VirtuApiuat@123",
-            CompanyName: "Virtuzone",
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-   
-        const authToken = authResponse.data.token; // Assuming token is here
-    // Prepare an array to store the merged results
+    // 3) Fetch only that slice of data (skip, limit)
+    const VirtualDetailsSubmissions = await Pidata.find({ planname: "Virtual Receptionist" })
+      .skip(skip)
+      .limit(limit);
+ 
+    // 4) Call authenticate once for the KYC status
+    const authResponse = await axios.post(
+      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
+      {
+        username: "VirtuUAT",
+        password: "VirtuApiuat@123",
+        CompanyName: "Virtuzone",
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+ 
+    const authToken = authResponse.data?.token;
     const mergedResults = [];
  
-    // Loop through each PiData document and find corresponding UserDetails data
+    // 5) Merge for each Pidata doc
     for (const submission of VirtualDetailsSubmissions) {
       const { quotePaymentWithDetails } = submission;
       const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
  
-      // Fetch the corresponding UserDetails document using QuotePaymentId
-      const userDetails = await VirtualDetails.findOne({ "QuotePaymentId": quotePaymentId });
+      // Try to find the corresponding VirtualDetails
+      const userDetails = await VirtualDetails.findOne({ QuotePaymentId: quotePaymentId });
  
-      // Merge PiData and UserDetails
+      // We want to push *all* items, but you can decide if you only push when userDetails is found
+      // Here, we push either way, so we always return up to 'limit' items per page.
+      let kycStatus = "Unknown";
+ 
+      // If userDetails exists, call the KYC status API
       if (userDetails) {
-           let kycStatus = null;
-           try {
-             // Call the status API with the CustomerId
-             const statusResponse = await axios.post(
-               `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
-               {
-                 CustomerId: submission?.leadWithDetails?.LeadId, // Use safe optional chaining
-                 CompanyName: "Virtuzone",
-               },
-               {
-                 headers: {
-                   "Content-Type": "application/json",
-                   Authorization: `Bearer ${authToken}`,
-                 },
-               }
-             );
-   console.log(statusResponse,"statusResponse")
-             // Extract KYC status from response
-             kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
-             await Pidata.updateOne(
-              { _id: submission._id }, // Find by ID
-              { $set: { kycStatus } } // Update kycStatus field
-            );
-   
-           } catch (statusError) {
-             console.error("Error fetching KYC status:", statusError.message);
-           }
-   
-           // Merge PiData, UserDetails, and KYC status
-           const mergedData = {
-             ...submission._doc, // Plain object representation
-             userDetails,
-             kycStatus, // Add KYC status
-           };
-   
-           mergedResults.push(mergedData);
-         }
+        try {
+          const statusResponse = await axios.post(
+            `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
+            {
+              CustomerId: submission?.leadWithDetails?.LeadId,
+              CompanyName: "Virtuzone",
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${authToken}`,
+              },
+            }
+          );
+ 
+          // Extract KYC status from response
+          kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+ 
+          // Update the Pidata doc with the new status
+          await Pidata.updateOne(
+            { _id: submission._id },
+            { $set: { kycStatus } }
+          );
+        } catch (statusError) {
+          console.error("Error fetching KYC status:", statusError.message);
+        }
+      }
+ 
+      // Build the merged object (even if userDetails is null)
+      const mergedData = {
+        ...submission._doc,
+        userDetails: userDetails || null,
+        kycStatus,
+      };
+ 
+      mergedResults.push(mergedData);
     }
  
-    // Return the merged results as a JSON response
-    res.status(200).json(mergedResults);
+    // 6) Return JSON with pagination metadata
+    res.status(200).json({
+      data: mergedResults,   // up to 'limit' items
+      totalRecords,          // how many total match
+      totalPages,            // total pages for front end
+      currentPage: page,     // which page we're on
+      pageSize: limit,       // how many items per page
+    });
   } catch (error) {
-    // Handle errors and return an appropriate response
+    console.error("Error fetching virtual details:", error);
     res.status(500).json({
-      error: "Error fetching business bank submissions",
+      error: "Error fetching virtual details",
       details: error.message,
     });
   }
 };
- 

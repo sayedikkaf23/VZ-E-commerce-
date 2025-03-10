@@ -1,8 +1,8 @@
 <div *ngIf="isLoading" class="red-loader">
   <div class="red-spinner"></div>
 </div>
-
-
+ 
+ 
 <div class="content">
   <div class="page-heading">
     <div class="row align-items-center justify-content-between">
@@ -27,7 +27,7 @@
       </div>
     </div>
   </div>
-
+ 
   <div class="table-responsive overflow-behaviour">
     <div class="table-responsive overflow-behaviour">
       <table class="table table-list-data table-hover">
@@ -39,13 +39,13 @@
             <th scope="col">Turn Over</th>
             <!-- <th scope="col">Bank Type</th> -->
             <th scope="col">Quote Payment ID </th>
-
+ 
             <th scope="col">Compliance Score</th>
             <th scope="col">Compliance Status</th>
             <th scope="col">View Products</th>
             <th scope="col">View Documents</th>
             <th scope="col">Action</th>
-
+ 
           </tr>
         </thead>
         <tbody>
@@ -55,13 +55,13 @@
             <!-- <td>{{ user.quoteWithProductDetails?.status }}</td> -->
             <td>{{ user.userDetails.Turnover }}</td>
             <td>{{ user.quotePaymentWithDetails.QuotePaymentId }}</td>
-
+ 
             <!-- <td>{{ user.salesPersonDetails?.salesPersonName }}</td> -->
             <td>{{ user.screeningDetails?.matchScore }}</td>
             <td>{{ user.kycStatus }}</td>
             <td>
               <button class="green-button" (click)="openProductModal(user)">View Products</button>
-              
+             
             </td>
             <td>
               <button class="green-button" (click)="openDocumentModal(user)">View Documents</button>            
@@ -74,8 +74,8 @@
         </tbody>
       </table>
     </div>
-
-
+ 
+ 
     <div *ngIf="showProductModal" class="modal-overlay">
       <div class="modal-content">
         <div class="modal-header">
@@ -107,7 +107,7 @@
         </div>
       </div>
     </div>
-    
+   
     <!-- Documents Modal -->
     <div *ngIf="showDocumentModal" class="modal-overlay">
       <div class="modal-content" style="width: 50% !important;">
@@ -132,36 +132,41 @@
         </div>
       </div>
     </div>
-    
-    
-  
+   
+   
+ 
     <!-- Pagination Controls -->
     <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
       <ul class="pagination custom-pagination">
-        <li class="page-item" [class.disabled]="currentPage === 1">
+        <!-- Previous Button -->
+        <li class="page-item" [class.disabled]="currentPage === 1 || isLoading">
           <a class="page-link" (click)="previousPage()" aria-label="Previous">
-            <span aria-hidden="true">&laquo;</span>
+            &laquo;
           </a>
         </li>
-        <li
-          class="page-item"
-          *ngFor="let page of totalPagesArray"
-          [class.active]="page === currentPage"
-        >
-          <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+   
+        <!-- Page Number Links -->
+        <li class="page-item"
+            *ngFor="let page of [].constructor(totalPages); let i=index"
+            [class.active]="(i+1) === currentPage"
+            [class.disabled]="isLoading">
+          <a class="page-link" (click)="goToPage(i+1)">{{ i+1 }}</a>
         </li>
-        <li class="page-item" [class.disabled]="currentPage === totalPages">
+   
+        <!-- Next Button -->
+        <li class="page-item" [class.disabled]="currentPage === totalPages || isLoading">
           <a class="page-link" (click)="nextPage()" aria-label="Next">
-            <span aria-hidden="true">&raquo;</span>
+            &raquo;
           </a>
         </li>
       </ul>
     </nav>
-  
+   
+ 
   </div>
-
-  
-  
+ 
+ 
+ 
   <div class="modal-overlay" *ngIf="showShareholderModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -193,9 +198,9 @@
       </div>
     </div>
   </div>
-  
-  
-
+ 
+ 
+ 
   <div class="modal-container" *ngIf="showFileModal">
     <div class="modal-backdrop" (click)="closeFileModal()"></div>
     <div class="modal-content">
@@ -219,7 +224,7 @@
       </ng-template>
     </div>
   </div>
-
+ 
   <!-- View Details -->
   <div class="modal-container" *ngIf="showDetailsModal">
     <div class="modal-backdrop" (click)="closeDetailsModal()"></div>
@@ -228,7 +233,7 @@
         <span class="close-btn" (click)="closeDetailsModal()">&times;</span>
         <h5 class="modal-title">Business Bank Details</h5>
       </div>
-  
+ 
       <!-- User Details Table -->
       <div *ngIf="selectedUser" style="padding: 10px; background: #f9f9f9; border-radius: 5px;">
         <table style="width: 100%; border-collapse: collapse;">
@@ -254,14 +259,15 @@
           </tr>
         </table>
       </div>
-  
+ 
       <ng-template #noFiles>
         <p class="no-files">No details available for this user.</p>
       </ng-template>
     </div>
   </div>
-  
-  
-  
-  
+ 
+ 
+ 
+ 
 </div>
+ 

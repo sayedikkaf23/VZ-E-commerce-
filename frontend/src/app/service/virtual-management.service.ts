@@ -12,9 +12,12 @@ export class VirtualManagementService {
   constructor( private http: HttpClient) {}
 
 
-  getVirtaulData(): Observable<any> {
-    return this.http.get(`${this.url}/virtual/getVirtualDetails`); // GET request to fetch all services
+  getVirtaulData(page: number, limit: number): Observable<any> {
+    const params = { page: page.toString(), limit: limit.toString() };
+    return this.http.get<any>(`${this.url}/virtual/getVirtualDetails`, { params });
+    // Adjust URL/path as needed for your Node route
   }
+ 
   callSalesforceEndpoint(payload:any): Observable<any> {
     return this.http.post(`${this.url}/virtual/callSalesforceEndpoint`, payload); // Sending the payload to the backend
   }

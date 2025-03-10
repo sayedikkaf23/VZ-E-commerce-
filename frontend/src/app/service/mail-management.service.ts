@@ -11,10 +11,12 @@ export class MailManagementService {
 
   constructor( private http: HttpClient) {}
 
-
-  getVirtaulData(): Observable<any> {
-    return this.http.get(`${this.url}/mail/getMailDetails`); // GET request to fetch all services
+  getVirtualData(page: number, limit: number): Observable<any> {
+    const params = { page: page.toString(), limit: limit.toString() };
+    return this.http.get<any>(`${this.url}/mail/getMailDetails`, { params });
+    // or whatever your actual endpoint is
   }
+ 
 
   callSalesforceEndpoint(payload:any): Observable<any> {
     return this.http.post(`${this.url}/mail/callSalesforceEndpoint`, payload); // Sending the payload to the backend

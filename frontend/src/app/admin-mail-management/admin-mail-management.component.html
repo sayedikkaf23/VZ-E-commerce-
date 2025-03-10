@@ -2,8 +2,8 @@
 <div *ngIf="isLoading" class="red-loader">
   <div class="red-spinner"></div>
 </div>
-
-
+ 
+ 
 <div class="content">
     <div class="page-heading">
       <div class="row align-items-center justify-content-between">
@@ -25,7 +25,7 @@
         </div>
       </div>
     </div>
-  
+ 
    
   <!-- Table Displaying Mail Data -->
   <div class="table-responsive overflow-behaviour">
@@ -48,12 +48,12 @@
       </thead>
       <tbody>
         <!-- Render mails for current page -->
-        <tr *ngFor="let mail of paginatedMailList()">
+        <tr *ngFor="let mail of filteredMailList">
           <td>{{ mail.leadWithDetails.FirstName }} {{ mail.leadWithDetails.LastName }}</td>
           <td>{{ mail.leadWithDetails.Email }}</td>
           <td>{{ mail.leadWithDetails.Phone }}</td>
           <td>{{ mail.quotePaymentWithDetails.QuotePaymentId }}</td>
-
+ 
           <!-- <td>{{ client.userDetails?.EmploymentStatus || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.salary || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.bankType || 'N/A' }}</td> -->
@@ -61,7 +61,7 @@
           <td>{{ mail.kycStatus || 'N/A' }}</td>
           <td>
             <button class="green-button" (click)="openProductModal(mail)">View Products</button>
-            
+           
           </td>
           <td>
             <button class="green-button" (click)="openDocumentModal(mail)">View Documents</button>            
@@ -75,22 +75,26 @@
       </tbody>
     </table>
   </div>
-  
+ 
   <!-- Pagination Controls -->
   <nav *ngIf="totalPages > 1" class="d-flex justify-content-end mt-3">
     <ul class="pagination custom-pagination">
-      <li class="page-item" [class.disabled]="currentPage === 1">
-        <a class="page-link" (click)="previousPage()" aria-label="Previous">
-          <span aria-hidden="true">&laquo;</span>
-        </a>
+      <!-- Previous -->
+      <li class="page-item" [class.disabled]="currentPage === 1 || isLoading">
+        <a class="page-link" (click)="previousPage()">&laquo;</a>
       </li>
-      <li class="page-item" *ngFor="let page of totalPagesArray" [class.active]="page === currentPage">
-        <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
+ 
+      <!-- Numbered Pages -->
+      <li class="page-item"
+          *ngFor="let page of [].constructor(totalPages); let i=index"
+          [class.active]="(i+1) === currentPage"
+          [class.disabled]="isLoading">
+        <a class="page-link" (click)="goToPage(i+1)">{{ i+1 }}</a>
       </li>
-      <li class="page-item" [class.disabled]="currentPage === totalPages">
-        <a class="page-link" (click)="nextPage()" aria-label="Next">
-          <span aria-hidden="true">&raquo;</span>
-        </a>
+ 
+      <!-- Next -->
+      <li class="page-item" [class.disabled]="currentPage === totalPages || isLoading">
+        <a class="page-link" (click)="nextPage()">&raquo;</a>
       </li>
     </ul>
   </nav>
@@ -107,8 +111,8 @@
               <th>Product Name</th>
               <th>Quantity</th>
               <th>Unit Price</th>
-          
-
+         
+ 
             </tr>
           </thead>
           <tbody>
@@ -117,7 +121,7 @@
               <td>{{ product.productQuantity }}</td>
               <td>{{ product.productUnitPrice }}</td>
              
-
+ 
             </tr>
           </tbody>
         </table>
@@ -129,10 +133,10 @@
       </div>
     </div>
   </div>
-  
-  
-  
-  
+ 
+ 
+ 
+ 
   <!-- Documents Modal -->
   <div *ngIf="showDocumentModal" class="modal-overlay">
     <div class="modal-content" style="width: 50% !important;">
@@ -157,9 +161,9 @@
       </div>
     </div>
   </div>
-  
  
-    
+ 
+   
   <div *ngIf="showModal" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
@@ -206,6 +210,7 @@
       </div>
     </div>
   </div>
-  
+ 
   </div>
-  
+ 
+ 

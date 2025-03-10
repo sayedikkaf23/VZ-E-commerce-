@@ -677,100 +677,175 @@ exports.MatchScoreProductService = async (req, res) => {
     res.status(500).json({ message: "Error calling Salesforce endpoint", details: error.message });
   }
 };
-
 exports.getAllSubmissions = async (req, res) => {
   try {
-    const pidata = await Pidata.find(); // Fetch data from Pidata model
-    res.status(200).json(pidata); // Send only Pidata data to the frontend
+    // 1) Parse query parameters for pagination
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+ 
+    // 2) Get optional search term from the query (or empty if not provided)
+    const searchTerm = req.query.searchTerm?.trim() || '';
+ 
+    // 3) Build the filter object
+    //    If searchTerm is provided, match it against multiple fields using $or + $regex
+    let filter = {};
+ 
+    if (searchTerm) {
+      filter = {
+        $or: [
+          { 'leadWithDetails.Email': { $regex: searchTerm, $options: 'i' } },
+          { 'quotePaymentWithDetails.QuotePaymentId': { $regex: searchTerm, $options: 'i' } },
+          { 'quoteWithProductDetails.quoteEmail': { $regex: searchTerm, $options: 'i' } },
+          // Add more fields if desired:
+          // { planname: { $regex: searchTerm, $options: 'i' } },
+          // etc.
+        ],
+      };
+    }
+ 
+    // 4) Fetch documents with filter, skip, and limit
+    const pidata = await Pidata.find(filter)
+      .skip(skip)
+      .limit(limit);
+ 
+    // 5) Count how many match the same filter (for total pages)
+    const totalRecords = await Pidata.countDocuments(filter);
+    const totalPages = Math.ceil(totalRecords / limit);
+ 
+    // 6) Return the results
+    res.status(200).json({
+      data: pidata,
+      totalRecords,
+      totalPages,
+      currentPage: page,
+      pageSize: limit,
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ error: 'Error fetching Pidata', details: error.message });
+    console.error('Error fetching submissions with search:', error);
+    res.status(500).json({
+      error: 'Error fetching submissions with search',
+      details: error.message,
+    });
   }
 };
+ 
  
 
 
 exports.getPersonalBank = async (req, res) => {
   try {
-    // Fetch documents from the PiData collection with subcategory 'personal'
-    const PersonalBankSubmissions = await Pidata.find({ subcategory: "personal" });
+    // 1) Extract page & limit from query (fallback to page=1, limit=10)
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
  
-    // Authenticate API to get the token
-    const authResponse = await axios.post(
-      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
+    // 2) Build Aggregation Pipeline
+    const pipeline = [
+      // Match only the subcategory = 'personal'
+      { $match: { subcategory: 'personal' } },
+ 
+      // $lookup to pull in matching UserDetails documents
       {
-        username: "VirtuUAT",
-        password: "VirtuApiuat@123",
-        CompanyName: "Virtuzone",
+        $lookup: {
+          from: 'userdetails', // The actual Mongo collection name for UserDetails
+          localField: 'quotePaymentWithDetails.QuotePaymentId',
+          foreignField: 'QuotePaymentId',
+          as: 'userDetails'
+        }
       },
+ 
+      // Only keep docs that actually have userDetails (an array with at least one element)
+      // If you only want exactly one userDetails doc, you can $unwind to flatten
+      { $unwind: '$userDetails' },
+ 
+      // Now we use $facet to get total count & the paginated docs in one go
       {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        $facet: {
+          metadata: [ { $count: 'total' } ], // Count how many docs after above steps
+          data: [
+            { $skip: skip },
+            { $limit: limit }
+          ]
+        }
       }
-    );
+    ];
  
-    const authToken = authResponse.data.token; // Assuming token is here
+    // 3) Execute the aggregation
+    const aggResult = await Pidata.aggregate(pipeline);
+   
+    // The structure of aggResult[0] is something like:
+    // {
+    //   metadata: [ { total: 42 } ],
+    //   data: [ { ...doc1... }, { ...doc2... }, ... up to limit ]
+    // }
+    const meta = aggResult[0]?.metadata?.[0] || {};
+    const totalRecords = meta.total || 0; // If none found, total will be 0
+    const data = aggResult[0]?.data || [];
  
-    // Prepare an array to store the merged results
+    // 4) totalPages from totalRecords
+    const totalPages = Math.ceil(totalRecords / limit);
+ 
+    // 5) For each doc, optionally do your KYC status call
+    //    Then push to final array.
+    //    Because these docs have a userDetails property from the pipeline,
+    //    there's no need to skip them — they already have userDetails.
     const mergedResults = [];
  
-    // Loop through each PiData document and find corresponding UserDetails data
-    for (const submission of PersonalBankSubmissions) {
-      const { quotePaymentWithDetails } = submission;
-      const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
- 
-      // Fetch the corresponding UserDetails document using QuotePaymentId
-      const userDetails = await UserDetails.findOne({ QuotePaymentId: quotePaymentId });
- 
-      if (userDetails) {
-        let kycStatus = null;
-        try {
-          // Call the status API with the CustomerId
-          const statusResponse = await axios.post(
+    // For each doc, call external KYC
+    // (Remember these docs are plain JS objects from aggregation, not Mongoose documents.)
+    // The docs have 'userDetails' because of $unwind
+    for (const doc of data) {
+      let kycStatus = 'Unknown';
+      try {
+        // If doc.leadWithDetails?.LeadId is present, call KYC
+        const leadId = doc?.leadWithDetails?.LeadId;
+        if (leadId) {
+          const authResponse = await axios.post(
             `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
             {
-              CustomerId: submission?.leadWithDetails?.LeadId, // Use safe optional chaining
-              CompanyName: "Virtuzone",
+              CustomerId: leadId,
+              CompanyName: 'Virtuzone'
             },
             {
               headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${authToken}`,
-              },
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${req.authToken}` // Or do a separate authenticate call if needed
+              }
             }
           );
-console.log(statusResponse,"statusResponse")
-          // Extract KYC status from response
-          kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+          kycStatus = authResponse.data?.CustomerStatus || 'Unknown';
+ 
+          // Optionally update the original Pidata doc
           await Pidata.updateOne(
-            { _id: submission._id }, // Find by ID
-            { $set: { kycStatus } } // Update kycStatus field
+            { _id: doc._id },
+            { $set: { kycStatus } }
           );
- 
-        } catch (statusError) {
-          console.error("Error fetching KYC status:", statusError.message);
         }
- 
-        // Merge PiData, UserDetails, and KYC status
-        const mergedData = {
-          ...submission._doc, // Plain object representation
-          userDetails,
-          kycStatus, // Add KYC status
-        };
- 
-        mergedResults.push(mergedData);
+      } catch (error) {
+        console.error('Error fetching KYC status:', error.message);
       }
+ 
+      // Attach the KYC status
+      // doc.userDetails is already there from $unwind
+      doc.kycStatus = kycStatus;
+ 
+      mergedResults.push(doc);
     }
  
-    // Return the merged results as JSON
-    res.status(200).json(mergedResults);
+    // 6) Return the final array
+    res.status(200).json({
+      data: mergedResults, // Up to 'limit' docs with userDetails
+      totalRecords,
+      totalPages,
+      currentPage: page,
+      pageSize: limit
+    });
   } catch (error) {
-    console.error("Error fetching personal bank submissions:", error);
+    console.error('Error fetching personal bank submissions:', error);
     res.status(500).json({
-      error: "Error fetching personal bank submissions",
-      details: error.message,
+      error: 'Error fetching personal bank submissions',
+      details: error.message
     });
   }
 };
@@ -779,11 +854,57 @@ console.log(statusResponse,"statusResponse")
 
 exports.getBusinessBank = async (req, res) => {
   try {
-    // Fetch documents from the PiData collection with subcategory 'business'
-    const businessBankSubmissions = await Pidata.find({ subcategory: "business" });
+    // 1) Extract page & limit from query (fallback to page=1, limit=10)
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
  
+    // 2) Build Aggregation Pipeline
+    const pipeline = [
+      // Match only the subcategory = "business"
+      { $match: { subcategory: "business" } },
  
+      // $lookup to pull in matching UserDetails documents
+      {
+        $lookup: {
+          from: "userdetails", // The MongoDB *collection* name for UserDetails
+          localField: "quotePaymentWithDetails.QuotePaymentId",
+          foreignField: "QuotePaymentId",
+          as: "userDetails"
+        }
+      },
  
+      // Only keep docs that actually have userDetails
+      { $unwind: "$userDetails" },
+ 
+      // Use $facet to get total count and paginated docs in one shot
+      {
+        $facet: {
+          metadata: [{ $count: "total" }], // This counts all matching docs
+          data: [
+            { $skip: skip },
+            { $limit: limit }
+          ]
+        }
+      }
+    ];
+ 
+    // 3) Execute the aggregation
+    const aggResult = await Pidata.aggregate(pipeline);
+ 
+    // The structure of aggResult[0] is like:
+    // {
+    //   metadata: [ { total: 42 } ],
+    //   data: [ { ...doc1... }, { ...doc2... }, ... up to limit ]
+    // }
+    const meta = aggResult[0]?.metadata?.[0] || {};
+    const totalRecords = meta.total || 0;
+    const data = aggResult[0]?.data || [];
+ 
+    // Calculate totalPages
+    const totalPages = Math.ceil(totalRecords / limit);
+ 
+    // 4) Optionally authenticate for the KYC calls
     const authResponse = await axios.post(
       `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
       {
@@ -797,28 +918,22 @@ exports.getBusinessBank = async (req, res) => {
         },
       }
     );
+    const authToken = authResponse.data?.token;
  
-    const authToken = authResponse.data.token; // Assuming token is here
- 
-    // Prepare an array to store the merged results
+    // 5) Loop over the final data to call KYC and attach kycStatus
     const mergedResults = [];
  
-    // Loop through each PiData document and find corresponding UserDetails data
-    for (const submission of businessBankSubmissions) {
-      const { quotePaymentWithDetails } = submission;
-      const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
+    for (const doc of data) {
+      let kycStatus = "Unknown";
  
-      // Fetch the corresponding UserDetails document using QuotePaymentId
-      const userDetails = await UserDetails.findOne({ "QuotePaymentId": quotePaymentId });
- 
-      if (userDetails) {
-        let kycStatus = null;
+      // If there's a leadId, call the KYC status
+      const leadId = doc?.leadWithDetails?.LeadId;
+      if (leadId && authToken) {
         try {
-          // Call the status API with the CustomerId
           const statusResponse = await axios.post(
             `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
             {
-              CustomerId: submission?.leadWithDetails?.LeadId, // Use safe optional chaining
+              CustomerId: leadId,
               CompanyName: "Virtuzone",
             },
             {
@@ -828,41 +943,42 @@ exports.getBusinessBank = async (req, res) => {
               },
             }
           );
-console.log(statusResponse,"statusResponse")
-          // Extract KYC status from response
           kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+ 
+          // Optionally update Pidata doc with KYC
           await Pidata.updateOne(
-            { _id: submission._id }, // Find by ID
-            { $set: { kycStatus } } // Update kycStatus field
+            { _id: doc._id },
+            { $set: { kycStatus } }
           );
-        } catch (statusError) {
-          console.error("Error fetching KYC status:", statusError.message);
+        } catch (error) {
+          console.error("Error fetching KYC status:", error.message);
         }
- 
-        // Merge PiData, UserDetails, and KYC status
-        const mergedData = {
-          ...submission._doc, // Plain object representation
-          userDetails,
-          kycStatus, // Add KYC status
-        };
- 
-        mergedResults.push(mergedData);
       }
  
-      // mergedResults.push(mergedData);
+      // Attach kycStatus
+      doc.kycStatus = kycStatus;
+ 
+      // Push to final
+      mergedResults.push(doc);
     }
  
-    // Return the merged results as a JSON response
-    res.status(200).json(mergedResults);
+    // 6) Return the final array + pagination info
+    res.status(200).json({
+      data: mergedResults,
+      totalRecords,
+      totalPages,
+      currentPage: page,
+      pageSize: limit,
+    });
+ 
   } catch (error) {
-    // Handle errors and return an appropriate response
+    console.error("Error fetching business bank submissions:", error);
     res.status(500).json({
       error: "Error fetching business bank submissions",
       details: error.message,
     });
   }
 };
- 
 
 
 exports.submitService = async (req, res) => {
