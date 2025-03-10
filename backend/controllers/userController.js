@@ -1145,7 +1145,7 @@ exports.addMenuItems = async (req, res) => {
 exports.checkStatus = async (req, res) => {
   // Destructure CustomerId and CompanyName from the request body
   const { CustomerId, CompanyName } = req.body;
-
+ 
   try {
     // Step 1: Authenticate to get the token
     const authResponse = await axios.post(
@@ -1161,9 +1161,9 @@ exports.checkStatus = async (req, res) => {
         },
       }
     );
-
+ 
     const authToken = authResponse.data.token; // Assuming the token is in authResponse.data.token
-
+ 
     // Step 2: Call the status API with the provided payload from the request body
     const statusResponse = await axios.post(
       `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
@@ -1178,15 +1178,35 @@ exports.checkStatus = async (req, res) => {
         },
       }
     );
-
+ 
     // Extract response data from the status API
     const statusData = statusResponse.data;
-
+ 
+    // Step 3: Find the Pidata entry using the LeadId in leadWithDetails to match CustomerId
+    const pidata = await Pidata.findOne({ 'leadWithDetails.LeadId': CustomerId });
+ 
+    if (!pidata) {
+      return res.status(404).json({ error: 'Pidata not found' });
+    }
+ 
+    // Update the kycStatus field with the value from the API response
+ 
+    pidata.kycStatus = statusData.CustomerStatus;
+    // Save the updated record
+    await pidata.save();
+ 
     // Send a success response with status data
-    res.status(200).json({ message: 'Status retrieved successfully', data: statusData });
+    res.status(200).json({
+      message: 'Status retrieved and Pidata updated successfully',
+      data: statusData,
+    });
+ 
   } catch (error) {
-    console.error('Error retrieving status:', error);
-    res.status(500).json({ error: 'Error retrieving status', details: error.message });
+    console.error('Error retrieving or updating status:', error);
+    res.status(500).json({
+      error: 'Error retrieving or updating status',
+      details: error.message,
+    });
   }
 };
 

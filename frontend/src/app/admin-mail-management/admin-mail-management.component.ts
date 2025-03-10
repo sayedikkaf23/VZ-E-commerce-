@@ -45,12 +45,10 @@ export class AdminMailManagementComponent {
       },
       (error) => {
         console.error('Error fetching mail details:', error);
+        this.isLoading = false; // Ensure loader is hidden on error
+
       },
-      () => {
-        setTimeout(() => {
-          this.isLoading = false; // Stop the red loader after a small delay
-        }, 500); // Adding a small delay to ensure smooth UI transition
-      }
+     
     );
   }
   

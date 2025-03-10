@@ -380,8 +380,10 @@
 /* Dropdown menu */
 .dropdown-menu {
   position: absolute;
-  background: #f2f2f2; /* Red background */
-  color: rgb(25, 3, 3);
+  right: 0;
+  top: 100%; /* Position below the three-dot button */
+  background: #f2f2f2; 
+  color: #190303;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   padding: 10px;
@@ -390,7 +392,13 @@
   flex-direction: column;
   min-width: 150px;
   font-weight: bold;
+  white-space: nowrap; /* Prevent wrapping */
 }
+td {
+  position: relative;
+  white-space: nowrap; /* Prevent content from wrapping */
+}
+
 
 .dropdown-menu button {
   background: rgba(255, 255, 255, 0.2); /* Light red for subtle contrast */

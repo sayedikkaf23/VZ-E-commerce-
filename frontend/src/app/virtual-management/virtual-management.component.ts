@@ -43,10 +43,10 @@ export class VirtualManagementComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching client details:', error);
+        this.isLoading = false; 
+
       },
-      () => {
-        this.isLoading = false; // Stop the red loader
-      }
+    
     );
   }
 

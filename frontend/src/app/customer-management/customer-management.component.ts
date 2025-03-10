@@ -30,7 +30,7 @@ export class CustomerManagementComponent implements OnInit {
   }
 
   fetchUserDetails(): void {
-    this.isLoading=true
+    this.isLoading = true;
     this.adminAuthService.getUserDetails().subscribe(
       (response) => {
         this.userList = response;
@@ -38,12 +38,12 @@ export class CustomerManagementComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching user details:', error);
+        this.isLoading = false; // Ensure loader is hidden on error
       },
-      ()=>{
-        this.isLoading=false
-      }
+    
     );
   }
+  
 
   paginatedUserList(): any[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;

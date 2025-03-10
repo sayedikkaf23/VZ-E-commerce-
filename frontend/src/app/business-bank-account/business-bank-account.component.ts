@@ -58,10 +58,10 @@ export class BusinessBankAccountComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching user details:', error);
+        this.isLoading = false; // Ensure loader is hidden on error
+
       },
-      () => {
-        this.isLoading=false
-      }
+     
     );
   }
 
