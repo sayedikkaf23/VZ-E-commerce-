@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
+
 import { AdminAuthService } from '../service/admin-auth.service';
 import Swal from 'sweetalert2';
 
@@ -8,6 +9,8 @@ import Swal from 'sweetalert2';
   styleUrls: ['./customer-management.component.css']
 })
 export class CustomerManagementComponent implements OnInit {
+  activeUser: any = null;
+
   userList: any[] = [];
   filteredUserList: any[] = [];
   currentPage: number = 1;
@@ -122,13 +125,21 @@ export class CustomerManagementComponent implements OnInit {
   closeDetailsModal(): void {
     this.showDetailsModal = false;
   }
-  handleUserAction(user: any): void {
+  handleUserAction(user: any, action: string): void {
     let newStatus = '';
   
-    if (user.kycStatus === 'Pending' || user.kycStatus === 'Rejected') {
-      newStatus = 'Approved'; // Allow both Pending and Rejected users to be approved
-    } else if (user.kycStatus === 'Auto Approved' || user.kycStatus === 'Approved') {
+    if (action === 'Approve') {
+      newStatus = 'Approved';
+    } else if (action === 'Reject') {
       newStatus = 'Rejected';
+    } else if (action === 'Check Status') {
+      Swal.fire({
+        title: 'User Status',
+        text: `Current Status: ${user.kycStatus}`,
+        icon: 'info',
+        confirmButtonColor: '#FF5A5F',
+      });
+      return;
     }
   
     Swal.fire({
@@ -136,43 +147,52 @@ export class CustomerManagementComponent implements OnInit {
       text: `Do you want to update the user's status to ${newStatus}?`,
       icon: 'question',
       showCancelButton: true,
-      confirmButtonText: '<i class="fa fa-check"></i> Yes, update it!',
-      cancelButtonText: '<i class="fa fa-times"></i> No, cancel',
-       confirmButtonColor: '#FF5A5F',
-     
+      confirmButtonText: 'Yes, update it!',
+      cancelButtonText: 'No, cancel',
+      confirmButtonColor: '#FF5A5F',
     }).then((result) => {
       if (result.isConfirmed) {
         const requestData = {
-          id: user._id, // Ensure you are passing the correct ID field
+          id: user._id,
           kycStatus: newStatus,
-          QuotePaymentId: user.quotePaymentWithDetails?.QuotePaymentId, // Include QuotePaymentId if required by the API
+          QuotePaymentId: user.quotePaymentWithDetails?.QuotePaymentId || '', // Ensure this field exists
         };
   
         this.adminAuthService.updateKycStatus(requestData).subscribe(
-          (response) => {
+          () => {
             Swal.fire({
               title: 'Status Updated!',
               text: `User's KYC status has been updated to ${newStatus}.`,
               icon: 'success',
               confirmButtonColor: '#FF5A5F',
-
             });
-            user.kycStatus = newStatus; // Update UI immediately
+            user.kycStatus = newStatus;
           },
-          (error) => {
-            console.error('Error updating KYC status:', error);
+          () => {
             Swal.fire({
               title: 'Update Failed!',
               text: 'Failed to update user status. Please try again later.',
               icon: 'error',
               confirmButtonColor: '#FF5A5F',
-
             });
           }
         );
       }
     });
   }
+  
+  
+  openMenu(event: Event, user: any): void {
+    event.stopPropagation();
+    this.activeUser = this.activeUser === user ? null : user;
+  }
+  
+  // Close menu when clicking anywhere else
+  @HostListener('document:click')
+  closeMenu(): void {
+    this.activeUser = null;
+  }
+  
 
   getButtonLabel(status: string): string {
     switch (status) {

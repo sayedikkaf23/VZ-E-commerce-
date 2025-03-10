@@ -58,13 +58,17 @@
 
           <td>{{ user.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
           <td>{{ user.updatedAt | date:'yyyy-MM-dd HH:mm' }}</td>
-          <td>
-            <button
-             class="green-button"
-              (click)="handleUserAction(user)">
-              {{ getButtonLabel(user.kycStatus) }}
+          <td style="position: relative;">
+            <button class="three-dot-menu" (click)="openMenu($event, user)">
+              &#x22EE;
             </button>
+            <div class="dropdown-menu" *ngIf="activeUser === user">
+              <button (click)="handleUserAction(user, 'Approve')">Approve</button>
+              <button (click)="handleUserAction(user, 'Reject')">Reject</button>
+              <button (click)="handleUserAction(user, 'Check Status')">Check Status</button>
+            </div>
           </td>
+          
           <!-- <td>
             <button class="green-button" (click)="openDetailsModal(user)">
               View Details

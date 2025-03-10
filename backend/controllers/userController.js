@@ -1309,6 +1309,7 @@ exports.dashboard = async (req, res) => {
 exports.updateKycStatus = async (req, res) => {
   try {
     const { id, kycStatus } = req.body;
+    
  
     // Validate input
     if (!id || !["Approved", "Rejected"].includes(kycStatus)) {
