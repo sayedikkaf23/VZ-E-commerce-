@@ -26,6 +26,7 @@ export class BackAccountOpeningComponent implements OnInit {
   }
 
   fetchUserDetails(): void {
+    this.isLoading=true
     this.adminAuthService.getPersonalBank().subscribe(
       (response) => {
         this.userList = response;
@@ -33,6 +34,9 @@ export class BackAccountOpeningComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching user details:', error);
+      },
+      () => {
+        this.isLoading = false; 
       }
     );
   }

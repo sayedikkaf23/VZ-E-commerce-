@@ -21,6 +21,7 @@ export class AdminMailManagementComponent {
   selectedMail: { [key: string]: any } | null = null;
   searchTerm: string = '';  
   filteredMailList: any[] = []; // Filtered user data
+  isLoading: boolean = false; // Red Loader state
 
   showDetailsModal: boolean = false;
   currentPage: number = 1;
@@ -34,24 +35,31 @@ export class AdminMailManagementComponent {
   }
 
   fetchMailDetails(): void {
+    this.isLoading = true; // Start the red loader
+  
     this.mailManagementService.getVirtaulData().subscribe(
       (response) => {
         this.mailList = response; // Assign the API response to the mailList array
         this.filteredMailList = [...this.mailList];
         this.checkColumnData(); // Check columns only after data is loaded
-        
       },
       (error) => {
         console.error('Error fetching mail details:', error);
+      },
+      () => {
+        setTimeout(() => {
+          this.isLoading = false; // Stop the red loader after a small delay
+        }, 500); // Adding a small delay to ensure smooth UI transition
       }
     );
   }
+  
+  
 
   checkColumnData(): void {
     this.hasSalaryData = this.userList.some((user) => !!user.salary);
     this.hasCompanyNameData = this.userList.some((user) => !!user.companyname);
   }
-  isLoading: boolean = false; // Global loader state
 
   checkStatus(user: any): void {
     const payload = {
@@ -59,25 +67,23 @@ export class AdminMailManagementComponent {
       CompanyName: 'Virtuzone',
     };
   
-    // Start the global loader
-    this.isLoading = true;
+    this.isLoading = true; // Start the red loader
   
     this.mailManagementService.checkStatus(payload).subscribe(
       (response) => {
-        // Update user status with the response
         user.CustomerStatus = response.data?.CustomerStatus || 'Status not found';
-        // console.log('Status check response:', response);
       },
       (error) => {
-        // Handle API error
         console.error('Error checking status:', error);
       },
       () => {
-        // Stop the global loader
-        this.isLoading = false;
+        setTimeout(() => {
+          this.isLoading = false; // Stop the red loader smoothly
+        }, 500);
       }
     );
   }
+  
   
   openMailDetails(details: any): void {
     this.selectedMailDetails = details; // Assign selected mail details

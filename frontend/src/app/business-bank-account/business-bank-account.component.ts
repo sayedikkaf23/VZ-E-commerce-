@@ -49,6 +49,7 @@ export class BusinessBankAccountComponent implements OnInit {
   }
 
   fetchUserDetails(): void {
+    this.isLoading=true
     this.adminAuthService.getBusinessBank().subscribe(
       (response) => {
         this.userList = response; // Assign the API response to the userList array
@@ -57,6 +58,9 @@ export class BusinessBankAccountComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching user details:', error);
+      },
+      () => {
+        this.isLoading=false
       }
     );
   }

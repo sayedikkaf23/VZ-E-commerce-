@@ -34,6 +34,7 @@ export class VirtualManagementComponent implements OnInit {
   }
 
   fetchClientDetails(): void {
+    this.isLoading = true
     this.virtualManagementService.getVirtaulData().subscribe(
       (response) => {
         this.clientList = response; // Assign the API response to the clientList array
@@ -42,6 +43,9 @@ export class VirtualManagementComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching client details:', error);
+      },
+      () => {
+        this.isLoading = false; // Stop the red loader
       }
     );
   }

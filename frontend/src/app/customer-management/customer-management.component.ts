@@ -20,6 +20,8 @@ export class CustomerManagementComponent implements OnInit {
   searchTerm: string = '';
   fromDate: string = '';
   toDate: string = '';
+  isLoading: boolean = false;
+
 
   constructor(private adminAuthService: AdminAuthService) { }
 
@@ -28,6 +30,7 @@ export class CustomerManagementComponent implements OnInit {
   }
 
   fetchUserDetails(): void {
+    this.isLoading=true
     this.adminAuthService.getUserDetails().subscribe(
       (response) => {
         this.userList = response;
@@ -35,6 +38,9 @@ export class CustomerManagementComponent implements OnInit {
       },
       (error) => {
         console.error('Error fetching user details:', error);
+      },
+      ()=>{
+        this.isLoading=false
       }
     );
   }
