@@ -71,4 +71,11 @@ export class OnlinePaymentService {
     const apiUrl = `${environment.apiUrl}/online/getpaymentmods`;
     return this.http.get<any[]>(apiUrl);
   }
+
+  sendWaitingMail(email: string): Observable<any>  {
+    const body = {email};
+    const apiUrl = `${environment.apiUrl}/payment/waitingMail`;
+    return this.http.post(apiUrl, body, {
+      headers: { "Content-Type": "application/json" },});
+  }
 }

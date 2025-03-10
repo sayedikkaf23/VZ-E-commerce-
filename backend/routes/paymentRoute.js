@@ -11,7 +11,8 @@ const {
     AddCashDeposit,
     convertCurrency,
     AddBankTransfer,
-    AddChequeDeposit
+    AddChequeDeposit,
+    sendWaitingEmail
 } = require("../controllers/paymentController");
  
 // const {upload} = require("../middleware/fileUpload");
@@ -48,5 +49,6 @@ router.post(
   AddChequeDeposit
 );
 router.post("/convert-currency", convertCurrency);
+router.post("/waitingMail", sendWaitingEmail);
  
 module.exports = router;
