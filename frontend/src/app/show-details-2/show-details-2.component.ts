@@ -171,7 +171,7 @@ export class ShowDetails2Component implements AfterViewInit {
                 return of(null);
               } else {
                 window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
-                this.router.navigate(['/']);
+                this.router.navigate([`/failure/${quotePaymentId}`]);
                 return of(null);
               }
             })
