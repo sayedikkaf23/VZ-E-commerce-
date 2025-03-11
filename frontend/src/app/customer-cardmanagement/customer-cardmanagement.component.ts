@@ -9,23 +9,23 @@ interface Service {
   description: string;
   status: string;
 }
-
+ 
 declare var jQuery: any;
-
+ 
 @Component({
   selector: 'app-customer-cardmanagement',
   templateUrl: './customer-cardmanagement.component.html',
   styleUrls: ['./customer-cardmanagement.component.css'], // Fix the styleUrls property
 })
 export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
-
+ 
   paginatedRecords: any[] = [];  // Data for the current page
   currentPage: number = 1;
   itemsPerPage: number = 10;      // Number of records per page
   totalPages: number = 0;
   filteredRecords: any[] = [];   // Records filtered by search
   searchTerm: string = '';
-
+ 
   services: Service[] = []; // Initialize an empty array for services
   records: any[] = [];
   selectedRecord: any = null; // Initialize to null
@@ -40,13 +40,13 @@ bankOpening: any[] = [];
   selectedaddAdditionalFile: any[] = [];
   selectedDocumentType: string = ''; // Stores the selected document type
   uploadedFiles: { name: string; url: string; type: string; recordId: string; size: number; }[] = []; // Stores uploaded files with their document types
-
+ 
   documentTypeOptions: string[] = []; // Options for the dropdown
   selectedIndex: number = 0;
-
-
+ 
+ 
   isLoading = false;
-
+ 
  
   constructor(
     private userService: UserService,
@@ -54,14 +54,14 @@ bankOpening: any[] = [];
     private router: Router,
     private toastr: ToastrService,
     private documenttypeService: DocumenttypeService // Add this
-
+ 
   ) {
    
   }
-
+ 
   ngOnInit(): void {
     // console.log('Current Route:', this.route.snapshot.url); // Check the current URL
-
+ 
     // Retrieve the email from localStorage
     const email = localStorage.getItem('userEmail');
     if (email) {
@@ -71,19 +71,19 @@ bankOpening: any[] = [];
     } else {
       console.error('No email found in localStorage.');
     }
-
-
+ 
+ 
  // Fetch Virtual Receptions
   this.fetchVirtualReceptions();
-
+ 
   // Fetch Mail Managements
   this.fetchMailManagements();
   this.fetchBusinessBanks();
   this.fetchPersonalBanks();
 }
-
-
-
+ 
+ 
+ 
 fetchVirtualReceptions(): void {
   this.documenttypeService.getVirtualReceptions().subscribe(
     (data) => {
@@ -97,7 +97,7 @@ fetchVirtualReceptions(): void {
     }
   );
 }
-
+ 
 fetchMailManagements(): void {
   this.documenttypeService.getMailManagements().subscribe(
     (data) => {
@@ -110,9 +110,9 @@ fetchMailManagements(): void {
     }
   );
 }
-
-
-
+ 
+ 
+ 
 fetchBusinessBanks(): void {
   this.documenttypeService.getBusinessBanks().subscribe(
     (data) => {
@@ -124,7 +124,7 @@ fetchBusinessBanks(): void {
     }
   );
 }
-
+ 
 fetchPersonalBanks(): void {
   this.documenttypeService.getPersonalBanks().subscribe(
     (data) => {
@@ -136,13 +136,13 @@ fetchPersonalBanks(): void {
     }
   );
 }
-
-
+ 
+ 
   extractNameFromEmail(email: string): string {
     return email.split('@')[0]; // Get the part before the '@' symbol
   }
   ngAfterViewInit() {
-
+ 
     // Toggle 'active' class on navbar toggle button
   const navbarToggle = document.querySelector('.navbar-toggle');
   if (navbarToggle) {
@@ -150,28 +150,28 @@ fetchPersonalBanks(): void {
       navbarToggle.classList.toggle('active');
     });
   }
-
+ 
      // Toggle sidebar visibility
  // Ensure 'menu-hide' is NOT present on initial load
  document.body.classList.remove('menu-hide');
-
+ 
  // Select the sidebar toggle button
  const sidebarIcon = document.querySelector('.sidebar_icon');
-
+ 
  if (sidebarIcon) {
    sidebarIcon.addEventListener('click', () => {
      document.body.classList.toggle('menu-hide');
    });
  }
   }
-
+ 
   isActive(route: string): boolean {
     return this.router.url === route;
   }
-
+ 
   getFileIcon(fileName: string): string {
     const extension = fileName.split('.').pop()?.toLowerCase(); // Extract file extension
-
+ 
     switch (extension) {
         case 'pdf':
             return 'assets/customer_protal/images/pdf-icon.png';
@@ -188,7 +188,7 @@ fetchPersonalBanks(): void {
             return 'assets/customer_protal/images/file.jpg'; // Default icon for unknown file types
     }
 }
-
+ 
 fetchUserServices(email: string): void {
   const payload = { email };
   this.userService.fetchUserServices(payload).subscribe(
@@ -218,7 +218,7 @@ searchRecords(): void {
   this.totalPages = Math.ceil(this.filteredRecords.length / this.itemsPerPage);
   this.setPage(1);
 }
-
+ 
 setPage(page: number): void {
   if (page < 1 || page > this.totalPages) return;
   this.currentPage = page;
@@ -226,59 +226,59 @@ setPage(page: number): void {
   const endIndex = startIndex + this.itemsPerPage;
   this.paginatedRecords = this.filteredRecords.slice(startIndex, endIndex);
 }
-
+ 
 // Change items per page and reset to the first page
 changeItemsPerPage(value: number): void {
   this.itemsPerPage = value;
   this.totalPages = Math.ceil(this.records.length / this.itemsPerPage);
   this.setPage(1);
 }
-
+ 
 // Getter to calculate the starting entry number for the current page
 get startEntry(): number {
   return this.records.length > 0 ? (this.currentPage - 1) * this.itemsPerPage + 1 : 0;
 }
-
+ 
 // Getter to calculate the ending entry number for the current page
 get endEntry(): number {
   return Math.min(this.currentPage * this.itemsPerPage, this.records.length);
 }
-
-
+ 
+ 
   toggleSidebar(): void {
     this.isSidebarActive = !this.isSidebarActive;
   }
-
+ 
   closeSidebar() {
     this.isSidebarActive = false;
   }
-
+ 
   viewDetails(record: any): void {
     this.selectedRecord = record; // Set the selected record
-  
+ 
     // Combine product arrays
     this.selectedRecord.combinedProducts = [
       ...(record.quoteWithProductDetails?.product || []),
       ...(record.salesforceResponseMatchScreening?.products || [])
     ];
-  
+ 
     // Calculate totals
     const subTotal = this.selectedRecord.combinedProducts.reduce((sum: number, product: any) => {
       const quantity = product.productQuantity || product.productQunatity || 0;
       const unitPrice = product.productUnitPrice || 0;
       return sum + quantity * unitPrice;
     }, 0);
-  
+ 
     const vat = subTotal * 0.05; // Assuming VAT is 5%
     const totalIncludingVAT = subTotal + vat;
-  
+ 
     // Set calculated values
     this.selectedRecord.calculatedSubTotal = subTotal;
     this.selectedRecord.calculatedVAT = vat;
     this.selectedRecord.calculatedTotalIncludingVAT = totalIncludingVAT;
-  
+ 
     console.log(this.selectedRecord);
-  
+ 
     // const modalElement = document.getElementById('detailsModal');
     // if (modalElement) {
     //   // Use the Bootstrap modal
@@ -286,74 +286,74 @@ get endEntry(): number {
     //   modal.show();
     // }
   }
-  
+ 
   uploadDetailsModal(record: any): void {
     this.selectedRecord = record; // Store the selected record
     // console.log("Selected Record:", record);
-  
+ 
     // Populate uploadedFiles with additionalUploadedFiles if they exist
     this.additionalFiles = record.additionalUploadedFiles || [];
-  
+ 
     // Dynamically set dropdown options based on the record's planname (if needed)
     this.documentTypeOptions = this.getOptions(record.planname, record.subcategory);
-  
+ 
     // Show the modal (if not using Bootstrap, use your own implementation)
     // const modalElement = document.getElementById('uploadDetailsModal');
     // if (modalElement) {
     //   modalElement.style.display = 'block'; // Show modal
     //   modalElement.classList.add('show'); // Add 'show' class
     // }
-
+ 
     document.querySelector('.app-wrapper')?.classList.add('blur-background');
   }
-  
-
+ 
+ 
   // Dynamic options based on planname
   getOptions(planname: string, subcategory: string): string[] {
-    if ( planname === 'Virtual Reception' ) {
+    if ( planname === 'Virtual Receptionist' ) {
       return this.virtualReceptionist.length ? this.virtualReceptionist : ['Loading...'];
     } else if (planname === 'Mail Management') {
       return this.mailManagemnt.length ? this.mailManagemnt : ['Loading...'];
-    } else if (planname === 'Bank Opening') {
+    } else if (planname === 'Bank Account Opening') {
       return this.bankOpening.length ? this.bankOpening : ['Loading...'];
     } else {
       return ['General Document', 'Other'];
     }
   }
-
-
+ 
+ 
   openFileInNewTab(fileUrl: string): void {
     if (fileUrl) {
       window.open(fileUrl, '_blank');
     }
   }
-  
+ 
   openShareholderModal(shareholders: any[],addAdditionalFile:any[]): void {
     this.selectedShareholders = shareholders;
     this.selectedaddAdditionalFile = addAdditionalFile;
     // console.log( this.selectedaddAdditionalFile)
     this.showModal = true;
   }
-
-
-
+ 
+ 
+ 
    // Handles file selection
    onFilesSelected(event: any): void {
     const files: FileList = event.target.files;
     if (!files || files.length === 0) {
       return;
     }
-
+ 
     // For each selected file, get its presigned URL and upload
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       this.isLoading = true;
-
+ 
       // Request a presigned URL from your backend
       this.userService.getPresignedUrl(file).subscribe(
         (response: any) => {
           const presignedUrl = response.url;
-
+ 
           // Upload the file to the presigned URL
           fetch(presignedUrl, {
             method: 'PUT',
@@ -365,9 +365,9 @@ get endEntry(): number {
               this.uploadedFiles.push({
                 name: file.name,
                 url: presignedUrl.split('?')[0], // If you want the actual file URL w/out query
-                type: this.selectedDocumentType, 
+                type: this.selectedDocumentType,
                 recordId: this.selectedRecord._id,
-                size: file.size // Add file size here 
+                size: file.size // Add file size here
                 // originalType: file.type
               });
               console.log('File uploaded successfully:', file.name);
@@ -382,13 +382,13 @@ get endEntry(): number {
         },
         (error) => {
           console.error('Error getting presigned URL', error);
-
+ 
           console.error('Error getting presigned URL:', error);
-
+ 
           // Angular’s HttpClient typically puts the server’s JSON under error.error
           // e.g., error.error = { error: "File size cannot exceed 1MB" }
           const errorMsg = error.error?.error || 'An error occurred while getting URL';
-  
+ 
           // Show it in a toast (using ngx-toastr for example)
           this.toastr.error(errorMsg, 'Error');
           this.isLoading = false;
@@ -396,30 +396,30 @@ get endEntry(): number {
       );
     }
   }
-
+ 
   // Placeholder for file viewing logic
   viewFile(fileUrl: string): void {
     window.open(fileUrl, '_blank');
   }
-  
+ 
   // Removes a specific file from the list
   removeFile(fileToRemove: { name: string; url: string; type: string }): void {
     this.uploadedFiles = this.uploadedFiles.filter(
       (file) => file.url !== fileToRemove.url
     );
   }
-  
-  
+ 
+ 
   submitDocuments(): void {
     // Example payload
     const payload = {
       someId: this.selectedRecord._id,
       files: this.uploadedFiles
     };
-
+ 
     // console.log('Submitting documents:', payload);
     document.querySelector('.app-wrapper')?.classList.remove('blur-background'); //clears the background blur
-
+ 
     // Make a call to your backend to save file info
     // or do any other processing you need here.
     this.userService.updateAdditionalUploadedFiles(payload)
@@ -428,7 +428,7 @@ get endEntry(): number {
           // console.log('Documents submitted successfully!', response);
           const email = localStorage.getItem('userEmail') ?? '';
           this.fetchUserServices(email);
-          
+         
           this.uploadedFiles = [];
           const modalElement = document.getElementById('uploadDetailsModal');
           if (modalElement) {
@@ -440,10 +440,10 @@ get endEntry(): number {
             if (backdrop) {
               backdrop.remove(); // Remove the backdrop manually if it exists
             }
-
+ 
            
           }
-    
+   
           // Optionally close the modal or reset the form
         },
         (error) => {
@@ -451,34 +451,34 @@ get endEntry(): number {
         }
       );
   }
-
+ 
   closeModal(): void {
     this.showModal = false;
-
-    
+ 
+   
   }
-
+ 
   closeModalFileupload(): void {
     const modalElement = document.getElementById('uploadDetailsModal');
     if (modalElement) {
       modalElement.style.display = 'none'; // Hide the modal
       modalElement.classList.remove('show'); // Remove the "show" class
     }
-  
+ 
     // Remove the backdrop if it exists
     const backdrop = document.querySelector('.modal-backdrop');
     if (backdrop) {
       backdrop.remove();
     }
-  
+ 
     // Optionally reset modal-related data here
     this.uploadedFiles = [];
-
+ 
     document.querySelector('.app-wrapper')?.classList.remove('blur-background');
   }
-  
-
-
+ 
+ 
+ 
   closeModalOutside(event: MouseEvent): void {
     // Closes the modal if the user clicks the backdrop
     this.showModal = false;
@@ -486,17 +486,17 @@ get endEntry(): number {
   navigateLogout(): void {
     this.router.navigate(['/login']); // Navigate to login
   }
-
+ 
   additionalFiles = [
   ];
-  
+ 
   newFile: File | null = null;
   newFileCategory = '';
-  
+ 
   handleFileUpload(event: any) {
     this.newFile = event.target.files[0];
   }
-  
+ 
   // addAdditionalFile() {
   //   if (this.newFile && this.newFileCategory) {
   //     const newFileEntry = {
@@ -509,12 +509,12 @@ get endEntry(): number {
   //     this.newFileCategory = '';
   //   }
   // }
-  
+ 
   removeAdditionalFile(file: any) {
     this.additionalFiles = this.additionalFiles.filter((f) => f !== file);
   }
-
-
+ 
+ 
   bytesToSize(bytes: number): string {
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
     if (bytes === 0) {
@@ -533,18 +533,15 @@ get endEntry(): number {
   goToDashbordService(): void {
     this.router.navigate(['user/dashboard']);
   }
-  
+ 
   goToHelp(): void {
     this.router.navigate(['/user/helpcenter']);
     console.log("clicked");
   }
-
+ 
 }
-
-
-
-
-
-
-
-
+ 
+ 
+ 
+ 
+ 

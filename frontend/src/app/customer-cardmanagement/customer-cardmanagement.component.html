@@ -1,36 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
+<body class="admin_body" style=" padding-top: 0;">
+  <div class="side_bar">
+    <div class="side_bar_wrap h-100 d-flex flex-column">
+      <div class="logo d-flex justify-content-center mb-4 d-lg-block d-none">
+        <a>
+          <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png"
+            alt="">
+        </a>
+      </div>
+      <div class="side_bar_content_wrap">
+        <ul class="menu-navigation">
+          <li class="active">
+            <a (click)="goToDashbordService()">
+              <span class="icon">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M10 20H9C5.22876 20 3.34315 20 2.17157 18.8284C1 17.6569 1 15.7712 1 12V9C1 5.22876 1 3.34315 2.17157 2.17157C3.34315 1 5.22876 1 9 1H11C14.7712 1 16.6569 1 17.8284 2.17157C19 3.34315 19 5.22876 19 9V9.5"
+                    fill="#FFDBE0" />
+                  <path
+                    d="M10 20H9C5.22876 20 3.34315 20 2.17157 18.8284C1 17.6569 1 15.7712 1 12V9C1 5.22876 1 3.34315 2.17157 2.17157C3.34315 1 5.22876 1 9 1H11C14.7712 1 16.6569 1 17.8284 2.17157C19 3.34315 19 5.22876 19 9V9.5"
+                    stroke="#121212" stroke-linecap="round" stroke-linejoin="round" />
+                  <path
+                    d="M16.4074 13.4036C16.6197 12.8655 17.3813 12.8655 17.5936 13.4036L17.6303 13.4969C18.1487 14.8113 19.1892 15.8518 20.5036 16.3702L20.5969 16.4069C21.135 16.6192 21.135 17.3808 20.5969 17.5931L20.5036 17.6298C19.1892 18.1482 18.1487 19.1887 17.6303 20.5031L17.5936 20.5964C17.3813 21.1345 16.6197 21.1345 16.4074 20.5964L16.3707 20.5031C15.8523 19.1887 14.8118 18.1482 13.4974 17.6298L13.4041 17.5931C12.866 17.3808 12.866 16.6192 13.4041 16.4069L13.4974 16.3702C14.8118 15.8518 15.8523 14.8113 16.3707 13.4969L16.4074 13.4036Z"
+                    fill="#FF2A47" stroke="#FF2A47" stroke-linecap="round" stroke-linejoin="round" />
+                  <path d="M5.99951 6H13.9995M5.99951 10.5H13.9995M5.99951 15H9.99951" stroke="#121212"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
 
+              </span>
+              <span class="text">
+                Active Service(s)
+              </span>
+            </a>
+          </li>
 
-
-<body class="admin_body"  style= " padding-top: 0;">
-    <div class="side_bar">
-        <div class="side_bar_wrap h-100 d-flex flex-column">
-            <div class="logo d-flex justify-content-center mb-4 d-lg-block d-none">
-                <a >
-                    <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" alt="">
-                </a>
-            </div>
-            <div class="side_bar_content_wrap">
-                <ul class="menu-navigation">
-                    <li class="active">
-                        <a (click)="goToDashbordService()">
-                            <span class="icon">
-                                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10 20H9C5.22876 20 3.34315 20 2.17157 18.8284C1 17.6569 1 15.7712 1 12V9C1 5.22876 1 3.34315 2.17157 2.17157C3.34315 1 5.22876 1 9 1H11C14.7712 1 16.6569 1 17.8284 2.17157C19 3.34315 19 5.22876 19 9V9.5" fill="#FFDBE0"/>
-                                    <path d="M10 20H9C5.22876 20 3.34315 20 2.17157 18.8284C1 17.6569 1 15.7712 1 12V9C1 5.22876 1 3.34315 2.17157 2.17157C3.34315 1 5.22876 1 9 1H11C14.7712 1 16.6569 1 17.8284 2.17157C19 3.34315 19 5.22876 19 9V9.5" stroke="#121212" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M16.4074 13.4036C16.6197 12.8655 17.3813 12.8655 17.5936 13.4036L17.6303 13.4969C18.1487 14.8113 19.1892 15.8518 20.5036 16.3702L20.5969 16.4069C21.135 16.6192 21.135 17.3808 20.5969 17.5931L20.5036 17.6298C19.1892 18.1482 18.1487 19.1887 17.6303 20.5031L17.5936 20.5964C17.3813 21.1345 16.6197 21.1345 16.4074 20.5964L16.3707 20.5031C15.8523 19.1887 14.8118 18.1482 13.4974 17.6298L13.4041 17.5931C12.866 17.3808 12.866 16.6192 13.4041 16.4069L13.4974 16.3702C14.8118 15.8518 15.8523 14.8113 16.3707 13.4969L16.4074 13.4036Z" fill="#FF2A47" stroke="#FF2A47" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M5.99951 6H13.9995M5.99951 10.5H13.9995M5.99951 15H9.99951" stroke="#121212" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    
-                            </span>
-                            <span class="text">
-                                Active Service(s)
-                            </span>
-                        </a>    
-                    </li>
-
-                    <!-- <li>
+          <!-- <li>
                         <a (click)="goToPastService()">
                             <span class="icon">
                                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,7 +51,7 @@
                         </a>    
                     </li>  -->
 
-                    <!-- <li>
+          <!-- <li>
                         <a>
                             <span class="icon">
                                 <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -64,72 +67,79 @@
                         </a>    
                     </li> -->
 
-                    <li >
-                        <a  (click)="goToHelp()">
-                            <span class="icon">
-                                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M16.0005 9.80456C16.0005 9.45886 16.0005 9.28606 16.0525 9.13206C16.2037 8.6845 16.6023 8.51082 17.0016 8.32894C17.4505 8.12448 17.6749 8.02225 17.8973 8.00426C18.1498 7.98384 18.4027 8.03824 18.6185 8.15935C18.9046 8.3199 19.1041 8.62499 19.3084 8.87308C20.2518 10.0189 20.7234 10.5919 20.896 11.2237C21.0353 11.7335 21.0353 12.2667 20.896 12.7765C20.6443 13.698 19.849 14.4705 19.2603 15.1855C18.9592 15.5512 18.8086 15.7341 18.6185 15.8408C18.4027 15.9619 18.1498 16.0163 17.8973 15.9959C17.6749 15.9779 17.4505 15.8757 17.0016 15.6712C16.6023 15.4893 16.2037 15.3157 16.0525 14.8681C16.0005 14.7141 16.0005 14.5413 16.0005 14.1956V9.80456Z" fill="#FFDBE0" stroke="#121212"/>
-                                    <path d="M5.99952 9.80467C5.99952 9.36947 5.9873 8.97828 5.63543 8.67227C5.50744 8.56097 5.33776 8.48368 4.99842 8.32912C4.54952 8.12465 4.32507 8.02242 4.10267 8.00443C3.43542 7.95047 3.07643 8.40588 2.69164 8.87325C1.74826 10.0191 1.27657 10.592 1.10397 11.2238C0.964692 11.7337 0.964692 12.2669 1.10397 12.7767C1.35571 13.6982 2.15103 14.4706 2.73972 15.1857C3.1108 15.6364 3.46528 16.0476 4.10267 15.9961C4.32507 15.9781 4.54952 15.8758 4.99842 15.6714C5.33776 15.5168 5.50744 15.4395 5.63543 15.3282C5.9873 15.0222 5.99952 14.6311 5.99952 14.1958V9.80467Z" fill="#FFDBE0" stroke="#121212"/>
-                                    <path d="M3.99854 8C3.99854 4.68629 7.13255 2 10.9985 2C14.8645 2 17.9985 4.68629 17.9985 8" stroke="#121212" stroke-linecap="square" stroke-linejoin="round"/>
-                                    <path d="M17.9976 16V16.8C17.9976 18.5673 16.2067 20 13.9976 20H11.9976" stroke="#121212" stroke-linecap="round" stroke-linejoin="round"/>
-                                    </svg>
-                                    
-                            </span>
-                            <span class="text">
-                                Help Centre
-                            </span>
-                        </a>    
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-    <section class="content_area">
-        <div class="sidebar_icon d-lg-block d-none">
-            <a  onclick="return false;">
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4.6665 9C4.6665 9 0.666511 6.05407 0.666504 5C0.666497 3.94587 4.6665 1 4.6665 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M9.3335 9C9.3335 9 5.3335 6.05407 5.3335 5C5.3335 3.94587 9.3335 1 9.3335 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <li>
+            <a (click)="goToHelp()">
+              <span class="icon">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M16.0005 9.80456C16.0005 9.45886 16.0005 9.28606 16.0525 9.13206C16.2037 8.6845 16.6023 8.51082 17.0016 8.32894C17.4505 8.12448 17.6749 8.02225 17.8973 8.00426C18.1498 7.98384 18.4027 8.03824 18.6185 8.15935C18.9046 8.3199 19.1041 8.62499 19.3084 8.87308C20.2518 10.0189 20.7234 10.5919 20.896 11.2237C21.0353 11.7335 21.0353 12.2667 20.896 12.7765C20.6443 13.698 19.849 14.4705 19.2603 15.1855C18.9592 15.5512 18.8086 15.7341 18.6185 15.8408C18.4027 15.9619 18.1498 16.0163 17.8973 15.9959C17.6749 15.9779 17.4505 15.8757 17.0016 15.6712C16.6023 15.4893 16.2037 15.3157 16.0525 14.8681C16.0005 14.7141 16.0005 14.5413 16.0005 14.1956V9.80456Z"
+                    fill="#FFDBE0" stroke="#121212" />
+                  <path
+                    d="M5.99952 9.80467C5.99952 9.36947 5.9873 8.97828 5.63543 8.67227C5.50744 8.56097 5.33776 8.48368 4.99842 8.32912C4.54952 8.12465 4.32507 8.02242 4.10267 8.00443C3.43542 7.95047 3.07643 8.40588 2.69164 8.87325C1.74826 10.0191 1.27657 10.592 1.10397 11.2238C0.964692 11.7337 0.964692 12.2669 1.10397 12.7767C1.35571 13.6982 2.15103 14.4706 2.73972 15.1857C3.1108 15.6364 3.46528 16.0476 4.10267 15.9961C4.32507 15.9781 4.54952 15.8758 4.99842 15.6714C5.33776 15.5168 5.50744 15.4395 5.63543 15.3282C5.9873 15.0222 5.99952 14.6311 5.99952 14.1958V9.80467Z"
+                    fill="#FFDBE0" stroke="#121212" />
+                  <path d="M3.99854 8C3.99854 4.68629 7.13255 2 10.9985 2C14.8645 2 17.9985 4.68629 17.9985 8"
+                    stroke="#121212" stroke-linecap="square" stroke-linejoin="round" />
+                  <path d="M17.9976 16V16.8C17.9976 18.5673 16.2067 20 13.9976 20H11.9976" stroke="#121212"
+                    stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
-            </a>              
+
+              </span>
+              <span class="text">
+                Help Centre
+              </span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <section class="content_area">
+    <div class="sidebar_icon d-lg-block d-none">
+      <a onclick="return false;">
+        <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4.6665 9C4.6665 9 0.666511 6.05407 0.666504 5C0.666497 3.94587 4.6665 1 4.6665 1"
+            stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M9.3335 9C9.3335 9 5.3335 6.05407 5.3335 5C5.3335 3.94587 9.3335 1 9.3335 1" stroke="currentColor"
+            stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
+    </div>
+    <div class="header_wrap">
+      <div class="row justify-content-between align-items-center">
+        <div class="col-auto d-block d-md-none">
+          <div class="logo d-flex justify-content-center d-lg-block d-md-none">
+            <a>
+              <img
+                src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png"
+                alt="">
+            </a>
+          </div>
         </div>
-        <div class="header_wrap">
-            <div class="row justify-content-between align-items-center">
-                <div class="col-auto d-block d-md-none">
-                    <div class="logo d-flex justify-content-center d-lg-block d-md-none">
-                        <a >
-                            <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" alt="">
-                        </a>
-                    </div>
-                </div>
-                <div class="col-auto d-none d-md-block">
-                    <div>
-                        <h4>Active Service(s)</h4>
-                        <!-- <p> <a href="#" onclick="return false;">Dashboard</a> / Active Service(s)</p> -->
-                    </div>
-                </div>
-                <div class="col-auto d-flex align-items-center">
-                    <div class="search_bar_wrap d-flex align-items-center row">
-                        <div class="col-auto p-0 d-none d-md-block">
-                          <div class="search-input-box d-flex align-items-center">
-                            <a  (click)="$event.preventDefault()">
-                              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M6.8087 12.6174C10.0168 12.6174 12.6174 10.0168 12.6174 6.8087C12.6174 3.60064 10.0168 1 6.8087 1C3.60064 1 1 3.60064 1 6.8087C1 10.0168 3.60064 12.6174 6.8087 12.6174Z" stroke="#767676" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M15 15L10.9111 10.9111" stroke="#767676" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
-                              </svg>
-                            </a>
-                            <input 
-                            type="text"  
-                            placeholder="Search here..." 
-                            name="search" 
-                            class="search-input form-control"
-                            [(ngModel)]="searchTerm"
-                            (input)="searchRecords()"
-                          >
-                          </div>
-                        </div>
-                        <!-- Other header icons remain unchanged -->
-                        <!-- <div class="col-auto p-0">
+        <div class="col-auto d-none d-md-block">
+          <div>
+            <h4>Active Service(s)</h4>
+            <!-- <p> <a href="#" onclick="return false;">Dashboard</a> / Active Service(s)</p> -->
+          </div>
+        </div>
+        <div class="col-auto d-flex align-items-center">
+          <div class="search_bar_wrap d-flex align-items-center row">
+            <div class="col-auto p-0 d-none d-md-block">
+              <div class="search-input-box d-flex align-items-center">
+                <a (click)="$event.preventDefault()">
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M6.8087 12.6174C10.0168 12.6174 12.6174 10.0168 12.6174 6.8087C12.6174 3.60064 10.0168 1 6.8087 1C3.60064 1 1 3.60064 1 6.8087C1 10.0168 3.60064 12.6174 6.8087 12.6174Z"
+                      stroke="#767676" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M15 15L10.9111 10.9111" stroke="#767676" stroke-width="1.4" stroke-linecap="round"
+                      stroke-linejoin="round" />
+                  </svg>
+                </a>
+                <input type="text" placeholder="Search here..." name="search" class="search-input form-control"
+                  [(ngModel)]="searchTerm" (input)="searchRecords()">
+              </div>
+            </div>
+            <!-- Other header icons remain unchanged -->
+            <!-- <div class="col-auto p-0">
                           <a href="#" (click)="$event.preventDefault()" class="header_icon">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M8 15C11.866 15 15 11.866 15 8C15 4.13401 11.866 1 8 1C4.13401 1 1 4.13401 1 8C1 11.866 4.13401 15 8 15Z" stroke="#767676" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -146,228 +156,195 @@
                             </svg>
                           </a>                            
                         </div> -->
-                        <div class="col-auto p-0">
-                          <div class="profile_image">
-                            <a href="#" (click)="$event.preventDefault()">
-                              <img src="assets/customer_protal/images/profile-image.png" alt="">
-                            </a>
-                            <ul class="profile_menu">
-                              <!-- <li>
+            <div class="col-auto p-0">
+              <div class="profile_image">
+                <a href="#" (click)="$event.preventDefault()">
+                  <img src="assets/customer_protal/images/profile-image.png" alt="">
+                </a>
+                <ul class="profile_menu">
+                  <!-- <li>
                                 <a href="#" (click)="$event.preventDefault()">{{ userName }}</a>
                               </li> -->
-                              <li >
-                                <a  (click)="navigateLogout(); $event.preventDefault()">Logout</a>
-                              </li>
-                            </ul>
-                          </div>
-                        </div>
-                      </div>
-                      
-                    <div class="navbar-toggle">
-                            <span></span>
-                            <span></span>
-                            <span></span>
-                    </div>
-                </div> 
-
-            </div>
-        </div>
-        <div class="text-center d-block d-md-none sm_inr_bnr">
-            <div class="container">
-                <h4>Active Service(s)</h4>
-                <p> <a  onclick="return false;">Dashboard</a> / Active Service(s)</p>
-            </div>
-        </div>
-        <div class="content_wrap">
-            <div class="row">
-                <div class="col">
-                    <div class="table-responsive table-sm-box">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                <th scope="col">Service Name</th>
-                                <th scope="col">Customer Name</th>
-                                <th scope="col">Tax Invoice Number</th>
-                                <th scope="col">Tax Invoice Date</th>
-                                <th>Invoice Amount</th>
-                                <th>Details</th>
-                                <th>View File</th>
-                                <th>Upload File</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let item of paginatedRecords">
-                                    <td data-title="Service Name"> {{ item.planname }}
-                                    </td>
-                                    <td data-title="Customer Name"> {{ item.quoteWithProductDetails?.AccountName }}</td>
-                                    <td data-title="Tax Invoice Number"> {{ item.invoiceNumber || '—' }}
-                                    </td>
-                                    <td data-title="Tax Invoice Date"> {{ item.invoiceDate }}</td>
-                                    <td data-title="Invoice Amount"> {{ item.salesforceResponseMatchScreening?.total_including_Vat | number:'1.0-0' }}
-                                    </td>
-                                    <td>
-                                        <a href="#servicedetail" 
-                                         data-bs-toggle="modal"  class="detail_btn" (click)="viewDetails(item); $event.preventDefault()">
-                                        
-                                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M14.8169 5.31786C15.0341 5.62236 15.1426 5.77464 15.1426 6C15.1426 6.22536 15.0341 6.37764 14.8169 6.68214C13.8411 8.05043 11.3492 11 7.99979 11C4.65035 11 2.15843 8.05043 1.18268 6.68214C0.965512 6.37764 0.856934 6.22536 0.856934 6C0.856934 5.77464 0.965512 5.62236 1.18268 5.31786C2.15843 3.9496 4.65035 1 7.99979 1C11.3492 1 13.8411 3.9496 14.8169 5.31786Z" stroke="white" stroke-width="1.3"/>
-                                                <path d="M10.1426 6C10.1426 4.8165 9.18329 3.85715 7.99979 3.85715C6.81629 3.85715 5.85693 4.8165 5.85693 6C5.85693 7.1835 6.81629 8.14286 7.99979 8.14286C9.18329 8.14286 10.1426 7.1835 10.1426 6Z" stroke="white" stroke-width="1.3"/>
-                                                </svg>
-                                            <span class="d-block d-md-none">Details</span>
-                                        
-                                        </a> 
-                                    </td>
-                                    <td>
-                                        <a href="#additionalfile"  data-bs-toggle="modal"  class="detail_btn" 
-                                        (click)="openShareholderModal(item.shareholders, item.additionalUploadedFiles); $event.preventDefault()">
-                                            <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M14.8169 5.31786C15.0341 5.62236 15.1426 5.77464 15.1426 6C15.1426 6.22536 15.0341 6.37764 14.8169 6.68214C13.8411 8.05043 11.3492 11 7.99979 11C4.65035 11 2.15843 8.05043 1.18268 6.68214C0.965512 6.37764 0.856934 6.22536 0.856934 6C0.856934 5.77464 0.965512 5.62236 1.18268 5.31786C2.15843 3.9496 4.65035 1 7.99979 1C11.3492 1 13.8411 3.9496 14.8169 5.31786Z" stroke="white" stroke-width="1.3"/>
-                                                <path d="M10.1426 6C10.1426 4.8165 9.18329 3.85715 7.99979 3.85715C6.81629 3.85715 5.85693 4.8165 5.85693 6C5.85693 7.1835 6.81629 8.14286 7.99979 8.14286C9.18329 8.14286 10.1426 7.1835 10.1426 6Z" stroke="white" stroke-width="1.3"/>
-                                                </svg>
-                                                <span class="d-block d-md-none">File</span>
-                                        </a> 
-                                        </td>
-                                        <td>
-                                        <a href="#uploaddocument_step2"  data-bs-toggle="modal"  class="detail_btn" (click)="uploadDetailsModal(item); $event.preventDefault()">
-                                            <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M7.00016 1V7.66667M7.00016 1C6.53336 1 5.66118 2.32953 5.3335 2.66667M7.00016 1C7.46696 1 8.33916 2.32953 8.66683 2.66667" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M12.3332 9C12.3332 10.6547 11.9878 11 10.3332 11H3.6665C2.01184 11 1.6665 10.6547 1.6665 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                                                </svg>
-                                                <span class="d-block d-md-none">Upload File</span>
-                                                
-                                        </a> 
-                                        </td>
-                                </tr>
-
-                              
-                                
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-            <div class="row d-flex justify-content-md-between justify-content-center">
-                <!-- Left: Entries & Show Dropdown -->
-                <div class="col-auto d-none d-md-block">
-                  <div class="show_entries_text d-flex justify-content-center align-items-center">
-                    <p class="mb-0">Show</p>
-                    <div class="dropdown">
-                      <button
-                        class="dropdown-toggle d-flex justify-content-between align-items-center"
-                        type="button"
-                        id="dropdownMenuButton1"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
-                      >
-                        <span>{{ itemsPerPage }}</span>
-                        <svg width="9" height="6" viewBox="0 0 9 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path
-                            d="M1 1.25L4.5 4.75L8 1.25"
-                            stroke="#121212"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                          />
-                        </svg>
-                      </button>
-                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                        <li class="dropdown-item" (click)="changeItemsPerPage(10)">10</li>
-                        <li class="dropdown-item" (click)="changeItemsPerPage(20)">20</li>
-                        <li class="dropdown-item" (click)="changeItemsPerPage(30)">30</li>
-                      </ul>
-                    </div>
-                    <p class="mb-0">Entries</p>
-                    <p class="mb-0">
-                      Showing {{ startEntry }} to {{ endEntry }} of {{ records.length }} entries
-                    </p>
-                  </div>
-                </div>
-              
-                <!-- Right: Pagination Controls -->
-                <div class="col-auto">
-                  <div class="nav_wrap">
-                    <nav aria-label="Page navigation example">
-                      <ul class="pagination">
-                        <!-- Previous Button -->
-                        <li class="page-item" [class.disabled]="currentPage === 1">
-                          <a
-                            class="page-link"
-                            href="#"
-                            (click)="setPage(currentPage - 1); $event.preventDefault();"
-                            aria-label="Previous"
-                          >
-                            <span aria-hidden="true">
-                              <svg
-                                width="8"
-                                height="12"
-                                viewBox="0 0 8 12"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M6.5 1L1.5 6L6.5 11"
-                                  stroke="#121212"
-                                  stroke-width="1.5"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </span>
-                          </a>
-                        </li>
-              
-                        <!-- Page Numbers -->
-                        <li
-                          class="page-item"
-                          *ngFor="let page of [].constructor(totalPages); let i = index"
-                          [class.active]="currentPage === i + 1"
-                        >
-                          <a
-                            class="page-link"
-                            href="#"
-                            (click)="setPage(i + 1); $event.preventDefault();"
-                          >
-                            {{ i + 1 }}
-                          </a>
-                        </li>
-              
-                        <!-- Next Button -->
-                        <li class="page-item" [class.disabled]="currentPage === totalPages">
-                          <a
-                            class="page-link"
-                            href="#"
-                            (click)="setPage(currentPage + 1); $event.preventDefault();"
-                            aria-label="Next"
-                          >
-                            <span aria-hidden="true">
-                              <svg
-                                width="8"
-                                height="12"
-                                viewBox="0 0 8 12"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M1.5 1L6.5 6L1.5 11"
-                                  stroke="#121212"
-                                  stroke-width="1.5"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </span>
-                          </a>
-                        </li>
-                      </ul>
-                    </nav>
-                  </div>
-                </div>
+                  <li>
+                    <a (click)="navigateLogout(); $event.preventDefault()">Logout</a>
+                  </li>
+                </ul>
               </div>
-              
-        </div>
-    </section>
+            </div>
+          </div>
 
-    
+          <div class="navbar-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="text-center d-block d-md-none sm_inr_bnr">
+      <div class="container">
+        <h4>Active Service(s)</h4>
+        <p> <a onclick="return false;">Dashboard</a> / Active Service(s)</p>
+      </div>
+    </div>
+    <div class="content_wrap">
+      <div class="row">
+        <div class="col">
+          <div class="table-responsive table-sm-box">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Service Name</th>
+                  <th scope="col">Customer Name</th>
+                  <th scope="col">Tax Invoice Number</th>
+                  <th scope="col">Tax Invoice Date</th>
+                  <th>Invoice Amount</th>
+                  <th>Details</th>
+                  <th>View File</th>
+                  <th>Upload File</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of paginatedRecords">
+                  <td data-title="Service Name"> {{ item.planname }}
+                  </td>
+                  <td data-title="Customer Name"> {{ item.quoteWithProductDetails?.AccountName }}</td>
+                  <td data-title="Tax Invoice Number"> {{ item.invoiceNumber || '—' }}
+                  </td>
+                  <td data-title="Tax Invoice Date"> {{ item.invoiceDate }}</td>
+                  <td data-title="Invoice Amount"> {{ item.salesforceResponseMatchScreening?.total_including_Vat |
+                    number:'1.0-0' }}
+                  </td>
+                  <td>
+                    <a href="#servicedetail" data-bs-toggle="modal" class="detail_btn"
+                      (click)="viewDetails(item); $event.preventDefault()">
+
+                      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M14.8169 5.31786C15.0341 5.62236 15.1426 5.77464 15.1426 6C15.1426 6.22536 15.0341 6.37764 14.8169 6.68214C13.8411 8.05043 11.3492 11 7.99979 11C4.65035 11 2.15843 8.05043 1.18268 6.68214C0.965512 6.37764 0.856934 6.22536 0.856934 6C0.856934 5.77464 0.965512 5.62236 1.18268 5.31786C2.15843 3.9496 4.65035 1 7.99979 1C11.3492 1 13.8411 3.9496 14.8169 5.31786Z"
+                          stroke="white" stroke-width="1.3" />
+                        <path
+                          d="M10.1426 6C10.1426 4.8165 9.18329 3.85715 7.99979 3.85715C6.81629 3.85715 5.85693 4.8165 5.85693 6C5.85693 7.1835 6.81629 8.14286 7.99979 8.14286C9.18329 8.14286 10.1426 7.1835 10.1426 6Z"
+                          stroke="white" stroke-width="1.3" />
+                      </svg>
+                      <span class="d-block d-md-none">Details</span>
+
+                    </a>
+                  </td>
+                  <td>
+                    <a href="#additionalfile" data-bs-toggle="modal" class="detail_btn"
+                      (click)="openShareholderModal(item.shareholders, item.additionalUploadedFiles); $event.preventDefault()">
+                      <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M14.8169 5.31786C15.0341 5.62236 15.1426 5.77464 15.1426 6C15.1426 6.22536 15.0341 6.37764 14.8169 6.68214C13.8411 8.05043 11.3492 11 7.99979 11C4.65035 11 2.15843 8.05043 1.18268 6.68214C0.965512 6.37764 0.856934 6.22536 0.856934 6C0.856934 5.77464 0.965512 5.62236 1.18268 5.31786C2.15843 3.9496 4.65035 1 7.99979 1C11.3492 1 13.8411 3.9496 14.8169 5.31786Z"
+                          stroke="white" stroke-width="1.3" />
+                        <path
+                          d="M10.1426 6C10.1426 4.8165 9.18329 3.85715 7.99979 3.85715C6.81629 3.85715 5.85693 4.8165 5.85693 6C5.85693 7.1835 6.81629 8.14286 7.99979 8.14286C9.18329 8.14286 10.1426 7.1835 10.1426 6Z"
+                          stroke="white" stroke-width="1.3" />
+                      </svg>
+                      <span class="d-block d-md-none">File</span>
+                    </a>
+                  </td>
+                  <td>
+                    <a href="#uploaddocument_step2" data-bs-toggle="modal" class="detail_btn"
+                      (click)="uploadDetailsModal(item); $event.preventDefault()">
+                      <svg width="14" height="12" viewBox="0 0 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M7.00016 1V7.66667M7.00016 1C6.53336 1 5.66118 2.32953 5.3335 2.66667M7.00016 1C7.46696 1 8.33916 2.32953 8.66683 2.66667"
+                          stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        <path
+                          d="M12.3332 9C12.3332 10.6547 11.9878 11 10.3332 11H3.6665C2.01184 11 1.6665 10.6547 1.6665 9"
+                          stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                      </svg>
+                      <span class="d-block d-md-none">Upload File</span>
+
+                    </a>
+                  </td>
+                </tr>
+
+
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="row d-flex justify-content-md-between justify-content-center">
+        <!-- Left: Entries & Show Dropdown -->
+        <div class="col-auto d-none d-md-block">
+          <div class="show_entries_text d-flex justify-content-center align-items-center">
+            <p class="mb-0">Show</p>
+            <div class="dropdown">
+              <button class="dropdown-toggle d-flex justify-content-between align-items-center" type="button"
+                id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                <span>{{ itemsPerPage }}</span>
+                <svg width="9" height="6" viewBox="0 0 9 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1.25L4.5 4.75L8 1.25" stroke="#121212" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                </svg>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                <li class="dropdown-item" (click)="changeItemsPerPage(10)">10</li>
+                <li class="dropdown-item" (click)="changeItemsPerPage(20)">20</li>
+                <li class="dropdown-item" (click)="changeItemsPerPage(30)">30</li>
+              </ul>
+            </div>
+            <p class="mb-0">Entries</p>
+            <p class="mb-0">
+              Showing {{ startEntry }} to {{ endEntry }} of {{ records.length }} entries
+            </p>
+          </div>
+        </div>
+
+        <!-- Right: Pagination Controls -->
+        <div class="col-auto">
+          <div class="nav_wrap">
+            <nav aria-label="Page navigation example">
+              <ul class="pagination">
+                <!-- Previous Button -->
+                <li class="page-item" [class.disabled]="currentPage === 1">
+                  <a class="page-link" href="#" (click)="setPage(currentPage - 1); $event.preventDefault();"
+                    aria-label="Previous">
+                    <span aria-hidden="true">
+                      <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6.5 1L1.5 6L6.5 11" stroke="#121212" stroke-width="1.5" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
+                    </span>
+                  </a>
+                </li>
+
+                <!-- Page Numbers -->
+                <li class="page-item" *ngFor="let page of [].constructor(totalPages); let i = index"
+                  [class.active]="currentPage === i + 1">
+                  <a class="page-link" href="#" (click)="setPage(i + 1); $event.preventDefault();">
+                    {{ i + 1 }}
+                  </a>
+                </li>
+
+                <!-- Next Button -->
+                <li class="page-item" [class.disabled]="currentPage === totalPages">
+                  <a class="page-link" href="#" (click)="setPage(currentPage + 1); $event.preventDefault();"
+                    aria-label="Next">
+                    <span aria-hidden="true">
+                      <svg width="8" height="12" viewBox="0 0 8 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1.5 1L6.5 6L1.5 11" stroke="#121212" stroke-width="1.5" stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
   <!-- Upload File - Modal -->
   <!-- <div class="modal fade" id="uploaddocument" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="uploaddocumentLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -412,9 +389,10 @@
       </div>
     </div>
   </div> -->
-  
+
   <!-- Upload File - Step 2 - Modal -->
-  <div class="modal fade fileupload_modal" id="uploaddocument_step2" data-bs-keyboard="false" tabindex="-1" aria-labelledby="uploaddocumentLabel" aria-hidden="true">
+  <div class="modal fade fileupload_modal" id="uploaddocument_step2" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="uploaddocumentLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
@@ -422,127 +400,134 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <div class="table-responsive table-sm-box">
-                <table class="table" *ngIf="uploadedFiles.length > 0; else noAdditionalFiles">
-                    <thead class="table-light">
-                      <tr>
-                        <th scope="col">File</th>
-                        <th scope="col">Document Type</th>
-                        <th scope="col">Size</th>
-                        <th scope="col" class="text-center">View</th>
-                        <th scope="col" class="text-center">Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody *ngIf="uploadedFiles.length > 0">
-                      <ng-container *ngFor="let file of uploadedFiles;">
-                      <tr *ngIf="file.recordId === selectedRecord._id"
-                      >
-                     
-                        <td >
-                            <div class="row gx-3 align-items-center flex-md-nowrap">
-                                <div class="col-auto">
-                                    <div class="table-thumbnail">
-                                        <img [src]="getFileIcon(file.name)" alt="" style="width: 55px; height: auto;">
-                                    </div>
-                                </div>
-                                <div class="col">
-                                  {{ file.name }}
+          <div class="table-responsive table-sm-box">
+            <table class="table" *ngIf="uploadedFiles.length > 0; else noAdditionalFiles">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">File</th>
+                  <th scope="col">Document Type</th>
+                  <th scope="col">Size</th>
+                  <th scope="col" class="text-center">View</th>
+                  <th scope="col" class="text-center">Delete</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="uploadedFiles.length > 0">
+                <ng-container *ngFor="let file of uploadedFiles;">
+                  <tr *ngIf="file.recordId === selectedRecord._id">
 
-                                </div>
-                            </div>
-                        </td>
-                        <td data-title="Document Type"> {{ file.type }}
-                        </td>
-                        <td data-title="Size"> {{ bytesToSize(file.size) }}</td>
-                        <td class="text-center">
-                            <a href="#" onclick="return false;" (click)="viewFile(file.url)"
-                            data-fancybox  class="btn-icon">
-                                <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M14.8169 5.31786C15.0341 5.62236 15.1426 5.77464 15.1426 6C15.1426 6.22536 15.0341 6.37764 14.8169 6.68214C13.8411 8.05043 11.3492 11 7.99979 11C4.65035 11 2.15843 8.05043 1.18268 6.68214C0.965512 6.37764 0.856934 6.22536 0.856934 6C0.856934 5.77464 0.965512 5.62236 1.18268 5.31786C2.15843 3.9496 4.65035 1 7.99979 1C11.3492 1 13.8411 3.9496 14.8169 5.31786Z" stroke="white" stroke-width="1.3"/>
-                                    <path d="M10.1426 6C10.1426 4.8165 9.18329 3.85715 7.99979 3.85715C6.81629 3.85715 5.85693 4.8165 5.85693 6C5.85693 7.1835 6.81629 8.14286 7.99979 8.14286C9.18329 8.14286 10.1426 7.1835 10.1426 6Z" stroke="white" stroke-width="1.3"/>
-                                    </svg>
-                                    <span class="d-block d-md-none">File</span>
-                            </a> 
-                        </td>
-                        <td class="text-center ">
-                            <a href="#" onclick="return false;" (click)="removeFile(file)"
-                            class="btn-icon">
-                                <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M13.3745 3.84271L12.9305 11.0257C12.817 12.8609 12.7603 13.7785 12.3003 14.4383C12.0728 14.7644 11.78 15.0397 11.4404 15.2465C10.7536 15.665 9.83424 15.665 7.99548 15.665C6.15437 15.665 5.2338 15.665 4.5465 15.2458C4.20669 15.0385 3.91379 14.7628 3.68643 14.436C3.22658 13.7753 3.1711 12.8564 3.06016 11.0186L2.62695 3.84271" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                                    <path d="M1.55176 3.84275H14.4488M10.9062 3.84275L10.4171 2.83372C10.0922 2.16345 9.92966 1.82832 9.64944 1.61931C9.58732 1.57294 9.52147 1.5317 9.45262 1.49599C9.1423 1.33499 8.76986 1.33499 8.02499 1.33499C7.26141 1.33499 6.87966 1.33499 6.56417 1.50274C6.49425 1.53992 6.42753 1.58283 6.3647 1.63103C6.08122 1.84851 5.92287 2.1959 5.60616 2.8907L5.17218 3.84275" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                                    <path d="M6.20898 11.7242V7.42523" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                                    <path d="M9.79199 11.7242V7.42523" stroke="white" stroke-width="1.3" stroke-linecap="round"/>
-                                </svg>
-                                <span class="d-block d-md-none">Delete</span>
-                            </a>
-                        </td>
-                      
-                      </tr>
-                     
-                      
-                    </ng-container>
-
-                    <ng-template #noAdditionalFiles>
-                      <p>No Additional documents added.</p>
-                    </ng-template>
-                      
-                    </tbody>
-                  </table>
-               </div>
-
-
-            </div>
-
-            <div class="modal-footer d-block">
-                
-                <!-- add_fileupload_wrap -->
-                <div class="fileupload_wrap">
-                    <div class="row align-items-center">
-                        <div class="col-md-6 mb-3 mb-md-0">
-                            <div class="form-field">
-                                <label for="">Select Document Type</label>
-                                <select class="form-select form-control" aria-label="Default select example"  [(ngModel)]="selectedDocumentType"
-                            >
-                                <option value="" disabled selected>Choose Document type</option>
-                                <option *ngFor="let option of documentTypeOptions" [value]="option">{{ option }}</option>
-                                
-                              </select>
-                            </div>
+                    <td>
+                      <div class="row gx-3 align-items-center flex-md-nowrap">
+                        <div class="col-auto">
+                          <div class="table-thumbnail">
+                            <img [src]="getFileIcon(file.name)" alt="" style="width: 55px; height: auto;">
+                          </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="image-upload image-upload-lg">
-                                <input type="file" class="d-none" id="img_upload"  (change)="onFilesSelected($event)"
-                                accept=".pdf,.doc,.docx,.jpg,.png"  />
-                                <label class="image-edit-btn image-upload-btn" for="img_upload">
-                                    <svg width="48" height="35" viewBox="0 0 48 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M37.1478 34.5H29.5954H27.5617H27.1225V24.3697H30.4357C31.2759 24.3697 31.7724 23.4149 31.2759 22.7275L24.831 13.8097C24.4205 13.2369 23.5707 13.2369 23.1602 13.8097L16.7153 22.7275C16.2189 23.4149 16.7058 24.3697 17.5556 24.3697H20.8687V34.5H20.4295H18.3958H9.64037C4.62773 34.2231 0.636719 29.5351 0.636719 24.4556C0.636719 20.9516 2.53675 17.8962 5.35337 16.2445C5.09558 15.5475 4.96191 14.8027 4.96191 14.0198C4.96191 10.4393 7.85492 7.54633 11.4354 7.54633C12.2087 7.54633 12.9535 7.68001 13.6505 7.9378C15.7224 3.54577 20.1908 0.5 25.3848 0.5C32.1065 0.509548 37.6443 5.65586 38.2745 12.2152C43.4399 13.1032 47.364 17.8867 47.364 23.3003C47.364 29.0864 42.8574 34.099 37.1478 34.5Z" fill="#FF2A47"/>
-                                    </svg>                                    
-                                </label>
-                                <div class="text">
-                                    <h6>Drag and drop files here</h6>
-                                    <p>Upload size: Max size upto 1 MB</p>
-                                    <a href="#" onclick="return false;"
-                ><u>Browse Files</u></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        <div class="col">
+                          {{ file.name }}
 
-                <div class="text-end mt-md-2 mt-0 addmore_toggle_wrap d-none">
-                    <a href="#" class="btn btn-sm btn-outline addmore_toggle">
-                        <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 1.5V9.5M9 5.5H1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </div>
+                      </div>
+                    </td>
+                    <td data-title="Document Type"> {{ file.type }}
+                    </td>
+                    <td data-title="Size"> {{ bytesToSize(file.size) }}</td>
+                    <td class="text-center">
+                      <a href="#" onclick="return false;" (click)="viewFile(file.url)" data-fancybox class="btn-icon">
+                        <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M14.8169 5.31786C15.0341 5.62236 15.1426 5.77464 15.1426 6C15.1426 6.22536 15.0341 6.37764 14.8169 6.68214C13.8411 8.05043 11.3492 11 7.99979 11C4.65035 11 2.15843 8.05043 1.18268 6.68214C0.965512 6.37764 0.856934 6.22536 0.856934 6C0.856934 5.77464 0.965512 5.62236 1.18268 5.31786C2.15843 3.9496 4.65035 1 7.99979 1C11.3492 1 13.8411 3.9496 14.8169 5.31786Z"
+                            stroke="white" stroke-width="1.3" />
+                          <path
+                            d="M10.1426 6C10.1426 4.8165 9.18329 3.85715 7.99979 3.85715C6.81629 3.85715 5.85693 4.8165 5.85693 6C5.85693 7.1835 6.81629 8.14286 7.99979 8.14286C9.18329 8.14286 10.1426 7.1835 10.1426 6Z"
+                            stroke="white" stroke-width="1.3" />
                         </svg>
-                        Add More
-                    </a>
-                </div>
-                <div class="text-center mt-3">
-                    <a href="#" onclick="return false;" (click)="submitDocuments()"
-                     class="btn btn-md" data-bs-dismiss="modal" >Submit Files</a>
-                </div>
+                        <span class="d-block d-md-none">File</span>
+                      </a>
+                    </td>
+                    <td class="text-center ">
+                      <a href="#" onclick="return false;" (click)="removeFile(file)" class="btn-icon">
+                        <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path
+                            d="M13.3745 3.84271L12.9305 11.0257C12.817 12.8609 12.7603 13.7785 12.3003 14.4383C12.0728 14.7644 11.78 15.0397 11.4404 15.2465C10.7536 15.665 9.83424 15.665 7.99548 15.665C6.15437 15.665 5.2338 15.665 4.5465 15.2458C4.20669 15.0385 3.91379 14.7628 3.68643 14.436C3.22658 13.7753 3.1711 12.8564 3.06016 11.0186L2.62695 3.84271"
+                            stroke="white" stroke-width="1.3" stroke-linecap="round" />
+                          <path
+                            d="M1.55176 3.84275H14.4488M10.9062 3.84275L10.4171 2.83372C10.0922 2.16345 9.92966 1.82832 9.64944 1.61931C9.58732 1.57294 9.52147 1.5317 9.45262 1.49599C9.1423 1.33499 8.76986 1.33499 8.02499 1.33499C7.26141 1.33499 6.87966 1.33499 6.56417 1.50274C6.49425 1.53992 6.42753 1.58283 6.3647 1.63103C6.08122 1.84851 5.92287 2.1959 5.60616 2.8907L5.17218 3.84275"
+                            stroke="white" stroke-width="1.3" stroke-linecap="round" />
+                          <path d="M6.20898 11.7242V7.42523" stroke="white" stroke-width="1.3" stroke-linecap="round" />
+                          <path d="M9.79199 11.7242V7.42523" stroke="white" stroke-width="1.3" stroke-linecap="round" />
+                        </svg>
+                        <span class="d-block d-md-none">Delete</span>
+                      </a>
+                    </td>
 
+                  </tr>
+
+
+                </ng-container>
+
+                <ng-template #noAdditionalFiles>
+                  <p>No Additional documents added.</p>
+                </ng-template>
+
+              </tbody>
+            </table>
+          </div>
+
+
+        </div>
+
+        <div class="modal-footer d-block">
+
+          <!-- add_fileupload_wrap -->
+          <div class="fileupload_wrap">
+            <div class="row align-items-center">
+              <div class="col-md-6 mb-3 mb-md-0">
+                <div class="form-field">
+                  <label for="">Select Document Type</label>
+                  <select class="form-select form-control" aria-label="Default select example"
+                    [(ngModel)]="selectedDocumentType">
+                    <option value="" disabled selected>Choose Document type</option>
+                    <option *ngFor="let option of documentTypeOptions" [value]="option">{{ option }}</option>
+
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="image-upload image-upload-lg">
+                  <input type="file" class="d-none" id="img_upload" (change)="onFilesSelected($event)"
+                    accept=".pdf,.doc,.docx,.jpg,.png" />
+                  <label class="image-edit-btn image-upload-btn" for="img_upload">
+                    <svg width="48" height="35" viewBox="0 0 48 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path
+                        d="M37.1478 34.5H29.5954H27.5617H27.1225V24.3697H30.4357C31.2759 24.3697 31.7724 23.4149 31.2759 22.7275L24.831 13.8097C24.4205 13.2369 23.5707 13.2369 23.1602 13.8097L16.7153 22.7275C16.2189 23.4149 16.7058 24.3697 17.5556 24.3697H20.8687V34.5H20.4295H18.3958H9.64037C4.62773 34.2231 0.636719 29.5351 0.636719 24.4556C0.636719 20.9516 2.53675 17.8962 5.35337 16.2445C5.09558 15.5475 4.96191 14.8027 4.96191 14.0198C4.96191 10.4393 7.85492 7.54633 11.4354 7.54633C12.2087 7.54633 12.9535 7.68001 13.6505 7.9378C15.7224 3.54577 20.1908 0.5 25.3848 0.5C32.1065 0.509548 37.6443 5.65586 38.2745 12.2152C43.4399 13.1032 47.364 17.8867 47.364 23.3003C47.364 29.0864 42.8574 34.099 37.1478 34.5Z"
+                        fill="#FF2A47" />
+                    </svg>
+                  </label>
+                  <div class="text">
+                    <h6>Drag and drop files here</h6>
+                    <p>Upload size: Max size upto 1 MB</p>
+                    <a href="#" onclick="return false;"><u>Browse Files</u></a>
+                  </div>
+                </div>
+              </div>
             </div>
+          </div>
+
+          <div class="text-end mt-md-2 mt-0 addmore_toggle_wrap d-none">
+            <a href="#" class="btn btn-sm btn-outline addmore_toggle">
+              <svg width="10" height="11" viewBox="0 0 10 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5 1.5V9.5M9 5.5H1" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+              Add More
+            </a>
+          </div>
+          <div class="text-center mt-3">
+            <a href="#" onclick="return false;" (click)="submitDocuments()" class="btn btn-md"
+              data-bs-dismiss="modal">Submit Files</a>
+          </div>
+
+        </div>
 
 
       </div>
@@ -551,7 +536,8 @@
 
 
   <!-- Modal -->
-  <div class="modal fade" id="servicedetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="servicedetailLabel" aria-hidden="true">
+  <div class="modal fade" id="servicedetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="servicedetailLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -559,47 +545,48 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-           <div class="table-responsive table-sm-box">
+          <div class="table-responsive table-sm-box">
             <table class="table">
-                <thead class="table-light">
-                  <tr>
-                    <th scope="col">Product</th>
-                    <th scope="col">Quantity</th>
-                    <th scope="col">Unit Price</th>
-                    <th scope="col">Taxable Amount</th>
-                    <th scope="col">VAT</th>
-                    <th scope="col">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr  *ngFor="let product of selectedRecord?.combinedProducts">
-                    <td data-title="Product">{{ product.productName }}</td>
-                    <td data-title="Quantity">{{ product.productQuantity || product.productQunatity }}</td>
-                    <td data-title="Unit Price">AED {{ product.productUnitPrice }}</td>
-                    <td data-title="Taxable Amount">AED {{ product.taxableAmount || 0 }}</td>
-                    <td data-title="VAT">AED  {{ product.vat || 0 }}</td>
-                    <td data-title="Total">AED {{ product.total || (product.productUnitPrice * (product.productQuantity || product.productQunatity)) }}</td>
-                  </tr>
-                  
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Product</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Unit Price</th>
+                  <th scope="col">Taxable Amount</th>
+                  <th scope="col">VAT</th>
+                  <th scope="col">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let product of selectedRecord?.combinedProducts">
+                  <td data-title="Product">{{ product.productName }}</td>
+                  <td data-title="Quantity">{{ product.productQuantity || product.productQunatity }}</td>
+                  <td data-title="Unit Price">AED {{ product.productUnitPrice }}</td>
+                  <td data-title="Taxable Amount">AED {{ product.taxableAmount || 0 }}</td>
+                  <td data-title="VAT">AED {{ product.vat || 0 }}</td>
+                  <td data-title="Total">AED {{ product.total || (product.productUnitPrice * (product.productQuantity ||
+                    product.productQunatity)) }}</td>
+                </tr>
 
-                  
-                </tbody>
-              </table>
-           </div>
-           <ul class="service_total">
+
+
+              </tbody>
+            </table>
+          </div>
+          <ul class="service_total">
             <li>
-                <p>Grand Total Without VAT:</p>
-                <b>AED {{ selectedRecord?.calculatedSubTotal | number: '1.2-2' }} </b>
+              <p>Grand Total Without VAT:</p>
+              <b>AED {{ selectedRecord?.calculatedSubTotal | number: '1.2-2' }} </b>
             </li>
             <li>
-                <p>VAT:</p>
-                <b>AED {{ selectedRecord?.calculatedVAT | number: '1.2-2' }}</b>
+              <p>VAT:</p>
+              <b>AED {{ selectedRecord?.calculatedVAT | number: '1.2-2' }}</b>
             </li>
             <li class="total">
-                <b>Total Including VAT:</b>
-                <b class="price">AED {{ selectedRecord?.calculatedTotalIncludingVAT | number: '1.2-2' }}</b>
+              <b>Total Including VAT:</b>
+              <b class="price">AED {{ selectedRecord?.calculatedTotalIncludingVAT | number: '1.2-2' }}</b>
             </li>
-           </ul>
+          </ul>
         </div>
         <!-- <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -610,68 +597,69 @@
   </div>
 
   <!-- Modal -->
-  <div class="modal fade" id="additionalfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="additionalfileLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" 
-    >
+  <div class="modal fade" id="additionalfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="additionalfileLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="additionalfileLabel">Additional Files</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <div class="row g-lg-4 g-3" *ngIf="(selectedaddAdditionalFile?.length || 0) > 0; else noAdditionalFiles">
-                <div class="col-md-6"  *ngFor="let file of selectedaddAdditionalFile">
-                    <div class="additional_file_box"  
-                      >
-                       
-                        <div class="row gx-3 align-items-center"
-                        >
-                            <div class="col-auto">
-                                <div class="image">
-                                  <img [src]="getFileIcon(file.name)" alt="" style="width: 55px; height: auto;">
-                                </div>
-                            </div>
-                            <div class="col-auto">
-                                <div class="txt">
-                                    <h3>{{ file.type }}</h3>
-                                    <p>{{ file.name }}</p>
-                                </div>
-                            </div>
-                            <div class="col d-flex justify-content-center mt-2 mt-md-0">
-                                <!-- <a href="#" onclick="return false;"
+          <div class="row g-lg-4 g-3" *ngIf="(selectedaddAdditionalFile?.length || 0) > 0; else noAdditionalFiles">
+            <div class="col-md-6" *ngFor="let file of selectedaddAdditionalFile">
+              <div class="additional_file_box">
+
+                <div class="row gx-3 align-items-center">
+                  <div class="col-auto">
+                    <div class="image">
+                      <img [src]="getFileIcon(file.name)" alt="" style="width: 55px; height: auto;">
+                    </div>
+                  </div>
+                  <div class="col-auto">
+                    <div class="txt">
+                      <h3>{{ file.type }}</h3>
+                      <p>{{ file.name }}</p>
+                    </div>
+                  </div>
+                  <div class="col d-flex justify-content-center mt-2 mt-md-0">
+                    <!-- <a href="#" onclick="return false;"
                                  class="btn-icon me-2">
                                     <svg width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                                         <path d="M9.94961 2.57006L10.6096 1.91007C11.1564 1.36331 12.0429 1.36331 12.5896 1.91007C13.1363 2.45683 13.1363 3.34329 12.5896 3.89005L11.9296 4.55004M9.94961 2.57006L5.51006 7.0096C5.17172 7.348 4.9317 7.77187 4.81565 8.23607L4.33301 10.1667L6.26361 9.684C6.72781 9.568 7.15167 9.32793 7.49007 8.9896L11.9296 4.55004M9.94961 2.57006L11.9296 4.55004" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
                                         <path d="M11.6666 8.50001C11.6666 10.6917 11.6666 11.7875 11.0613 12.5251C10.9505 12.6601 10.8267 12.7839 10.6917 12.8947C9.95413 13.5 8.85827 13.5 6.6666 13.5H6.33333C3.81917 13.5 2.56211 13.5 1.78106 12.7189C1.00002 11.9379 1 10.6808 1 8.16668V7.83334C1 5.64169 1 4.54587 1.60529 3.8083C1.71611 3.67328 1.83993 3.54946 1.97496 3.43864C2.71253 2.83334 3.80835 2.83334 6 2.83334" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>                                    
                                 </a> -->
-                                <a [href]="file.url"
-                                target="_blank" class="btn-icon">
-                                    <svg width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M14.8174 5.81786C15.0346 6.12236 15.1431 6.27464 15.1431 6.5C15.1431 6.72536 15.0346 6.87764 14.8174 7.18214C13.8416 8.55043 11.3497 11.5 8.00028 11.5C4.65084 11.5 2.15892 8.55043 1.18316 7.18214C0.966 6.87764 0.857422 6.72536 0.857422 6.5C0.857422 6.27464 0.966 6.12236 1.18316 5.81786C2.15892 4.4496 4.65084 1.5 8.00028 1.5C11.3497 1.5 13.8416 4.4496 14.8174 5.81786Z" stroke="currentColor" stroke-width="1.3"/>
-                                        <path d="M10.1431 6.5C10.1431 5.3165 9.18378 4.35715 8.00028 4.35715C6.81678 4.35715 5.85742 5.3165 5.85742 6.5C5.85742 7.6835 6.81678 8.64286 8.00028 8.64286C9.18378 8.64286 10.1431 7.6835 10.1431 6.5Z" stroke="currentColor" stroke-width="1.3"/>
-                                    </svg>                                    
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                     <!-- Fallback message for when there are no additional files -->
-       
-
+                    <a [href]="file.url" target="_blank" class="btn-icon">
+                      <svg width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M14.8174 5.81786C15.0346 6.12236 15.1431 6.27464 15.1431 6.5C15.1431 6.72536 15.0346 6.87764 14.8174 7.18214C13.8416 8.55043 11.3497 11.5 8.00028 11.5C4.65084 11.5 2.15892 8.55043 1.18316 7.18214C0.966 6.87764 0.857422 6.72536 0.857422 6.5C0.857422 6.27464 0.966 6.12236 1.18316 5.81786C2.15892 4.4496 4.65084 1.5 8.00028 1.5C11.3497 1.5 13.8416 4.4496 14.8174 5.81786Z"
+                          stroke="currentColor" stroke-width="1.3" />
+                        <path
+                          d="M10.1431 6.5C10.1431 5.3165 9.18378 4.35715 8.00028 4.35715C6.81678 4.35715 5.85742 5.3165 5.85742 6.5C5.85742 7.6835 6.81678 8.64286 8.00028 8.64286C9.18378 8.64286 10.1431 7.6835 10.1431 6.5Z"
+                          stroke="currentColor" stroke-width="1.3" />
+                      </svg>
+                    </a>
+                  </div>
                 </div>
+              </div>
+              <!-- Fallback message for when there are no additional files -->
 
-               
-                
+
             </div>
 
-            <ng-template #noAdditionalFiles>
-              <p>No additional files added.</p>
-            </ng-template>
-            
-    
-            <ng-template #noShareholders>
-              <p>No shareholders found.</p>
-            </ng-template>
+
+
+          </div>
+
+          <ng-template #noAdditionalFiles>
+            <p>No additional files added.</p>
+          </ng-template>
+
+
+          <ng-template #noShareholders>
+            <p>No shareholders found.</p>
+          </ng-template>
         </div>
         <!-- <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -680,8 +668,6 @@
       </div>
     </div>
   </div>
-   
-    
-</body>
 
-</html>
+
+</body>

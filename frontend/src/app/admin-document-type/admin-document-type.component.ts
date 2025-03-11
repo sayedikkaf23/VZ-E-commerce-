@@ -248,6 +248,21 @@ export class AdminDocumentTypeComponent {
     }
   }
  
+  updateDocTypeAdd(): void {
+    const count = Number(this.selectedCount) || 0;
+ 
+    // Adjust the docTypes array size based on the selected count
+    if (count > this.docTypes.length) {
+      this.docTypes = [
+        ...this.docTypes,
+        ...Array(count - this.docTypes.length).fill(''),
+      ];
+    } else {
+      this.docTypes = this.docTypes.slice(0, count);
+    }
+  }
+ 
+ 
   // Method to delete a specific document type
   deleteDocType(index: number): void {
     // Get the corresponding doc record that includes the _id
@@ -462,4 +477,3 @@ export class AdminDocumentTypeComponent {
   }
  
 }
- 
