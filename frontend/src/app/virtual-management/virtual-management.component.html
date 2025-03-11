@@ -110,6 +110,7 @@
               <th>Product Name</th>
               <th>Quantity</th>
               <th>Unit Price</th>
+              <th>Total Price</th>
             </tr>
           </thead>
           <tbody>
@@ -117,14 +118,15 @@
               <td>{{ product.productName }}</td>
               <td>{{ product.productQuantity }}</td>
               <td>{{ product.productUnitPrice }}</td>
+              <td>{{  product.total || (product.productUnitPrice * (product.productQuantity || product.productQunatity))   | number:'1.0-2' }}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="modal-footer">
-        <p>Total Amount: <strong style="font-weight: bold; color: rgb(235, 55, 55);">{{ salesforceResponseMatchScreening?.totalAmount }}</strong></p>
-        <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55);">{{ salesforceResponseMatchScreening?.totalVAT }}</strong></p>
-        <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55);">{{ salesforceResponseMatchScreening?.total_including_Vat }}</strong></p>
+        <p>Total Amount: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalAmount  | number:'1.0-2'}}</strong></p>
+        <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalVAT  | number:'1.0-2'}}</strong></p>
+        <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.total_including_Vat | number:'1.0-2' }}</strong></p>
       </div>
     </div>
   </div>
@@ -154,11 +156,14 @@
     </div>
   </div>
   <!-- Modal for Shareholder Details -->
-  <div class="modal-container" *ngIf="showModal">
-    <div class="modal-backdrop" (click)="closeModal()"></div>
+  <div  class="modal-overlay" *ngIf="showModal">
+    
     <div class="modal-content">
-      <span class="close-btn" (click)="closeModal()">&times;</span>
+      <div class="modal-header">
       <h5 class="modal-title">Shareholder Details</h5>
+      <span class="close-btn" (click)="closeModal()">&times;</span>
+      </div>
+      <div class="modal-body">
       <table class="table">
         <thead>
           <tr>
@@ -192,6 +197,11 @@
           </tr>
         </tbody>
       </table>
+     <div *ngIf="!selectedClientDetails.length" class="no-files">No shareholders available</div>
+    </div>
+      <div class="modal-footer">
+        <button class="green-button" (click)="closeModal()">Close</button>
+      </div>
     </div>
   </div>
  

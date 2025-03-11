@@ -28,6 +28,14 @@ export class AdminMailManagementComponent {
   itemsPerPage: number = 10; // Adjust as needed
   totalRecords: number = 0;
   totalPages: number = 0;
+
+  salesforceResponseMatchScreening: any = {}; // Declare this at the top
+ 
+ 
+selectedProducts: any[] = [];
+selectedDocuments: any[] = [];
+showProductModal: boolean = false;
+showDocumentModal: boolean = false;
  
   constructor(private mailManagementService: MailManagementService) {}
  
@@ -204,13 +212,7 @@ onDateFilter(): void {
 }
  
  
-salesforceResponseMatchScreening: any = {}; // Declare this at the top
- 
- 
-selectedProducts: any[] = [];
-selectedDocuments: any[] = [];
-showProductModal: boolean = false;
-showDocumentModal: boolean = false;
+
 openProductModal(user: any): void {
   console.log('Product Modal Opened', user); // Debug
   this.salesforceResponseMatchScreening = user.salesforceResponseMatchScreening; // ✅ Store the full object

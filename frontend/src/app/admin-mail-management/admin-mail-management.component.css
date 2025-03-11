@@ -121,37 +121,36 @@
   z-index: 999; /* Ensure it’s behind the modal but above other elements */
 }
 
-
+.modal-body{
+  padding: 10px;
+  overflow-x: auto;
+}
 
 .modal-header {
   position: sticky;
   top: 0;
   background: #fff;
-  height: auto;
+  height: 65px;
   border-bottom: 2px solid #ddd;
   z-index: 10;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 0;
+  padding: 10px;
 }
 
 
 /* Close button */
 .close-btn {
   position: absolute;
-  top: 10px;
+  top: 0px;
   right: 10px;
-  font-size: 20px;
+  font-size: 36px;
   cursor: pointer;
 }
 
-/* Modal title */
-.modal-title {
-  margin-bottom: 20px;
-  font-size: 18px;
-  font-weight: bold;
-}
+
 
 /* Table styling inside modal */
 .modal-content .table {
@@ -224,11 +223,11 @@
   height: 100%;
 }
 .modal-content {
-  width: auto;
-  max-width: 600px;
+  width: 60%;
+  max-width: 100%;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
   background: white;
-  padding: 20px;
+  padding: 10px;
   border-radius: 10px;
   position: absolute;
   top: 50%;
@@ -250,15 +249,7 @@
   z-index: 1000;
 }
 
-/* Close button */
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 20px;
-  cursor: pointer;
-  color: #555;
-}
+
 
 .close-btn:hover {
   color: #000;
@@ -266,13 +257,13 @@
 
 /* Modal title */
 .modal-title {
-  margin-bottom: 20px;
+ margin-bottom: 0px;
   font-size: 20px;
   font-weight: bold;
   color: #333;
   text-align: center;
-  border-bottom: 1px solid #ddd;
-  padding-bottom: 10px;
+
+ 
 }
 
 /* File list container */
@@ -280,7 +271,7 @@
   display: flex;
   flex-direction: column;
   gap: 15px;
-  margin-top: 15px;
+  margin-top: 0px;
 }
 
 /* Individual file item */
@@ -336,7 +327,7 @@
   text-align: center;
   font-size: 14px;
   color: #999;
-  margin-top: 20px;
+  margin: 10px;
 }
 .global-loader {
   position: fixed;
@@ -401,8 +392,8 @@
   display: flex;
   flex-direction: column; /* Stack items on small screens */
   align-items: flex-end;
-  justify-content: space-between;
-  padding: 20px;
+  justify-content: center;
+  padding: 10px;
   background-color: #f9f9f9;
   border-top: 2px solid #ddd;
   gap: 15px; /* Space between items */
