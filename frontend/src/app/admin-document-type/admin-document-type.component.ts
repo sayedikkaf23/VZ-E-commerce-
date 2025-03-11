@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import { AdminAuthService } from '../service/admin-auth.service';
 import { DocumenttypeService } from '../service/documenttype.service';
 import { UserService } from '../service/user.service';
-
+import { Observable } from 'rxjs';
+ 
 @Component({
   selector: 'app-admin-document-type',
   templateUrl: './admin-document-type.component.html',
@@ -15,28 +16,28 @@ export class AdminDocumentTypeComponent {
   selectedDocDetails: any[] = []; // To store selected mail details
   showModal: boolean = false; // Flag to control modal visibility
   docRecords: any[] = []; // Stores full response objects including _id
-
+ 
   serviceList: any[] = [];
   documentTypeInput: any;
   selectedServiceName: any;
-
+ 
   docTypesMap: { [key: string]: string[] } = {};
   selectedCount: number | null = null;
-
+ 
   constructor(
     private adminAuthService: AdminAuthService,
     private userService: UserService,
     private documenttypeService: DocumenttypeService
   ) {}
-
+ 
   ngOnInit(): void {
     this.loadServices();
   }
-
+ 
   trackByIndex(index: number, item: any): number {
     return index;
   }
-
+ 
   loadServices(): void {
     this.userService.getServices().subscribe(
       (data) => {
@@ -51,31 +52,31 @@ export class AdminDocumentTypeComponent {
       }
     );
   }
-
+ 
   openDocType(serviceName: string): void {
     this.selectedServiceName = serviceName;
-
+ 
     // Reset the docTypes array for the add modal
     this.docTypes = [];
     this.selectedCount = null;
-
+ 
     this.showModal = true;
     const modalElement = document.getElementById('docTypeModal');
     if (modalElement) {
       modalElement.style.display = 'block'; // Show modal
       modalElement.classList.add('show'); // Add 'show' class
     }
-
+ 
     // Add blur effect to the main content
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.classList.add('blurred');
     }
   }
-
+ 
   openEditDocType(serviceName: string): void {
     this.selectedServiceName = serviceName;
-  
+ 
     // Fetch document types based on the service name
     switch (serviceName) {
       case 'Bank Account Opening':
@@ -92,7 +93,7 @@ export class AdminDocumentTypeComponent {
           }
         );
         break;
-
+ 
       // case 'Business Bank':
       //   this.documenttypeService.getBusinessBanks().subscribe(
       //     (response: any[]) => {
@@ -104,14 +105,14 @@ export class AdminDocumentTypeComponent {
       //     }
       //   );
       //   break;
-
+ 
       case 'Virtual Receptionist':
         this.documenttypeService.getVirtualReceptions().subscribe(
           (response: any[]) => {
             this.docRecords = response; // Store the full objects
             this.docTypes = response.map((item) => item.documentType);
             this.selectedCount = this.docTypes.length;
-
+ 
           },
           (error) => {
             console.error('Error fetching Virtual Receptions:', error);
@@ -120,7 +121,7 @@ export class AdminDocumentTypeComponent {
           }
         );
         break;
-
+ 
       case 'Mail Management':
         this.documenttypeService.getMailManagements().subscribe(
           (response: any[]) => {
@@ -135,14 +136,14 @@ export class AdminDocumentTypeComponent {
           }
         );
         break;
-
+ 
       default:
         console.warn('Unknown service name:', serviceName);
         this.docTypes = [];
         this.selectedCount = 0;
         break;
     }
-
+ 
     // Show the modal
     this.showModal = true;
     const modalElement = document.getElementById('editDocTypeModal');
@@ -150,31 +151,31 @@ export class AdminDocumentTypeComponent {
       modalElement.style.display = 'block'; // Show modal
       modalElement.classList.add('show'); // Add 'show' class
     }
-
+ 
     // Add blur effect to the main content
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.classList.add('blurred');
     }
   }
-
+ 
   closeAddModal(): void {
     const modalElement = document.getElementById('docTypeModal');
     if (modalElement) {
       modalElement.style.display = 'none'; // Hide the modal
       modalElement.classList.remove('show'); // Remove the "show" class
     }
-
+ 
     this.selectedCount = null; // Reset the dropdown value
     this.docTypes = []; // Clear the text box list
-
+ 
     // Remove blur effect from the main content
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.classList.remove('blurred');
     }
   }
-
+ 
   closeEditModal(): void {
     if (this.selectedServiceName) {
       // Reset docTypes to the original values from docTypesMap
@@ -182,44 +183,118 @@ export class AdminDocumentTypeComponent {
         ? [...this.docTypesMap[this.selectedServiceName]]
         : [];
     }
-
+ 
     const modalElement = document.getElementById('editDocTypeModal');
     if (modalElement) {
       modalElement.style.display = 'none'; // Hide the modal
       modalElement.classList.remove('show'); // Remove the "show" class
     }
-
+ 
     // Remove blur effect from the main content
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.classList.remove('blurred');
     }
   }
-
+ 
   // Method triggered when dropdown value changes
   updateDocType(): void {
-    const count = Number(this.selectedCount) || 0;
-
-    // Adjust the docTypes array size based on the selected count
-    if (count > this.docTypes.length) {
-      this.docTypes = [
-        ...this.docTypes,
-        ...Array(count - this.docTypes.length).fill(''),
-      ];
-    } else {
-      this.docTypes = this.docTypes.slice(0, count);
+    // If user hasn't selected a valid number, just return
+    if (this.selectedCount === null) {
+      return;
+    }
+ 
+    // If new count is smaller than our current docTypes array length,
+    // we delete the extra items
+    if (this.selectedCount < this.docTypes.length) {
+      // Identify the "excess" documents
+      // e.g., if we have 7 docs but user picks 2, the last 5 (indexes 2..6) are "excess"
+      const itemsToDelete = this.docRecords.slice(this.selectedCount);
+ 
+      // Example: call a delete method for each “excess” doc
+      itemsToDelete.forEach(doc => {
+        if (!doc || !doc._id) return; // Safety check
+ 
+        let deleteObservable: Observable<any>;
+        switch (this.selectedServiceName) {
+          case 'Bank Account Opening':
+            deleteObservable = this.documenttypeService.deletePersonalBank(doc._id);
+            break;
+          case 'Mail Management':
+            deleteObservable = this.documenttypeService.deleteMailManagements(doc._id);
+            break;
+          case 'Virtual Receptionist':
+            deleteObservable = this.documenttypeService.deleteVirtualReceptions(doc._id);
+            break;
+          default:
+            console.error('Unknown service name:', this.selectedServiceName);
+            return;
+        }
+ 
+         // Actually delete from the backend
+      deleteObservable.subscribe({
+        next: (response) => {
+          console.log('Deleted from DB:', response);
+        },
+        error: (error) => {
+          console.error('Error deleting from DB:', error);
+        }
+      });
+      });
+ 
+      // Now remove them from the arrays so the UI updates
+      this.docTypes = this.docTypes.slice(0, this.selectedCount);
+      this.docRecords = this.docRecords.slice(0, this.selectedCount);
     }
   }
-
+ 
   // Method to delete a specific document type
   deleteDocType(index: number): void {
-    if (index > -1) {
-      this.docTypes.splice(index, 1); // Remove from docTypes array
-      this.docRecords.splice(index, 1); // Also remove the corresponding record from docRecords
+    // Get the corresponding doc record that includes the _id
+    const docToDelete = this.docRecords[index];
+ 
+    // Safety check
+    if (!docToDelete || !docToDelete._id) {
+      console.error('No valid document _id found.');
+      return;
     }
-    this.selectedCount = this.docTypes.length; // Update the count accordingly
+ 
+    // Based on the selected service, determine which delete API to call
+    let deleteObservable: Observable<any>;
+ 
+    switch (this.selectedServiceName) {
+      case 'Bank Account Opening':
+        deleteObservable = this.documenttypeService.deletePersonalBank(docToDelete._id);
+        break;
+      case 'Mail Management':
+        deleteObservable = this.documenttypeService.deleteMailManagements(docToDelete._id);
+        break;
+      case 'Virtual Receptionist':
+        deleteObservable = this.documenttypeService.deleteVirtualReceptions(docToDelete._id);
+        break;
+      default:
+        console.error('Unknown service name:', this.selectedServiceName);
+        return;
+    }
+ 
+    // Call the appropriate service to delete on the backend
+    deleteObservable.subscribe({
+      next: (response: any) => {
+        console.log('Document deleted from the server:', response);
+ 
+        // Now remove from the arrays (frontend)
+        this.docTypes.splice(index, 1);
+        this.docRecords.splice(index, 1);
+        this.selectedCount = this.docTypes.length;
+      },
+      error: (error: any) => {
+        console.error('Error deleting document:', error);
+        // Handle errors if needed
+      }
+    });
   }
-
+ 
+ 
   submitDocuments(): void {
     if (this.selectedServiceName) {
       // Check if there are existing docTypes for the selected service
@@ -227,15 +302,15 @@ export class AdminDocumentTypeComponent {
         // If not, initialize an empty array
         this.docTypesMap[this.selectedServiceName] = [];
       }
-
+ 
       // Append new docTypes to the existing ones
       this.docTypesMap[this.selectedServiceName] = [
         ...this.docTypesMap[this.selectedServiceName],
         ...this.docTypes,
       ];
-
+ 
       // console.log(this.docTypesMap, 'docTypesMap');
-
+ 
       // Call the corresponding API based on the selected service name
       switch (this.selectedServiceName) {
         case 'Bank Account Opening':
@@ -248,7 +323,7 @@ export class AdminDocumentTypeComponent {
             }
           );
           break;
-
+ 
         // case 'Accounting & VAT':
         //   this.documenttypeService.createBusinessBank(this.docTypes).subscribe(
         //     (response) => {
@@ -259,7 +334,7 @@ export class AdminDocumentTypeComponent {
         //     }
         //   );
         //   break;
-
+ 
         case 'Virtual Receptionist':
           this.documenttypeService
             .createVirtualReception(this.docTypes)
@@ -272,7 +347,7 @@ export class AdminDocumentTypeComponent {
               }
             );
           break;
-
+ 
         case 'Mail Management':
           this.documenttypeService
             .createMailManagement(this.docTypes)
@@ -285,7 +360,7 @@ export class AdminDocumentTypeComponent {
               }
             );
           break;
-
+ 
         default:
           console.warn(
             'No matching service found for:',
@@ -293,17 +368,17 @@ export class AdminDocumentTypeComponent {
           );
           break;
       }
-
+ 
       // Clear the current modal input and close it
       this.docTypes = [];
       this.selectedCount = null;
-
+ 
       const modalElement = document.getElementById('docTypeModal');
       if (modalElement) {
         modalElement.style.display = 'none'; // Close the modal
         modalElement.classList.remove('show'); // Remove "show" class
       }
-
+ 
       // Remove blur effect from the main content
       const mainContent = document.getElementById('main-content');
       if (mainContent) {
@@ -311,13 +386,13 @@ export class AdminDocumentTypeComponent {
       }
     }
   }
-
+ 
   submitEditDocuments(): void {
     if (!this.selectedServiceName || !this.docRecords.length) {
       console.warn('No service selected or no document records available.');
       return;
     }
-  
+ 
     // Build the payload with _id and updated documentType
     const updatedData = this.docRecords.map((record, index) => ({
       id: record._id,                // Use the existing _id from the stored records
@@ -327,8 +402,8 @@ export class AdminDocumentTypeComponent {
     // .filter(item => item.id && item.documentType); // Remove entries where `documentType` is missing
     console.log('Updated docTypes:', this.docTypes);
     console.log('updatedData before sending:', JSON.stringify(updatedData, null, 2));
-
-
+ 
+ 
     // Call the appropriate update API based on the selected service name
     switch (this.selectedServiceName) {
       case 'Bank Account Opening':
@@ -341,7 +416,7 @@ export class AdminDocumentTypeComponent {
           }
         );
         break;
-  
+ 
       case 'Virtual Receptionist':
         this.documenttypeService.updateVirtualReception(updatedData).subscribe(
           (response) => {
@@ -352,7 +427,7 @@ export class AdminDocumentTypeComponent {
           }
         );
         break;
-  
+ 
       case 'Mail Management':
         this.documenttypeService.updateMailManagement(updatedData).subscribe(
           (response) => {
@@ -363,27 +438,28 @@ export class AdminDocumentTypeComponent {
           }
         );
         break;
-  
+ 
       default:
         console.warn('No matching service found for:', this.selectedServiceName);
         return;
     }
-  
+ 
     // Remove blur effect and close the modal
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
       mainContent.classList.remove('blurred');
     }
-  
+ 
     const editModalElement = document.getElementById('editDocTypeModal');
     if (editModalElement) {
       editModalElement.style.display = 'none';
       editModalElement.classList.remove('show');
     }
-  
+ 
     // Optionally clear the records and types for next usage
     this.docRecords = [];
     this.docTypes = [];
   }
-  
+ 
 }
+ 
