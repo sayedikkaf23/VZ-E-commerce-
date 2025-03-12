@@ -25,7 +25,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   totalPages: number = 0;
   filteredRecords: any[] = [];   // Records filtered by search
   searchTerm: string = '';
- 
+  isDragging = false;
   services: Service[] = []; // Initialize an empty array for services
   records: any[] = [];
   selectedRecord: any = null; // Initialize to null
@@ -537,6 +537,28 @@ get endEntry(): number {
   goToHelp(): void {
     this.router.navigate(['/user/helpcenter']);
     console.log("clicked");
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+
+    if (event.dataTransfer?.files) {
+      this.onFilesSelected({ target: { files: event.dataTransfer.files } });
+    }
   }
  
 }

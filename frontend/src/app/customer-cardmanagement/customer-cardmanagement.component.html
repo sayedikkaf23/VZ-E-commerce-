@@ -493,7 +493,10 @@
                 </div>
               </div>
               <div class="col-md-6">
-                <div class="image-upload image-upload-lg">
+                <div class="image-upload image-upload-lg"  (dragover)="onDragOver($event)"
+                (dragleave)="onDragLeave($event)"
+                (drop)="onDrop($event)"
+                [class.dragging]="isDragging">
                   <input type="file" class="d-none" id="img_upload" (change)="onFilesSelected($event)"
                     accept=".pdf,.doc,.docx,.jpg,.png" />
                   <label class="image-edit-btn image-upload-btn" for="img_upload">
