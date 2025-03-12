@@ -299,7 +299,8 @@ export class AdminDocumentTypeComponent {
     deleteObservable.subscribe({
       next: (response: any) => {
         console.log('Document deleted from the server:', response);
- 
+        this.toastr.success('Document deleted', 'Success'); 
+
         // Now remove from the arrays (frontend)
         this.docTypes.splice(index, 1);
         this.docRecords.splice(index, 1);
@@ -437,6 +438,8 @@ export class AdminDocumentTypeComponent {
         this.documenttypeService.updatePersonalBank(updatedData).subscribe(
           (response) => {
             console.log('Personal Bank updated successfully:', response);
+            this.toastr.success('Personal Bank updated successfully!', 'Success'); 
+
                       },
           (error) => {
             console.error('Error updating Personal Bank:', error);
@@ -448,6 +451,8 @@ export class AdminDocumentTypeComponent {
         this.documenttypeService.updateVirtualReception(updatedData).subscribe(
           (response) => {
             console.log('Virtual Reception updated successfully:', response);
+            this.toastr.success('Virtual Reception updated  successfully!', 'Success'); 
+
           },
           (error) => {
             console.error('Error updating Virtual Reception:', error);
@@ -459,6 +464,8 @@ export class AdminDocumentTypeComponent {
         this.documenttypeService.updateMailManagement(updatedData).subscribe(
           (response) => {
             console.log('Mail Management updated successfully:', response);
+            this.toastr.success('Mail Management update successfully!', 'Success'); 
+
           },
           (error) => {
             console.error('Error updating Mail Management:', error);
