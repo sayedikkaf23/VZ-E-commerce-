@@ -3,7 +3,8 @@ import { AdminAuthService } from '../service/admin-auth.service';
 import { DocumenttypeService } from '../service/documenttype.service';
 import { UserService } from '../service/user.service';
 import { Observable } from 'rxjs';
- 
+import { ToastrService } from 'ngx-toastr';
+
 @Component({
   selector: 'app-admin-document-type',
   templateUrl: './admin-document-type.component.html',
@@ -27,7 +28,9 @@ export class AdminDocumentTypeComponent {
   constructor(
     private adminAuthService: AdminAuthService,
     private userService: UserService,
-    private documenttypeService: DocumenttypeService
+    private documenttypeService: DocumenttypeService,
+        private toastr: ToastrService,
+    
   ) {}
  
   ngOnInit(): void {
@@ -332,9 +335,14 @@ export class AdminDocumentTypeComponent {
           this.documenttypeService.createPersonalBank(this.docTypes).subscribe(
             (response) => {
               console.log('Bank Account Opening API Response:', response);
+              this.toastr.success('Documents submitted successfully!', 'Success'); 
+
             },
             (error) => {
               console.error('Error:', error);
+              this.toastr.error('Error updating bank documents.', 'Error');
+
+
             }
           );
           break;
@@ -356,6 +364,8 @@ export class AdminDocumentTypeComponent {
             .subscribe(
               (response) => {
                 console.log('Virtual Receptionist API Response:', response);
+                this.toastr.success('Documents submitted successfully!', 'Success'); 
+
               },
               (error) => {
                 console.error('Error:', error);
@@ -369,6 +379,8 @@ export class AdminDocumentTypeComponent {
             .subscribe(
               (response) => {
                 console.log('Mail Management API Response:', response);
+                this.toastr.success('Documents submitted successfully!', 'Success'); 
+
               },
               (error) => {
                 console.error('Error:', error);
