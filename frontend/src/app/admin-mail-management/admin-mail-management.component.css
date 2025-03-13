@@ -311,15 +311,19 @@
 
 /* View file link */
 .view-link {
-  font-size: 14px;
-  font-weight: bold;
-  color: #007bff;
-  text-decoration: none;
-  transition: color 0.3s ease;
+  height: 30px;
+  width: 30px;
+  border-radius: 7px;
+  background-color: #ff2a47;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--white);
+  vertical-align: top;
 }
 
 .view-link:hover {
-  color: #0056b3;
+  background-color: #030303;
 }
 
 /* No files message */
