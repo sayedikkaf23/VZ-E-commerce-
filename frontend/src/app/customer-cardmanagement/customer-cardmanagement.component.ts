@@ -1,9 +1,10 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, PLATFORM_ID, Inject } from '@angular/core';
 import { UserService } from '../service/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { DocumenttypeService } from '../service/documenttype.service';
+import { isPlatformBrowser } from '@angular/common';
 interface Service {
   name: string;
   description: string;
@@ -53,7 +54,8 @@ bankOpening: any[] = [];
     private route: ActivatedRoute,
     private router: Router,
     private toastr: ToastrService,
-    private documenttypeService: DocumenttypeService // Add this
+    private documenttypeService: DocumenttypeService, // Add this
+    @Inject(PLATFORM_ID) private platformId: object
  
   ) {
    
@@ -80,6 +82,9 @@ bankOpening: any[] = [];
   this.fetchMailManagements();
   this.fetchBusinessBanks();
   this.fetchPersonalBanks();
+  if (isPlatformBrowser(this.platformId)) {
+    document.body.classList.add('admin_body');
+  }
 }
  
  
@@ -484,6 +489,9 @@ get endEntry(): number {
     this.showModal = false;
   }
   navigateLogout(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.classList.remove('admin_body'); // ✅ Remove the class before navigating
+    }
     this.router.navigate(['/login']); // Navigate to login
   }
  
