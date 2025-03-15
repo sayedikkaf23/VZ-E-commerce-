@@ -90,28 +90,34 @@ bankOpening: any[] = [];
  
  
 fetchVirtualReceptions(): void {
+  this.isLoading = true;
   this.documenttypeService.getVirtualReceptions().subscribe(
     (data) => {
       console.log('Virtual Receptions:', data);
       this.virtualReceptionist = data.map((item: any) => item.documentType);
       console.log('Virtual Receptions doctypes:', this.virtualReceptionist);
       // Do something with the data
+      this.isLoading = false;
     },
     (error) => {
       console.error('Error fetching virtual receptions:', error);
+      this.isLoading = false;
     }
   );
 }
  
 fetchMailManagements(): void {
+  this.isLoading = true;
   this.documenttypeService.getMailManagements().subscribe(
     (data) => {
       // console.log('Mail Managements:', data);
       this.mailManagemnt = data.map((item: any) => item.documentType);
       // Do something with the data
+      this.isLoading = false;
     },
     (error) => {
       console.error('Error fetching mail managements:', error);
+      this.isLoading = false;
     }
   );
 }
@@ -119,25 +125,31 @@ fetchMailManagements(): void {
  
  
 fetchBusinessBanks(): void {
+  this.isLoading = true;
   this.documenttypeService.getBusinessBanks().subscribe(
     (data) => {
       // console.log('Business Banks:', data);
       // this.businessBanks = data; // Store the response
+      this.isLoading = false;
     },
     (error) => {
       console.error('Error fetching business banks:', error);
+      this.isLoading = false;
     }
   );
 }
  
 fetchPersonalBanks(): void {
+  this.isLoading = true;
   this.documenttypeService.getPersonalBanks().subscribe(
     (data) => {
       // console.log('Personal Banks:', data);
       this.bankOpening = data.map((item: any) => item.documentType); // Store the response
+      this.isLoading = false;
     },
     (error) => {
       console.error('Error fetching personal banks:', error);
+      this.isLoading = false;
     }
   );
 }
@@ -196,6 +208,7 @@ fetchPersonalBanks(): void {
  
 fetchUserServices(email: string): void {
   const payload = { email };
+  this.isLoading = true;
   this.userService.fetchUserServices(payload).subscribe(
     (response: any) => {
       if (response && response.data) {
@@ -203,10 +216,12 @@ fetchUserServices(email: string): void {
         this.filteredRecords = this.records;
         this.totalPages = Math.ceil(this.filteredRecords.length / this.itemsPerPage);
         this.setPage(1);
+        this.isLoading = false;
       }
     },
     (error: any) => {
       console.error('Error fetching user services:', error);
+      this.isLoading = false;
     }
   );
 }
