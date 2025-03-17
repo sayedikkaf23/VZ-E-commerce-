@@ -11,6 +11,7 @@ import { ToastrService } from 'ngx-toastr';
 export class ForgotPasswordComponent {
   forgotPasswordForm: FormGroup;
   savedEmail: any;
+  isLoading = false;
 
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute,   private toastr: ToastrService,
@@ -31,11 +32,14 @@ export class ForgotPasswordComponent {
 
   submit() {
     const email = this.forgotPasswordForm.value.email;
+    this.isLoading = true;
   
     this.userService.forgotPassword(email).subscribe(
       (response) => {
         console.log("Reset link sent:", response);
         // alert("A password reset link has been sent to your email.");
+        this.isLoading = false;
+
         this.toastr.success('A password reset link has been sent to your email.', 'Success');
       },
       (error) => {
@@ -44,6 +48,7 @@ export class ForgotPasswordComponent {
           error?.error?.message || "Failed to send reset link!",
           'Error'
         ); // Handle error response
+        this.isLoading = false;
       }
     );
   }
