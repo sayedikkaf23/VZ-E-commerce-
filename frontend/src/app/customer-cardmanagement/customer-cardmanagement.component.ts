@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, PLATFORM_ID, Inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, Renderer2, PLATFORM_ID, Inject } from '@angular/core';
 import { UserService } from '../service/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
@@ -45,6 +45,8 @@ bankOpening: any[] = [];
   documentTypeOptions: string[] = []; // Options for the dropdown
   selectedIndex: number = 0;
  
+  private sidebarIcon!: HTMLElement;
+  private listenerFn!: () => void;
  
   isLoading = false;
  
@@ -55,7 +57,8 @@ bankOpening: any[] = [];
     private router: Router,
     private toastr: ToastrService,
     private documenttypeService: DocumenttypeService, // Add this
-    @Inject(PLATFORM_ID) private platformId: object
+    @Inject(PLATFORM_ID) private platformId: object,
+    private renderer: Renderer2, private el: ElementRef
  
   ) {
    
@@ -158,33 +161,27 @@ fetchPersonalBanks(): void {
   extractNameFromEmail(email: string): string {
     return email.split('@')[0]; // Get the part before the '@' symbol
   }
+  
   ngAfterViewInit() {
- 
-    // Toggle 'active' class on navbar toggle button
-  const navbarToggle = document.querySelector('.navbar-toggle');
-  if (navbarToggle) {
-    navbarToggle.addEventListener('click', () => {
-      navbarToggle.classList.toggle('active');
-    });
+    // Remove 'menu-hide' on component initialization
+    this.renderer.removeClass(document.body, 'menu-hide');
+
+    // Select the sidebar toggle button
+    this.sidebarIcon = this.el.nativeElement.querySelector('.sidebar_icon');
+
+    if (this.sidebarIcon) {
+      // Use Renderer2 to add the event listener
+      this.listenerFn = this.renderer.listen(this.sidebarIcon, 'click', () => {
+        if (document.body.classList.contains('menu-hide')) {
+          this.renderer.removeClass(document.body, 'menu-hide');
+        } else {
+          this.renderer.addClass(document.body, 'menu-hide');
+        }
+      });
+    }
   }
  
-     // Toggle sidebar visibility
- // Ensure 'menu-hide' is NOT present on initial load
- document.body.classList.remove('menu-hide');
  
- // Select the sidebar toggle button
- const sidebarIcon = document.querySelector('.sidebar_icon');
- 
- if (sidebarIcon) {
-   sidebarIcon.addEventListener('click', () => {
-     document.body.classList.toggle('menu-hide');
-   });
- }
-  }
- 
-  isActive(route: string): boolean {
-    return this.router.url === route;
-  }
  
   getFileIcon(fileName: string): string {
     const extension = fileName.split('.').pop()?.toLowerCase(); // Extract file extension
@@ -265,13 +262,7 @@ get endEntry(): number {
 }
  
  
-  toggleSidebar(): void {
-    this.isSidebarActive = !this.isSidebarActive;
-  }
  
-  closeSidebar() {
-    this.isSidebarActive = false;
-  }
  
   viewDetails(record: any): void {
     this.selectedRecord = record; // Set the selected record
@@ -505,7 +496,7 @@ get endEntry(): number {
   }
   navigateLogout(): void {
     if (isPlatformBrowser(this.platformId)) {
-      document.body.classList.remove('admin_body'); // ✅ Remove the class before navigating
+      document.body.classList.remove('admin_body'); // Remove the class before navigating
     }
     this.router.navigate(['/login']); // Navigate to login
   }
@@ -584,6 +575,13 @@ get endEntry(): number {
     }
   }
  
+  ngOnDestroy() {
+    // Remove event listener when component is destroyed
+    if (this.listenerFn) {
+      this.listenerFn();
+    }
+  }
+  
 }
  
  
