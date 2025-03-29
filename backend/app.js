@@ -17,7 +17,8 @@ var nationalities=require('./routes/nationality')
 const paymentMethodRoutes = require('./routes/paymentMethodRoutes');
 const authRoutes = require('./routes/authRoutes');
 const documentRoute = require('./routes/documentRoute');
-
+const countryRiskRoutes = require("./routes/countryRiskRoutes");
+const productRiskRoutes = require("./routes/productRiskRoutes");
 var app = express();
 require('./controllers/mailerController');
 
@@ -60,6 +61,8 @@ app.use('/auth', authRoutes);
 app.use('/online', onlinePayment);
 app.use('/documentype', documentRoute);
 app.use('/payment', paymentRoute);
+app.use("/api/country-risk", countryRiskRoutes);
+app.use("/api/product-risk", productRiskRoutes);
 
 if (!process.env.SALESFORCE_USERNAME || !process.env.SALESFORCE_PASSWORD) {
   console.error("Salesforce credentials are missing. Please check .env file.");

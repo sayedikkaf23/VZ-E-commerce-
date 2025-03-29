@@ -47,11 +47,9 @@ showDocumentModal: boolean = false;
     this.isLoading = true;
     this.mailManagementService.getVirtualData(page, limit).subscribe({
       next: (response) => {
-        // { data: [...], totalRecords: N, totalPages: M, currentPage, etc. }
+        console.log(response); // Check the response
         this.mailList = response.data;
-     
- 
-        this.filteredMailList = [...this.mailList]; // if you want to filter on the client
+        this.filteredMailList = [...this.mailList];
         this.totalRecords = response.totalRecords;
         this.totalPages = response.totalPages;
         this.currentPage = page;
@@ -63,6 +61,7 @@ showDocumentModal: boolean = false;
         this.isLoading = false;
       }
     });
+    
   }
  
  
