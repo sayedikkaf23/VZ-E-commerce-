@@ -299,17 +299,17 @@ html .form-check .form-check-input {
 }
 
 .admin_body{
-    --sidebar_width : 300px;
-    padding-left: var(--sidebar_width);
+    
+    padding-left:150px;
     transition: all 0.4s;
 }
 .side_bar {
     position: fixed;
     top: 0;
     left: 0;
-    max-width: var(--sidebar_width);
+    
     height: 100%;
-    width: 100%;
+    width: 300px;
     background-color: var(--white);
     transition: all 0.4s;
     transform: translateX(0);
@@ -902,6 +902,9 @@ body.menu-hide .side_bar {
     transform: translateX(-100%);
 }
 body.menu-hide {
+    padding-left: 0;
+}
+body.menu-hide .admin_body {
     padding-left: 0;
 }
 .sidebar_icon a svg {

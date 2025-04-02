@@ -15,6 +15,7 @@ export class _HomeComponent {
 
   services: any[] = [];
   isBrowser: boolean;
+  isLoading = false;
 
   constructor(private router: Router, private userService: UserService, private cdRef: ChangeDetectorRef, private zone: NgZone, @Inject(PLATFORM_ID) private platformId: Object) {
     // Check if the platform is browser
@@ -56,6 +57,7 @@ export class _HomeComponent {
   
 
   loadServices(): void {
+    this.isLoading = true;
     this.userService.getServices().subscribe(
       (data) => {
         // Filter active services and sort by order
@@ -65,9 +67,11 @@ export class _HomeComponent {
   
         // console.log('Services loaded:', this.services);
         this.cdRef.detectChanges();  // Trigger change detection if needed
+        this.isLoading = false;
       },
       (error) => {
         console.error('Error loading services:', error);
+        this.isLoading = false;
       }
     );
   }

@@ -16,6 +16,7 @@ export class ResetPasswordComponent {
   token: string | null = null; // Store token from URL
   passwordVisible = false;
   passwordVisible2 = false;
+  isLoading = false;
 
   constructor(
     private route: ActivatedRoute,
@@ -62,9 +63,12 @@ export class ResetPasswordComponent {
         return;
       }
 
+      this.isLoading = true;
+
       this.userService.resetPassword(this.token, newPassword).subscribe(
         (response) => {
           console.log('Password reset successful', response);
+          this.isLoading = false;
          
           this.toastr.success('Password reset successfully!', 'Success'); 
           
@@ -76,6 +80,7 @@ export class ResetPasswordComponent {
             error?.error?.message || 'An error occurred. Please try again.',
             'Error'
           );
+          this.isLoading = false;
         }
       );
     

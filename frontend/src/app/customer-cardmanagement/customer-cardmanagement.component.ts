@@ -1,9 +1,10 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, Renderer2, PLATFORM_ID, Inject } from '@angular/core';
 import { UserService } from '../service/user.service';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { DocumenttypeService } from '../service/documenttype.service';
+import { isPlatformBrowser } from '@angular/common';
 interface Service {
   name: string;
   description: string;
@@ -44,6 +45,8 @@ bankOpening: any[] = [];
   documentTypeOptions: string[] = []; // Options for the dropdown
   selectedIndex: number = 0;
  
+  private sidebarIcon!: HTMLElement;
+  private listenerFn!: () => void;
  
   isLoading = false;
  
@@ -53,7 +56,9 @@ bankOpening: any[] = [];
     private route: ActivatedRoute,
     private router: Router,
     private toastr: ToastrService,
-    private documenttypeService: DocumenttypeService // Add this
+    private documenttypeService: DocumenttypeService, // Add this
+    @Inject(PLATFORM_ID) private platformId: object,
+    private renderer: Renderer2, private el: ElementRef
  
   ) {
    
@@ -80,33 +85,42 @@ bankOpening: any[] = [];
   this.fetchMailManagements();
   this.fetchBusinessBanks();
   this.fetchPersonalBanks();
+  if (isPlatformBrowser(this.platformId)) {
+    document.body.classList.add('admin_body');
+  }
 }
  
  
  
 fetchVirtualReceptions(): void {
+  this.isLoading = true;
   this.documenttypeService.getVirtualReceptions().subscribe(
     (data) => {
       console.log('Virtual Receptions:', data);
       this.virtualReceptionist = data.map((item: any) => item.documentType);
       console.log('Virtual Receptions doctypes:', this.virtualReceptionist);
       // Do something with the data
+      this.isLoading = false;
     },
     (error) => {
       console.error('Error fetching virtual receptions:', error);
+      this.isLoading = false;
     }
   );
 }
  
 fetchMailManagements(): void {
+  this.isLoading = true;
   this.documenttypeService.getMailManagements().subscribe(
     (data) => {
       // console.log('Mail Managements:', data);
       this.mailManagemnt = data.map((item: any) => item.documentType);
       // Do something with the data
+      this.isLoading = false;
     },
     (error) => {
       console.error('Error fetching mail managements:', error);
+      this.isLoading = false;
     }
   );
 }
@@ -114,25 +128,31 @@ fetchMailManagements(): void {
  
  
 fetchBusinessBanks(): void {
+  this.isLoading = true;
   this.documenttypeService.getBusinessBanks().subscribe(
     (data) => {
       // console.log('Business Banks:', data);
       // this.businessBanks = data; // Store the response
+      this.isLoading = false;
     },
     (error) => {
       console.error('Error fetching business banks:', error);
+      this.isLoading = false;
     }
   );
 }
  
 fetchPersonalBanks(): void {
+  this.isLoading = true;
   this.documenttypeService.getPersonalBanks().subscribe(
     (data) => {
       // console.log('Personal Banks:', data);
       this.bankOpening = data.map((item: any) => item.documentType); // Store the response
+      this.isLoading = false;
     },
     (error) => {
       console.error('Error fetching personal banks:', error);
+      this.isLoading = false;
     }
   );
 }
@@ -141,33 +161,27 @@ fetchPersonalBanks(): void {
   extractNameFromEmail(email: string): string {
     return email.split('@')[0]; // Get the part before the '@' symbol
   }
+  
   ngAfterViewInit() {
- 
-    // Toggle 'active' class on navbar toggle button
-  const navbarToggle = document.querySelector('.navbar-toggle');
-  if (navbarToggle) {
-    navbarToggle.addEventListener('click', () => {
-      navbarToggle.classList.toggle('active');
-    });
+    // Remove 'menu-hide' on component initialization
+    this.renderer.removeClass(document.body, 'menu-hide');
+
+    // Select the sidebar toggle button
+    this.sidebarIcon = this.el.nativeElement.querySelector('.sidebar_icon');
+
+    if (this.sidebarIcon) {
+      // Use Renderer2 to add the event listener
+      this.listenerFn = this.renderer.listen(this.sidebarIcon, 'click', () => {
+        if (document.body.classList.contains('menu-hide')) {
+          this.renderer.removeClass(document.body, 'menu-hide');
+        } else {
+          this.renderer.addClass(document.body, 'menu-hide');
+        }
+      });
+    }
   }
  
-     // Toggle sidebar visibility
- // Ensure 'menu-hide' is NOT present on initial load
- document.body.classList.remove('menu-hide');
  
- // Select the sidebar toggle button
- const sidebarIcon = document.querySelector('.sidebar_icon');
- 
- if (sidebarIcon) {
-   sidebarIcon.addEventListener('click', () => {
-     document.body.classList.toggle('menu-hide');
-   });
- }
-  }
- 
-  isActive(route: string): boolean {
-    return this.router.url === route;
-  }
  
   getFileIcon(fileName: string): string {
     const extension = fileName.split('.').pop()?.toLowerCase(); // Extract file extension
@@ -191,6 +205,7 @@ fetchPersonalBanks(): void {
  
 fetchUserServices(email: string): void {
   const payload = { email };
+  this.isLoading = true;
   this.userService.fetchUserServices(payload).subscribe(
     (response: any) => {
       if (response && response.data) {
@@ -198,10 +213,12 @@ fetchUserServices(email: string): void {
         this.filteredRecords = this.records;
         this.totalPages = Math.ceil(this.filteredRecords.length / this.itemsPerPage);
         this.setPage(1);
+        this.isLoading = false;
       }
     },
     (error: any) => {
       console.error('Error fetching user services:', error);
+      this.isLoading = false;
     }
   );
 }
@@ -245,13 +262,7 @@ get endEntry(): number {
 }
  
  
-  toggleSidebar(): void {
-    this.isSidebarActive = !this.isSidebarActive;
-  }
  
-  closeSidebar() {
-    this.isSidebarActive = false;
-  }
  
   viewDetails(record: any): void {
     this.selectedRecord = record; // Set the selected record
@@ -484,6 +495,9 @@ get endEntry(): number {
     this.showModal = false;
   }
   navigateLogout(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.classList.remove('admin_body'); // Remove the class before navigating
+    }
     this.router.navigate(['/login']); // Navigate to login
   }
  
@@ -561,6 +575,13 @@ get endEntry(): number {
     }
   }
  
+  ngOnDestroy() {
+    // Remove event listener when component is destroyed
+    if (this.listenerFn) {
+      this.listenerFn();
+    }
+  }
+  
 }
  
  

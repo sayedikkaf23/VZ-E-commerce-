@@ -15,12 +15,15 @@ export class UserHeaderComponent {
 
   menuItems: MenuItem[] = [];
 
+  isLoading = false;
   constructor(private menuService: AdminAuthService) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.menuService.getMenuItems().subscribe(
       (items) => this.menuItems = items,
       (error) => console.error('Error loading menu items', error)
     );
+    this.isLoading = false;
   }
 }
