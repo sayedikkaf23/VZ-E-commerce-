@@ -378,78 +378,78 @@ exports.getVirtualDetails = async (req, res) => {
       .limit(limit);
  
     // 4) Call authenticate once for the KYC status
-    const authResponse = await axios.post(
-      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
-      {
-        username: "VirtuUAT",
-        password: "VirtuApiuat@123",
-        CompanyName: "Virtuzone",
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    // const authResponse = await axios.post(
+    //   `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
+    //   {
+    //     username: "VirtuUAT",
+    //     password: "VirtuApiuat@123",
+    //     CompanyName: "Virtuzone",
+    //   },
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
  
-    const authToken = authResponse.data?.token;
-    const mergedResults = [];
+    // const authToken = authResponse.data?.token;
+    // const mergedResults = [];
  
     // 5) Merge for each Pidata doc
-    for (const submission of VirtualDetailsSubmissions) {
-      const { quotePaymentWithDetails } = submission;
-      const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
+    // for (const submission of VirtualDetailsSubmissions) {
+    //   const { quotePaymentWithDetails } = submission;
+    //   const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
  
-      // Try to find the corresponding VirtualDetails
-      const userDetails = await VirtualDetails.findOne({ QuotePaymentId: quotePaymentId });
+    //   // Try to find the corresponding VirtualDetails
+    //   const userDetails = await VirtualDetails.findOne({ QuotePaymentId: quotePaymentId });
  
-      // We want to push *all* items, but you can decide if you only push when userDetails is found
-      // Here, we push either way, so we always return up to 'limit' items per page.
-      let kycStatus = "Unknown";
+    //   // We want to push *all* items, but you can decide if you only push when userDetails is found
+    //   // Here, we push either way, so we always return up to 'limit' items per page.
+    //   let kycStatus = "Unknown";
  
-      // If userDetails exists, call the KYC status API
-      if (userDetails) {
-        try {
-          const statusResponse = await axios.post(
-            `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
-            {
-              CustomerId: submission?.leadWithDetails?.LeadId,
-              CompanyName: "Virtuzone",
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          );
+    //   // If userDetails exists, call the KYC status API
+    //   if (userDetails) {
+    //     try {
+    //       const statusResponse = await axios.post(
+    //         `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
+    //         {
+    //           CustomerId: submission?.leadWithDetails?.LeadId,
+    //           CompanyName: "Virtuzone",
+    //         },
+    //         {
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Bearer ${authToken}`,
+    //           },
+    //         }
+    //       );
  
-          // Extract KYC status from response
-          kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+    //       // Extract KYC status from response
+    //       kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
  
-          // Update the Pidata doc with the new status
-          await Pidata.updateOne(
-            { _id: submission._id },
-            { $set: { kycStatus } }
-          );
-        } catch (statusError) {
-          console.error("Error fetching KYC status:", statusError.message);
-        }
-      }
+    //       // Update the Pidata doc with the new status
+    //       await Pidata.updateOne(
+    //         { _id: submission._id },
+    //         { $set: { kycStatus } }
+    //       );
+    //     } catch (statusError) {
+    //       console.error("Error fetching KYC status:", statusError.message);
+    //     }
+    //   }
  
-      // Build the merged object (even if userDetails is null)
-      const mergedData = {
-        ...submission._doc,
-        userDetails: userDetails || null,
-        kycStatus,
-      };
+    //   // Build the merged object (even if userDetails is null)
+    //   const mergedData = {
+    //     ...submission._doc,
+    //     userDetails: userDetails || null,
+    //     kycStatus,
+    //   };
  
-      mergedResults.push(mergedData);
-    }
+    //   mergedResults.push(mergedData);
+    // }
  
     // 6) Return JSON with pagination metadata
     res.status(200).json({
-      data: mergedResults,   // up to 'limit' items
+      data: VirtualDetailsSubmissions,   // up to 'limit' items
       totalRecords,          // how many total match
       totalPages,            // total pages for front end
       currentPage: page,     // which page we're on

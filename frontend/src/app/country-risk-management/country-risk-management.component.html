@@ -1,0 +1,76 @@
+<!-- country-risk-management.component.html -->
+<div class="content">
+    <div class="page-heading">
+      <div class="row align-items-center justify-content-between">
+        <div class="col-auto">
+          <div class="row align-items-center">
+            <div class="col-auto mb-2">
+              <h2>Country Risk Management</h2>
+            </div>
+            <div class="col-auto mb-2">
+              <button class="btn btn-sm btn-light-primary" (click)="openAddModal()">
+                <i class="fa-solid fa-plus"></i> New Country
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="table-responsive overflow-behaviour">
+      <table class="table table-list-data table-hover">
+        <thead class="bg-light">
+          <tr>
+            <th><b>Country</b></th>
+            <th><b>Risk</b></th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let country of countryRisks">
+            <td>{{ country.country }}</td>
+            <td>{{ country.risk }}</td>
+            <td class="text-end td-action-data">
+              <div class="dropdown">
+                <button class="btn btn-icon btn-sm btn-light dropdown-toggle arrow-none" data-bs-toggle="dropdown">
+                  <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+                <ul class="dropdown-menu custom-dropdown">
+                  <li>
+                    <button class="dropdown-item" (click)="openEditModal(country)">Edit</button>
+                  </li>
+                  <li>
+                    <button class="dropdown-item" (click)="deleteCountry(country._id)">Delete</button>
+                  </li>
+                </ul>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="modal-container" *ngIf="isEditModalOpen">
+    <div class="modal-backdrop" (click)="closeEditModal()"></div>
+    <div class="modal-content">
+      <span class="close-btn" (click)="closeEditModal()">&times;</span>
+      <h5 class="modal-title">{{ isAddingNew ? 'Add' : 'Edit' }} Country Risk</h5>
+      <form [formGroup]="editCountryForm">
+        <div class="form-group">
+          <label class="form-label">Country</label>
+          <input type="text" class="form-control" formControlName="country">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Risk</label>
+          <select class="form-control" formControlName="risk">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" (click)="saveCountry()">Save changes</button>
+      </form>
+    </div>
+  </div>
+  

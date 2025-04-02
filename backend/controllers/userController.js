@@ -905,66 +905,66 @@ exports.getBusinessBank = async (req, res) => {
     const totalPages = Math.ceil(totalRecords / limit);
  
     // 4) Optionally authenticate for the KYC calls
-    const authResponse = await axios.post(
-      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
-      {
-        username: "VirtuUAT",
-        password: "VirtuApiuat@123",
-        CompanyName: "Virtuzone",
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const authToken = authResponse.data?.token;
+    // const authResponse = await axios.post(
+    //   `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
+    //   {
+    //     username: "VirtuUAT",
+    //     password: "VirtuApiuat@123",
+    //     CompanyName: "Virtuzone",
+    //   },
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+    // const authToken = authResponse.data?.token;
  
     // 5) Loop over the final data to call KYC and attach kycStatus
-    const mergedResults = [];
+    // const mergedResults = [];
  
-    for (const doc of data) {
-      let kycStatus = "Unknown";
+    // for (const doc of data) {
+    //   let kycStatus = "Unknown";
  
-      // If there's a leadId, call the KYC status
-      const leadId = doc?.leadWithDetails?.LeadId;
-      if (leadId && authToken) {
-        try {
-          const statusResponse = await axios.post(
-            `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
-            {
-              CustomerId: leadId,
-              CompanyName: "Virtuzone",
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          );
-          kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+    //   // If there's a leadId, call the KYC status
+    //   const leadId = doc?.leadWithDetails?.LeadId;
+    //   if (leadId && authToken) {
+    //     try {
+    //       const statusResponse = await axios.post(
+    //         `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
+    //         {
+    //           CustomerId: leadId,
+    //           CompanyName: "Virtuzone",
+    //         },
+    //         {
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Bearer ${authToken}`,
+    //           },
+    //         }
+    //       );
+    //       kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
  
-          // Optionally update Pidata doc with KYC
-          await Pidata.updateOne(
-            { _id: doc._id },
-            { $set: { kycStatus } }
-          );
-        } catch (error) {
-          console.error("Error fetching KYC status:", error.message);
-        }
-      }
+    //       // Optionally update Pidata doc with KYC
+    //       await Pidata.updateOne(
+    //         { _id: doc._id },
+    //         { $set: { kycStatus } }
+    //       );
+    //     } catch (error) {
+    //       console.error("Error fetching KYC status:", error.message);
+    //     }
+    //   }
  
-      // Attach kycStatus
-      doc.kycStatus = kycStatus;
+    //   // Attach kycStatus
+    //   doc.kycStatus = kycStatus;
  
-      // Push to final
-      mergedResults.push(doc);
-    }
+    //   // Push to final
+    //   mergedResults.push(doc);
+    // }
  
     // 6) Return the final array + pagination info
     res.status(200).json({
-      data: mergedResults,
+      data: data,
       totalRecords,
       totalPages,
       currentPage: page,

@@ -383,86 +383,86 @@ exports.getMailDetails = async (req, res) => {
       .limit(limit);
  
     // 4) Authenticate once for KYC status calls
-    const authResponse = await axios.post(
-      `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
-      {
-        username: "VirtuUAT",
-        password: "VirtuApiuat@123",
-        CompanyName: "Virtuzone",
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const authToken = authResponse.data?.token || null;
+    // const authResponse = await axios.post(
+    //   `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
+    //   {
+    //     username: "VirtuUAT",
+    //     password: "VirtuApiuat@123",
+    //     CompanyName: "Virtuzone",
+    //   },
+    //   {
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //   }
+    // );
+    // const authToken = authResponse.data?.token || null;
  
-    const mergedResults = [];
+    // const mergedResults = [];
  
-    // 5) Loop through the fetched subset
-    for (const submission of MailDetailsSubmissions) {
-      const { quotePaymentWithDetails } = submission;
-      const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
+    // // 5) Loop through the fetched subset
+    // for (const submission of MailDetailsSubmissions) {
+    //   const { quotePaymentWithDetails } = submission;
+    //   const quotePaymentId = quotePaymentWithDetails?.QuotePaymentId;
  
-      // Attempt to find the corresponding MailDetails doc
-      let userDetails = null;
-      try {
-        userDetails = await MailDetails.findOne({ QuotePaymentId: quotePaymentId });
-      } catch (err) {
-        console.error("Error finding MailDetails:", err.message);
-      }
+    //   // Attempt to find the corresponding MailDetails doc
+    //   let userDetails = null;
+    //   try {
+    //     userDetails = await MailDetails.findOne({ QuotePaymentId: quotePaymentId });
+    //   } catch (err) {
+    //     console.error("Error finding MailDetails:", err.message);
+    //   }
  
-      // Default KYC status
-      let kycStatus = "Unknown";
+    //   // Default KYC status
+    //   let kycStatus = "Unknown";
  
-      // If you only want to call the KYC API when userDetails is found, do a condition:
-      // if (userDetails) { ... }
-      // OR if you'd like to do it unconditionally, keep it outside:
-      if (authToken && submission?.leadWithDetails?.LeadId) {
-        try {
-          // Call the external KYC status API
-          const statusResponse = await axios.post(
-            `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
-            {
-              CustomerId: submission.leadWithDetails.LeadId,
-              CompanyName: "Virtuzone",
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${authToken}`,
-              },
-            }
-          );
+    //   // If you only want to call the KYC API when userDetails is found, do a condition:
+    //   // if (userDetails) { ... }
+    //   // OR if you'd like to do it unconditionally, keep it outside:
+    //   if (authToken && submission?.leadWithDetails?.LeadId) {
+    //     try {
+    //       // Call the external KYC status API
+    //       const statusResponse = await axios.post(
+    //         `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
+    //         {
+    //           CustomerId: submission.leadWithDetails.LeadId,
+    //           CompanyName: "Virtuzone",
+    //         },
+    //         {
+    //           headers: {
+    //             "Content-Type": "application/json",
+    //             Authorization: `Bearer ${authToken}`,
+    //           },
+    //         }
+    //       );
  
-          // Extract KYC status from response
-          kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
+    //       // Extract KYC status from response
+    //       kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
  
-          // Update Pidata KYC status
-          await Pidata.updateOne(
-            { _id: submission._id },
-            { $set: { kycStatus } }
-          );
-        } catch (statusError) {
-          console.error("Error fetching KYC status:", statusError.message);
-        }
-      }
+    //       // Update Pidata KYC status
+    //       await Pidata.updateOne(
+    //         { _id: submission._id },
+    //         { $set: { kycStatus } }
+    //       );
+    //     } catch (statusError) {
+    //       console.error("Error fetching KYC status:", statusError.message);
+    //     }
+    //   }
  
-      // 6) Merge data and push no matter what
-      const mergedData = {
-        ...submission._doc,
-        userDetails,  // might be null if not found
-        kycStatus,
-      };
+    //   // 6) Merge data and push no matter what
+    //   const mergedData = {
+    //     ...submission._doc,
+    //     userDetails,  // might be null if not found
+    //     kycStatus,
+    //   };
  
-      mergedResults.push(mergedData);
-    }
+    //   mergedResults.push(mergedData);
+    // }
  
     // 7) Return up to 10 docs, each with userDetails or null
     // plus your pagination metadata
     res.status(200).json({
-      data: mergedResults,     // This will have the same count as MailDetailsSubmissions
+      data: MailDetailsSubmissions,     // This will have the same count as MailDetailsSubmissions
       totalRecords,
       totalPages,
       currentPage: page,

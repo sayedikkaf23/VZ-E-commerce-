@@ -72,6 +72,8 @@ import { PastServiceComponent } from './past-service/past-service.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { HelpCenterComponent } from './help-center/help-center.component';
+import { CountryRiskManagementComponent } from './country-risk-management/country-risk-management.component';
+import { ProductRiskManagementComponent } from './product-risk-management/product-risk-management.component';
 
 @NgModule({
   declarations: [
@@ -136,7 +138,9 @@ import { HelpCenterComponent } from './help-center/help-center.component';
     PastServiceComponent,
     ForgotPasswordComponent,
     ResetPasswordComponent,
-    HelpCenterComponent
+    HelpCenterComponent,
+    CountryRiskManagementComponent,
+    ProductRiskManagementComponent
     
   ],
   imports: [

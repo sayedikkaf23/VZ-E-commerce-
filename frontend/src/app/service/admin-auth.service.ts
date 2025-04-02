@@ -72,4 +72,58 @@ export class AdminAuthService {
   updateKycStatus(data: { id: string; kycStatus: string ,QuotePaymentId:string}): Observable<any> {
     return this.http.post(`${this.url}/user/updateKycStatus`, data); // POST request to check status
   }
+
+
+  // Get all country risks
+getCountryRisks() {
+  return this.http.get<any[]>(`${this.url}/api/country-risk/all`);
+}
+
+// Add a new country risk
+addCountryRisk(data: { country: string, risk: string }) {
+  return this.http.post(`${this.url}/api/country-risk/add`, data);
+}
+
+// Update existing country risk
+updateCountryRisk(id: string, data: { country: string, risk: string }) {
+  return this.http.put(`${this.url}/api/country-risk/update/${id}`, data);
+}
+
+// Delete country risk
+deleteCountryRisk(id: string) {
+  return this.http.delete(`${this.url}/api/country-risk/delete/${id}`);
+}
+// Get all product risks
+getProductRisks(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.url}/api/product-risk/all`);
+}
+
+// Add a new product or multiple products
+// Add one or more products
+addProductRisk(data: any | any[]): Observable<any> {
+  return this.http.post(`${this.url}/api/product-risk/add`, data);
+}
+
+
+// Update one or more products
+updateProductRisk(id: string, data: any): Observable<any> {
+  return this.http.put(`${this.url}/api/product-risk/update`, [{ _id: id, ...data }]);
+}
+
+// Delete one or more products
+deleteProductRisk(id: string): Observable<any> {
+  return this.http.request('delete', `${this.url}/api/product-risk/delete`, {
+    body: { ids: [id] }
+  });
+}
+
+getFilteredProductsByCountry(data: {
+  country: string;
+  selectedProductIds: string[];
+  isAutoApproved: boolean;
+}) {
+  return this.http.post<any>(`${this.url}/api/customer/get-by-country-risk`, data);
+}
+
+
 }

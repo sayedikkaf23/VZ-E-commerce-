@@ -53,6 +53,8 @@ import { PastServiceComponent } from './past-service/past-service.component';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 import { ResetPasswordComponent } from './reset-password/reset-password.component';
 import { HelpCenterComponent } from './help-center/help-center.component';
+import { CountryRiskManagementComponent } from './country-risk-management/country-risk-management.component';
+import { ProductRiskManagementComponent } from './product-risk-management/product-risk-management.component';
 const routes: Routes = [
 
   {
@@ -303,6 +305,16 @@ const routes: Routes = [
       {
         path: 'admin-mail-management',
         component: AdminMailManagementComponent,
+       
+      },
+      {
+        path: 'country-risk-management',
+        component: CountryRiskManagementComponent,
+       
+      },
+      {
+        path: 'product-risk-management',
+        component: ProductRiskManagementComponent,
        
       },
       {
