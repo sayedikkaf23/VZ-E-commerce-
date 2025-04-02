@@ -1,9 +1,10 @@
 // country-risk-management.component.ts
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { AdminAuthService } from '../service/admin-auth.service';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
+import { GetnationalityService } from '../service/getnationality.service';
 
 @Component({
   selector: 'app-country-risk-management',
@@ -16,11 +17,15 @@ export class CountryRiskManagementComponent implements OnInit {
   isEditModalOpen = false;
   selectedCountryId: string | null = null;
   isAddingNew = false;
+  nationalities: any[] = [];
 
   constructor(
     private adminAuthService: AdminAuthService,
     private fb: FormBuilder,
-    private toastr: ToastrService
+    private toastr: ToastrService,
+        private cdRef: ChangeDetectorRef,
+    
+    private getnationalityService: GetnationalityService,
   ) {
     this.editCountryForm = this.fb.group({
       country: [''],
@@ -30,6 +35,15 @@ export class CountryRiskManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCountryRisks();
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalities = data.map((country: any) => ({
+        common: country.name.common,
+        country: country.name.country
+      }));
+
+      // Trigger change detection to update the view
+      this.cdRef.detectChanges();
+    });
   }
 
   getCountryRisks(): void {

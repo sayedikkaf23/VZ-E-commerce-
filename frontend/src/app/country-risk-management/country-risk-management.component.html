@@ -59,7 +59,9 @@
       <form [formGroup]="editCountryForm">
         <div class="form-group">
           <label class="form-label">Country</label>
-          <input type="text" class="form-control" formControlName="country">
+          <select class="form-control" formControlName="country">
+            <option *ngFor="let nationality of nationalities" [value]="nationality.common">{{ nationality.common }}</option>
+          </select>
         </div>
         <div class="form-group">
           <label class="form-label">Risk</label>
@@ -73,4 +75,5 @@
       </form>
     </div>
   </div>
+  
   

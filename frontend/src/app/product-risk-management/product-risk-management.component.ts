@@ -21,6 +21,7 @@ export class ProductRiskManagementComponent implements OnInit {
   constructor(
     private adminAuthService: AdminAuthService,
     private fb: FormBuilder,
+    
     private toastr: ToastrService
   ) {
     this.editProductForm = this.fb.group({
@@ -34,6 +35,7 @@ export class ProductRiskManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.getProducts();
+    
   }
 
   getProducts(): void {
