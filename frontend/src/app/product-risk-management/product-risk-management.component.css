@@ -9,36 +9,38 @@
   width: 100vw;
   height: 100vh;
   z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.5); /* Optional: add a semi-transparent background to the container */
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow-y: auto; /* Allows scrolling if content overflows */
 }
 
 /* Modal content */
 .modal-content {
   background-color: #fff;
   padding: 20px;
-  width: 593px;
-  max-width: 90vw;
+  width: 48%; /* Adjust width to fill more space */
+  max-width: 700px; /* Max width for larger screens */
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   position: relative;
   z-index: 1001;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr); /* Use a grid with two columns */
-  grid-gap: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 /* Modal title */
 .modal-title {
-  grid-column: span 2; /* Make the title span both columns */
   margin-bottom: 20px;
   font-size: 18px;
   font-weight: bold;
+  text-align: center;
 }
 
 /* Form label and input styling */
 .form-group {
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 /* Adjust label font size and input padding */
@@ -48,17 +50,8 @@
 }
 
 .form-control {
-  padding: 10px;
-  font-size: 14px;
-}
-
-/* Dropdown styling with arrows */
-.select-arrow {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none; /* Ensure the arrow doesn’t block interaction */
+  padding: 12px; /* Increased padding for larger inputs */
+  font-size: 16px; /* Larger font size */
 }
 
 /* Close button */
@@ -77,9 +70,79 @@
   z-index: 999;
 }
 
-/* Responsive handling for smaller screens */
+/* Style for dynamic fields (5 items in a row) */
+.dynamic-fields {
+  display: flex;
+  gap: 10px; /* Reduced gap to minimize space */
+  flex-wrap: wrap;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.dynamic-fields .form-group {
+  flex: 1;
+  min-width: calc(20% - 10px); /* Ensures that 5 fields fit without gaps */
+  max-width: calc(20% - 10px); /* Max width for each form field */
+}
+
+.dynamic-fields .form-group select,
+.dynamic-fields .form-group input {
+  width: 100%; /* Makes the input fields and dropdowns take full width */
+}
+
+
+/* Style for the dropdown container */
+.dropdown-container {
+  position: relative;
+  width: 100%; /* Ensure the container is 100% width */
+}
+
+/* Style for the dropdown icon */
+.dropdown-icon {
+  position: absolute;
+  right: 10px; /* Adjust to position the icon at the end */
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Prevents the icon from interfering with the dropdown interaction */
+}
+
+/* Form input styles */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.form-control {
+  padding: 8px; /* Larger input fields */
+  font-size: 16px; /* Larger font size */
+  width: 100%; /* Ensure it takes full width */
+  box-sizing: border-box; /* Prevents padding from expanding the input */
+}
+
+/* Style for the select dropdown to prevent clipping */
+select.form-control {
+  padding-right: 30px; /* Adjust to give space for the icon */
+  text-overflow: ellipsis; /* Ensures that longer text is handled gracefully */
+}
+
+/* Make sure the form fields stack properly in a single row */
 @media (max-width: 600px) {
   .modal-content {
-    grid-template-columns: 1fr; /* Stack fields in one column on smaller screens */
+    width: 90%; /* Adjust width for smaller screens */
+  }
+
+  .dynamic-fields {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .dynamic-fields .form-group {
+    min-width: 100%;
   }
 }

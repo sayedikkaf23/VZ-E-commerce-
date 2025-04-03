@@ -1,110 +1,122 @@
 <div class="content">
-    <div class="page-heading">
-      <div class="row align-items-center justify-content-between">
-        <div class="col-auto">
-          <div class="row align-items-center">
-            <div class="col-auto mb-2">
-              <h2>Product Risk Management</h2>
-            </div>
-            <div class="col-auto mb-2">
-              <button class="btn btn-sm btn-light-primary" (click)="openAddModal()">
-                <i class="fa-solid fa-plus"></i> New Product
-              </button>
-            </div>
+  <div class="page-heading">
+    <div class="row align-items-center justify-content-between">
+      <div class="col-auto">
+        <div class="row align-items-center">
+          <div class="col-auto mb-2">
+            <h2>Product Risk Management</h2>
+          </div>
+          <div class="col-auto mb-2">
+            <button class="btn btn-sm btn-light-primary" (click)="openAddModal()">
+              <i class="fa-solid fa-plus"></i> New Product
+            </button>
           </div>
         </div>
       </div>
     </div>
-  
-    <div class="table-responsive overflow-behaviour">
-      <table class="table table-list-data table-hover">
-        <thead class="bg-light">
-          <tr>
-            <th>Product</th>
-            <th>Description</th>
-            <th>Unit Price</th>
-            <th>Quantity</th>
-            <th>Risk</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let product of products">
-            <td>{{ product.name }}</td>
-            <td>{{ product.description }}</td>
-            <td>{{ product.unitPrice }}</td>
-            <td>{{ product.quantity }}</td>
-            <td>{{ product.risk }}</td>
-            <td class="text-end td-action-data">
-              <div class="dropdown">
-                <button class="btn btn-icon btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">
-                  <i class="fa-solid fa-ellipsis-vertical"></i>
-                </button>
-                <ul class="dropdown-menu">
-                  <li>
-                    <button class="dropdown-item" (click)="openEditModal(product)">Edit</button>
-                  </li>
-                  <li>
-                    <button class="dropdown-item" (click)="deleteProduct(product._id)">Delete</button>
-                  </li>
-                </ul>
-              </div>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
   </div>
-<!-- Modal -->
+
+  <div class="table-responsive overflow-behaviour">
+    <table class="table table-list-data table-hover">
+      <thead class="bg-light">
+        <tr>
+          <th>Product</th>
+          <th>Description</th>
+          <th>Unit Price</th>
+          <th>Quantity</th>
+          <th>Risk</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of products">
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.unitPrice }}</td>
+          <td>{{ product.quantity }}</td>
+          <td>{{ product.risk }}</td>
+          <td class="text-end td-action-data">
+            <div class="dropdown">
+              <button class="btn btn-icon btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+              </button>
+              <ul class="dropdown-menu">
+                <li>
+                  <button class="dropdown-item" (click)="openEditModal(product)">Edit</button>
+                </li>
+                <li>
+                  <button class="dropdown-item" (click)="deleteProduct(product._id)">Delete</button>
+                </li>
+              </ul>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Modal content -->
 <div class="modal-container" *ngIf="isEditModalOpen">
   <div class="modal-backdrop" (click)="closeEditModal()"></div>
   <div class="modal-content">
     <span class="close-btn" (click)="closeEditModal()">&times;</span>
     <h5 class="modal-title">{{ isAddingNew ? 'Add' : 'Edit' }} Product</h5>
-    
+
     <form [formGroup]="editProductForm">
       <div class="form-group">
         <label class="form-label">How many products need to be added?</label>
-        <select class="form-control" formControlName="productCount" (change)="onProductCountChange($event)">
-          <option *ngFor="let count of productCountOptions" [value]="count">{{ count }}</option>
-        </select>
+        <div class="dropdown-container">
+          <select class="form-control" formControlName="productCount" (change)="onProductCountChange($event)">
+            <option *ngFor="let count of productCountOptions" [value]="count">{{ count }}</option>
+          </select>
+          <i class="fa fa-chevron-down dropdown-icon"></i> <!-- Icon added here -->
+        </div>
       </div>
+      
 
-      <!-- Dynamic product fields -->
+      <!-- Dynamic product fields in two rows -->
       <div formArrayName="products">
-        <div *ngFor="let product of dynamicProducts.controls; let i = index" [formGroupName]="i">
-          <div class="form-group">
+        <div *ngFor="let product of dynamicProducts.controls; let i = index" [formGroupName]="i" class="dynamic-fields">
+          <!-- Row 1: Product Name, Description -->
+          <div class="form-group half-width">
             <label class="form-label">Product Name {{ i + 1 }}</label>
             <input type="text" class="form-control" formControlName="name">
           </div>
-          <div class="form-group">
+          <div class="form-group half-width">
             <label class="form-label">Description</label>
             <input type="text" class="form-control" formControlName="description">
           </div>
-          <div class="form-group">
+          
+          <!-- Row 2: Unit Price, Quantity, Risk -->
+          <div class="form-group half-width">
             <label class="form-label">Unit Price</label>
             <input type="number" class="form-control" formControlName="unitPrice">
           </div>
-          <div class="form-group">
+          <div class="form-group half-width">
             <label class="form-label">Quantity</label>
             <input type="number" class="form-control" formControlName="quantity">
           </div>
           <div class="form-group">
             <label class="form-label">Risk</label>
-            <div class="dropdown">
+            <div class="dropdown-container">
               <select class="form-control" formControlName="risk">
                 <option value="Low">Low</option>
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
               </select>
-              <!-- Dropdown Arrow Icon -->
-              <i class="fa fa-chevron-down select-arrow" aria-hidden="true"></i>
+              <i class="fa fa-chevron-down dropdown-icon"></i> <!-- Icon added -->
             </div>
           </div>
+          
         </div>
       </div>
-
-      <button class="btn btn-primary" (click)="saveProduct()">Save changes</button>
+      <div class="col-auto mt-3">
+        <button class="btn btn-ms btn-light-primary" (click)="saveProduct()">
+          <i class="fa-solid fa-plus"></i>Add Product
+        </button>
+      </div>
+     
     </form>
   </div>
 </div>
