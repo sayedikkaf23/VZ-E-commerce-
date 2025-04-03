@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { AdminAuthService } from '../service/admin-auth.service';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
@@ -16,26 +16,27 @@ export class ProductRiskManagementComponent implements OnInit {
   selectedProductId: string | null = null;
   isAddingNew = false;
 
-  
+  // Options for the product count dropdown
+  productCountOptions = [1, 2, 3, 4, 5];
 
   constructor(
     private adminAuthService: AdminAuthService,
     private fb: FormBuilder,
-    
     private toastr: ToastrService
   ) {
     this.editProductForm = this.fb.group({
-      name: [''],
-      description: [''],
-      unitPrice: [''],
-      quantity: [''],
-      risk: ['']
+      productCount: [1, Validators.required], // Default to 1 product
+      products: this.fb.array([]) // FormArray for dynamic product fields
     });
   }
 
   ngOnInit(): void {
     this.getProducts();
-    
+    this.setProductFields(1); // Default to 1 product
+  }
+
+  get dynamicProducts() {
+    return (this.editProductForm.get('products') as FormArray);
   }
 
   getProducts(): void {
@@ -48,41 +49,52 @@ export class ProductRiskManagementComponent implements OnInit {
     );
   }
 
-  filteredProducts: any[] = [];
+  // Handle change in the product count dropdown
+  onProductCountChange(event: any): void {
+    const productCount = event.target.value;
+    this.setProductFields(productCount);
+  }
 
-getFilteredProducts(selectedCountry: string, selectedProductIds: string[], isAutoApproved: boolean): void {
-  const requestData = {
-    country: selectedCountry,
-    selectedProductIds,
-    isAutoApproved
-  };
-
-  this.adminAuthService.getFilteredProductsByCountry(requestData).subscribe(
-    (res) => {
-      this.filteredProducts = res.products;
-    },
-    (err) => {
-      console.error('Error filtering products:', err);
+  // Dynamically add/remove product fields based on selected count
+  setProductFields(count: number): void {
+    const currentCount = this.dynamicProducts.length;
+    if (count > currentCount) {
+      for (let i = currentCount; i < count; i++) {
+        this.dynamicProducts.push(this.createProductForm());
+      }
+    } else if (count < currentCount) {
+      for (let i = currentCount - 1; i >= count; i--) {
+        this.dynamicProducts.removeAt(i);
+      }
     }
-  );
+  }
+
+  // Create form for each product
+// Inside createProductForm method
+createProductForm(): FormGroup {
+  return this.fb.group({
+    name: ['', Validators.required],  // Ensure name is required
+    description: ['', Validators.required],  // Ensure description is required
+    unitPrice: ['', [Validators.required, Validators.min(0)]],  // Ensure unitPrice is required
+    quantity: ['', [Validators.required, Validators.min(1)]],  // Ensure quantity is required
+    risk: ['', Validators.required]  // Ensure risk is required
+  });
 }
 
-onCountryChange(country: string): void {
-  const productIds = this.products.map(p => p._id); // or your current product list
-  const isAutoApproved = true; // or fetch based on customer settings
-
-  this.getFilteredProducts(country, productIds, isAutoApproved);
-}
 
   openAddModal(): void {
     this.editProductForm.reset();
     this.selectedProductId = null;
     this.isEditModalOpen = true;
     this.isAddingNew = true;
+    this.setProductFields(1); // Default to 1 product
   }
 
   openEditModal(product: any): void {
-    this.editProductForm.patchValue(product);
+    this.editProductForm.patchValue({
+      productCount: product.count || 1
+    });
+    this.setProductFields(product.count || 1);
     this.selectedProductId = product._id;
     this.isEditModalOpen = true;
     this.isAddingNew = false;
@@ -95,9 +107,15 @@ onCountryChange(country: string): void {
 
   saveProduct(): void {
     const data = this.editProductForm.value;
+    
+    // Log form data for debugging
+    console.log('Form Data:', data);
+  
     if (this.isAddingNew) {
-      this.adminAuthService.addProductRisk(data).subscribe(
-        () => {
+      // Ensure you're passing the array of products
+      const products = data.products;
+      this.adminAuthService.addProductRisk({ products }).subscribe(
+        (response) => {
           this.getProducts();
           this.closeEditModal();
           this.toastr.success('Product added successfully!');
@@ -121,6 +139,7 @@ onCountryChange(country: string): void {
       );
     }
   }
+  
 
   deleteProduct(id: string): void {
     Swal.fire({

@@ -1,14 +1,28 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-const ProductRiskSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+const productRiskSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, 'Product name is required']
+  },
   description: String,
-  unitPrice: Number,
-  quantity: Number,
-  risk: { type: String, enum: ["Low", "Medium", "High"], required: true }
-}, { timestamps: true });
+  unitPrice: {
+    type: Number,
+    required: [true, 'Unit price is required'],
+    min: 0
+  },
+  quantity: {
+    type: Number,
+    required: [true, 'Quantity is required'],
+    min: 1
+  },
+  risk: {
+    type: String,
+    enum: ['Low', 'Medium', 'High'],
+    required: [true, 'Risk level is required']
+  }
+});
 
-// Prevent same product name with same risk
-ProductRiskSchema.index({ name: 1, risk: 1 }, { unique: true });
+const ProductRisk = mongoose.model('ProductRisk', productRiskSchema);
 
-module.exports = mongoose.model("ProductRisk", ProductRiskSchema);
+module.exports = ProductRisk;

@@ -1,43 +1,40 @@
 const ProductRisk = require("../models/ProductRisk");
 
 // ✅ Add single or multiple products (with duplication check)
+// ✅ Add single or multiple products (with duplication check)
 exports.addProducts = async (req, res) => {
   try {
-    const payload = req.body;
+    const payload = req.body.products;  // Make sure you're using the "products" array
 
     if (!payload || (Array.isArray(payload) && payload.length === 0)) {
       return res.status(400).json({ message: "No product data provided" });
     }
 
-    if (Array.isArray(payload)) {
-      // Check for duplicates before insert
-      const existing = await ProductRisk.find({
-        $or: payload.map(p => ({ name: p.name, risk: p.risk }))
-      });
+    // Loop through each product and check if it's valid
+    const productPromises = payload.map(async (product) => {
+      const { name, risk } = product;
 
-      const existingKeys = new Set(existing.map(p => `${p.name}_${p.risk}`));
-      const newProducts = payload.filter(p => !existingKeys.has(`${p.name}_${p.risk}`));
-
-      if (newProducts.length === 0) {
-        return res.status(400).json({ message: "All products already exist" });
+      // Validate name and risk before saving
+      if (!name || !risk) {
+        return res.status(400).json({ message: "Product name and risk are required" });
       }
 
-      const added = await ProductRisk.insertMany(newProducts);
-      return res.status(201).json({ message: "Products added", data: added });
-    } else {
-      const { name, risk } = payload;
       const exists = await ProductRisk.findOne({ name, risk });
       if (exists) {
         return res.status(400).json({ message: "Product already exists" });
       }
 
-      const product = await ProductRisk.create(payload);
-      return res.status(201).json({ message: "Product added", data: product });
-    }
+      return ProductRisk.create(product);
+    });
+
+    // Wait for all products to be processed
+    const addedProducts = await Promise.all(productPromises);
+    return res.status(201).json({ message: "Products added", data: addedProducts });
   } catch (error) {
     res.status(500).json({ message: "Add error", error: error.message });
   }
 };
+
 
 // ✅ Update multiple products
 exports.updateProducts = async (req, res) => {

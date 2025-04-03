@@ -1,69 +1,85 @@
-/* Override Bootstrap's modal backdrop */
+/* Modal container styling */
+.modal-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.5); /* Optional: add a semi-transparent background to the container */
+}
+
+/* Modal content */
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  width: 593px;
+  max-width: 90vw;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1001;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Use a grid with two columns */
+  grid-gap: 15px;
+}
+
+/* Modal title */
+.modal-title {
+  grid-column: span 2; /* Make the title span both columns */
+  margin-bottom: 20px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Form label and input styling */
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Adjust label font size and input padding */
+.form-label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.form-control {
+  padding: 10px;
+  font-size: 14px;
+}
+
+/* Dropdown styling with arrows */
+.select-arrow {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none; /* Ensure the arrow doesn’t block interaction */
+}
+
+/* Close button */
+.close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+/* Modal backdrop */
 .modal-backdrop {
-    background-color: rgba(0, 0, 0, 0.5) !important; /* Darken background overlay */
-    opacity: 1 !important; /* Full opacity for backdrop */
-    z-index: 999; /* Ensure it’s behind the modal but above other elements */
-  }
-  
-  /* Modal container */
-  .modal-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw; /* Full viewport width */
-    height: 100vh; /* Full viewport height */
-    z-index: 1000;
-    background-color: rgba(0, 0, 0, 0.5); /* Optional: add a semi-transparent background to the container */
-  }
-  
-  /* Modal content */
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 1;
+  z-index: 999;
+}
+
+/* Responsive handling for smaller screens */
+@media (max-width: 600px) {
   .modal-content {
-    background-color: #fff;
-    padding: 20px;
-    width: 593px; /* Adjust width for better layout */
-    max-width: 90vw; /* Responsive width on smaller screens */
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    position: relative;
-    z-index: 1001;
+    grid-template-columns: 1fr; /* Stack fields in one column on smaller screens */
   }
-  
-  /* Close button */
-  .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 20px;
-    cursor: pointer;
-  }
-  
-  /* Modal title */
-  .modal-title {
-    margin-bottom: 20px;
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  /* Table styling inside modal */
-  .modal-content .table {
-    margin-bottom: 0;
-  }
-  
-  /* Table column header adjustments */
-  .modal-content th {
-    font-weight: 600;
-    color: #333;
-    font-size: 14px;
-    text-align: left;
-  }
-  
-  /* Optional for alignment */
-  .dropdown-menu {
-    left: auto;
-    right: 0;
-    top: 100%;
-  }
-  
+}
