@@ -54,24 +54,34 @@
   <div class="modal-container" *ngIf="isEditModalOpen">
     <div class="modal-backdrop" (click)="closeEditModal()"></div>
     <div class="modal-content">
-      <span class="close-btn" (click)="closeEditModal()">&times;</span>
+     <div class="modal-header">
       <h5 class="modal-title">{{ isAddingNew ? 'Add' : 'Edit' }} Country Risk</h5>
+      <button
+    type="button"
+    class="btn-close"
+    (click)="closeEditModal()"
+    aria-label="Close"
+  ></button>
+     </div>
       <form [formGroup]="editCountryForm">
-        <div class="form-group">
+        <div class="form-group " style="padding: 6px 15px;">
           <label class="form-label">Country</label>
-          <select class="form-control" formControlName="country">
+          <select class="form-select styled-select" formControlName="country">
             <option *ngFor="let nationality of nationalities" [value]="nationality.common">{{ nationality.common }}</option>
           </select>
         </div>
-        <div class="form-group">
+        <div class="form-group" style="padding: 6px 15px;">
           <label class="form-label">Risk</label>
-          <select class="form-control" formControlName="risk">
+          <select class="form-select styled-select" formControlName="risk">
             <option value="Low">Low</option>
             <option value="Medium">Medium</option>
             <option value="High">High</option>
           </select>
         </div>
-        <button class="btn btn-primary" (click)="saveCountry()">Save changes</button>
+       
+        <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
+          <button class="btn btn-primary custom-button" (click)="saveCountry()">Save Changes</button>
+        </div>
       </form>
     </div>
   </div>

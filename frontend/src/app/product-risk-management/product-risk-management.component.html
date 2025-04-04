@@ -60,11 +60,17 @@
 <div class="modal-container" *ngIf="isEditModalOpen">
   <div class="modal-backdrop" (click)="closeEditModal()"></div>
   <div class="modal-content">
-    <span class="close-btn" (click)="closeEditModal()">&times;</span>
+   <div class="modal-header" style="padding: 0;">
     <h5 class="modal-title">{{ isAddingNew ? 'Add' : 'Edit' }} Product</h5>
-
+    <button
+    type="button"
+    class="btn-close"
+    (click)="closeEditModal()"
+    aria-label="Close"
+  ></button>
+   </div>
     <form [formGroup]="editProductForm">
-      <div class="form-group">
+      <div class="form-group" style="padding: 6px 15px;">
         <label class="form-label">How many products need to be added?</label>
         <div class="dropdown-container">
           <select class="form-control" formControlName="productCount" (change)="onProductCountChange($event)">
@@ -75,29 +81,29 @@
       </div>
       
       <!-- Dynamic product fields in two rows -->
-      <div formArrayName="products">
+      <div formArrayName="products" style="padding: 6px 15px;">
         <div *ngFor="let product of dynamicProducts.controls; let i = index" [formGroupName]="i" class="dynamic-fields">
           <!-- Row 1: Product Name, Description -->
           <div class="form-group half-width">
-            <label class="form-label">Product Name {{ i + 1 }}</label>
+            <label class="form-custom">Product Name {{ i + 1 }}</label>
             <input type="text" class="form-control" formControlName="name">
           </div>
           <div class="form-group half-width">
-            <label class="form-label">Description</label>
+            <label class="form-custom">Description</label>
             <input type="text" class="form-control" formControlName="description">
           </div>
           
           <!-- Row 2: Unit Price, Quantity, Risk -->
           <div class="form-group half-width">
-            <label class="form-label">Unit Price</label>
+            <label class="form-custom">Unit Price</label>
             <input type="number" class="form-control" formControlName="unitPrice">
           </div>
           <div class="form-group half-width">
-            <label class="form-label">Quantity</label>
+            <label class="form-custom">Quantity</label>
             <input type="number" class="form-control" formControlName="quantity">
           </div>
           <div class="form-group">
-            <label class="form-label">Risk</label>
+            <label class="form-custom">Risk</label>
             <div class="dropdown-container">
               <select class="form-control" formControlName="risk">
                 <option value="Low">Low</option>
@@ -110,10 +116,10 @@
           
         </div>
       </div>
-      <div class="col-auto mt-3">
-        <button class="btn btn-ms btn-light-primary" (click)="saveProduct()">
-          <i class="fa-solid" [ngClass]="isAddingNew ? 'fa-plus' : 'fa-check'"></i>
-          {{ isAddingNew ? 'Add Product' : 'Update Product' }}
+      <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
+        <button class="btn btn-primary custom-button" (click)="saveProduct()">
+          
+          {{ isAddingNew ? 'Add Product' : 'Update Product' }}<i class="fa-solid" [ngClass]="isAddingNew ? 'fa-plus' : 'fa-check'"></i>
         </button>
       </div>
      
