@@ -66,3 +66,13 @@
   right: 0;
   top: 100%;
 }
+
+.form-label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.form-check-label {
+  font-size: 14px;
+  margin-bottom: 0px;
+}
