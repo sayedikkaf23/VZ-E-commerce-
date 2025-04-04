@@ -12,9 +12,11 @@ import Swal from 'sweetalert2'; // Import SweetAlert2
 export class SettingsComponent implements OnInit {
   services: any[] = [];
   editServiceForm: FormGroup;
+  addServiceForm!: FormGroup;
   isEditModalOpen = false;
   selectedServiceId: string | null = null;
   selectedFile: File | null = null;
+  showModal = false;
 
   constructor(
     private adminAuthService: AdminAuthService,
@@ -30,6 +32,11 @@ export class SettingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.getServices();
+    this.addServiceForm = this.fb.group({
+      serviceName: [''],
+      description: [''],
+      isActive: [true]
+    });
   }
 
   getServices(): void {
@@ -54,6 +61,34 @@ export class SettingsComponent implements OnInit {
     });
   }
 
+  openAddModal(): void {
+    this.showModal = true;
+  }
+
+  addService(): void {
+    if (this.addServiceForm.valid) {
+      const { serviceName, description, isActive } = this.addServiceForm.value;
+      this.adminAuthService.addService(serviceName, description, isActive)
+        .subscribe({
+          next: (res) => {
+            console.log('Service created:', res);
+            
+            this.getServices(); // Refresh the service list after updating
+            this.closeAddModal();
+            this.toastr.success('New Service added successfully!'); // Show success message
+          },
+          error: (err) => {
+            console.error('Error: adding new service', err);
+            this.toastr.error('Error adding new service.'); // Show error message
+          }
+        });
+    }
+  }
+
+  closeAddModal(): void {
+   this.showModal=false
+  }
+
   closeEditModal(): void {
     this.isEditModalOpen = false;
     this.selectedServiceId = null;
@@ -64,6 +99,8 @@ export class SettingsComponent implements OnInit {
       this.selectedFile = event.target.files[0];
     }
   }
+
+
 
   updateService(): void {
     const serviceData = this.editServiceForm.value;

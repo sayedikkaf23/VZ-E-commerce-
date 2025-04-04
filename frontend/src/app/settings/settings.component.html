@@ -7,7 +7,7 @@
             <h2>Services</h2>
           </div>
           <div class="col-auto mb-2">
-            <a class="btn btn-sm btn-light-primary">
+            <a class="btn btn-sm btn-light-primary" (click)="openAddModal()">
               <i class="fa-solid fa-plus"></i> New Service
             </a>
           </div>
@@ -125,3 +125,72 @@
   </div>
 </div>
 
+
+
+<div class="modal-container"  *ngIf="showModal">
+  <div class=" modal-backdrop "  (click)="closeAddModal()" > </div>
+    <div class="modal-content" style="padding: 10px;">
+      <form [formGroup]="addServiceForm" (ngSubmit)="addService()">
+      <div class="modal-header">
+        <h5 class="modal-title mb-0" id="docTypeModalLabel">Add a new Service</h5>
+        <button
+        type="button"
+        class="btn-close"
+        (click)="closeAddModal()"
+        aria-label="Close"
+      ></button>
+      </div>
+   
+      <!-- Modal Body -->
+      <div class="form-field" style="padding: 6px 15px;">
+          <label for="servicename">Enter new Service name<span class="required">*</span></label>
+          <fieldset>
+            <input
+              type="text"
+              id="servicename"
+              name="servicename"
+              class="form-control styled-input"
+              placeholder="Enter service name"
+              formControlName="serviceName"
+              required
+            />
+          </fieldset>
+        </div>
+        <div class="form-field" style="padding: 6px 15px;">
+          <label for="description">Enter the description<span class="required">*</span></label>
+          <fieldset>
+            <input
+              type="text"
+              id="description"
+              name="description"
+              class="form-control styled-input"
+              placeholder="Enter service description"
+              formControlName="description"
+              required
+            />
+          </fieldset>
+      </div>
+
+      <div class="form-field form-switch" style="padding: 6px 15px; display: flex;">
+        <label for="isActive">Status<span class="required">*</span></label>
+        <input type="checkbox" id="isActive" class="form-control form-check-input ms-3" formControlName="isActive">
+    </div>
+     
+
+
+       
+     
+       <!-- Submit Button -->
+  <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
+    <button
+    class="btn btn-primary" style="white-space: nowrap; background-color: #cf3339 !important;"
+      
+    >
+      Submit
+    </button>
+  </div>
+</form>
+
+    </div>
+  
+</div>

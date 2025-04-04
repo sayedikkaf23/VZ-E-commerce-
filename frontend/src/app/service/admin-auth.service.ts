@@ -41,6 +41,17 @@ export class AdminAuthService {
   getServices(): Observable<any> {
     return this.http.get(`${this.url}/user/services`); // GET request to fetch user services
   }
+
+  addService(serviceName: string, description: string, isActive: boolean): Observable<any> {
+    const data = {
+      serviceName,
+      description,
+      isActive
+    };
+  
+    return this.http.post(`${this.url}/user/services`, data);
+  }
+
   updateService(
     serviceId: string,
     serviceData: any,
