@@ -95,24 +95,32 @@
 <div class="modal-container" *ngIf="isEditModalOpen">
   <div class="modal-backdrop" (click)="closeEditModal()"></div>
   <div class="modal-content">
-    <span class="close-btn" (click)="closeEditModal()">&times;</span>
+    <div class="modal-header">
     <h5 class="modal-title">Edit Service</h5>
+    <button
+        type="button"
+        class="btn-close"
+        (click)="closeEditModal()"
+        aria-label="Close"
+      ></button>
+    </div>
     <form [formGroup]="editServiceForm">
-      <div class="form-group">
+      <div class="form-group" style="padding: 6px 15px;">
         <label for="serviceName" class="form-label">Service Name</label>
         <input type="text" id="serviceName" class="form-control" formControlName="serviceName">
       </div>
       <br>
-      <div class="form-group">
+      <div class="form-group" style="padding: 6px 15px;">
         <label for="description" class="form-label">Description</label>
         <input type="text" id="description" class="form-control" formControlName="description">
       </div>
   <br>
  
  
-      <div class="form-group form-switch">
-        <input type="checkbox" id="isActive" class="form-check-input" formControlName="isActive">
+      <div class="form-group form-switch" style="padding: 6px 15px; display: flex; align-items: center;">
+       
         <label for="isActive" class="form-check-label">Is Active</label>
+        <input type="checkbox" id="isActive" class="form-check-input ms-4" formControlName="isActive">
       </div>
       <br>
       
@@ -120,7 +128,16 @@
         <label for="serviceIcon" class="form-label">Service Icon</label>
         <input type="file" id="serviceIcon" class="form-control" (change)="onFileSelect($event)">
       </div> -->
-      <button class="btn btn-primary" (click)="updateService()">Save changes</button>
+      <!-- <button class="btn btn-primary" (click)="updateService()">Save changes</button> -->
+       <!-- Submit Button -->
+  <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
+    <button
+    class="btn btn-primary" style="white-space: nowrap; background-color: #cf3339 !important;"
+    (click)="updateService()"
+    >
+      Submit
+    </button>
+  </div>
     </form>
   </div>
 </div>
@@ -129,10 +146,10 @@
 
 <div class="modal-container"  *ngIf="showModal">
   <div class=" modal-backdrop "  (click)="closeAddModal()" > </div>
-    <div class="modal-content" style="padding: 10px;">
+    <div class="modal-content">
       <form [formGroup]="addServiceForm" (ngSubmit)="addService()">
       <div class="modal-header">
-        <h5 class="modal-title mb-0" id="docTypeModalLabel">Add a new Service</h5>
+        <h5 class="modal-title" id="docTypeModalLabel">Add a new Service</h5>
         <button
         type="button"
         class="btn-close"
@@ -142,8 +159,8 @@
       </div>
    
       <!-- Modal Body -->
-      <div class="form-field" style="padding: 6px 15px;">
-          <label for="servicename">Enter new Service name<span class="required">*</span></label>
+      <div class="form-group" style="padding: 6px 15px;">
+          <label class="form-label" for="servicename">Enter new Service name<span class="required">*</span></label>
           <fieldset>
             <input
               type="text"
@@ -156,8 +173,9 @@
             />
           </fieldset>
         </div>
-        <div class="form-field" style="padding: 6px 15px;">
-          <label for="description">Enter the description<span class="required">*</span></label>
+        <br>
+        <div class="form-group" style="padding: 6px 15px;">
+          <label class="form-label" for="description">Enter the description<span class="required">*</span></label>
           <fieldset>
             <input
               type="text"
@@ -170,11 +188,13 @@
             />
           </fieldset>
       </div>
+      <br>
 
-      <div class="form-field form-switch" style="padding: 6px 15px; display: flex;">
-        <label for="isActive">Status<span class="required">*</span></label>
-        <input type="checkbox" id="isActive" class="form-control form-check-input ms-3" formControlName="isActive">
+      <div class="form-group form-switch" style="padding: 6px 15px; display: flex; align-items: center;">
+        <label  class="form-label" for="isActive">Is Active<span class="required">*</span></label>
+        <input type="checkbox" id="isActive" class="form-control form-check-input ms-4" formControlName="isActive">
     </div>
+    <br>
      
 
 
