@@ -1032,6 +1032,31 @@ exports.getAllServices = async (req, res) => {
 };
 
 
+exports.createService = async (req, res) => {
+  try {
+    const { serviceName, description, isActive } = req.body;
+
+    // Basic validation
+    if (!serviceName || !description) {
+      return res.status(400).json({ error: "serviceName and description are required." });
+    }
+
+    // Create and save the new service
+    const newService = new Service({
+      serviceName,
+      description,
+      isActive: isActive !== undefined ? isActive : true,
+    });
+
+    const savedService = await newService.save();
+    res.status(201).json(savedService);
+  } catch (error) {
+    res.status(500).json({ error: "Error creating service", details: error.message });
+  }
+};
+
+
+
 exports.loginAdmin = async (req, res) => {
   const { email, password } = req.body;
 

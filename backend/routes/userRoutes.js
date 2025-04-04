@@ -11,6 +11,7 @@ router.post('/callSalesforceQuoteService', userController.callSalesforceQuoteSer
 // Route to handle service submission with a single file upload
 router.post('/submit-service', singleUpload, userController.submitService);
 router.get('/services', userController.getAllServices);
+router.post('/services', userController.createService);
 router.get('/submissions', userController.getAllSubmissions);
 router.get('/getBusinessBank', userController.getBusinessBank);
 router.get('/getPersonalBank', userController.getPersonalBank);
