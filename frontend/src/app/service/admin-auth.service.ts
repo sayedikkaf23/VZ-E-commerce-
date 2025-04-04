@@ -105,10 +105,11 @@ addProductRisk(data: any | any[]): Observable<any> {
 }
 
 
-// Update one or more products
 updateProductRisk(id: string, data: any): Observable<any> {
   return this.http.put(`${this.url}/api/product-risk/update`, [{ _id: id, ...data }]);
 }
+
+
 
 // Delete one or more products
 deleteProductRisk(id: string): Observable<any> {

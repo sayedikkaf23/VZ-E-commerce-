@@ -24,21 +24,24 @@ export class ProductRiskManagementComponent implements OnInit {
     private fb: FormBuilder,
     private toastr: ToastrService
   ) {
+    // Initialize the form with a default product count and an empty FormArray for products
     this.editProductForm = this.fb.group({
-      productCount: [1, Validators.required], // Default to 1 product
-      products: this.fb.array([]) // FormArray for dynamic product fields
+      productCount: [1, Validators.required],
+      products: this.fb.array([])
     });
   }
 
   ngOnInit(): void {
     this.getProducts();
-    this.setProductFields(1); // Default to 1 product
+    this.setProductFields(1); // Default to one product field
   }
 
+  // Shortcut to access the dynamic FormArray
   get dynamicProducts() {
-    return (this.editProductForm.get('products') as FormArray);
+    return this.editProductForm.get('products') as FormArray;
   }
 
+  // Fetch products from the API
   getProducts(): void {
     this.adminAuthService.getProductRisks().subscribe(
       (res) => this.products = res,
@@ -49,13 +52,13 @@ export class ProductRiskManagementComponent implements OnInit {
     );
   }
 
-  // Handle change in the product count dropdown
+  // Adjust the number of dynamic product fields when the product count changes
   onProductCountChange(event: any): void {
     const productCount = event.target.value;
     this.setProductFields(productCount);
   }
 
-  // Dynamically add/remove product fields based on selected count
+  // Dynamically add or remove product fields based on the selected count
   setProductFields(count: number): void {
     const currentCount = this.dynamicProducts.length;
     if (count > currentCount) {
@@ -69,50 +72,58 @@ export class ProductRiskManagementComponent implements OnInit {
     }
   }
 
-  // Create form for each product
-// Inside createProductForm method
-createProductForm(): FormGroup {
-  return this.fb.group({
-    name: ['', Validators.required],  // Ensure name is required
-    description: ['', Validators.required],  // Ensure description is required
-    unitPrice: ['', [Validators.required, Validators.min(0)]],  // Ensure unitPrice is required
-    quantity: ['', [Validators.required, Validators.min(1)]],  // Ensure quantity is required
-    risk: ['', Validators.required]  // Ensure risk is required
-  });
-}
+  // Create a FormGroup for each product with necessary validations
+  createProductForm(): FormGroup {
+    return this.fb.group({
+      name: ['', Validators.required],
+      description: ['', Validators.required],
+      unitPrice: ['', [Validators.required, Validators.min(0)]],
+      quantity: ['', [Validators.required, Validators.min(1)]],
+      risk: ['', Validators.required]
+    });
+  }
 
-
+  // Open the modal for adding a new product
   openAddModal(): void {
     this.editProductForm.reset();
     this.selectedProductId = null;
     this.isEditModalOpen = true;
     this.isAddingNew = true;
-    this.setProductFields(1); // Default to 1 product
+    this.setProductFields(1); // Always start with one product field for adding
   }
 
+  // Open the modal for editing an existing product
   openEditModal(product: any): void {
-    this.editProductForm.patchValue({
-      productCount: product.count || 1
-    });
-    this.setProductFields(product.count || 1);
+    // Set the form to a single product update
+    this.editProductForm.patchValue({ productCount: 1 });
+    this.setProductFields(1);
     this.selectedProductId = product._id;
     this.isEditModalOpen = true;
     this.isAddingNew = false;
+
+    // Pre-populate the first dynamic form with the product's current details
+    this.dynamicProducts.at(0).patchValue({
+      name: product.name,
+      description: product.description,
+      unitPrice: product.unitPrice,
+      quantity: product.quantity,
+      risk: product.risk
+    });
   }
 
+  // Close the modal and reset selection
   closeEditModal(): void {
     this.isEditModalOpen = false;
     this.selectedProductId = null;
   }
 
+  // Save a new product or update an existing one based on the modal mode
   saveProduct(): void {
     const data = this.editProductForm.value;
-    
-    // Log form data for debugging
     console.log('Form Data:', data);
-  
+
     if (this.isAddingNew) {
-      // Ensure you're passing the array of products
+      // For adding, send an object with a products array
       const products = data.products;
       this.adminAuthService.addProductRisk({ products }).subscribe(
         (response) => {
@@ -126,7 +137,10 @@ createProductForm(): FormGroup {
         }
       );
     } else if (this.selectedProductId) {
-      this.adminAuthService.updateProductRisk(this.selectedProductId, data).subscribe(
+      // For updating, call the service with two arguments: the id and the product update data.
+      // The service method will handle wrapping it in an array.
+      const productUpdate = data.products[0];
+      this.adminAuthService.updateProductRisk(this.selectedProductId, productUpdate).subscribe(
         () => {
           this.getProducts();
           this.closeEditModal();
@@ -139,8 +153,8 @@ createProductForm(): FormGroup {
       );
     }
   }
-  
 
+  // Delete a product after confirmation
   deleteProduct(id: string): void {
     Swal.fire({
       title: 'Are you sure?',

@@ -70,11 +70,10 @@
           <select class="form-control" formControlName="productCount" (change)="onProductCountChange($event)">
             <option *ngFor="let count of productCountOptions" [value]="count">{{ count }}</option>
           </select>
-          <i class="fa fa-chevron-down dropdown-icon"></i> <!-- Icon added here -->
+          <i class="fa fa-chevron-down dropdown-icon"></i>
         </div>
       </div>
       
-
       <!-- Dynamic product fields in two rows -->
       <div formArrayName="products">
         <div *ngFor="let product of dynamicProducts.controls; let i = index" [formGroupName]="i" class="dynamic-fields">
@@ -105,7 +104,7 @@
                 <option value="Medium">Medium</option>
                 <option value="High">High</option>
               </select>
-              <i class="fa fa-chevron-down dropdown-icon"></i> <!-- Icon added -->
+              <i class="fa fa-chevron-down dropdown-icon"></i>
             </div>
           </div>
           
@@ -113,7 +112,8 @@
       </div>
       <div class="col-auto mt-3">
         <button class="btn btn-ms btn-light-primary" (click)="saveProduct()">
-          <i class="fa-solid fa-plus"></i>Add Product
+          <i class="fa-solid" [ngClass]="isAddingNew ? 'fa-plus' : 'fa-check'"></i>
+          {{ isAddingNew ? 'Add Product' : 'Update Product' }}
         </button>
       </div>
      

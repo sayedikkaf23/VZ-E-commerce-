@@ -36,13 +36,15 @@ exports.addProducts = async (req, res) => {
 };
 
 
-// ✅ Update multiple products
 exports.updateProducts = async (req, res) => {
   try {
-    const updates = req.body;
+    let updates = req.body;
+    if (!Array.isArray(updates)) {
+      updates = [updates];
+    }
 
-    if (!Array.isArray(updates) || updates.length === 0) {
-      return res.status(400).json({ message: "Provide an array of products to update" });
+    if (updates.length === 0) {
+      return res.status(400).json({ message: "Provide product data to update" });
     }
 
     const updated = await Promise.all(
@@ -56,6 +58,7 @@ exports.updateProducts = async (req, res) => {
     res.status(500).json({ message: "Update error", error: error.message });
   }
 };
+
 
 // ✅ Delete multiple products
 exports.deleteProducts = async (req, res) => {
