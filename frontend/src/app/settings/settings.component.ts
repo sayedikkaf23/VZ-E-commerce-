@@ -87,6 +87,12 @@ export class SettingsComponent implements OnInit {
 
   closeAddModal(): void {
    this.showModal=false
+     // Reset the form with default values (if any)
+  this.addServiceForm.reset({
+    serviceName: '',
+    description: '',
+    isActive: false
+  });
   }
 
   closeEditModal(): void {
