@@ -1,0 +1,89 @@
+/* Override Bootstrap's modal backdrop */
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.5) !important; /* Darken background overlay */
+    opacity: 1 !important; /* Full opacity for backdrop */
+    z-index: 999; /* Ensure it’s behind the modal but above other elements */
+  }
+  
+  /* Modal container */
+  .modal-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5); /* Optional: add a semi-transparent background to the container */
+  }
+  
+  /* Modal content */
+  .modal-content {
+    background-color: #fff;
+    padding: 10px;
+    width: 593px; /* Adjust width for better layout */
+    max-width: 90vw; /* Responsive width on smaller screens */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1001;
+  }
+  
+  /* Close button */
+  .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  /* Modal title */
+  .modal-title {
+  
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  
+.form-label {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+  
+  /* Table styling inside modal */
+  .modal-content .table {
+    margin-bottom: 0;
+  }
+  
+  /* Table column header adjustments */
+  .modal-content th {
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    text-align: left;
+  }
+  
+  /* Optional for alignment */
+  .dropdown-menu {
+    left: auto;
+    right: 0;
+    top: 100%;
+  }
+  
+
+  .custom-button {
+    box-shadow: 0 0 0 0 transparent !important;
+    border: 1px solid #ff9e9e  !important;  /* Border color */
+    color:#cf3339  !important;  /* Text color */
+    background-color: #ff9e9e !important; /* Light red for normal */
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .custom-button:hover,
+  .custom-button:active {
+    background-color: #cf3339 !important; /* Dark red on hover & click */
+    border-color: #cf3339 !important;
+  }

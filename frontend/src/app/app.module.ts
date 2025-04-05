@@ -74,6 +74,7 @@ import { ResetPasswordComponent } from './reset-password/reset-password.componen
 import { HelpCenterComponent } from './help-center/help-center.component';
 import { CountryRiskManagementComponent } from './country-risk-management/country-risk-management.component';
 import { ProductRiskManagementComponent } from './product-risk-management/product-risk-management.component';
+import { RiskComponent } from './risk/risk.component';
 
 @NgModule({
   declarations: [
@@ -140,7 +141,8 @@ import { ProductRiskManagementComponent } from './product-risk-management/produc
     ResetPasswordComponent,
     HelpCenterComponent,
     CountryRiskManagementComponent,
-    ProductRiskManagementComponent
+    ProductRiskManagementComponent,
+    RiskComponent
     
   ],
   imports: [

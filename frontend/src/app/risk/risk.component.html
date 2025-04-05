@@ -1,0 +1,81 @@
+<!-- country-risk-management.component.html -->
+<div class="content">
+    <div class="page-heading">
+      <div class="row align-items-center justify-content-between">
+        <div class="col-auto">
+          <div class="row align-items-center">
+            <div class="col-auto mb-2">
+              <h2>Risk Management</h2>
+            </div>
+            <div class="col-auto mb-2">
+              <button class="btn btn-sm btn-light-primary" >
+                <i class="fa-solid fa-plus"></i> New Risk
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="table-responsive overflow-behaviour">
+      <table class="table table-list-data table-hover">
+        <thead class="bg-light">
+          <tr>
+            
+            <th><b>Risk</b></th>
+            <th><b>Status</b></th>
+           
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let risk of riskList">
+            <td>{{ risk.risk }}</td>
+            <td>
+                <div class="form-check form-switch form-switch-2">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    
+                    [checked]="risk.isActive"
+                  />
+                </div>
+              </td>
+       
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="modal-container" *ngIf="isEditModalOpen">
+    <div class="modal-backdrop" (click)="closeEditModal()"></div>
+    <div class="modal-content">
+     <div class="modal-header">
+      <h5 class="modal-title">{{ isAddingNew ? 'Add' : 'Edit' }} Risk</h5>
+      <button
+    type="button"
+    class="btn-close"
+    (click)="closeEditModal()"
+    aria-label="Close"
+  ></button>
+     </div>
+      <form [formGroup]="editRiskForm">
+       
+        <div class="form-group" style="padding: 6px 15px;">
+          <label class="form-label">Risk</label>
+          <select class="form-select styled-select" formControlName="risk">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+       
+        <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
+          <button class="btn btn-primary custom-button" >Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  
