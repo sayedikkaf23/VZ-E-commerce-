@@ -38,3 +38,4 @@ exports.deleteCountryRisk = async (req, res) => {
   await CountryRisk.findByIdAndDelete(req.params.id);
   res.json({ message: "Deleted successfully" });
 };
+
