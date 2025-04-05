@@ -32,3 +32,29 @@ exports.getActiveRisks = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+
+exports.updateRiskStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { isActive } = req.body;
+
+    if (typeof isActive !== 'boolean') {
+      return res.status(400).json({ error: 'isActive must be true or false' });
+    }
+
+    const updated = await Risk.findByIdAndUpdate(
+      id,
+      { isActive },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ error: 'Risk not found' });
+    }
+
+    res.status(200).json({ message: 'Risk status updated', data: updated });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
