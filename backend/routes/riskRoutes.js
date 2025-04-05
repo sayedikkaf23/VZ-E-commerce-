@@ -1,0 +1,11 @@
+const express = require('express');
+const router = express.Router();
+const riskController = require('../controllers/RiskMangament');
+
+// Add new risk
+router.post('/addrisk', riskController.addRisk);
+
+// Get all active risks
+router.get('/getrisk', riskController.getActiveRisks);
+
+module.exports = router;

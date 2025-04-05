@@ -20,6 +20,8 @@ const documentRoute = require('./routes/documentRoute');
 const countryRiskRoutes = require("./routes/countryRiskRoutes");
 const productRiskRoutes = require("./routes/productRiskRoutes");
 const productFiltred=require("./routes/productFilterRoutes")
+const risk=require("./routes/riskRoutes")
+
 var app = express();
 require('./controllers/mailerController');
 
@@ -59,6 +61,7 @@ app.use('/mail', mailDetails);
 app.use('/nationalities',nationalities)
 app.use('/payment',paymentMethodRoutes)
 app.use('/auth', authRoutes);
+app.use('/risk', risk);
 app.use('/online', onlinePayment);
 app.use('/documentype', documentRoute);
 app.use('/payment', paymentRoute);
