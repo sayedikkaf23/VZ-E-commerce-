@@ -7,7 +7,10 @@ router.post('/addrisk', riskController.addRisk);
 
 // Get all active risks
 router.get('/getrisk', riskController.getActiveRisks);
+router.post('/getProductsByCountryRisk', riskController.getProductsByCountryRisk);
 
 router.patch('/updaterisk/:id/status', riskController.updateRiskStatus);
+
+
 
 module.exports = router;

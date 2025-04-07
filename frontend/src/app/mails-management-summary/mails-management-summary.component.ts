@@ -52,22 +52,9 @@ export class MailsManagementSummaryComponent {
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
     // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
     this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
-    this.quoteWithProductDetails = this.matchScoreResponse?.data;
+    this.quoteWithProductDetails = this.matchScoreResponse?.products;
     
-    if (!this.salesforceResponse) {
-      Swal.fire({
-        title: 'Session Expired',
-        text: 'Your session has expired. Please complete the form again from the beginning.',
-        icon: 'warning',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#FF5A5F'
-      }).then((result) => {
-        if (result.value) {
-          localStorage.clear();
-          this.router.navigate(['/home']);
-        }
-      });
-    } else if (this.isBrowser) {
+  if (this.isBrowser) {
       const mailform = localStorage.getItem('mailform');
       const mailform2 = localStorage.getItem('mailform1');
       const mailform3 = localStorage.getItem('mailform2');
@@ -158,6 +145,7 @@ export class MailsManagementSummaryComponent {
       });
     });
   }
+  
   submitData() {
     const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
   

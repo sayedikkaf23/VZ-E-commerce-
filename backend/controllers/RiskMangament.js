@@ -1,5 +1,6 @@
 const Risk = require('../models/Risk');
-
+const ProductRisk = require("../models/ProductRisk");
+const CountryRisk = require("../models/CountryRisk");
 // ➕ Add New Risk
 exports.addRisk = async (req, res) => {
   try {
@@ -56,5 +57,35 @@ exports.updateRiskStatus = async (req, res) => {
     res.status(200).json({ message: 'Risk status updated', data: updated });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+};
+
+
+exports.getProductsByCountryRisk = async (req, res) => {
+  const { country } = req.body;
+
+  try {
+    if (!country) {
+      return res.status(400).json({ message: 'Country is required in request body' });
+    }
+
+    // Find the risk level for the country
+    const countryRisk = await CountryRisk.findOne({ country });
+
+    if (!countryRisk) {
+      return res.status(404).json({ message: 'Country not found' });
+    }
+
+    // Find products with the same risk level
+    const products = await ProductRisk.find({ risk: countryRisk.risk });
+
+    return res.status(200).json({
+      country,
+      riskLevel: countryRisk.risk,
+      products
+    });
+  } catch (error) {
+    console.error('Error getting products by country risk:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 };

@@ -242,10 +242,8 @@ i: any;
 
 
 submitData() {
-  // Retrieve the merged data from localStorage
   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
 
-  // Show a SweetAlert confirmation dialog
   Swal.fire({
     title: 'Confirm Your Data',
     text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
@@ -256,71 +254,32 @@ submitData() {
     cancelButtonText: 'Review Data'
   }).then((result) => {
     if (result.isConfirmed) {
-      // Build the payload from the merged data
       const birthday = new Date(mergedData.birthday);
+
       const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
-      
+
       const payload = {
-        firstName: mergedData.firstName,
-        lastName: mergedData.lastName,
-        email: mergedData.email,
-        nationality: mergedData.nationality,
-        phone: mergedData.mobileNumber, // Ensure this is mapped correctly
-        dob: formattedBirthday,
-        service: "virtual_reception",
-        CustomerType: 'C',
-        shareholders: this.displayShareholders,
-        planname: "Mail Management",
-        isProfile: false,
-        // tradeLicenseFileName: this.tradeLicenseFileName, // Uncomment if needed
-        tradeLicenseFileUrl: this.tradeLicenseFileurl,
+        country: mergedData.nationality,
       };
 
-      this.isLoading = true; // Show loading indicator
+      this.isLoading = true;
 
-      // First API call: callSalesforceEndpoint
-      this.mailManagementService.callSalesforceEndpoint(payload).pipe(
-        switchMap((response: any) => {
-          // Store the Salesforce response if necessary
-          this.dataStorageService.setSalesforceResponse(response);
-
-          // Prepare payload for the second API call
-          const quotePayload = {
-            lead_source: response.data.leadWithDetails.LeadSource,
-            currencyCode: response.data.quotePaymentWithDetails.Currency,
-            quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId,
-            account_id: response.data.quotePaymentWithDetails.AccountId,
-            payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
-          };
-
-          // Second API call: callSalesforceQuoteService
-          return this.userService.callSalesforceQuoteService(quotePayload).pipe(
-            switchMap((quoteResponse: any) => {
-              // Prepare payload for the third API call
-              const matchScorePayload = {
-                quotePaymentId: quotePayload.quotePaymentId,
-                accountId: quotePayload.account_id,
-                leadId: response.data.leadWithDetails.LeadId,
-                matchScore: response.screeningmatchScore.matchScore, // Adjust if necessary
-              };
-
-              // Third API call: MatchScoreProductService
-              return this.userService.MatchScoreProductService(matchScorePayload);
-            })
-          );
-        })
-      ).subscribe(
-        (quoteResponse: any) => {
-          // Success: Hide the loader, store final data, and navigate to the summary page
+      this.mailManagementService.getProductsByCountryRisk(payload).subscribe(
+        (response: any) => {
           this.isLoading = false;
+
+          // Store final merged data
           localStorage.setItem('finalDataMail', JSON.stringify(mergedData));
-          this.matchScoreStorageService.setMatchScoreResponse(quoteResponse);
-          this.router.navigate(['/mails-summary']); // Replace with your actual route
+
+          // Save product data
+          this.matchScoreStorageService.setMatchScoreResponse(response);
+
+          // Navigate to summary page
+          this.router.navigate(['/mails-summary']);
         },
         (error) => {
-          // On error: Hide the loader and show a SweetAlert with a Retry option
-          console.error(error);
           this.isLoading = false;
+          console.error(error);
 
           Swal.fire({
             title: 'Error',
@@ -331,16 +290,15 @@ submitData() {
             cancelButtonText: 'Cancel'
           }).then((retryResult) => {
             if (retryResult.isConfirmed) {
-              // If the user clicks Retry, call submitData() again to reattempt the submission
-              this.submitData();
+              this.submitData(); // Retry
             }
           });
         }
       );
     }
-    // If the user selects "Review Data" (cancel), do nothing so they can make adjustments.
   });
 }
+
 
 
 

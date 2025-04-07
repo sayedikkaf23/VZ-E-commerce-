@@ -5,11 +5,14 @@ const RiskSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    
   },
   isActive: {
     type: Boolean,
     default: true
+  },
+  countries: {
+    type: [String], // Array of strings
+    default: []
   }
 }, {
   timestamps: true // adds createdAt and updatedAt

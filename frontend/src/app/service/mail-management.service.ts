@@ -26,4 +26,9 @@ export class MailManagementService {
     return this.http.post(`${this.url}/user/checkStatus`, data); // POST request to check status
   }
 
+
+  getProductsByCountryRisk(payload:any): Observable<any> {
+    return this.http.post(`${this.url}/risk/getProductsByCountryRisk`, payload); // Sending the payload to the backend
+  }
+
 }

@@ -3,13 +3,38 @@ const CountryRisk = require("../models/CountryRisk");
 exports.addCountryRisk = async (req, res) => {
   try {
     const { country, risk } = req.body;
+    /**
+     * 'risk' here should be the ID of the Risk document
+     * in which you want to push the new country reference.
+     *
+     * e.g. {
+     *   "country": "USA",
+     *   "risk": "644930b1234abcd5678ef012"  <-- a valid ObjectId for a Risk
+     * }
+     */
+
+    // 1. Check if the country already exists in CountryRisk
     const exists = await CountryRisk.findOne({ country });
+    if (exists) {
+      return res.status(400).json({ message: "Country already exists" });
+    }
 
-    if (exists) return res.status(400).json({ message: "Country already exists" });
+    // 2. Create the new CountryRisk document
+    const newCountry = await CountryRisk.create({ country, risk });
+    // 'newCountry' will have an _id like '644932abc...'
 
-    const entry = await CountryRisk.create({ country, risk });
-    res.status(201).json(entry);
+    // 3. Push the new country's _id into the Risk's 'countries' array
+    await Risk.findByIdAndUpdate(
+      risk,                    // The ID of the Risk doc
+      { $push: { countries: newCountry._id } },
+      { new: true }           // Return the updated doc if you want
+    );
+
+    // 4. Return the newly created CountryRisk
+    res.status(201).json(newCountry);
+
   } catch (err) {
+    console.error('Error adding country risk:', err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };

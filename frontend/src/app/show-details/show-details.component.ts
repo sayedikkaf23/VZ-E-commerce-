@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr'; // For toast notifications
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
-import { switchMap } from 'rxjs';
+import { catchError, switchMap } from 'rxjs';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
 import { of } from 'rxjs';
@@ -164,13 +164,11 @@ export class ShowDetailsComponent implements AfterViewInit {
 
 
   submitData() {
-    // Combine personalInfo and bankInfo into finalData
     const finalData = {
-      ...this.personalInfo, // Merge personal information
-      ...this.bankInfo      // Merge bank service information
+      ...this.personalInfo,
+      ...this.bankInfo
     };
   
-    // Show a SweetAlert confirmation dialog
     Swal.fire({
       title: 'Confirm Your Data',
       text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
@@ -181,67 +179,17 @@ export class ShowDetailsComponent implements AfterViewInit {
       cancelButtonText: 'Review Data'
     }).then((result) => {
       if (result.isConfirmed) {
-
-
         const birthday = new Date(finalData.birthday);
-const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
-
+        const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
+  
         const payload = {
-          firstName: finalData.firstName,
-          lastName: finalData.lastName,
-          email: finalData.email,
-          nationality: finalData.nationality,
-          phone: finalData.mobileNumber, // Ensure to map this correctly
-          dob:formattedBirthday,
-          service: "Bank_opening",
-          CustomerType: finalData.CustomerType || '',
-          planname: "Bank Account Opening",
-          isProfile: false,
+          country: finalData.nationality,
         };
   
-        this.isLoading = true; // Show loading indicator if necessary
+        this.isLoading = true;
   
-        // First API call to callSalesforceEndpoint
-        this.userService.callSalesforceEndpoint(payload).pipe(
-          switchMap((response: any) => {
-            // Store the Salesforce response if needed
-            this.dataStorageService.setSalesforceResponse(response);
-  
-            // Prepare payload for the second API call
-            const quotePayload = {
-              lead_source: response.data.leadWithDetails.LeadSource,
-              currencyCode: response.data.quotePaymentWithDetails.Currency, // Update this as needed
-              quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has quotePaymentId
-              account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has account_id
-              payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
-            };
-  
-            // Call the second API
-            return this.userService.callSalesforceQuoteService(quotePayload).pipe(
-              switchMap((quoteResponse: any) => {
-                // Prepare payload for MatchScoreProductService
-                const matchScorePayload = {
-                  quotePaymentId: quotePayload.quotePaymentId,
-                  accountId: quotePayload.account_id,
-                  leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
-                  matchScore: response.screeningmatchScore.matchScore, // Adjust based on response structure
-                };
-  
-                // Call the third API
-                return this.userService.MatchScoreProductService(matchScorePayload);
-              })
-            );
-          })
-        ).subscribe(
-          (matchScoreResponse: any) => {
-            // Successful API calls: hide loader, store final data, and navigate to the summary page
-            this.isLoading = false;
-            localStorage.setItem('finalData', JSON.stringify(finalData));
-            this.matchScoreStorageService.setMatchScoreResponse(matchScoreResponse);
-            this.router.navigate(['/ShowDetails-2']); // Replace with your actual route
-          },
-          (error) => {
-            // On error: hide loader and show a SweetAlert with Retry and Cancel options
+        this.userService.getProductsByCountryRisk(payload).pipe(
+          catchError((error) => {
             console.error(error);
             this.isLoading = false;
             Swal.fire({
@@ -253,14 +201,22 @@ const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0
               cancelButtonText: 'Cancel'
             }).then((retryResult) => {
               if (retryResult.isConfirmed) {
-                // If the user selects Retry, call submitData() again to reattempt the submission
                 this.submitData();
               }
             });
+            return of(null); // gracefully complete the observable chain
+          })
+        ).subscribe((matchScoreResponse: any) => {
+          this.isLoading = false;
+  
+          if (matchScoreResponse) {
+            localStorage.setItem('finalData', JSON.stringify(finalData));
+            this.matchScoreStorageService.setMatchScoreResponse(matchScoreResponse);
+  console.log(matchScoreResponse, "matchScoreResponse")
+            this.router.navigate(['/ShowDetails-2']);
           }
-        );
+        });
       }
-      // If the user clicks "Review Data", no further action is taken.
     });
   }
   

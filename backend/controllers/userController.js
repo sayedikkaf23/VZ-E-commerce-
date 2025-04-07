@@ -379,7 +379,8 @@ exports.callSalesforceEndpoint = async (req, res) => {
         {
           UserId: 'ComplianceUAT',
           CompanyName: 'Virtuzone',
-          CustomerId: responseData.leadWithDetails.LeadId,
+          CustomerId: generateCustomerId(), 
+
           CustomerType: CustomerType,
           FirstName: firstName,
           MiddleName: '',
@@ -432,14 +433,17 @@ console.log(screeningResponse,"screeningResponse")
         Gender: shareholder.gender || ''
       }));
 
-
+      const generateCustomerId = () => {
+        return 'CUST-' + Math.random().toString(36).substring(2, 10).toUpperCase(); // e.g., CUST-8G7YTXLZ
+      };
 
       screeningResponse = await axios.post(
         `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/Screening`,
         {
           UserId: 'ComplianceUAT',
           CompanyName: 'Virtuzone',
-          CustomerId: responseData.leadWithDetails.LeadId,
+          CustomerId: generateCustomerId(), // 🎯 Random ID
+
           CustomerType: CustomerType,
           FirstName: firstName,
           MiddleName: '',
@@ -485,68 +489,68 @@ console.log(screeningResponse,"screeningResponse")
     const { matchScore } = screeningResponse.data;
 
     // Step 5: Create a new Pidata document
-    const newPidata = new Pidata({
-      leadWithDetails: {
-        Nationality: responseData.leadWithDetails.Nationality,
-        Phone: responseData.leadWithDetails.Phone,
-        Origin__c: responseData.leadWithDetails.Origin__c,
-        Email: responseData.leadWithDetails.Email.toLowerCase(),
-        LeadSource: responseData.leadWithDetails.LeadSource,
-        Status: responseData.leadWithDetails.Status,
-        Company: responseData.leadWithDetails.Comapny,
-        LastName: responseData.leadWithDetails.LastName,
-        FirstName: responseData.leadWithDetails.FirstName,
-        LeadId: responseData.leadWithDetails.LeadId || 'N/A',
+    // const newPidata = new Pidata({
+    //   leadWithDetails: {
+    //     Nationality: responseData.leadWithDetails.Nationality,
+    //     Phone: responseData.leadWithDetails.Phone,
+    //     Origin__c: responseData.leadWithDetails.Origin__c,
+    //     Email: responseData.leadWithDetails.Email.toLowerCase(),
+    //     LeadSource: responseData.leadWithDetails.LeadSource,
+    //     Status: responseData.leadWithDetails.Status,
+    //     Company: responseData.leadWithDetails.Comapny,
+    //     LastName: responseData.leadWithDetails.LastName,
+    //     FirstName: responseData.leadWithDetails.FirstName,
+    //     LeadId: responseData.leadWithDetails.LeadId || 'N/A',
         
-      },
-      quotePaymentWithDetails: {
-        Currency: responseData.quotePaymentWithDetails.Currency || null,
-        QuotePaymentId: responseData.quotePaymentWithDetails.QuotePaymentId || 'N/A',
-        AccountId: responseData.quotePaymentWithDetails.AccountId || 'N/A',
-      },
-      quoteWithProductDetails: {
-        AccountName: responseData.quoteWithProductDetails.AccountName,
-        Discount: responseData.quoteWithProductDetails.Discount || 0,
-        invoiceCurrency: responseData.quoteWithProductDetails.invoiceCurrency || null,
-        invoiceDate: responseData.quoteWithProductDetails.invoiceDate,
-        invoiceNumber: responseData.quoteWithProductDetails.invoiceNumber || null,
-        mobile: formattedPhone,
-        oppurtunityId: responseData.quoteWithProductDetails.oppurtunityId || 'N/A',
-        ownerId: responseData.quoteWithProductDetails.ownerId || 'N/A',
-        partPayment: responseData.quoteWithProductDetails.partPayment || null,
-        paymentLink: responseData.quoteWithProductDetails.paymentLink || null,
-        paymentMethod: responseData.quoteWithProductDetails.paymentMethod || null,
-        product: responseData.quoteWithProductDetails.product || [],
-        quoteEmail: responseData.quoteWithProductDetails.quoteEmail,
-        quoteId: responseData.quoteWithProductDetails.quoteId || 'N/A',
-        quoteName: responseData.quoteWithProductDetails.quoteName || 'Test Quote',
-        quotePaymentId: responseData.quoteWithProductDetails.quotePaymentId || 'N/A',
-        quotePdf: {
-          ContentType: responseData.quoteWithProductDetails.quotePdf.ContentType,
-          name: responseData.quoteWithProductDetails.quotePdf.name,
-          pdfContent: responseData.quoteWithProductDetails.quotePdf.pdfContent,
-        },
-        sendToPaymentGateway: responseData.quoteWithProductDetails.sendToPaymentGateway || false,
-        status: responseData.quoteWithProductDetails.status || 'Draft',
-        subTotal: responseData.quoteWithProductDetails.subTotal || 0,
-        totalIncludingVAT: responseData.quoteWithProductDetails.totalIncludingVAT || 0,
-        totalPrice: responseData.quoteWithProductDetails.totalPrice || 0,
-      },
-      screeningDetails: { // Add screening details to the document
-        matchScore: matchScore,
-      },
-      salesPersonDetails: { // Adding salesperson details
-        salesPersonEmail: responseData.salesPersonDetails?.salesPersonEmail || 'N/A',
-        salesPersonMobile: responseData.salesPersonDetails?.salesPersonMobile || 'N/A',
-        salesPersonName: responseData.salesPersonDetails?.salesPersonName || 'N/A',
-    },
-      isProfile: isProfile ,
-      planname: planname ,
-      subcategory: subcategory ,
-    });
+    //   },
+    //   quotePaymentWithDetails: {
+    //     Currency: responseData.quotePaymentWithDetails.Currency || null,
+    //     QuotePaymentId: responseData.quotePaymentWithDetails.QuotePaymentId || 'N/A',
+    //     AccountId: responseData.quotePaymentWithDetails.AccountId || 'N/A',
+    //   },
+    //   quoteWithProductDetails: {
+    //     AccountName: responseData.quoteWithProductDetails.AccountName,
+    //     Discount: responseData.quoteWithProductDetails.Discount || 0,
+    //     invoiceCurrency: responseData.quoteWithProductDetails.invoiceCurrency || null,
+    //     invoiceDate: responseData.quoteWithProductDetails.invoiceDate,
+    //     invoiceNumber: responseData.quoteWithProductDetails.invoiceNumber || null,
+    //     mobile: formattedPhone,
+    //     oppurtunityId: responseData.quoteWithProductDetails.oppurtunityId || 'N/A',
+    //     ownerId: responseData.quoteWithProductDetails.ownerId || 'N/A',
+    //     partPayment: responseData.quoteWithProductDetails.partPayment || null,
+    //     paymentLink: responseData.quoteWithProductDetails.paymentLink || null,
+    //     paymentMethod: responseData.quoteWithProductDetails.paymentMethod || null,
+    //     product: responseData.quoteWithProductDetails.product || [],
+    //     quoteEmail: responseData.quoteWithProductDetails.quoteEmail,
+    //     quoteId: responseData.quoteWithProductDetails.quoteId || 'N/A',
+    //     quoteName: responseData.quoteWithProductDetails.quoteName || 'Test Quote',
+    //     quotePaymentId: responseData.quoteWithProductDetails.quotePaymentId || 'N/A',
+    //     quotePdf: {
+    //       ContentType: responseData.quoteWithProductDetails.quotePdf.ContentType,
+    //       name: responseData.quoteWithProductDetails.quotePdf.name,
+    //       pdfContent: responseData.quoteWithProductDetails.quotePdf.pdfContent,
+    //     },
+    //     sendToPaymentGateway: responseData.quoteWithProductDetails.sendToPaymentGateway || false,
+    //     status: responseData.quoteWithProductDetails.status || 'Draft',
+    //     subTotal: responseData.quoteWithProductDetails.subTotal || 0,
+    //     totalIncludingVAT: responseData.quoteWithProductDetails.totalIncludingVAT || 0,
+    //     totalPrice: responseData.quoteWithProductDetails.totalPrice || 0,
+    //   },
+    //   screeningDetails: { // Add screening details to the document
+    //     matchScore: matchScore,
+    //   },
+    //   salesPersonDetails: { // Adding salesperson details
+    //     salesPersonEmail: responseData.salesPersonDetails?.salesPersonEmail || 'N/A',
+    //     salesPersonMobile: responseData.salesPersonDetails?.salesPersonMobile || 'N/A',
+    //     salesPersonName: responseData.salesPersonDetails?.salesPersonName || 'N/A',
+    // },
+    //   isProfile: isProfile ,
+    //   planname: planname ,
+    //   subcategory: subcategory ,
+    // });
 
-    // Step 6: Save the document to MongoDB
-    await newPidata.save();
+    // // Step 6: Save the document to MongoDB
+    // await newPidata.save();
 
     // Send a success response
     res.status(200).json({ message: 'Data saved successfully', data: responseData ,screeningmatchScore:screeningResponse.data});

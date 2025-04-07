@@ -44,24 +44,11 @@ export class ShowDetails2Component implements AfterViewInit {
   ngOnInit(): void {
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
     this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
-    this.quoteWithProductDetails = this.matchScoreResponse?.data;
-// console.log(matchScoreResponse)
+    this.quoteWithProductDetails = this.matchScoreResponse?.products;
+console.log( this.salesforceResponse, this.quoteWithProductDetails)
     // Check if the salesforceResponse is empty or null
-    if (!this.salesforceResponse) {
-      Swal.fire({
-        title: 'Session Expired',
-        text: 'Your session has expired. Please complete the form again from the beginning.',
-        icon: 'warning',
-        confirmButtonText: 'OK',
-         confirmButtonColor: '#FF5A5F'
-      }).then((result) => {
-        if (result.value) {
-          localStorage.removeItem('step1Data');
-          localStorage.removeItem('step2Data');
-          this.router.navigate(['/home']);  // Navigate to the start of the form
-        }
-      });
-    } else if (this.isBrowser) {
+   
+   if(this.isBrowser) {
       const step1Data = localStorage.getItem('step1Data');
       const step2Data = localStorage.getItem('step2Data');
 
