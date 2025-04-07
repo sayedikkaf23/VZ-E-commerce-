@@ -70,6 +70,21 @@ export class RiskComponent {
         });
     }
   }
+
+  toggleRiskStatus(risk: any) {
+    const updatedStatus = !risk.isActive;
+  
+    this.adminAuthService.updateRiskStatus(risk._id, updatedStatus).subscribe({
+      next: (response) => {
+        risk.isActive = updatedStatus; // update UI
+        console.log('Risk status updated');
+      },
+      error: (err) => {
+        console.error('Failed to update risk status:', err);
+        // optionally show toast or revert change
+      }
+    });
+  }
  
 
   closeAddModal(): void {

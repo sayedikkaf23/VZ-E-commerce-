@@ -13,6 +13,7 @@ import { GetnationalityService } from '../service/getnationality.service';
 })
 export class CountryRiskManagementComponent implements OnInit {
   countryRisks: any[] = [];
+  riskList: any[] = [];
   editCountryForm: FormGroup;
   isEditModalOpen = false;
   selectedCountryId: string | null = null;
@@ -35,6 +36,7 @@ export class CountryRiskManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.getCountryRisks();
+    this.getRiskList();
     this.getnationalityService.getNationality().subscribe((data) => {
       this.nationalities = data.map((country: any) => ({
         common: country.name.common,
@@ -61,6 +63,16 @@ export class CountryRiskManagementComponent implements OnInit {
     this.isAddingNew = true;
     this.selectedCountryId = null;
     this.editCountryForm.reset();
+  }
+
+  getRiskList(): void {
+    this.adminAuthService.getRisk().subscribe(
+      (res) => this.riskList = res,
+      (err) => {
+        console.error('Error fetching risk list:', err);
+        this.toastr.error('Failed to fetch risk list.');
+      }
+    );
   }
 
   openEditModal(country: any): void {

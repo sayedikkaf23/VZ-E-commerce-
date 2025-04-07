@@ -48,8 +48,17 @@ export class AdminAuthService {
     return this.http.post(`${this.url}/risk/addrisk`, data);
   }
   getRisk(): Observable<any> {
-    return this.http.get(`${this.url}/risk/getallrisk`); // GET request to fetch user services
+    return this.http.get(`${this.url}/risk/getallrisk`); 
   }
+
+  getActiveRisk(): Observable<any> {
+    return this.http.get(`${this.url}/risk/getrisk`); 
+  }
+
+  updateRiskStatus(id: string, isActive: boolean): Observable<any> {
+    return this.http.patch(`${this.url}/risk/updaterisk/${id}/status`, { isActive });
+  }
+
   getServices(): Observable<any> {
     return this.http.get(`${this.url}/user/services`); // GET request to fetch user services
   }
