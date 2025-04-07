@@ -11,14 +11,9 @@ import { GetnationalityService } from '../service/getnationality.service';
   styleUrl: './risk.component.css'
 })
 export class RiskComponent {
-  riskList = [
-    { risk: 'High', isActive: true },
-    { risk: 'Medium', isActive: true },
-    { risk: 'Low', isActive: true },
-   
-  ];
-  editRiskForm: FormGroup;
-  isEditModalOpen = false;
+  riskList: any[] = [];
+  addRiskForm!: FormGroup;
+  isAddModalOpen = false;
  
   isAddingNew = false;
   nationalities: any[] = [];
@@ -27,58 +22,66 @@ export class RiskComponent {
     private adminAuthService: AdminAuthService,
     private fb: FormBuilder,
     private toastr: ToastrService,
-        private cdRef: ChangeDetectorRef,
     
-    private getnationalityService: GetnationalityService,
   ) {
-    this.editRiskForm = this.fb.group({
-     
-      risk: ['']
-    });
+    
   }
 
   ngOnInit(): void {
     this.getRiskList();
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities = data.map((country: any) => ({
-        common: country.name.common,
-        country: country.name.country
-      }));
-
-      // Trigger change detection to update the view
-      this.cdRef.detectChanges();
+    this.addRiskForm = this.fb.group({
+      name: [''],
+      isActive: [true]
     });
   }
 
   getRiskList(): void {
-   
+    this.adminAuthService.getRisk().subscribe(
+      (res) => this.riskList = res,
+      (err) => {
+        console.error('Error fetching risk list:', err);
+        this.toastr.error('Failed to fetch risk list.');
+      }
+    );
   }
 
   openAddModal(): void {
-    this.isEditModalOpen = true;
-    this.isAddingNew = true;
-   
-    this.editRiskForm.reset();
+    this.isAddModalOpen = true;
+
   }
 
-  openEditModal(risk: any): void {
-    this.isEditModalOpen = true;
-    this.isAddingNew = false;
-  
-    this.editRiskForm.patchValue({
 
-      risk: risk
+  addRisk(): void {
+    if (this.addRiskForm.valid) {
+      const { name, isActive } = this.addRiskForm.value;
+      this.adminAuthService.addRisk(name, isActive)
+        .subscribe({
+          next: (res) => {
+            console.log('New Risk created:', res);
+            
+            this.getRiskList(); // Refresh the service list after updating
+            this.closeAddModal();
+            this.toastr.success('New Risk added successfully!'); // Show success message
+          },
+          error: (err) => {
+            console.error('Error: adding new risk', err);
+            this.toastr.error('Error adding new risk.'); // Show error message
+          }
+        });
+    }
+  }
+ 
+
+  closeAddModal(): void {
+    this.isAddModalOpen = false;
+    this.addRiskForm.reset({
+      serviceName: '',
+      description: '',
+      isActive: false
     });
   }
 
-  closeEditModal(): void {
-    this.isEditModalOpen = false;
-    
-  }
 
-  saveRisk(): void {
-   
-  }
 
   deleteRisk(id: string): void {
     

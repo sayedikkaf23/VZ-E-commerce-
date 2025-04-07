@@ -8,7 +8,7 @@
               <h2>Risk Management</h2>
             </div>
             <div class="col-auto mb-2">
-              <button class="btn btn-sm btn-light-primary" >
+              <button class="btn btn-sm btn-light-primary"  (click)="openAddModal()">
                 <i class="fa-solid fa-plus"></i> New Risk
               </button>
             </div>
@@ -29,7 +29,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let risk of riskList">
-            <td>{{ risk.risk }}</td>
+            <td>{{ risk.name }}</td>
             <td>
                 <div class="form-check form-switch form-switch-2">
                   <input
@@ -48,31 +48,32 @@
     </div>
   </div>
   
-  <div class="modal-container" *ngIf="isEditModalOpen">
-    <div class="modal-backdrop" (click)="closeEditModal()"></div>
+  <div class="modal-container" *ngIf="isAddModalOpen">
+    <div class="modal-backdrop" (click)="closeAddModal()"></div>
     <div class="modal-content">
      <div class="modal-header">
-      <h5 class="modal-title">{{ isAddingNew ? 'Add' : 'Edit' }} Risk</h5>
+      <h5 class="modal-title">Add New Risk</h5>
       <button
     type="button"
     class="btn-close"
-    (click)="closeEditModal()"
+    (click)="closeAddModal()"
     aria-label="Close"
   ></button>
      </div>
-      <form [formGroup]="editRiskForm">
+      <form [formGroup]="addRiskForm">
        
         <div class="form-group" style="padding: 6px 15px;">
           <label class="form-label">Risk</label>
-          <select class="form-select styled-select" formControlName="risk">
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
-          </select>
+          <input type="text" id="name" class="form-control" formControlName="name">
         </div>
+
+        <div class="form-group form-switch" style="padding: 6px 15px; display: flex; align-items: center;">
+            <label for="isActive" class="form-check-label">Status</label>
+            <input type="checkbox" id="isActive" class="form-check-input ms-4" formControlName="isActive">
+          </div>
        
         <div style="text-align:center; margin-top: 15px; margin-bottom: 10px;">
-          <button class="btn btn-primary custom-button" >Save Changes</button>
+          <button class="btn btn-primary custom-button" (click)="addRisk()">Save Changes</button>
         </div>
       </form>
     </div>

@@ -4,7 +4,7 @@ const riskController = require('../controllers/RiskMangament');
 
 // Add new risk
 router.post('/addrisk', riskController.addRisk);
-
+router.get('/getallrisk', riskController.getRisks);
 // Get all active risks
 router.get('/getrisk', riskController.getActiveRisks);
 
