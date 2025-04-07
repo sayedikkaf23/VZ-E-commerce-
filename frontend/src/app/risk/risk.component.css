@@ -52,6 +52,11 @@
   font-size: 14px;
   margin-bottom: 5px;
 }
+
+.form-check-label {
+  font-size: 14px;
+  
+}
   
   /* Table styling inside modal */
   .modal-content .table {

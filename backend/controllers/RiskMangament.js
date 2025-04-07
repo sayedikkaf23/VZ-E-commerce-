@@ -4,7 +4,7 @@ const CountryRisk = require("../models/CountryRisk");
 // ➕ Add New Risk
 exports.addRisk = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, isActive } = req.body;
 
     if (!name) {
       return res.status(400).json({ error: 'Invalid or missing risk name' });
@@ -16,9 +16,19 @@ exports.addRisk = async (req, res) => {
       return res.status(409).json({ error: 'Risk already exists' });
     }
 
-    const newRisk = new Risk({ name });
+    const newRisk = new Risk({ name, isActive: isActive !== undefined ? isActive : true });
     const saved = await newRisk.save();
     res.status(201).json({ message: 'Risk added successfully', data: saved });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+
+exports.getRisks = async (req, res) => {
+  try {
+    const risks = await Risk.find();
+    res.status(200).json(risks);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

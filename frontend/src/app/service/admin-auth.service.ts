@@ -38,6 +38,27 @@ export class AdminAuthService {
     return this.http.get<any>( `${this.url}/user/getPersonalBank`, { params });
     // Adjust path as needed for your route
   }
+
+  addRisk( name: string, isActive: boolean): Observable<any> {
+    const data = {
+      name,
+      isActive
+    };
+  
+    return this.http.post(`${this.url}/risk/addrisk`, data);
+  }
+  getRisk(): Observable<any> {
+    return this.http.get(`${this.url}/risk/getallrisk`); 
+  }
+
+  getActiveRisk(): Observable<any> {
+    return this.http.get(`${this.url}/risk/getrisk`); 
+  }
+
+  updateRiskStatus(id: string, isActive: boolean): Observable<any> {
+    return this.http.patch(`${this.url}/risk/updaterisk/${id}/status`, { isActive });
+  }
+
   getServices(): Observable<any> {
     return this.http.get(`${this.url}/user/services`); // GET request to fetch user services
   }
@@ -51,6 +72,8 @@ export class AdminAuthService {
   
     return this.http.post(`${this.url}/user/services`, data);
   }
+
+
 
   updateService(
     serviceId: string,

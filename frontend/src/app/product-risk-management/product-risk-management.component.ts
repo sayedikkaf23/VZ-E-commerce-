@@ -15,6 +15,7 @@ export class ProductRiskManagementComponent implements OnInit {
   isEditModalOpen = false;
   selectedProductId: string | null = null;
   isAddingNew = false;
+  riskList: any[] = [];
 
   // Options for the product count dropdown
   productCountOptions = [1, 2, 3, 4, 5];
@@ -33,6 +34,7 @@ export class ProductRiskManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.getProducts();
+    this.getRiskList();
     this.setProductFields(1); // Default to one product field
   }
 
@@ -48,6 +50,16 @@ export class ProductRiskManagementComponent implements OnInit {
       (err) => {
         console.error('Error fetching products:', err);
         this.toastr.error('Failed to fetch products.');
+      }
+    );
+  }
+
+  getRiskList(): void {
+    this.adminAuthService.getRisk().subscribe(
+      (res) => this.riskList = res,
+      (err) => {
+        console.error('Error fetching risk list:', err);
+        this.toastr.error('Failed to fetch risk list.');
       }
     );
   }

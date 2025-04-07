@@ -73,9 +73,11 @@
         <div class="form-group" style="padding: 6px 15px;">
           <label class="form-label">Risk</label>
           <select class="form-select styled-select" formControlName="risk">
-            <option value="Low">Low</option>
-            <option value="Medium">Medium</option>
-            <option value="High">High</option>
+            <ng-container *ngFor="let risk of riskList">
+              <option *ngIf="risk.isActive" [value]="risk.name">
+              {{ risk.name }}
+            </option>
+            </ng-container>
           </select>
         </div>
        

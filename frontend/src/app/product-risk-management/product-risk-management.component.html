@@ -106,9 +106,11 @@
             <label class="form-custom">Risk</label>
             <div class="dropdown-container">
               <select class="form-control" formControlName="risk">
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
+                <ng-container *ngFor="let risk of riskList">
+                  <option *ngIf="risk.isActive" [value]="risk.name">
+                  {{ risk.name }}
+                </option>
+                </ng-container>
               </select>
               <i class="fa fa-chevron-down dropdown-icon"></i>
             </div>
