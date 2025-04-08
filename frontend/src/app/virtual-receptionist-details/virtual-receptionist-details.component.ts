@@ -256,75 +256,93 @@ export class VirtualReceptionistDetailsComponent {
           .toString()
           .padStart(2, '0')}/${birthday.getFullYear()}`;
 
+        // const payload = {
+        //   firstName: mergedData.firstName,
+        //   lastName: mergedData.lastName,
+        //   email: mergedData.email,
+        //   nationality: mergedData.nationality,
+        //   phone: mergedData.mobileNumber, // Ensure to map this correctly
+        //   dob: formattedBirthday,
+        //   service: 'virtual_reception',
+        //   CustomerType: 'C',
+        //   shareholders: this.displayShareholders,
+        //   planname: 'Virtual Receptionist',
+        //   isProfile: false,
+        //   tradeLicenseFileUrl: this.tradeLicenseFileurl,
+        // };
+
         const payload = {
-          firstName: mergedData.firstName,
-          lastName: mergedData.lastName,
-          email: mergedData.email,
-          nationality: mergedData.nationality,
-          phone: mergedData.mobileNumber, // Ensure to map this correctly
-          dob: formattedBirthday,
-          service: 'virtual_reception',
-          CustomerType: 'C',
-          shareholders: this.displayShareholders,
-          planname: 'Virtual Receptionist',
-          isProfile: false,
-          tradeLicenseFileUrl: this.tradeLicenseFileurl,
+          country: mergedData.nationality,
         };
 
         this.isLoading = true; // Show loading indicator if necessary
 
         // First API call to callSalesforceEndpoint
-        this.virtualManagementService
-          .callSalesforceEndpoint(payload)
-          .pipe(
-            switchMap((response: any) => {
-              // Store the Salesforce response if needed
-              this.dataStorageService.setSalesforceResponse(response);
+        // this.virtualManagementService
+        //   .callSalesforceEndpoint(payload)
+        //   .pipe(
+        //     switchMap((response: any) => {
+        //       // Store the Salesforce response if needed
+        //       this.dataStorageService.setSalesforceResponse(response);
 
-              // Prepare payload for the second API call
-              const quotePayload = {
-                lead_source: response.data.leadWithDetails.LeadSource,
-                currencyCode: response.data.quotePaymentWithDetails.Currency,
-                quotePaymentId:
-                  response.data.quotePaymentWithDetails.QuotePaymentId,
-                account_id: response.data.quotePaymentWithDetails.AccountId,
-                payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`,
-              };
+        //       // Prepare payload for the second API call
+        //       const quotePayload = {
+        //         lead_source: response.data.leadWithDetails.LeadSource,
+        //         currencyCode: response.data.quotePaymentWithDetails.Currency,
+        //         quotePaymentId:
+        //           response.data.quotePaymentWithDetails.QuotePaymentId,
+        //         account_id: response.data.quotePaymentWithDetails.AccountId,
+        //         payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`,
+        //       };
 
-              // Call the second API
-              return this.userService
-                .callSalesforceQuoteService(quotePayload)
-                .pipe(
-                  switchMap((quoteResponse: any) => {
-                    // Prepare payload for the third API call
-                    const matchScorePayload = {
-                      quotePaymentId: quotePayload.quotePaymentId,
-                      accountId: quotePayload.account_id,
-                      leadId: response.data.leadWithDetails.LeadId,
-                      matchScore: response.screeningmatchScore.matchScore,
-                    };
+        //       // Call the second API
+        //       return this.userService
+        //         .callSalesforceQuoteService(quotePayload)
+        //         .pipe(
+        //           switchMap((quoteResponse: any) => {
+        //             // Prepare payload for the third API call
+        //             const matchScorePayload = {
+        //               quotePaymentId: quotePayload.quotePaymentId,
+        //               accountId: quotePayload.account_id,
+        //               leadId: response.data.leadWithDetails.LeadId,
+        //               matchScore: response.screeningmatchScore.matchScore,
+        //             };
 
-                    // Call the third API
-                    return this.userService.MatchScoreProductService(
-                      matchScorePayload
-                    );
-                  })
-                );
-            })
-          )
-          .subscribe(
-            (quoteResponse: any) => {
-              // Successful API calls: hide loader, store final data, and navigate to the summary page
-              this.isLoading = false;
-              localStorage.setItem(
-                'finalDataVirtual',
-                JSON.stringify(mergedData)
-              );
-              this.matchScoreStorageService.setMatchScoreResponse(
-                quoteResponse
-              );
-              this.router.navigate(['/virtual-summary']); // Replace with your actual route
-            },
+        //             // Call the third API
+        //             return this.userService.MatchScoreProductService(
+        //               matchScorePayload
+        //             );
+        //           })
+        //         );
+        //     })
+        //   )
+        //   .subscribe(
+        //     (quoteResponse: any) => {
+        //       // Successful API calls: hide loader, store final data, and navigate to the summary page
+        //       this.isLoading = false;
+        //       localStorage.setItem(
+        //         'finalDataVirtual',
+        //         JSON.stringify(mergedData)
+        //       );
+        //       this.matchScoreStorageService.setMatchScoreResponse(
+        //         quoteResponse
+        //       );
+        //       this.router.navigate(['/virtual-summary']); // Replace with your actual route
+        //     },
+
+        this.virtualManagementService.getProductsByCountryRisk(payload).subscribe(
+          (response: any) => {
+            this.isLoading = false;
+  
+            // Store final merged data
+            localStorage.setItem('finalDataMail', JSON.stringify(mergedData));
+  
+            // Save product data
+            this.matchScoreStorageService.setMatchScoreResponse(response);
+  
+            // Navigate to summary page
+            this.router.navigate(['/virtual-summary']);
+          },
             (error) => {
               // On error: hide loader and show a SweetAlert with Retry and Cancel options
               this.isLoading = false;
