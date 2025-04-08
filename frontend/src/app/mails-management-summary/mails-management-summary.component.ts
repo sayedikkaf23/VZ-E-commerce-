@@ -211,4 +211,14 @@ export class MailsManagementSummaryComponent {
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left';
   }
+
+  getTotalAmountIncludingVAT(): number {
+    if (!this.matchScoreResponse?.products) return 0;
+  
+    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
+      const itemTotal = product.unitPrice * product.quantity * 1.05; // Assuming 5% VAT
+      return total + itemTotal;
+    }, 0);
+  }
+  
 }

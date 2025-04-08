@@ -63,16 +63,13 @@
                             </thead>
                             <tbody>
                               <tr>
-                                <td>AED {{ quoteWithProductDetails?.totalAmount | number:'1.0-2' }}</td>
-    <td>AED {{ quoteWithProductDetails?.totalVAT | number:'1.0-2' }}</td>
+                                <td>AED {{ getTotalAmountIncludingVAT() | number:'1.0-2' }}</td>
+    <td>AED 0</td>
     <td>
-      {{
-        quoteWithProductDetails?.Discount != null && quoteWithProductDetails?.Discount !== '' 
-          ? ('AED ' + (quoteWithProductDetails?.Discount | number:'1.0-2')) 
-          : 'NA'
-      }}
+      AED 0
     </td>
-    <td>AED {{ quoteWithProductDetails?.total_including_Vat | number:'1.0-2' }}</td>
+    <td class="currency"><strong>AED {{ getTotalAmountIncludingVAT() | number:'1.0-2' }}</strong></td>
+
                               </tr>
                             </tbody>
                           </table>
