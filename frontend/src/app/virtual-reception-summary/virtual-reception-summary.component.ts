@@ -52,22 +52,25 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
     // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
     this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
-    this.quoteWithProductDetails = this.matchScoreResponse?.data;
+    // this.quoteWithProductDetails = this.matchScoreResponse?.data;
     
-    if (!this.salesforceResponse) {
-      Swal.fire({
-        title: 'Session Expired',
-        text: 'Your session has expired. Please complete the form again from the beginning.',
-        icon: 'warning',
-        confirmButtonText: 'OK',
-        confirmButtonColor: '#FF5A5F'
-      }).then((result) => {
-        if (result.value) {
-          localStorage.clear();
-          this.router.navigate(['/home']);
-        }
-      });
-    } else if (this.isBrowser) {
+    // if (!this.salesforceResponse) {
+    //   Swal.fire({
+    //     title: 'Session Expired',
+    //     text: 'Your session has expired. Please complete the form again from the beginning.',
+    //     icon: 'warning',
+    //     confirmButtonText: 'OK',
+    //     confirmButtonColor: '#FF5A5F'
+    //   }).then((result) => {
+    //     if (result.value) {
+    //       localStorage.clear();
+    //       this.router.navigate(['/home']);
+    //     }
+    //   });
+    // } else if (this.isBrowser) {
+      this.quoteWithProductDetails = this.matchScoreResponse?.products;
+    
+      if (this.isBrowser) {
       const mailform = localStorage.getItem('virtualdata');
       const mailform2 = localStorage.getItem('virtualdata1');
       const mailform3 = localStorage.getItem('virtualdata2');
@@ -210,6 +213,14 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     );
   }
   
+  getTotalAmountIncludingVAT(): number {
+    if (!this.matchScoreResponse?.products) return 0;
+  
+    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
+      const itemTotal = product.unitPrice * product.quantity * 1.05; // Assuming 5% VAT
+      return total + itemTotal;
+    }, 0);
+  }
 
   showError(errorMessage: string): void {
     this.toastr.error(errorMessage || 'Error submitting data', 'Error', {

@@ -335,7 +335,7 @@ export class VirtualReceptionistDetailsComponent {
             this.isLoading = false;
   
             // Store final merged data
-            localStorage.setItem('finalDataMail', JSON.stringify(mergedData));
+            localStorage.setItem('finalDataVirtual', JSON.stringify(mergedData));
   
             // Save product data
             this.matchScoreStorageService.setMatchScoreResponse(response);
