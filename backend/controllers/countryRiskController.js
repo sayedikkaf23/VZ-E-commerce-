@@ -1,4 +1,5 @@
 const CountryRisk = require("../models/CountryRisk");
+const Risk = require('../models/Risk');
 
 exports.addCountryRisk = async (req, res) => {
   try {
@@ -24,11 +25,11 @@ exports.addCountryRisk = async (req, res) => {
     // 'newCountry' will have an _id like '644932abc...'
 
     // 3. Push the new country's _id into the Risk's 'countries' array
-    await Risk.findByIdAndUpdate(
-      risk,                    // The ID of the Risk doc
-      { $push: { countries: newCountry._id } },
-      { new: true }           // Return the updated doc if you want
-    );
+    // await Risk.findByIdAndUpdate(
+    //   risk,                    // The ID of the Risk doc
+    //   { $push: { countries: newCountry._id } },
+    //   { new: true }           // Return the updated doc if you want
+    // );
 
     // 4. Return the newly created CountryRisk
     res.status(201).json(newCountry);

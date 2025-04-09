@@ -16,6 +16,7 @@ export class ProductRiskManagementComponent implements OnInit {
   selectedProductId: string | null = null;
   isAddingNew = false;
   riskList: any[] = [];
+  currencies: any[] = [];
 
   // Options for the product count dropdown
   productCountOptions = [1, 2, 3, 4, 5];
@@ -34,6 +35,7 @@ export class ProductRiskManagementComponent implements OnInit {
 
   ngOnInit(): void {
     this.getProducts();
+    this.getAllCurrencies();
     this.getRiskList();
     this.setProductFields(1); // Default to one product field
   }
@@ -53,6 +55,20 @@ export class ProductRiskManagementComponent implements OnInit {
       }
     );
   }
+  
+  getAllCurrencies(): void {
+    this.adminAuthService.getCurrency().subscribe(
+      (res:any) => {
+        this.currencies = res.data; // ✅ Grab the array inside the "data" field
+
+      },
+      (err) => {
+        console.error('Error fetching currencies:', err);
+        this.toastr.error('Failed to fetch currencies.');
+      }
+    );
+  }
+  
 
   getRiskList(): void {
     this.adminAuthService.getRisk().subscribe(

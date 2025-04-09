@@ -132,6 +132,10 @@ getProductRisks(): Observable<any[]> {
   return this.http.get<any[]>(`${this.url}/api/product-risk/all`);
 }
 
+getCurrency(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.url}/currency/all`);
+}
+
 // Add a new product or multiple products
 // Add one or more products
 addProductRisk(data: any | any[]): Observable<any> {
