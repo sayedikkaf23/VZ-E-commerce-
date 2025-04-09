@@ -17,7 +17,12 @@ import Swal from 'sweetalert2';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { VirtualManagementService } from '../service/virtual-management.service';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
-
+import { GetnationalityService } from '../service/getnationality.service';
+import { ChangeDetectorRef } from '@angular/core';
+interface Nationality {
+  common: string;
+  country: string;
+}
 declare var $: any;
 
 @Component({
@@ -27,7 +32,7 @@ declare var $: any;
 })
 export class VirtualReceptionistDetailsComponent {
   isLoading = false;
-
+  nationalities: Nationality[] = [];
   showAll = false;
   displayShareholders: any = [];
   isBrowser: boolean;
@@ -46,12 +51,24 @@ export class VirtualReceptionistDetailsComponent {
     private dataStorageService: DataStorageService,
     private virtualManagementService: VirtualManagementService,
     private matchScoreStorageService: MatchScoreStorageService,
+    private cdRef: ChangeDetectorRef,
+    private getnationalityService: GetnationalityService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
   }
 
   ngOnInit(): void {
+
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalities = data.map((country: any) => ({
+        common: country.name.common,
+        country: country.name.country
+      }));
+     
+    
+    this.cdRef.detectChanges(); // Trigger change detection to update the view
+  });
     const mailform = localStorage.getItem('virtualdata');
     const mailform2 = localStorage.getItem('virtualdata1');
     const mailform3 = localStorage.getItem('virtualdata2');
@@ -271,9 +288,17 @@ export class VirtualReceptionistDetailsComponent {
         //   tradeLicenseFileUrl: this.tradeLicenseFileurl,
         // };
 
-        const payload = {
-          country: mergedData.nationality,
-        };
+        // const payload = {
+        //   country: mergedData.nationality,
+        // };
+        const nationality = mergedData.nationality;
+      const match = this.nationalities.find(
+        (item) => item.common.toLowerCase() === nationality.toLowerCase()
+      );
+
+      const payload = {
+        country: match ? match.country : nationality // fallback if not found
+      };
 
         this.isLoading = true; // Show loading indicator if necessary
 

@@ -1,5 +1,5 @@
 const CountryRisk = require("../models/CountryRisk");
-const Risk = require('../models/Risk');
+const Risk = require("../models/Risk");
 
 exports.addCountryRisk = async (req, res) => {
   try {

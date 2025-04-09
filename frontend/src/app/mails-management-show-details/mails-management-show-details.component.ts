@@ -11,7 +11,12 @@ import Swal from 'sweetalert2';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { MailManagementService } from '../service/mail-management.service';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
-
+import { GetnationalityService } from '../service/getnationality.service';
+import { ChangeDetectorRef } from '@angular/core';
+interface Nationality {
+  common: string;
+  country: string;
+}
 declare var $: any;
 
 
@@ -24,7 +29,7 @@ declare var $: any;
 export class MailsManagementShowDetailsComponent {
 
   isLoading = false;
-
+  nationalities: Nationality[] = [];
   showAll = false;
   displayShareholders :any= [];
   isBrowser: boolean;
@@ -45,6 +50,8 @@ i: any;
     private fileStorageService: FileStorageService,
     private dataStorageService: DataStorageService,
     private matchScoreStorageService: MatchScoreStorageService,
+    private cdRef: ChangeDetectorRef,
+       private getnationalityService: GetnationalityService,
 
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -52,6 +59,16 @@ i: any;
   }
 
   ngOnInit(): void {
+
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalities = data.map((country: any) => ({
+        common: country.name.common,
+        country: country.name.country
+      }));
+     
+    
+    this.cdRef.detectChanges(); // Trigger change detection to update the view
+  });
     const mailform = localStorage.getItem('mailform');
     const mailform2 = localStorage.getItem('mailform1');
     const mailform3 = localStorage.getItem('mailform2') ;
@@ -258,9 +275,17 @@ submitData() {
 
       const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
 
+      const nationality = mergedData.nationality;
+      const match = this.nationalities.find(
+        (item) => item.common.toLowerCase() === nationality.toLowerCase()
+      );
+
       const payload = {
-        country: mergedData.nationality,
+        country: match ? match.country : nationality // fallback if not found
       };
+      // const payload = {
+      //   country: mergedData.nationality,
+      // };
 
       this.isLoading = true;
 

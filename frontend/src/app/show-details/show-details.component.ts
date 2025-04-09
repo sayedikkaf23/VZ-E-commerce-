@@ -10,6 +10,13 @@ import { DataStorageService } from '../service/data-storage.service'; // Import 
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
 import { of } from 'rxjs';
 import Swal from 'sweetalert2';
+import { GetnationalityService } from '../service/getnationality.service';
+import { ChangeDetectorRef } from '@angular/core';
+interface Nationality {
+  common: string;
+  country: string;
+}
+
 
 declare var $: any;
 
@@ -20,7 +27,7 @@ declare var $: any;
 })
 export class ShowDetailsComponent implements AfterViewInit {
   isLoading = false;
-
+  nationalities: Nationality[] = [];
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
   bankInfo: any = {}; // To store bank service information (Step 2 data)
@@ -33,6 +40,8 @@ export class ShowDetailsComponent implements AfterViewInit {
     private userService: UserService,
     private dataStorageService: DataStorageService,
     private matchScoreStorageService: MatchScoreStorageService,
+    private cdRef: ChangeDetectorRef,
+    private getnationalityService: GetnationalityService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -40,6 +49,15 @@ export class ShowDetailsComponent implements AfterViewInit {
 
   ngOnInit(): void {
 
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalities = data.map((country: any) => ({
+        common: country.name.common,
+        country: country.name.country
+      }));
+     
+    
+    this.cdRef.detectChanges(); // Trigger change detection to update the view
+  });
 
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
 
@@ -182,8 +200,17 @@ export class ShowDetailsComponent implements AfterViewInit {
         const birthday = new Date(finalData.birthday);
         const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
   
+        // const payload = {
+        //   country: finalData.nationality,
+        // };
+
+        const nationality = finalData.nationality;
+        const match = this.nationalities.find(
+          (item) => item.common.toLowerCase() === nationality.toLowerCase()
+        );
+  
         const payload = {
-          country: finalData.nationality,
+          country: match ? match.country : nationality // fallback if not found
         };
   
         this.isLoading = true;
