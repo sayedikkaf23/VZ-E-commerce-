@@ -32,11 +32,11 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let product of matchScoreResponse?.data?.products">
-                                <td>{{ product.productName }}</td>
-                                <td style="text-align: center;">{{ product.productQuantity }}</td>
-                                <td class="currency">AED {{ product.productUnitPrice | number:'1.0-2' }}</td>
-                                <td class="currency">AED {{ (product.productUnitPrice * product.productQuantity * 1.05) | number:'1.0-2' }}</td>
+                              <tr *ngFor="let product of matchScoreResponse?.products">
+                                <td>{{ product.name }}</td>
+                                <td style="text-align: center;">{{ product.quantity }}</td>
+                                <td class="currency">AED {{ product.unitPrice | number:'1.0-2' }}</td>
+                                <td class="currency">AED {{ (product.unitPrice * product.quantity * 1.05) | number:'1.0-2' }}</td>
                             
                               </tr>
                             </tbody>
@@ -63,16 +63,10 @@
                             </thead>
                             <tbody>
                               <tr>
-                                <td>AED {{ quoteWithProductDetails?.totalAmount | number:'1.0-2' }}</td>
-                                <td>AED {{ quoteWithProductDetails?.totalVAT | number:'1.0-2' }}</td>
-                                <td>
-                                  {{
-                                    quoteWithProductDetails?.Discount != null && quoteWithProductDetails?.Discount !== '' 
-                                      ? 'AED ' + (quoteWithProductDetails?.Discount | number:'1.0-2') 
-                                      : 'NA'
-                                  }}
-                                </td>
-                                <td>AED {{ quoteWithProductDetails?.total_including_Vat | number:'1.0-2' }}</td>
+                                <td>AED {{ getTotalAmountIncludingVAT() | number:'1.0-2' }}</td>
+                                <td>AED 0</td>
+                                <td>AED 0</td>
+                                 <td class="currency"><strong>AED {{ getTotalAmountIncludingVAT() | number:'1.0-2' }}</strong></td>
                               </tr>
                             </tbody>
                           </table>

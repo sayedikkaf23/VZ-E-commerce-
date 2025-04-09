@@ -100,8 +100,11 @@ export class CountryRiskManagementComponent implements OnInit {
           this.toastr.success('Country risk added successfully!');
         },
         (error) => {
-          console.error('Add failed:', error);
-          this.toastr.error('Error adding country risk.');
+          if (error.status === 409 || error.error?.message?.includes('already exists')) {
+            this.toastr.warning('Country already exists!');
+          } else {
+            this.toastr.error('Error adding country risk.');
+          }
         }
       );
     } else if (this.selectedCountryId) {
