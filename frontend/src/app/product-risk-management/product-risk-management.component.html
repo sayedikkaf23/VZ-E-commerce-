@@ -25,6 +25,11 @@
           <th>Unit Price</th>
           <th>Quantity</th>
           <th>Risk</th>
+          <th>Currency</th>
+          <th>Discount</th>
+          <th>VAT</th>
+          <th>Total Price</th>
+          <th>Total Price(VAT)</th>
           <th></th>
         </tr>
       </thead>
@@ -35,6 +40,11 @@
           <td>{{ product.unitPrice }}</td>
           <td>{{ product.quantity }}</td>
           <td>{{ product.risk }}</td>
+          <td>{{ product.currencyName }}</td>
+          <td>{{ product.discount }}</td>
+          <td>{{ product.vat }}</td>
+          <td>{{ product.totalPrice }}</td>
+          <td>{{ product.totalPriceVat }}</td>
           <td class="text-end td-action-data">
             <div class="dropdown">
               <button class="btn btn-icon btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">
@@ -95,8 +105,8 @@
 
           <div class="form-group half-width">
             <label class="form-custom">Currency</label>
-            <select class="form-control" formControlName="currency">
-              <option *ngFor="let currency of currencies" [value]="currency._id">
+            <select class="form-control" formControlName="currencyName">
+              <option *ngFor="let currency of currencies" [value]="currency.currencyName">
                 {{ currency.currencyName }}
               </option>
             </select>
@@ -125,6 +135,26 @@
               </select>
               <i class="fa fa-chevron-down dropdown-icon"></i>
             </div>
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-custom">Discount</label>
+            <input type="number" class="form-control" formControlName="discount">
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-custom">VAT</label>
+            <input type="number" class="form-control" formControlName="vat" readonly>
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-custom">Total Price</label>
+            <input type="number" style="background: none;" class="form-control" formControlName="totalPrice" readonly>
+          </div>
+
+          <div class="form-group half-width">
+            <label class="form-custom">Total Price-VAT</label>
+            <input type="number" style="background: none;" class="form-control" formControlName="totalPriceVat" readonly>
           </div>
           
         </div>

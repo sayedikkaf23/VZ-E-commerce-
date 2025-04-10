@@ -6,6 +6,13 @@ const productRiskSchema = new mongoose.Schema({
     required: [true, 'Product name is required']
   },
   description: String,
+  totalPrice: Number,
+  totalPriceVat: Number,
+  currencyName: {
+    type: String,
+    required: [true, 'Currency name is required']
+  },
+  vat:Number,
   unitPrice: {
     type: Number,
     required: [true, 'Unit price is required'],
@@ -15,6 +22,11 @@ const productRiskSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'Quantity is required'],
     min: 1
+  },
+  discount: {
+    type: Number,
+    required: [true, 'Discount is required'],
+    min: 0
   },
   risk: {
     type: String,

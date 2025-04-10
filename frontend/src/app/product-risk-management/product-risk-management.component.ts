@@ -18,6 +18,7 @@ export class ProductRiskManagementComponent implements OnInit {
   riskList: any[] = [];
   currencies: any[] = [];
 
+
   // Options for the product count dropdown
   productCountOptions = [1, 2, 3, 4, 5];
 
@@ -48,7 +49,10 @@ export class ProductRiskManagementComponent implements OnInit {
   // Fetch products from the API
   getProducts(): void {
     this.adminAuthService.getProductRisks().subscribe(
-      (res) => this.products = res,
+      (res) =>{
+        this.products = res;
+        console.log(this.products);
+      },
       (err) => {
         console.error('Error fetching products:', err);
         this.toastr.error('Failed to fetch products.');
@@ -102,13 +106,54 @@ export class ProductRiskManagementComponent implements OnInit {
 
   // Create a FormGroup for each product with necessary validations
   createProductForm(): FormGroup {
-    return this.fb.group({
+    const group = this.fb.group({
       name: ['', Validators.required],
       description: ['', Validators.required],
       unitPrice: ['', [Validators.required, Validators.min(0)]],
       quantity: ['', [Validators.required, Validators.min(1)]],
-      risk: ['', Validators.required]
+      risk: ['', Validators.required],
+      currencyName: ['', Validators.required],
+      discount: ['', Validators.required],
+      vat: ['', Validators.required],
+      totalPrice: [{ value: '', disabled: true }],
+      totalPriceVat: [{ value: '', disabled: true }],
     });
+
+      // Set VAT automatically when currency changes
+  group.get('currencyName')?.valueChanges.subscribe((selectedCurrencyName) => {
+    const selectedCurrency = this.currencies.find(
+      (c) => c.currencyName === selectedCurrencyName
+    );
+    if (selectedCurrency) {
+      group.patchValue({ vat: selectedCurrency.Vat_percent }, { emitEvent: false });
+    }
+  });
+  
+    // Subscribe to value changes
+    group.valueChanges.subscribe((values) => {
+      const unitPrice = +(values?.unitPrice ?? 0);
+    const quantity = +(values?.quantity ?? 0);
+    const discount = +(values?.discount ?? 0);
+    const vat = +(values?.vat ?? 0);
+  
+      const rawTotal = unitPrice * quantity;
+      const discountAmount = rawTotal * (discount / 100);
+      const totalPrice = rawTotal - discountAmount;
+  
+      const vatAmount = totalPrice * (vat / 100);
+      const totalPriceVat = totalPrice - vatAmount;
+      if (unitPrice && quantity && discount) {
+      group.patchValue(
+        {
+          totalPrice: totalPrice.toFixed(2),
+        totalPriceVat: totalPriceVat.toFixed(2),
+        },
+        { emitEvent: false } // Prevent infinite loop
+      );
+    }
+    });
+  
+    return group;
   }
 
   // Open the modal for adding a new product
@@ -147,7 +192,7 @@ export class ProductRiskManagementComponent implements OnInit {
 
   // Save a new product or update an existing one based on the modal mode
   saveProduct(): void {
-    const data = this.editProductForm.value;
+    const data = this.editProductForm.getRawValue();
     console.log('Form Data:', data);
 
     if (this.isAddingNew) {

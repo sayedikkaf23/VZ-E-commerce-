@@ -17,8 +17,8 @@
 .modal-content {
   background-color: #fff;
   padding: 20px;
-  width: 48%; /* Adjust width to fill more space */
-  max-width: 700px; /* Max width for larger screens */
+  width: 66%; /* Adjust width to fill more space */
+  /* Max width for larger screens */
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -140,8 +140,27 @@ select.form-control {
 @media (max-width: 600px) {
   .modal-content {
     width: 90%; /* Adjust width for smaller screens */
+    height: 90%;
+    overflow: auto;
+    scrollbar-width: thin;             /* Firefox */
+    scrollbar-color: #ccc transparent; /* Firefox */
   }
-
+  
+  /* Chrome, Edge, Safari */
+  .modal-content::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .modal-content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .modal-content::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
   .dynamic-fields {
     flex-direction: column;
     gap: 15px;
