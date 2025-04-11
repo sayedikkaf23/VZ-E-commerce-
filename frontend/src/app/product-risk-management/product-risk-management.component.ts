@@ -113,7 +113,7 @@ export class ProductRiskManagementComponent implements OnInit {
       quantity: ['', [Validators.required, Validators.min(1)]],
       risk: ['', Validators.required],
       currencyName: ['', Validators.required],
-      discount: ['', Validators.required],
+      discount: [0, Validators.required],
       vat: ['', Validators.required],
       totalPrice: [{ value: '', disabled: true }],
       totalPriceVat: [{ value: '', disabled: true }],
@@ -141,8 +141,8 @@ export class ProductRiskManagementComponent implements OnInit {
       const totalPrice = rawTotal - discountAmount;
   
       const vatAmount = totalPrice * (vat / 100);
-      const totalPriceVat = totalPrice - vatAmount;
-      if (unitPrice && quantity && discount) {
+      const totalPriceVat = totalPrice + vatAmount;
+      if (unitPrice && quantity) {
       group.patchValue(
         {
           totalPrice: totalPrice.toFixed(2),
