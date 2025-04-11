@@ -175,6 +175,26 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       }
     );
   }
+
+
+  getTotalAmountIncludingVAT(): number {
+    if (!this.matchScoreResponse?.products) return 0;
+  
+    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
+      const itemTotal = product.unitPrice * product.quantity * 1.05; // Assuming 5% VAT
+      return total + itemTotal;
+    }, 0);
+  }
+
+
+  getTotalAmount(): number {
+    if (!this.matchScoreResponse?.products) return 0;
+  
+    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
+      const itemTotal = product.unitPrice * product.quantity ;
+      return total + itemTotal;
+    }, 0);
+  }
   
   
 }

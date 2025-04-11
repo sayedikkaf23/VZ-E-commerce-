@@ -222,6 +222,16 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     }, 0);
   }
 
+
+  getTotalAmount(): number {
+    if (!this.matchScoreResponse?.products) return 0;
+  
+    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
+      const itemTotal = product.unitPrice * product.quantity ;
+      return total + itemTotal;
+    }, 0);
+  }
+
   showError(errorMessage: string): void {
     this.toastr.error(errorMessage || 'Error submitting data', 'Error', {
       positionClass: this.getToastPosition()

@@ -62,13 +62,13 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr>
-                                <td>AED {{ getTotalAmountIncludingVAT() | number:'1.0-2' }}</td>
-    <td>AED 0</td>
-    <td>
-      AED 0
-    </td>
-    <td class="currency"><strong>AED {{ getTotalAmountIncludingVAT() | number:'1.0-2' }}</strong></td>
+                              <tr  *ngIf="matchScoreResponse?.products?.length > 0">
+                                <td>AED {{ getTotalAmount() | number:'1.0-2' }}</td>
+                                <td> {{ matchScoreResponse.products[0].vat }}</td>
+                                <td>
+                                    {{ matchScoreResponse.products[0].discount }}
+                                </td>
+                                <td class="currency"><strong>AED {{ getTotalAmountIncludingVAT() | number:'1.0-2' }}</strong></td>
 
                               </tr>
                             </tbody>
