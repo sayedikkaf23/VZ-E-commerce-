@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { AdminAuthService } from '../service/admin-auth.service';
 import { ToastrService } from 'ngx-toastr';
 import Swal from 'sweetalert2';
-
+ 
 @Component({
   selector: 'app-product-risk-management',
   templateUrl: './product-risk-management.component.html',
@@ -17,11 +17,11 @@ export class ProductRiskManagementComponent implements OnInit {
   isAddingNew = false;
   riskList: any[] = [];
   currencies: any[] = [];
-
-
+ 
+ 
   // Options for the product count dropdown
   productCountOptions = [1, 2, 3, 4, 5];
-
+ 
   constructor(
     private adminAuthService: AdminAuthService,
     private fb: FormBuilder,
@@ -33,19 +33,39 @@ export class ProductRiskManagementComponent implements OnInit {
       products: this.fb.array([])
     });
   }
-
+ 
   ngOnInit(): void {
     this.getProducts();
     this.getAllCurrencies();
     this.getRiskList();
     this.setProductFields(1); // Default to one product field
+ 
+    if (this.dynamicProducts.length > 0) {
+      const firstCurrencyControl = this.dynamicProducts
+        .at(0)
+        .get('currencyName');
+ 
+      // Watch for changes
+      firstCurrencyControl?.valueChanges.subscribe((newValue) => {
+        // Update all subsequent rows:
+        for (let i = 1; i < this.dynamicProducts.length; i++) {
+          const currencyControl = this.dynamicProducts.at(i).get('currencyName');
+          // Temporarily enable so we can set value
+          currencyControl?.enable({ emitEvent: false });
+          currencyControl?.setValue(newValue, { emitEvent: false });
+          // Disable again
+          currencyControl?.disable({ emitEvent: false });
+        }
+      });
+    }
+ 
   }
-
+ 
   // Shortcut to access the dynamic FormArray
   get dynamicProducts() {
     return this.editProductForm.get('products') as FormArray;
   }
-
+ 
   // Fetch products from the API
   getProducts(): void {
     this.adminAuthService.getProductRisks().subscribe(
@@ -59,12 +79,12 @@ export class ProductRiskManagementComponent implements OnInit {
       }
     );
   }
-  
+ 
   getAllCurrencies(): void {
     this.adminAuthService.getCurrency().subscribe(
       (res:any) => {
         this.currencies = res.data; // ✅ Grab the array inside the "data" field
-
+ 
       },
       (err) => {
         console.error('Error fetching currencies:', err);
@@ -72,8 +92,8 @@ export class ProductRiskManagementComponent implements OnInit {
       }
     );
   }
-  
-
+ 
+ 
   getRiskList(): void {
     this.adminAuthService.getRisk().subscribe(
       (res) => this.riskList = res,
@@ -83,27 +103,50 @@ export class ProductRiskManagementComponent implements OnInit {
       }
     );
   }
-
+ 
   // Adjust the number of dynamic product fields when the product count changes
   onProductCountChange(event: any): void {
     const productCount = event.target.value;
     this.setProductFields(productCount);
   }
-
+ 
   // Dynamically add or remove product fields based on the selected count
   setProductFields(count: number): void {
     const currentCount = this.dynamicProducts.length;
+ 
+    // If you need more products:
     if (count > currentCount) {
       for (let i = currentCount; i < count; i++) {
-        this.dynamicProducts.push(this.createProductForm());
+        const newGroup = this.createProductForm();
+ 
+        // If it's NOT the first product in the array:
+        if (i > 0) {
+          // Get the first product’s currency
+          const masterCurrency = this.dynamicProducts
+            .at(0)
+            .get('currencyName')
+            ?.value;
+ 
+          // Set + disable
+          newGroup.get('currencyName')?.setValue(masterCurrency, {
+            emitEvent: false,
+          });
+          newGroup.get('currencyName')?.disable({ emitEvent: false });
+        }
+ 
+        // Add the new group to the array
+        this.dynamicProducts.push(newGroup);
       }
-    } else if (count < currentCount) {
+    }
+    // If you need fewer products:
+    else if (count < currentCount) {
       for (let i = currentCount - 1; i >= count; i--) {
         this.dynamicProducts.removeAt(i);
       }
     }
   }
-
+ 
+ 
   // Create a FormGroup for each product with necessary validations
   createProductForm(): FormGroup {
     const group = this.fb.group({
@@ -118,7 +161,7 @@ export class ProductRiskManagementComponent implements OnInit {
       totalPrice: [{ value: '', disabled: true }],
       totalPriceVat: [{ value: '', disabled: true }],
     });
-
+ 
       // Set VAT automatically when currency changes
   group.get('currencyName')?.valueChanges.subscribe((selectedCurrencyName) => {
     const selectedCurrency = this.currencies.find(
@@ -128,18 +171,18 @@ export class ProductRiskManagementComponent implements OnInit {
       group.patchValue({ vat: selectedCurrency.Vat_percent }, { emitEvent: false });
     }
   });
-  
+ 
     // Subscribe to value changes
     group.valueChanges.subscribe((values) => {
       const unitPrice = +(values?.unitPrice ?? 0);
     const quantity = +(values?.quantity ?? 0);
     const discount = +(values?.discount ?? 0);
     const vat = +(values?.vat ?? 0);
-  
+ 
       const rawTotal = unitPrice * quantity;
       const discountAmount = rawTotal * (discount / 100);
       const totalPrice = rawTotal - discountAmount;
-  
+ 
       const vatAmount = totalPrice * (vat / 100);
       const totalPriceVat = totalPrice + vatAmount;
       if (unitPrice && quantity) {
@@ -152,10 +195,10 @@ export class ProductRiskManagementComponent implements OnInit {
       );
     }
     });
-  
+ 
     return group;
   }
-
+ 
   // Open the modal for adding a new product
   openAddModal(): void {
     this.editProductForm.reset();
@@ -164,7 +207,7 @@ export class ProductRiskManagementComponent implements OnInit {
     this.isAddingNew = true;
     this.setProductFields(1); // Always start with one product field for adding
   }
-
+ 
   // Open the modal for editing an existing product
   openEditModal(product: any): void {
     // Set the form to a single product update
@@ -173,7 +216,7 @@ export class ProductRiskManagementComponent implements OnInit {
     this.selectedProductId = product._id;
     this.isEditModalOpen = true;
     this.isAddingNew = false;
-
+ 
     // Pre-populate the first dynamic form with the product's current details
     this.dynamicProducts.at(0).patchValue({
       name: product.name,
@@ -183,18 +226,18 @@ export class ProductRiskManagementComponent implements OnInit {
       risk: product.risk
     });
   }
-
+ 
   // Close the modal and reset selection
   closeEditModal(): void {
     this.isEditModalOpen = false;
     this.selectedProductId = null;
   }
-
+ 
   // Save a new product or update an existing one based on the modal mode
   saveProduct(): void {
     const data = this.editProductForm.getRawValue();
     console.log('Form Data:', data);
-
+ 
     if (this.isAddingNew) {
       // For adding, send an object with a products array
       const products = data.products;
@@ -226,7 +269,7 @@ export class ProductRiskManagementComponent implements OnInit {
       );
     }
   }
-
+ 
   // Delete a product after confirmation
   deleteProduct(id: string): void {
     Swal.fire({
@@ -251,3 +294,4 @@ export class ProductRiskManagementComponent implements OnInit {
     });
   }
 }
+ 
