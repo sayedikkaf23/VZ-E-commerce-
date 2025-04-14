@@ -5,11 +5,16 @@ import { ToastrService } from 'ngx-toastr'; // For toast notifications
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
-import { switchMap } from 'rxjs';
+import { switchMap, catchError, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
-
+import { GetnationalityService } from '../service/getnationality.service';
+import { ChangeDetectorRef } from '@angular/core';
+interface Nationality {
+  common: string;
+  country: string;
+}
 
 declare var $: any;
 @Component({
@@ -20,6 +25,7 @@ declare var $: any;
 export class MailMangamentShowDetailsComponent {
   isLoading = false;
   showAll = false;
+  nationalities: Nationality[] = [];
   displayShareholders :any= [];
   isBrowser: boolean;
   personalInfo: any = {}; // To store personal information (Step 1 data)
@@ -33,6 +39,8 @@ export class MailMangamentShowDetailsComponent {
     private userService: UserService,
     private dataStorageService: DataStorageService,
     private matchScoreStorageService: MatchScoreStorageService,
+    private cdRef: ChangeDetectorRef,
+    private getnationalityService: GetnationalityService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
@@ -40,7 +48,15 @@ export class MailMangamentShowDetailsComponent {
 
   ngOnInit(): void {
 
-
+    this.getnationalityService.getNationality().subscribe((data) => {
+      this.nationalities = data.map((country: any) => ({
+        common: country.name.common,
+        country: country.name.country
+      }));
+     
+    
+    this.cdRef.detectChanges(); // Trigger change detection to update the view
+  });
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
@@ -188,51 +204,78 @@ export class MailMangamentShowDetailsComponent {
         const birthday = new Date(finalData.birthday);
         const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
         
+        // const payload = {
+        //   firstName: finalData.firstName,
+        //   lastName: finalData.lastName,
+        //   email: finalData.email,
+        //   nationality: finalData.nationality,
+        //   phone: finalData.mobileNumber, // Ensure to map this correctly
+        //   dob: formattedBirthday,
+        //   service: "Bank_opening",
+        //   CustomerType: finalData.CustomerType,
+        //   shareholders: this.shareholders,
+        //   planname: "Bank Account Opening",
+        //   isProfile: false,
+        // };
+
+        const nationality = finalData.nationality;
+        const match = this.nationalities.find(
+          (item) => item.common.toLowerCase() === nationality.toLowerCase()
+        );
+  
         const payload = {
-          firstName: finalData.firstName,
-          lastName: finalData.lastName,
-          email: finalData.email,
-          nationality: finalData.nationality,
-          phone: finalData.mobileNumber, // Ensure to map this correctly
-          dob: formattedBirthday,
-          service: "Bank_opening",
-          CustomerType: finalData.CustomerType,
-          shareholders: this.shareholders,
-          planname: "Bank Account Opening",
-          isProfile: false,
+          country: match ? match.country : nationality // fallback if not found
         };
   
         this.isLoading = true; // Show loading indicator if necessary
   
         // First API call to callSalesforceEndpoint
-        this.userService.callSalesforceEndpoint(payload).pipe(
-          switchMap((response: any) => {
-            // Save Salesforce response if needed
-            this.dataStorageService.setSalesforceResponse(response);
-            // Prepare payload for the second API call
-            const quotePayload = {
-              lead_source: response.data.leadWithDetails.LeadSource,
-              currencyCode: response.data.quotePaymentWithDetails.Currency, // Update as needed
-              quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has this field
-              account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has this field
-              payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
-            };
-            // Call the second API
-            return this.userService.callSalesforceQuoteService(quotePayload).pipe(
-              switchMap((quoteResponse: any) => {
-                // Prepare payload for MatchScoreProductService
-                const matchScorePayload = {
-                  quotePaymentId: quotePayload.quotePaymentId,
-                  accountId: quotePayload.account_id,
-                  leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
-                  matchScore: response.screeningmatchScore.matchScore, // Adjust based on response structure
-                };
+         this.userService.getProductsByCountryRisk(payload).pipe(
+                  catchError((error) => {
+                    console.error(error);
+                    this.isLoading = false;
+                    Swal.fire({
+                      title: 'Error',
+                      text: 'Something went wrong. Would you like to retry?',
+                      icon: 'error',
+                      showCancelButton: true,
+                      confirmButtonText: 'Retry',
+                      cancelButtonText: 'Cancel'
+                    }).then((retryResult) => {
+                      if (retryResult.isConfirmed) {
+                        this.submitData();
+                      }
+                    });
+                    return of(null); // gracefully complete the observable chain
+                  })
+        // this.userService.callSalesforceEndpoint(payload).pipe(
+        //   switchMap((response: any) => {
+        //     // Save Salesforce response if needed
+        //     this.dataStorageService.setSalesforceResponse(response);
+        //     // Prepare payload for the second API call
+        //     const quotePayload = {
+        //       lead_source: response.data.leadWithDetails.LeadSource,
+        //       currencyCode: response.data.quotePaymentWithDetails.Currency, // Update as needed
+        //       quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has this field
+        //       account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has this field
+        //       payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
+        //     };
+        //     // Call the second API
+        //     return this.userService.callSalesforceQuoteService(quotePayload).pipe(
+        //       switchMap((quoteResponse: any) => {
+        //         // Prepare payload for MatchScoreProductService
+        //         const matchScorePayload = {
+        //           quotePaymentId: quotePayload.quotePaymentId,
+        //           accountId: quotePayload.account_id,
+        //           leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
+        //           matchScore: response.screeningmatchScore.matchScore, // Adjust based on response structure
+        //         };
   
-                // Call the third API
-                return this.userService.MatchScoreProductService(matchScorePayload);
-              })
-            );
-          })
+        //         // Call the third API
+        //         return this.userService.MatchScoreProductService(matchScorePayload);
+        //       })
+        //     );
+        //   })
         ).subscribe(
           (quoteResponse: any) => {
             this.isLoading = false; // Hide loader
@@ -243,28 +286,28 @@ export class MailMangamentShowDetailsComponent {
   
             // Navigate to the next step
             this.router.navigate(['/bussiness-show-details']); // Replace with your actual route
-          },
-          (error) => {
-            this.isLoading = false; // Hide loader in case of error
-            console.error("Error during Salesforce API calls:", error);
-            
-            // Show an error SweetAlert with a Retry option
-            Swal.fire({
-              title: 'Error',
-              text: 'Something went wrong. Would you like to retry?',
-              icon: 'error',
-              showCancelButton: true,
-              confirmButtonText: 'Retry',
-              cancelButtonText: 'Cancel'
-            }).then((result) => {
-              if (result.isConfirmed) {
-                // Call submitData() again to retry the process
-                this.submitData();
-              } else {
-                // Optionally handle the cancel action, e.g., remain on the page or perform other actions
-              }
-            });
           }
+          // (error) => {
+          //   this.isLoading = false; // Hide loader in case of error
+          //   console.error("Error during Salesforce API calls:", error);
+            
+          //   // Show an error SweetAlert with a Retry option
+          //   Swal.fire({
+          //     title: 'Error',
+          //     text: 'Something went wrong. Would you like to retry?',
+          //     icon: 'error',
+          //     showCancelButton: true,
+          //     confirmButtonText: 'Retry',
+          //     cancelButtonText: 'Cancel'
+          //   }).then((result) => {
+          //     if (result.isConfirmed) {
+          //       // Call submitData() again to retry the process
+          //       this.submitData();
+          //     } else {
+          //       // Optionally handle the cancel action, e.g., remain on the page or perform other actions
+          //     }
+          //   });
+          // }
         );
       }
       // If the user clicks "Review Data", do nothing so they can make corrections.

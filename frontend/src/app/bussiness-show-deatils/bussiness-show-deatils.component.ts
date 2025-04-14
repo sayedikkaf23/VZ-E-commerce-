@@ -55,45 +55,59 @@ export class BussinessShowDeatilsComponent {
     this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
     this.quoteWithProductDetails = this.matchScoreResponse?.data;
     // Check if the salesforceResponse is empty or null
-    if (!this.salesforceResponse) {
-      Swal.fire({
-        title: 'Session Expired',
-        text: 'Your session has expired. Please complete the form again from the beginning.',
-        icon: 'warning',
-        confirmButtonText: 'OK',
-         confirmButtonColor: '#FF5A5F'
-      }).then((result) => {
-        if (result.value) {
-          localStorage.removeItem('step1Data');
-          localStorage.removeItem('mailform');
-          localStorage.removeItem('mailform2');
-          localStorage.removeItem('finalDatabussiness');
+  //   if (!this.salesforceResponse) {
+  //     Swal.fire({
+  //       title: 'Session Expired',
+  //       text: 'Your session has expired. Please complete the form again from the beginning.',
+  //       icon: 'warning',
+  //       confirmButtonText: 'OK',
+  //        confirmButtonColor: '#FF5A5F'
+  //     }).then((result) => {
+  //       if (result.value) {
+  //         localStorage.removeItem('step1Data');
+  //         localStorage.removeItem('mailform');
+  //         localStorage.removeItem('mailform2');
+  //         localStorage.removeItem('finalDatabussiness');
 
 
-          this.router.navigate(['/home']);  // Navigate to the start of the form
-        }
-      });
-    } else if (this.isBrowser) {
-      // Retrieve data from localStorage
+  //         this.router.navigate(['/home']);  // Navigate to the start of the form
+  //       }
+  //     });
+  //   } else if (this.isBrowser) {
+  //     // Retrieve data from localStorage
    
-      const mailform = localStorage.getItem('step1Data');
-      const mailform2 = localStorage.getItem('mailform2');
-  // console.log(mailform2,"sssss")
-      // If there is no data in localStorage, navigate away from this page
-      if ( !mailform || !mailform2 ) {
-        // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
-        this.router.navigate(['/home']); // Replace with the correct route
-      } else {
-        // Parse and store data if it exists
-        this.personalInfo = JSON.parse(mailform);
-        this.companyInfo = JSON.parse(mailform2);
-        this.shareholders=this.companyInfo.shareholders
-        this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
-        // console.log(  this.displayShareholders)
+  //     const mailform = localStorage.getItem('step1Data');
+  //     const mailform2 = localStorage.getItem('mailform2');
+  // // console.log(mailform2,"sssss")
+  //     // If there is no data in localStorage, navigate away from this page
+  //     if ( !mailform || !mailform2 ) {
+  //       // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
+  //       this.router.navigate(['/home']); // Replace with the correct route
+  //     } else {
+  //       // Parse and store data if it exists
+  //       this.personalInfo = JSON.parse(mailform);
+  //       this.companyInfo = JSON.parse(mailform2);
+  //       this.shareholders=this.companyInfo.shareholders
+  //       this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
+  //       // console.log(  this.displayShareholders)
         
 
-      }
+  //     }
+  //   }
+  if(this.isBrowser) {
+    const step1Data = localStorage.getItem('step1Data');
+    const mailform2 = localStorage.getItem('mailform2');
+
+    if (!step1Data || !mailform2) {
+      this.router.navigate(['/home']);  // Navigate to home if there's no data
+    } else {
+      this.personalInfo = JSON.parse(step1Data);
+      this.bankInfo = JSON.parse(mailform2);
+
+      // Prevent back navigation
+      this.preventBackNavigation();
     }
+  }
   }
 
   ngAfterViewInit(): void {
@@ -253,6 +267,25 @@ export class BussinessShowDeatilsComponent {
   getToastPosition(): string {
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left'; // Adjust based on scroll
+  }
+
+    getTotalAmountIncludingVAT(): number {
+    if (!this.matchScoreResponse?.products) return 0;
+  
+    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
+      const itemTotal = product.unitPrice * product.quantity * 1.05; // Assuming 5% VAT
+      return total + itemTotal;
+    }, 0);
+  }
+
+
+  getTotalAmount(): number {
+    if (!this.matchScoreResponse?.products) return 0;
+  
+    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
+      const itemTotal = product.unitPrice * product.quantity ;
+      return total + itemTotal;
+    }, 0);
   }
 
 }

@@ -42,6 +42,9 @@ export class ShowDetails2Component implements AfterViewInit {
   }
 
   ngOnInit(): void {
+    if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
     this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
     this.quoteWithProductDetails = this.matchScoreResponse?.products;
