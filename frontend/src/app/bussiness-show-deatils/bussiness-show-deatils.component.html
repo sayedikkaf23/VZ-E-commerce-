@@ -33,11 +33,11 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let product of matchScoreResponse?.data?.products">
-                                <td>{{ product.productName }}</td>
-                                <td>{{ product.productQuantity }}</td>
-                                <td>AED {{ product.productUnitPrice | number:'1.0-2' }}</td>
-                                <td>AED {{ (product.productUnitPrice * product.productQuantity * 1.05) | number:'1.0-2' }}</td>
+                              <tr *ngFor="let product of matchScoreResponse?.products">
+                                <td>{{ product.name }}</td>
+                                <td>{{ product.quantity }}</td>
+                                <td class="currency">{{ product.currencyName }} {{ product.unitPrice | number:'1.2-2' }}</td>
+                                <td class="currency">{{ product.currencyName }} {{ product.totalPriceVat | number:'1.2-2' }}</td>
                               </tr>
                             </tbody>
                           </table>
@@ -57,24 +57,20 @@
                           <thead>
                             <tr>
                               <th class="column-space">Price</th>
-                              <th class="column-space">VAT</th>
-                              <th class="column-space">Discount Price</th>
+                              <th class="column-space">VAT%</th>
+                              <th class="column-space">Discount%</th>
                               <th class="column-space">Total Amount</th>
                             </tr>
                           </thead>
                           <tbody>
-                            <tr>
-                              <td>AED {{ quoteWithProductDetails?.totalAmount | number:'1.0-2' }}</td>
-                              <td>AED {{ quoteWithProductDetails?.totalVAT | number:'1.0-2' }}</td>
-                              <td>
-                                {{
-                                  quoteWithProductDetails?.Discount != null && quoteWithProductDetails?.Discount !== '' 
-                                    ? 'AED ' + (quoteWithProductDetails?.Discount | number:'1.0-2') 
-                                    : 'NA'
-                                }}
-                              </td>
-                              
-                                                            <td>AED {{ quoteWithProductDetails?.total_including_Vat | number:'1.0-2' }}</td>
+                            <tr  *ngIf="matchScoreResponse?.products?.length > 0">
+                              <td>{{ matchScoreResponse.products[0].currencyName }} {{ getTotalAmount() | number:'1.2-2' }}</td>
+                            <td> {{ ((getTotalAmountIncludingVAT() - getTotalDiscountedAmount()) / getTotalAmountIncludingVAT()) * 100 | number:'1.2-2' }}%</td>
+                            <td>
+                                {{ ((getTotalAmount() - getTotalDiscountedAmount()) / getTotalAmount()) * 100 | number:'1.2-2' }}%
+                            </td>
+                            <td class="currency"><strong>{{ matchScoreResponse.products[0].currencyName }} {{ getTotalAmountIncludingVAT() | number:'1.2-2' }}</strong></td>
+
                               
                             </tr>
                           </tbody>

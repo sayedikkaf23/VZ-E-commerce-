@@ -26,8 +26,8 @@
           <th>Quantity</th>
           <th>Risk</th>
           <th>Currency</th>
-          <th>Discount</th>
-          <th>VAT</th>
+          <th>Discount%</th>
+          <th>VAT%</th>
           <th>Total Price</th>
           <th>Total Price(VAT)</th>
           <th></th>
@@ -41,10 +41,10 @@
           <td>{{ product.quantity }}</td>
           <td>{{ product.risk }}</td>
           <td>{{ product.currencyName }}</td>
-          <td>{{ product.discount }}</td>
-          <td>{{ product.vat }}</td>
-          <td>{{ product.totalPrice }}</td>
-          <td>{{ product.totalPriceVat }}</td>
+          <td>{{ product.discount }}%</td>
+          <td>{{ product.vat }}%</td>
+          <td>{{ product.currencyName }} {{ product.totalPrice  | number:'1.2-2' }}</td>
+          <td>{{ product.currencyName }} {{ product.totalPriceVat  | number:'1.2-2' }}</td>
           <td class="text-end td-action-data">
             <div class="dropdown">
               <button class="btn btn-icon btn-sm btn-light dropdown-toggle" data-bs-toggle="dropdown">
