@@ -28,6 +28,8 @@
                   <th style="text-wrap: nowrap">Product Name</th>
                   <th style="text-wrap: nowrap">Quantity</th>
                   <th style="text-wrap: nowrap">Unit Price</th>
+                  <th style="text-wrap: nowrap">Total Price</th>
+
                   <th style="text-wrap: nowrap">Total Price (Including VAT)</th>
                 </tr>
                 <tr>
@@ -39,6 +41,8 @@
                   <td>{{ product.name }}</td>
                   <td>{{ product.quantity  }}</td>
                   <td class="currency">{{ product.currencyName }} {{ product.unitPrice | number:'1.2-2' }}</td>
+                  <td class="currency">{{ product.totalPrice }}</td>
+
                   <td class="currency">{{ product.currencyName }} {{ product.totalPriceVat | number:'1.2-2' }}</td>
                 </tr>
               </tbody>
@@ -47,12 +51,12 @@
         </div>
 
         <!-- Right Column for Personal Bank Service -->
-        <div class="col-md-12">
+        <!-- <div class="col-md-12">
           <div class="box-light">
             <div class="d-flex align-items-center justify-content-between">
-              <h4>Order Summary</h4>
+              <h4>Order Summary</h4> -->
               <!-- <a [routerLink]="['/step-2']" class="btn-edit">Edit</a> -->
-            </div>
+            <!-- </div>
             <table class="order-summary-table">
               <thead>
                 <tr>
@@ -76,7 +80,7 @@
               </tbody>
             </table>
           </div>
-        </div>
+        </div> -->
       </div>
       <button (click)="submitData()" class="btn primary-btn"  style="width: 1200px;">
         Pay Now
