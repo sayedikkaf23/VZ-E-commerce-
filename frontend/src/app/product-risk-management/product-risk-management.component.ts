@@ -237,7 +237,7 @@ export class ProductRiskManagementComponent implements OnInit {
   saveProduct(): void {
     const data = this.editProductForm.getRawValue();
     console.log('Form Data:', data);
- 
+  
     if (this.isAddingNew) {
       // For adding, send an object with a products array
       const products = data.products;
@@ -245,11 +245,12 @@ export class ProductRiskManagementComponent implements OnInit {
         (response) => {
           this.getProducts();
           this.closeEditModal();
-          this.toastr.success('Product added successfully!');
+          this.toastr.success(response.message);
         },
         (error) => {
           console.error('Add error:', error);
-          this.toastr.error('Failed to add product.');
+          // Display the error message returned by the backend; if not available, a default message.
+          this.toastr.error(error.error.message || 'Failed to add product.');
         }
       );
     } else if (this.selectedProductId) {

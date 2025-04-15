@@ -1,3 +1,12 @@
+
+.required {
+  color: red;
+  font-weight: bold;
+  margin-left: 3;
+  width: 80px;
+  height: 90px;
+}
+
 /* Modal container styling */
 .modal-container {
   display: flex;

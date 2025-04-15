@@ -1,37 +1,52 @@
 const ProductRisk = require("../models/ProductRisk");
 
 // ✅ Add single or multiple products (with duplication check)
-// ✅ Add single or multiple products (with duplication check)
 exports.addProducts = async (req, res) => {
   try {
-    const payload = req.body.products;  // Make sure you're using the "products" array
+    const products = req.body.products; // expecting an array of products
 
-    if (!payload || (Array.isArray(payload) && payload.length === 0)) {
+    if (!products || !Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ message: "No product data provided" });
     }
 
-    // Loop through each product and check if it's valid
-    const productPromises = payload.map(async (product) => {
-      const { name, risk } = product;
+    // Process each product
+    const addedProducts = [];
+    for (const product of products) {
+      const { name, unitPrice, quantity, currencyName, risk } = product;
 
-      // Validate name and risk before saving
-      if (!name || !risk) {
-        return res.status(400).json({ message: "Product name and risk are required" });
+      // Validate mandatory fields
+      if (
+        !name ||
+        unitPrice === undefined ||
+        quantity === undefined ||
+        !currencyName ||
+        !risk
+      ) {
+        return res.status(400).json({
+          message: "Mandatory fields missing: name, unit price, quantity, currency, and risk level are required."
+        });
       }
 
+      // Additional business validations:
+      // Check if the product already exists with the same name and risk
       const exists = await ProductRisk.findOne({ name, risk });
       if (exists) {
         return res.status(400).json({ message: "Product already exists" });
       }
 
-      return ProductRisk.create(product);
-    });
+      // Create the product in the database.
+      // Any Mongoose errors (including those from schema validations) will be caught.
+      const createdProduct = await ProductRisk.create(product);
+      addedProducts.push(createdProduct);
+    }
 
-    // Wait for all products to be processed
-    const addedProducts = await Promise.all(productPromises);
     return res.status(201).json({ message: "Products added", data: addedProducts });
   } catch (error) {
-    res.status(500).json({ message: "Add error", error: error.message });
+    // If the error is from Mongoose validations, return a 400 error.
+    if (error.name === "ValidationError") {
+      return res.status(400).json({ message: error.message });
+    }
+    return res.status(500).json({ message: "An error occurred", error: error.message });
   }
 };
 
