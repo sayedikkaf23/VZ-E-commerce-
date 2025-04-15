@@ -183,17 +183,25 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
   getTotalAmountIncludingVAT(): number {
     if (!this.matchScoreResponse?.products) return 0;
   
-    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
-      const itemTotal = product.unitPrice * product.quantity * 1.05; // Assuming 5% VAT
+    return this.matchScoreResponse.products.reduce((total: number, product: {totalPriceVat: number}) => {
+    
+      return total + product.totalPriceVat;
+    }, 0);
+  }
+
+  getTotalDiscountedAmount(): number {
+    if (!this.matchScoreResponse?.products) return 0;
+  
+    return this.matchScoreResponse.products.reduce((total: number, product: { totalPrice: number}) => {
+      const itemTotal = product.totalPrice ;
       return total + itemTotal;
     }, 0);
   }
 
-
   getTotalAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
   
-    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
+    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number}) => {
       const itemTotal = product.unitPrice * product.quantity ;
       return total + itemTotal;
     }, 0);

@@ -77,7 +77,13 @@
 .product-table {
   width: 100%;
   border-collapse: collapse;
-  table-layout: auto; /* Allows columns to adjust to content */
+  table-layout: fixed; /* Allows columns to adjust to content */
+}
+
+@media (max-width: 768px) {
+  .product-table {
+    table-layout: auto; /* Adjusts column widths based on content on smaller screens */
+  }
 }
 
 .product-table th,
@@ -194,7 +200,7 @@
   @media (max-width: 767px) {
     .primary-btn {
       width: 100% !important;  /* Full width for mobile */
-      max-width: 400px !important; /* Set max-width for mobile */
+   
       height: 45px !important; /* Adjust height for mobile */
       padding: 10px 15px !important; /* Adjust padding for mobile */
       font-size: 16px !important; /* Adjust font size for mobile */

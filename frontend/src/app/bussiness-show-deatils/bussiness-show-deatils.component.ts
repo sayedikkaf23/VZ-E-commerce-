@@ -27,7 +27,8 @@ export class BussinessShowDeatilsComponent {
   matchScoreResponse: any;
   showAll = false;
   displayShareholders :any= [];
-
+totalDiscount: number = 0;
+totalVat: number = 0;
 
   companyInfo: any = {}; // To store bank service information (Step 2 data)
   shareholders :any= [];
@@ -272,9 +273,9 @@ export class BussinessShowDeatilsComponent {
     getTotalAmountIncludingVAT(): number {
     if (!this.matchScoreResponse?.products) return 0;
   
-    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
-      const itemTotal = product.unitPrice * product.quantity * 1.05; // Assuming 5% VAT
-      return total + itemTotal;
+    return this.matchScoreResponse.products.reduce((total: number, product: {totalPriceVat: number}) => {
+    
+      return total + product.totalPriceVat;
     }, 0);
   }
 
@@ -282,8 +283,17 @@ export class BussinessShowDeatilsComponent {
   getTotalAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
   
-    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number; }) => {
+    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number}) => {
       const itemTotal = product.unitPrice * product.quantity ;
+      return total + itemTotal;
+    }, 0);
+  }
+
+  getTotalDiscountedAmount(): number {
+    if (!this.matchScoreResponse?.products) return 0;
+  
+    return this.matchScoreResponse.products.reduce((total: number, product: { totalPrice: number}) => {
+      const itemTotal = product.totalPrice ;
       return total + itemTotal;
     }, 0);
   }

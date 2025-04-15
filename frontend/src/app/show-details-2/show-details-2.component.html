@@ -38,8 +38,8 @@
                 <tr *ngFor="let product of matchScoreResponse?.products">
                   <td>{{ product.name }}</td>
                   <td>{{ product.quantity  }}</td>
-                  <td class="currency"> AED {{(product.unitPrice  | number:'1.0-2') }}</td>
-    <td class="currency">AED {{ (product.unitPrice  * product.quantity * 1.05) | number:'1.0-2' }}</td>
+                  <td class="currency">{{ product.currencyName }} {{ product.unitPrice | number:'1.2-2' }}</td>
+                  <td class="currency">{{ product.currencyName }} {{ product.totalPriceVat | number:'1.2-2' }}</td>
                 </tr>
               </tbody>
             </table>
@@ -57,20 +57,21 @@
               <thead>
                 <tr>
                   <th class="column-space">Price</th>
-                  <th class="column-space">VAT</th>
-                  <th class="column-space">Discount Price</th>
+                  <th class="column-space">VAT%</th>
+                  <th class="column-space">Discount%</th>
                   <th class="column-space">Total Amount</th>
                 </tr>
               </thead>
               <tbody>
                 <tr  *ngIf="matchScoreResponse?.products?.length > 0">
-                  <td>AED {{ getTotalAmount() | number:'1.0-2' }}</td>
-                  <td> {{ matchScoreResponse.products[0].vat }}</td>
-                  <td>
-                      {{ matchScoreResponse.products[0].discount }}
-                  </td>
-                  <td class="currency"><strong>AED {{ getTotalAmountIncludingVAT() | number:'1.0-2' }}</strong></td>
+                  <td>{{ matchScoreResponse.products[0].currencyName }} {{ getTotalAmount() | number:'1.2-2' }}</td>
+                <td> {{ ((getTotalAmountIncludingVAT() - getTotalDiscountedAmount()) / getTotalAmountIncludingVAT()) * 100 | number:'1.2-2' }}%</td>
+                <td>
+                    {{ ((getTotalAmount() - getTotalDiscountedAmount()) / getTotalAmount()) * 100 | number:'1.2-2' }}%
+                </td>
+                <td class="currency"><strong>{{ matchScoreResponse.products[0].currencyName }} {{ getTotalAmountIncludingVAT() | number:'1.2-2' }}</strong></td>
 
+                  
                 </tr>
               </tbody>
             </table>
