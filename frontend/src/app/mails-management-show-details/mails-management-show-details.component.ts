@@ -281,7 +281,7 @@ submitData() {
       );
 
       const payload = {
-        country: match ? match.country : nationality // fallback if not found
+        countries: [match ? match.country : nationality]  // e.g. ["India"] or ["Indian"]
       };
       // const payload = {
       //   country: mergedData.nationality,

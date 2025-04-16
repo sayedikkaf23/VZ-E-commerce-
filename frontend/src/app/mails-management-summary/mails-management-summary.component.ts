@@ -52,7 +52,9 @@ export class MailsManagementSummaryComponent {
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
     // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
     this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
-    this.quoteWithProductDetails = this.matchScoreResponse?.products;
+    this.quoteWithProductDetails =
+  this.matchScoreResponse?.results?.[0]?.products || [];
+
     
   if (this.isBrowser) {
       const mailform = localStorage.getItem('mailform');

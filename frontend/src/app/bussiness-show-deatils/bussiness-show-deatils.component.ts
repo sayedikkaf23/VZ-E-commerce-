@@ -54,7 +54,9 @@ totalVat: number = 0;
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
     // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
     this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
-    this.quoteWithProductDetails = this.matchScoreResponse?.data;
+    this.quoteWithProductDetails =
+  this.matchScoreResponse?.results?.[0]?.products || [];
+
     // Check if the salesforceResponse is empty or null
   //   if (!this.salesforceResponse) {
   //     Swal.fire({

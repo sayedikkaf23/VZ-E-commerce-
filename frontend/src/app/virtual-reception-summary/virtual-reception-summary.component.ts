@@ -68,7 +68,10 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     //     }
     //   });
     // } else if (this.isBrowser) {
-      this.quoteWithProductDetails = this.matchScoreResponse?.products;
+    console.log(this.matchScoreResponse,"ss")
+    this.quoteWithProductDetails =
+    this.matchScoreResponse?.results?.[0]?.products || [];
+  console.log( this.quoteWithProductDetails,"product")
     
       if (this.isBrowser) {
       const mailform = localStorage.getItem('virtualdata');

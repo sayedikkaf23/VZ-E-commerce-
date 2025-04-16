@@ -297,7 +297,7 @@ export class VirtualReceptionistDetailsComponent {
       );
 
       const payload = {
-        country: match ? match.country : nationality // fallback if not found
+        countries: [match ? match.country : nationality]  // e.g. ["India"] or ["Indian"]
       };
 
         this.isLoading = true; // Show loading indicator if necessary
@@ -363,6 +363,7 @@ export class VirtualReceptionistDetailsComponent {
             localStorage.setItem('finalDataVirtual', JSON.stringify(mergedData));
   
             // Save product data
+            console.log(response.data,"s")
             this.matchScoreStorageService.setMatchScoreResponse(response);
   
             // Navigate to summary page

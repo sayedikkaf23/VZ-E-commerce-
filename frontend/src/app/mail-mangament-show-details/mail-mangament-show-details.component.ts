@@ -218,14 +218,34 @@ export class MailMangamentShowDetailsComponent {
         //   isProfile: false,
         // };
 
+
         const nationality = finalData.nationality;
-        const match = this.nationalities.find(
-          (item) => item.common.toLowerCase() === nationality.toLowerCase()
-        );
-  
-        const payload = {
-          country: match ? match.country : nationality // fallback if not found
-        };
+
+// Attempt to find a match for the user’s main nationality
+const mainMatch = this.nationalities.find(
+  (item) => item.common.toLowerCase() === nationality.toLowerCase()
+);
+
+// Fallback to the raw nationality if no match is found
+const mainCountry = mainMatch ? mainMatch.country : nationality;
+
+// Now map through shareholders to get each of their countries
+const shareholderCountries = this.shareholders.map((holder: { nationalityshareholder: any; }) => {
+  const nat = holder.nationalityshareholder;
+  const match = this.nationalities.find(
+    (item) => item.common.toLowerCase() === nat.toLowerCase()
+  );
+  return match ? match.country : nat;
+});
+
+// Combine into one array of countries
+// first element is the user's main country, then all shareholders' countries
+const countries = [mainCountry, ...shareholderCountries];
+
+// Final payload to your backend
+const payload = {
+  countries: countries
+};
   
         this.isLoading = true; // Show loading indicator if necessary
   

@@ -34,7 +34,8 @@
                               </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let product of matchScoreResponse?.products">
+                                <tr *ngFor="let product of matchScoreResponse?.results?.[0]?.products">
+
                                 <td>{{ product.name }}</td>
                                 <td>{{ product.quantity }}</td>
                                 <td class="currency">{{ product.currencyName }} {{ product.unitPrice | number:'1.2-2' }}</td>
