@@ -51,7 +51,9 @@
 </div>
 
 <div class="form-field" *ngIf="formData.companylocation === 'Yes'">
-  <label for="tradelicense">What are the type of activities mentioned on your trade license?: <span class="required">*</span></label>
+  <label for="tradelicense">
+    What are the type of activities mentioned on your trade license?: <span class="required">*</span>
+  </label>
   <fieldset>
     <select
       name="tradelicense"
@@ -59,10 +61,10 @@
       class="form-select"
       [(ngModel)]="formData.tradelicense"
     >
-    <!-- <option value="" disabled selected>
-      What are the type of activities mentioned on your trade license?
-    </option>    -->
-       <option *ngFor="let category of businessCategories" [value]="category.name">
+      <option [ngValue]="null" disabled>
+        What are the type of activities mentioned on your trade license?
+      </option>
+      <option *ngFor="let category of businessCategories" [value]="category.name">
         {{ category.name }}
       </option>
     </select>
