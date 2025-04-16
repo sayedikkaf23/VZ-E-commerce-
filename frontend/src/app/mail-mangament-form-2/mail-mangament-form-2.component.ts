@@ -30,7 +30,8 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     shareholdercount:'',
     type: 'Business Bank',
     CustomerType: 'C',
-    tradelicense: null  // initialize as null so the placeholder is selected
+    tradelicense: null , // initialize as null so the placeholder is selected
+    Companylicensed: null,
 
   };
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
