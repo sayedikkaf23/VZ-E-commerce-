@@ -72,30 +72,54 @@ exports.updateRiskStatus = async (req, res) => {
 
 
 exports.getProductsByCountryRisk = async (req, res) => {
-  const { country } = req.body;
-
+  // We expect something like: { "countries": ["USA", "India"] }
+  const { countries } = req.body;
+   
   try {
-    if (!country) {
-      return res.status(400).json({ message: 'Country is required in request body' });
-    }
-
-    // Find the risk level for the country
-    const countryRisk = await CountryRisk.findOne({ country });
-
-    if (!countryRisk) {
-      return res.status(404).json({ message: 'Country not found' });
-    }
-
-    // Find products with the same risk level
-    const products = await ProductRisk.find({ risk: countryRisk.risk });
-
-    return res.status(200).json({
-      country,
-      riskLevel: countryRisk.risk,
-      products
-    });
-  } catch (error) {
-    console.error('Error getting products by country risk:', error);
-    return res.status(500).json({ message: 'Server error' });
+  // 1. Validate input
+  if (!Array.isArray(countries) || countries.length === 0) {
+  return res
+  .status(400)
+  .json({ message: 'countries must be a non-empty array' });
   }
-};
+   
+  const results = [];
+   
+  // 2. Loop through each country in the array
+  for (const country of countries) {
+  // 3. Find all risk entries for this country (if you have at most one risk per country, use `findOne`;
+  // if you have multiple possible risk entries, use `find`)
+  const countryRisks = await CountryRisk.find({ country });
+   
+  // If there is no risk data for this country, you can skip or handle differently
+  if (!countryRisks || countryRisks.length === 0) {
+  // Option: push an entry with an empty products array or skip
+  results.push({
+  country,
+  riskLevel: null,
+  products: [],
+  message: 'No risk data found for this country',
+  });
+  continue;
+  }
+   
+  // 4. For each risk document found, query ProductRisk and build result items
+  for (const cr of countryRisks) {
+  // cr might look like { country: 'India', risk: 'High', ... }
+  const products = await ProductRisk.find({ risk: cr.risk });
+   
+  results.push({
+  country: cr.country,
+  riskLevel: cr.risk,
+  products,
+  });
+  }
+  }
+   
+  // 5. Return array of all matched countries and their products
+  return res.status(200).json({ results });
+  } catch (error) {
+  console.error('Error getting products by multiple countries risk:', error);
+  return res.status(500).json({ message: 'Server error' });
+  }
+  };
