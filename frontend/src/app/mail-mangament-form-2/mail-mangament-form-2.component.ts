@@ -46,6 +46,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   step1Data: any = {}; // To store Step 1 data
   nationalities: string[] = []; // Initialize as an empty array
   nationalitiesData: string[] = []; // Initialize as an empty array
+  businessCategories: any[] = [];
 
 
   constructor(
@@ -101,6 +102,8 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       // Trigger change detection if necessary
       this.cdRef.detectChanges();
     }
+
+   
   }
 
   preventManualInput(event: KeyboardEvent): void {
@@ -112,7 +115,27 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     input.showPicker(); // Explicitly trigger the date picker
   }
 
+  onCompanyLocationChange(value: string): void {
+    if (value === 'Yes') {
+      // Call the API when "Yes" is selected
+      this.userService.getAllBusinessCategories().subscribe(
+        (response) => {
+          // Log for debugging
+          console.log('Categories response:', response);
 
+          // Assuming response structure: { message: string, data: Array }
+          this.businessCategories = response.data;
+          this.cdRef.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching business categories:', error);
+        }
+      );
+    } else {
+      // Optionally clear the categories if "No" is selected
+      this.businessCategories = [];
+    }
+  }
   ngAfterViewInit() {
     const Tooltip = (window as any).Tooltip;
     Tooltip.initAll();

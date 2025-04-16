@@ -19,16 +19,56 @@
           <div class="item">
             <h3>Business Bank Account Opening</h3>
             <div class="form-field">
+              <!-- First Dropdown -->
               <div class="form-field">
                 <label for="resident">Is your company located in UAE? <span class="required">*</span></label>
                 <fieldset>
-                  <select name="resident" id="resident" class="form-select" [(ngModel)]="formData.companylocation">
+                  <select
+                    name="resident"
+                    id="resident"
+                    class="form-select"
+                    [(ngModel)]="formData.companylocation"
+                    (ngModelChange)="onCompanyLocationChange($event)"
+                  >
                     <option value="" disabled selected>Is your company located in UAE?</option>
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                   </select>
                 </fieldset>
               </div>
+              
+
+<!-- Additional Dropdowns shown when the company is located in UAE -->
+<div class="form-field" *ngIf="formData.companylocation === 'Yes'">
+  <label for="Companylicensed">Where is your Company licensed? <span class="required">*</span></label>
+  <fieldset>
+    <select name="Companylicensed" id="Companylicensed" class="form-select" [(ngModel)]="formData.Companylicensed">
+      <option value="" disabled selected>Where is your Company licensed?</option>
+      <option value="Mainland">Mainland</option>
+      <option value="Freezone">Freezone</option>
+    </select>
+  </fieldset>
+</div>
+
+<div class="form-field" *ngIf="formData.companylocation === 'Yes'">
+  <label for="tradelicense">What are the type of activities mentioned on your trade license?: <span class="required">*</span></label>
+  <fieldset>
+    <select
+      name="tradelicense"
+      id="tradelicense"
+      class="form-select"
+      [(ngModel)]="formData.tradelicense"
+    >
+    <!-- <option value="" disabled selected>
+      What are the type of activities mentioned on your trade license?
+    </option>    -->
+       <option *ngFor="let category of businessCategories" [value]="category.name">
+        {{ category.name }}
+      </option>
+    </select>
+  </fieldset>
+</div>
+
             </div>
             <!-- <div class="form-field">
                 <fieldset>

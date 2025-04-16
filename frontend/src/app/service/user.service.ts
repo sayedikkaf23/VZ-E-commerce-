@@ -36,6 +36,9 @@ export class UserService {  // Changed the service name to UserService
   getProductsByCountryRisk(payload:any): Observable<any> {
     return this.http.post(`${this.url}/risk/getProductsByCountryRisk`, payload); // Sending the payload to the backend
   }
+  getAllBusinessCategories(): Observable<any> {
+    return this.http.get(`${this.url}/risk/getAllBusinessCategories`);
+  }
   
   callSalesforceQuoteService(payload:any): Observable<any> {
     return this.http.post(`${this.url}/user/callSalesforceQuoteService`, payload); // Sending the payload to the backend
@@ -47,6 +50,7 @@ export class UserService {  // Changed the service name to UserService
   fetchUserServices(payload:any): Observable<any> {
     return this.http.post(`${this.url}/user/getallUserSerive`, payload); // Sending the payload to the backend
   }
+ 
   
   getPresignedUrl(file: File): Observable<any> {
     const formData = new FormData();
