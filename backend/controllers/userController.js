@@ -560,7 +560,78 @@ console.log(screeningResponse,"screeningResponse")
   }
 };
 
+exports.createOpportunity = async (req, res) => {
+  try {
+    // 1. Extract data from request body (JSON sent by client)
+    const {
+      firstName,
+      lastName,
+      email,
+      nationality,
+      phone,
+      dob,
+      prodcutNameList, // Notice: in your sample JSON, it's spelled "prodcutNameList"
+    } = req.body;
 
+    // 2. Construct the object you want to send to Salesforce
+    //    Adjust the field names and structure as required by your Apex REST service
+    const requestBody = {
+      firstName,
+      lastName,
+      email,
+      nationality,
+      phone,
+      dob,
+      prodcutNameList,
+    };
+
+    // 3. Request the Salesforce access token
+    const tokenResponse = await axios.post(
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
+      null, // no body needed; we pass parameters in the query string
+      {
+        params: {
+          client_id: '3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip',
+          client_secret: '0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1',
+          grant_type: 'password',
+          username: 'vzpaymentapi@vz.ae.vzfullcopy',
+          password: 'VZ@12345678',
+        },
+      }
+    );
+
+    const accessToken = tokenResponse.data.access_token;
+    const salesforceUrl = tokenResponse.data.instance_url;
+
+    // 4. Make the PUT request to your Apex REST endpoint with the constructed requestBody
+    const salesforceResponse = await axios.post(
+      `${salesforceUrl}/services/apexrest/VZAR_CreateOpportunity/`,
+      requestBody,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    // 5. Send success response to client
+    return res
+      .status(200)
+      .json({
+        message: 'Data sent successfully to Salesforce',
+        data: salesforceResponse.data,
+      });
+  } catch (error) {
+    console.error('Error creating opportunity:', error?.response?.data || error);
+
+    // Send error response to client
+    return res.status(500).json({
+      message: 'Failed to create opportunity in Salesforce',
+      error: error?.response?.data || error.toString(),
+    });
+  }
+};
 
 
 exports.callSalesforceQuoteService = async (req, res) => {

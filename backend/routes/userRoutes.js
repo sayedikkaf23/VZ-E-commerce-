@@ -28,4 +28,5 @@ router.post('/MatchScoreProductService', userController.MatchScoreProductService
 router.post('/updateAdditionalUploadedFiles', userController.updateAdditionalUploadedFiles);
 router.get('/dashboard', userController.dashboard);
 router.post('/updateKycStatus', userController.updateKycStatus);
+router.post('/createOpportunity', userController.createOpportunity);
 module.exports = router;

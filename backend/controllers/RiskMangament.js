@@ -1,6 +1,8 @@
 const Risk = require('../models/Risk');
 const ProductRisk = require("../models/ProductRisk");
 const CountryRisk = require("../models/CountryRisk");
+const BusinessCategory = require('../models/BusinessCategory'); // adjust path if needed
+
 // ➕ Add New Risk
 exports.addRisk = async (req, res) => {
   try {
@@ -123,3 +125,59 @@ exports.getProductsByCountryRisk = async (req, res) => {
   return res.status(500).json({ message: 'Server error' });
   }
   };
+
+
+  exports.getActivictyByRiskBulk = async (req, res) => {
+    try {
+      const entries = req.body;
+  
+      if (!Array.isArray(entries) || entries.length === 0) {
+        return res.status(400).json({ message: 'Array of business categories required' });
+      }
+  
+      const formattedEntries = [];
+  
+      for (const entry of entries) {
+        const { name, isActive = true, risk = 'Low', createdBy, updatedBy } = entry;
+  
+        if (!name) continue; // skip if no name
+  
+        const exists = await BusinessCategory.findOne({ name });
+        if (exists) continue; // skip duplicates
+  
+        formattedEntries.push({
+          name,
+          isActive,
+          risk,
+          createdBy,
+          updatedBy,
+        });
+      }
+  
+      const inserted = await BusinessCategory.insertMany(formattedEntries);
+  
+      res.status(201).json({
+        message: `${inserted.length} categories inserted successfully`,
+        data: inserted,
+      });
+    } catch (err) {
+      console.error('Bulk insert error:', err);
+      res.status(500).json({ message: 'Server error during bulk insert' });
+    }
+  }
+
+
+  exports.getAllBusinessCategories = async (req, res) => {
+    try {
+      const categories = await BusinessCategory.find({ isActive: true }); // Only active
+  
+      res.status(200).json({
+        message: `${categories.length} active categories found`,
+        data: categories
+      });
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      res.status(500).json({ message: 'Server error while fetching categories' });
+    }
+  };
+  
