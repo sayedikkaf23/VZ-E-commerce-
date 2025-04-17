@@ -36,6 +36,9 @@ export class UserService {  // Changed the service name to UserService
   getProductsByCountryRisk(payload:any): Observable<any> {
     return this.http.post(`${this.url}/risk/getProductsByCountryRisk`, payload); // Sending the payload to the backend
   }
+  getProductsByCategoryAndCountryRisk(payload:any): Observable<any> {
+    return this.http.post(`${this.url}/risk/getProductsByCategoryAndCountryRisk`, payload); // Sending the payload to the backend
+  }
   getAllBusinessCategories(): Observable<any> {
     return this.http.get(`${this.url}/risk/getAllBusinessCategories`);
   }

@@ -189,7 +189,7 @@ export class MailMangamentShowDetailsComponent {
       ...this.personalInfo, // Merge personal information (Step 1 data)
       ...this.companyInfo   // Merge company information (Step 2 data)
     };
-  
+  console.log(finalData,"finalData")
     // Show a SweetAlert confirmation dialog
     Swal.fire({
       title: 'Confirm Your Data',
@@ -227,30 +227,27 @@ const mainMatch = this.nationalities.find(
 );
 
 // Fallback to the raw nationality if no match is found
-const mainCountry = mainMatch ? mainMatch.country : nationality;
+// 1. Main nationality straight from the form
+const mainNationality = finalData.nationality;   // e.g. "Indian"
 
-// Now map through shareholders to get each of their countries
-const shareholderCountries = this.shareholders.map((holder: { nationalityshareholder: any; }) => {
-  const nat = holder.nationalityshareholder;
-  const match = this.nationalities.find(
-    (item) => item.common.toLowerCase() === nat.toLowerCase()
-  );
-  return match ? match.country : nat;
-});
+// 2. Grab every shareholder’s nationality (skip blanks)
+const shareholderNationalities = (finalData.shareholders ?? [])
+  .map((sh: { nationalityshareholder: any; }) => sh.nationalityshareholder)
+  .filter(Boolean);                              // keeps only truthy strings
 
-// Combine into one array of countries
-// first element is the user's main country, then all shareholders' countries
-const countries = [mainCountry, ...shareholderCountries];
+// 3. Merge (no deduping)
+const nationalities = [mainNationality, ...shareholderNationalities];
 
-// Final payload to your backend
+// 4. Final payload
 const payload = {
-  countries: countries
+  categoryName: finalData.tradelicense,
+  nationalities            // <-- now an array of raw nationalities
 };
   
         this.isLoading = true; // Show loading indicator if necessary
   
         // First API call to callSalesforceEndpoint
-         this.userService.getProductsByCountryRisk(payload).pipe(
+         this.userService.getProductsByCategoryAndCountryRisk(payload).pipe(
                   catchError((error) => {
                     console.error(error);
                     this.isLoading = false;

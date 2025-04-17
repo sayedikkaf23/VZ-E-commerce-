@@ -29,12 +29,12 @@
                                 <th>Product Name</th>
                                 <th>Quantity</th>
                                 <th>Unit Price</th>
-                                <th>totalPrice</th>
+                                <th>Total Price</th>
                                 <th>Total Price (Including VAT)</th>
                               </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let product of matchScoreResponse?.results?.[0]?.products">
+                                <tr *ngFor="let product of matchScoreResponse?.products">
 
                                 <td>{{ product.name }}</td>
                                 <td>{{ product.quantity }}</td>

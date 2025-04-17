@@ -2,7 +2,7 @@ const Risk = require('../models/Risk');
 const ProductRisk = require("../models/ProductRisk");
 const CountryRisk = require("../models/CountryRisk");
 const BusinessCategory = require('../models/BusinessCategory'); // adjust path if needed
-
+const Nationality = require('../models/nationalityModel');
 // ➕ Add New Risk
 exports.addRisk = async (req, res) => {
   try {
@@ -180,4 +180,98 @@ exports.getProductsByCountryRisk = async (req, res) => {
       res.status(500).json({ message: 'Server error while fetching categories' });
     }
   };
+  
+
+
+  exports.getProductsByCategoryAndCountryRisk = async (req, res) => {
+    try {
+      const { categoryName, nationalities } = req.body;
+  
+      if (!Array.isArray(nationalities) || nationalities.length === 0) {
+        return res.status(400).json({ message: 'A non-empty array of nationalities is required' });
+      }
+  
+      const riskLevels = ['Low', 'Medium', 'High'];
+      const debugInfo = [];
+      let allCountryRisks = [];
+  
+      // Step 1: Loop through nationalities and collect risks
+      for (const nationality of nationalities) {
+        const nationalityDoc = await Nationality.findOne({ Value: nationality });
+        if (!nationalityDoc || !nationalityDoc.Country) {
+          debugInfo.push({ nationality, country: null, message: 'Country not found' });
+          continue;
+        }
+  
+        const country = nationalityDoc.Country;
+        const countryRiskDocs = await CountryRisk.find({ country });
+  
+        if (!countryRiskDocs || countryRiskDocs.length === 0) {
+          debugInfo.push({ nationality, country, message: 'No country risk found' });
+          continue;
+        }
+  
+        const risks = countryRiskDocs.map(r => r.risk);
+        allCountryRisks.push(...risks);
+        debugInfo.push({ nationality, country, risks });
+      }
+  
+      if (allCountryRisks.length === 0) {
+        return res.status(404).json({ message: 'No valid country risk data found for any nationality' });
+      }
+  
+      const maxCountryRiskIndex = allCountryRisks.reduce((max, risk) => {
+        const idx = riskLevels.indexOf(risk);
+        return idx > max ? idx : max;
+      }, -1);
+  
+      // CASE 1: If no categoryName provided → use only country risk
+      if (!categoryName) {
+        const finalRisk = riskLevels[maxCountryRiskIndex];
+        const products = await ProductRisk.find({ risk: finalRisk });
+  
+        return res.status(200).json({
+          appliedRisk: finalRisk,
+          from: 'country',
+          products,
+          debugInfo
+        });
+      }
+  
+      // CASE 2: Category is present → combine logic
+      const category = await BusinessCategory.findOne({ name: categoryName });
+      if (!category) {
+        return res.status(404).json({ message: 'Business category not found' });
+      }
+  
+      const categoryRisk = category.risk;
+      const categoryRiskIndex = riskLevels.indexOf(categoryRisk);
+  
+      let selectedRiskIndex = categoryRiskIndex;
+  
+      if (categoryRiskIndex > maxCountryRiskIndex) {
+        selectedRiskIndex = categoryRiskIndex;
+      } else {
+        selectedRiskIndex = Math.max(categoryRiskIndex, maxCountryRiskIndex);
+      }
+  
+      const finalRisk = riskLevels[selectedRiskIndex];
+      const products = await ProductRisk.find({ risk: finalRisk });
+  
+      return res.status(200).json({
+        appliedRisk: finalRisk,
+        from: 'category + country',
+        categoryRisk,
+        allCountryRisks,
+        products,
+        debugInfo
+      });
+  
+    } catch (err) {
+      console.error('Error in getProductsByCategoryAndCountryRisk:', err);
+      return res.status(500).json({ message: 'Server error' });
+    }
+  };
+  
+  
   

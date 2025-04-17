@@ -94,7 +94,9 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
         jurisdiction: parsedData.jurisdiction,
         Turnover: parsedData.Turnover,
         shareholdercount: parsedData.shareholdercount,
-        type: parsedData.type
+        type: parsedData.type,
+        Companylicensed: parsedData.Companylicensed,
+        tradelicense: parsedData.tradelicense,
       };
       
       // Update shareholders if it exists in the parsed data
@@ -255,6 +257,8 @@ deleteShareholder(index: number) {
 
         // Append Step 2 data
         formDataToSend.append('companylocation', this.formData.companylocation);
+        formDataToSend.append('tradelicense', this.formData.tradelicense);
+        formDataToSend.append('Companylicensed', this.formData.Companylicensed);
         // formDataToSend.append('jurisdiction', this.formData.jurisdiction);
         formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
         formDataToSend.append('Turnover', this.formData.Turnover);
