@@ -10,6 +10,7 @@ router.get('/getrisk', riskController.getActiveRisks);
 router.post('/getProductsByCountryRisk', riskController.getProductsByCountryRisk);
 router.post('/getActivictyByRiskBulk', riskController.getActivictyByRiskBulk);
 router.get('/getAllBusinessCategories', riskController.getAllBusinessCategories);
+router.post('/getProductsByCategoryAndCountryRisk', riskController.getProductsByCategoryAndCountryRisk);
 
 router.patch('/updaterisk/:id/status', riskController.updateRiskStatus);
 

@@ -108,6 +108,15 @@
                   <th> Is Your Company located in the UAE? :</th>
                   <td>{{ companyInfo.companylocation }}</td>
                 </tr>
+                <tr *ngIf="companyInfo.companylocation === 'Yes'">
+                  <th>Where is your Company licensed? :</th>
+                  <td>{{ companyInfo.Companylicensed }}</td>
+                </tr>
+                <tr *ngIf="companyInfo.companylocation === 'Yes'">
+                  <th>What are the type of activities mentioned on your trade license? :</th>
+                  <td>{{ companyInfo.tradelicense }}</td>
+                </tr>
+               
                 <!-- <tr>
                   <th>Which Jurisdiction is your Company Located it? :</th>
                   <td>{{ companyInfo.jurisdiction }}</td>
