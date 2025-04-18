@@ -563,7 +563,7 @@ console.log(screeningResponse,"screeningResponse")
 exports.createOpportunity = async (req, res) => {
   try {
  
-    console.log(req.body)
+    console.log(req.body,"req.body")
     /*───────────────────────────── 1. grab body ─────────────────────────────*/
     const {
       firstName,
@@ -574,7 +574,10 @@ exports.createOpportunity = async (req, res) => {
       dob,
       prodcutNameList = [] ,
       planname,
-      subcategory,       // spelling kept as in the client payload
+      subcategory,
+      totalIncludingVAT,
+      totalPrice  ,
+      subTotal     // spelling kept as in the client payload
     } = req.body;
  
     /*───────────────────────────── 2. send to SF ────────────────────────────*/
@@ -614,6 +617,7 @@ exports.createOpportunity = async (req, res) => {
       }
     );
  
+console.log(sfResp.data,"sfResp.data")
     /*───────────────────────────── 3. save in Mongo ─────────────────────────*/
     const pidataDoc = await Pidata.create({
       leadWithDetails: {
@@ -622,21 +626,31 @@ exports.createOpportunity = async (req, res) => {
         Email: email,
         Nationality: nationality,
         Phone: phone,
-        LeadSource: 'Website',     // or whatever source you want
-        Status: 'Created'
+        Origin__c: 'Website',     // or whatever source you want
+        Status: 'Created',
+        LeadId: sfResp.data?.LeadId ,
+      },
+      quotePaymentWithDetails: {
+        QuotePaymentId:sfResp.data?.QuotePaymentId
       },
       quoteWithProductDetails: {
+        quoteEmail: email,
+        quoteName: firstName + ' ' + lastName,
+        quotePaymentId: sfResp.data?.QuotePaymentId,
+        totalIncludingVAT:totalIncludingVAT,
+        subTotal:subTotal,
+        totalPrice:totalPrice,
         product: prodcutNameList   // store the whole array
       },
-      salesforceResponseMatchScreening: {
+      // salesforceResponseMatchScreening: {
        
-        leadId:         sfResp.data?.LeadId         ?? null,
-        // accountId:      sfResp.data?.AccountId      ?? null,
-        opportunityId:  sfResp.data?.OpportunityId  ?? null,
-        quoteId:        sfResp.data?.QuoteId        ?? null,
-        quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
-        message:        sfResp.data?.Message        ?? ''
-      },
+      //   leadId:         sfResp.data?.LeadId         ?? null,
+      //   // accountId:      sfResp.data?.AccountId      ?? null,
+      //   opportunityId:  sfResp.data?.OpportunityId  ?? null,
+      //   quoteId:        sfResp.data?.QuoteId        ?? null,
+      //   quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
+      //   message:        sfResp.data?.Message        ?? ''
+      // },
       planname:planname,
       subcategory:subcategory,
     });
