@@ -9,9 +9,9 @@ import AOS from 'aos';
 import { switchMap, of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
-
+ 
 declare var $: any;
-
+ 
 @Component({
   selector: 'app-bussiness-show-deatils',
   templateUrl: './bussiness-show-deatils.component.html',
@@ -29,10 +29,10 @@ export class BussinessShowDeatilsComponent {
   displayShareholders :any= [];
 totalDiscount: number = 0;
 totalVat: number = 0;
-
+ 
   companyInfo: any = {}; // To store bank service information (Step 2 data)
   shareholders :any= [];
-  
+ 
   constructor(
     private http: HttpClient,
     private toastr: ToastrService,
@@ -40,13 +40,13 @@ totalVat: number = 0;
     private dataStorageService: DataStorageService,
     private userService: UserService,
     private matchScoreStorageService: MatchScoreStorageService,
-
+ 
     @Inject(PLATFORM_ID) private platformId: Object,
     private location: Location // Inject Location service
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
-
+ 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
@@ -56,7 +56,7 @@ totalVat: number = 0;
     this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
     this.quoteWithProductDetails =
   this.matchScoreResponse?.results?.[0]?.products || [];
-
+ 
     // Check if the salesforceResponse is empty or null
   //   if (!this.salesforceResponse) {
   //     Swal.fire({
@@ -71,8 +71,8 @@ totalVat: number = 0;
   //         localStorage.removeItem('mailform');
   //         localStorage.removeItem('mailform2');
   //         localStorage.removeItem('finalDatabussiness');
-
-
+ 
+ 
   //         this.router.navigate(['/home']);  // Navigate to the start of the form
   //       }
   //     });
@@ -93,30 +93,39 @@ totalVat: number = 0;
   //       this.shareholders=this.companyInfo.shareholders
   //       this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
   //       // console.log(  this.displayShareholders)
-        
-
+       
+ 
   //     }
   //   }
-  if(this.isBrowser) {
-    const step1Data = localStorage.getItem('step1Data');
-    const mailform2 = localStorage.getItem('mailform2');
-
-    if (!step1Data || !mailform2) {
-      this.router.navigate(['/home']);  // Navigate to home if there's no data
-    } else {
-      this.personalInfo = JSON.parse(step1Data);
-      this.bankInfo = JSON.parse(mailform2);
-
-      // Prevent back navigation
-      this.preventBackNavigation();
-    }
+  // if(this.isBrowser) {
+  //   const step1Data = localStorage.getItem('step1Data');
+  //   const mailform2 = localStorage.getItem('mailform2');
+ 
+  //   if (!step1Data || !mailform2) {
+  //     this.router.navigate(['/home']);  // Navigate to home if there's no data
+  //   } else {
+  //     this.personalInfo = JSON.parse(step1Data);
+  //     this.bankInfo = JSON.parse(mailform2);
+ 
+  //     // Prevent back navigation
+  //     this.preventBackNavigation();
+  //   }
+  // }
+ 
+ 
+  const mailform = localStorage.getItem('step1Data');
+      const mailform2 = localStorage.getItem('mailform2');
+      this.personalInfo = mailform ? JSON.parse(mailform) : {};
+            this.companyInfo = JSON.parse(mailform2 || '{}');
+            this.shareholders=this.companyInfo.shareholders
+            this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
+            console.log(  this.displayShareholders)
   }
-  }
-
+ 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
       AOS.init();
-
+ 
       $(window).scroll(function () {
         const height = $(window).scrollTop();
         if (height > 50) {
@@ -125,33 +134,33 @@ totalVat: number = 0;
           $('html').removeClass('sticky');
         }
       });
-
+ 
       $(document).ready(() => {
         $('.scrollToTop').click(function (event: any) {
           event.preventDefault();
           $('html, body').animate({ scrollTop: 0 }, 'slow');
           return false;
         });
-
+ 
         $('.navbar-toggle').click(function () {
           $('html').toggleClass('menu-show');
         });
-
+ 
         $('.header-menu-overlay').click(function () {
           $('html').removeClass('menu-show');
         });
-
+ 
         $('.sub-menu-toggle').click(() => {
           $(this).parent().toggleClass('submenu_active');
         });
       });
     }
   }
-
+ 
   preventBackNavigation() {
     // Push the current route to history to prevent back navigation
     history.pushState(null, '', this.router.url);
-  
+ 
     // Listen for 'popstate' events to block back navigation
     window.addEventListener('popstate', (event) => {
       history.pushState(null, '', this.router.url);
@@ -163,21 +172,21 @@ totalVat: number = 0;
       }, 50);
     });
   }
-  
+ 
   // submitData() {
   //   const finalData = {
   //     ...this.personalInfo,
   //     ...this.bankInfo
   //   };
-
+ 
   //   this.userService.uploadUserData(finalData).pipe(
   //     switchMap(response => {
   //       if (response.message) {
   //         localStorage.removeItem('step1Data');
   //         localStorage.removeItem('step2Data');
-
+ 
   //         const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
-
+ 
   //         if (quotePaymentId) {
   //           const paymentUrl = `https://virtuzone.yeepeey.com/onlinepayment/${quotePaymentId}`;
   //           window.location.href = paymentUrl;
@@ -197,29 +206,22 @@ totalVat: number = 0;
   //     }
   //   );
   // }
-
-
+ 
+ 
   submitData() {
-
-    if (!this.salesforceResponse || !this.salesforceResponse.data || !this.salesforceResponse.data.leadWithDetails) {
-      console.error("salesforceResponse.data.leadWithDetails is not ready or missing");
-      return;
-    }
-    
-    const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
-    if (!LeadId) {
-      console.error("LeadId is not found in salesforceResponse.data.leadWithDetails");
-    }
-
-
+ 
+ 
     const finalData = {
-      ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.companyInfo,// Merge bank information (Step 2 data)
-      LeadId
+      ...this.personalInfo,       // step‑1 data
+      ...this.companyInfo,        // step‑2 data
+      quoteWithProductDetails:this.matchScoreResponse?.products   // whole object nested
     };
-  
+   
+ 
+    console.log(finalData, "finalData")
+ 
     // Send data to the backend using userService
-    this.userService.uploadUserData(finalData).pipe(
+    this.userService.createOpportunity(finalData).pipe(
       switchMap(response => {
         if (response.message) {
           localStorage.removeItem('step1Data');
@@ -230,14 +232,14 @@ totalVat: number = 0;
           // localStorage.clear();
           const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
           const checkStatusData = {
-            CustomerId:LeadId, // Ensure customerId exists in personalInfo
+            CustomerId:response.salesforce.QuotePaymentId, // Ensure customerId exists in personalInfo
             CompanyName: "Virtuzone" // Ensure companyName exists in personalInfo
           };
-  
+ 
           return this.userService.checkStatus(checkStatusData).pipe(
             switchMap(checkStatusResponse => {
               console.log("Check Status Response:", checkStatusResponse);
-  
+ 
               if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
                 // Redirect to payment URL
                 this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
@@ -266,38 +268,39 @@ totalVat: number = 0;
       positionClass: this.getToastPosition()
     });
   }
-
+ 
   getToastPosition(): string {
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left'; // Adjust based on scroll
   }
-
+ 
     getTotalAmountIncludingVAT(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
+ 
     return this.matchScoreResponse.products.reduce((total: number, product: {totalPriceVat: number}) => {
-    
+   
       return total + product.totalPriceVat;
     }, 0);
   }
-
-
+ 
+ 
   getTotalAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
+ 
     return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number}) => {
       const itemTotal = product.unitPrice * product.quantity ;
       return total + itemTotal;
     }, 0);
   }
-
+ 
   getTotalDiscountedAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
+ 
     return this.matchScoreResponse.products.reduce((total: number, product: { totalPrice: number}) => {
       const itemTotal = product.totalPrice ;
       return total + itemTotal;
     }, 0);
   }
-
+ 
 }
+ 
