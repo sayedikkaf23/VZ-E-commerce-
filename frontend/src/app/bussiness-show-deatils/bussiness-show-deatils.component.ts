@@ -6,7 +6,7 @@ import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import { DataStorageService } from '../service/data-storage.service';
 import AOS from 'aos';
-import { switchMap, of } from 'rxjs';
+import { switchMap, of, tap, map } from 'rxjs';
 import Swal from 'sweetalert2';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
  
@@ -209,60 +209,73 @@ totalVat: number = 0;
  
  
   submitData() {
- 
- 
     const finalData = {
-      ...this.personalInfo,       // step‑1 data
-      ...this.companyInfo,        // step‑2 data
-      prodcutNameList:this.matchScoreResponse?.products   // whole object nested
+      ...this.personalInfo,
+      ...this.companyInfo,
+      prodcutNameList: this.matchScoreResponse?.products
     };
-   
  
-    console.log(finalData, "finalData")
- 
-    // Send data to the backend using userService
     this.userService.createOpportunity(finalData).pipe(
       switchMap(response => {
-        if (response.message) {
-          localStorage.removeItem('step1Data');
-          localStorage.removeItem('mailform');
-          localStorage.removeItem('step2Data');
-          localStorage.removeItem('mailform2');
-          localStorage.removeItem('finalData');
-          // localStorage.clear();
-          const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
-          const checkStatusData = {
-            CustomerId:response.salesforce.QuotePaymentId, // Ensure customerId exists in personalInfo
-            CompanyName: "Virtuzone" // Ensure companyName exists in personalInfo
-          };
- 
-          return this.userService.checkStatus(checkStatusData).pipe(
-            switchMap(checkStatusResponse => {
-              console.log("Check Status Response:", checkStatusResponse);
- 
-              if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-                // Redirect to payment URL
-                this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
-                return of(null);
-              } else {
-                window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
-                this.router.navigate(['/']);
-                return of(null);
-              }
-            })
-          );
-        } else {
-          throw new Error('Data submission failed');
+        if (!response?.salesforce?.QuotePaymentId) {
+          throw new Error('Missing QuotePaymentId from Salesforce');
         }
+ 
+        const quotePaymentId = response.salesforce.QuotePaymentId;
+ 
+        const payload = {
+          CustomerId:  quotePaymentId,
+          CompanyName: 'Virtuzone'
+        };
+ 
+        return this.userService.callSalesforceEndpoint(payload).pipe(
+          map(secondResponse => ({
+            quotePaymentId,
+            leadId: secondResponse?.screeningmatchScore?.customerId || null
+          }))
+        );
+      }),
+ 
+      switchMap(({ quotePaymentId, leadId }) => {
+        if (!leadId) {
+          throw new Error('Missing LeadId from screening response');
+        }
+ 
+        const checkStatusData = {
+          CustomerId: leadId,
+          CompanyName: 'Virtuzone'
+        };
+ 
+        return this.userService.checkStatus(checkStatusData).pipe(
+          tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
+            if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+              this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+            } else {
+              window.alert(
+                'Your request has been submitted successfully. You will receive an email when your application is approved.'
+              );
+              this.router.navigate(['/']);
+            }
+ 
+            // Clear local storage
+            localStorage.removeItem('step1Data');
+            localStorage.removeItem('mailform');
+            localStorage.removeItem('step2Data');
+            localStorage.removeItem('mailform2');
+            localStorage.removeItem('finalData');
+          })
+        );
       })
-    ).subscribe(
-      () => {},
-      error => {
-        this.toastr.error(error.message || 'An error occurred', 'Error');
-        console.error(error);
+    ).subscribe({
+      next: () => {},
+      error: err => {
+        this.toastr.error(err.message || 'An error occurred', 'Error');
+        console.error(err);
       }
-    );
+    });
   }
+ 
+ 
   showError(errorMessage: string): void {
     this.toastr.error(errorMessage || 'Error submitting data', 'Error', {
       positionClass: this.getToastPosition()
