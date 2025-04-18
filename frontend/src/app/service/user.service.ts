@@ -30,8 +30,8 @@ export class UserService {  // Changed the service name to UserService
     return this.http.post(`${this.url}/user/checkUser`, payload); // Sending the payload to the backend
   }
 
-  callSalesforceEndpoint(payload:any): Observable<any> {
-    return this.http.post(`${this.url}/user/callSalesforceEndpoint`, payload); // Sending the payload to the backend
+  digicomplice(payload:any): Observable<any> {
+    return this.http.post(`${this.url}/user/digicomplice`, payload); // Sending the payload to the backend
   }
   getProductsByCountryRisk(payload:any): Observable<any> {
     return this.http.post(`${this.url}/risk/getProductsByCountryRisk`, payload); // Sending the payload to the backend

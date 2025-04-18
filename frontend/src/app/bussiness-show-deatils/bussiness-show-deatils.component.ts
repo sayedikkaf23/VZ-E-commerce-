@@ -228,7 +228,7 @@ totalVat: number = 0;
           CompanyName: 'Virtuzone'
         };
  
-        return this.userService.callSalesforceEndpoint(payload).pipe(
+        return this.userService.digicomplice(payload).pipe(
           map(secondResponse => ({
             quotePaymentId,
             leadId: secondResponse?.screeningmatchScore?.customerId || null
