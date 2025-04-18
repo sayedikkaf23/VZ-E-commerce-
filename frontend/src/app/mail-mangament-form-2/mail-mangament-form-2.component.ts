@@ -75,6 +75,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
+    
 
     this.getnationalityService.getNationality().subscribe((data) => {
       this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
@@ -108,7 +109,16 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges();
     }
 
-   
+    if (this.formData.companylocation === 'Yes') {
+      // reload the categories so the dropdown has options to select
+      this.userService.getAllBusinessCategories().subscribe(
+        resp => {
+          this.businessCategories = resp.data;
+          this.cdRef.detectChanges();
+        },
+        err => console.error(err)
+      );
+    }
   }
 
   preventManualInput(event: KeyboardEvent): void {
