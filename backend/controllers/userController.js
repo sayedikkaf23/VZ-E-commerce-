@@ -465,26 +465,53 @@ console.log(screeningResponse,"screeningResponse")
   }
 };
 
+
+
+function mapToProductWrapper(arr = []) {
+  return arr.map(p => ({
+            // or hard‑code a product ID
+    ProductName:        p.name,
+    ProductFamily:      p.ProductFamily,             // or hard‑code a family string
+    ProductDescription: p.description || '',
+    ProductCurrencyName:p.currencyName,
+    productUnitPrice:   p.unitPrice,
+    productQuantity:    p.quantity,
+    ProductDiscount:    p.discount,
+
+    // ← leave out _id, __v, totalPrice, totalPriceVat, vat, etc.
+  }));
+}
+
+
 exports.createOpportunity = async (req, res) => {
   try {
  
-    console.log(req.body,"req.body")
+    // console.log(req.body,"req.body")
     /*───────────────────────────── 1. grab body ─────────────────────────────*/
     const {
       firstName,
       lastName,
       email,
       nationality,
-      phone,
-      dob,
-      prodcutNameList = [] ,
-      planname,
-      subcategory,
-      totalIncludingVAT,
-      totalPrice  ,
-      subTotal     // spelling kept as in the client payload
+
+  
+      shareholders = [] ,
+      type,
+      CustomerType
+       // spelling kept as in the client payload
     } = req.body;
- 
+    const dob = req.body?.birthday || null;     // yyyy‑mm‑dd string
+
+    const prodcutNameList = mapToProductWrapper(req.body.prodcutNameList);
+  
+    // console.log(prodcutNameList,"prodcutNameList")
+
+    const phone =
+  req.body?.mobileNumber?.e164Number ||
+  ((req.body?.mobileNumber?.dialCode || '') + (req.body?.mobileNumber?.nationalNumber || '')).replace(/\s+/g, '') ||
+  req.body?.mobileNumber?.number ||
+  '';
+
     /*───────────────────────────── 2. send to SF ────────────────────────────*/
     const tokenResp = await axios.post(
       `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
@@ -502,7 +529,15 @@ exports.createOpportunity = async (req, res) => {
  
     const accessToken  = tokenResp.data.access_token;
     const salesforceUrl = tokenResp.data.instance_url;
- 
+ console.log( {
+  firstName,
+  lastName,
+  email,
+  nationality,
+  phone,
+  dob,
+  prodcutNameList      // ship list exactly as Salesforce expects
+},"req.body saleforce ")
     const sfResp = await axios.post(
       `${salesforceUrl}/services/apexrest/VZAR_CreateOpportunity/`,
       {
@@ -523,6 +558,32 @@ exports.createOpportunity = async (req, res) => {
     );
  
 console.log(sfResp.data,"sfResp.data")
+
+
+const rawProdcutNameList = Array.isArray(req.body.prodcutNameList)
+  ? req.body.prodcutNameList
+  : [];
+
+/* ── totals ────────────────────────────────────────────────── */
+const { subTotal, totalIncludingVAT } = rawProdcutNameList.reduce(
+  (tot, item) => {
+    const base =
+      item.totalPrice ??
+      (item.unitPrice || 0) * (item.quantity || 1) - (item.discount || 0);
+
+    const withVat =
+      item.totalPriceVat ??
+      base * (1 + (item.vat || 0) / 100);
+
+    tot.subTotal           += base;
+    tot.totalIncludingVAT  += withVat;
+    return tot;
+  },
+  { subTotal: 0, totalIncludingVAT: 0 }
+);
+
+const totalPrice = subTotal; 
+
     /*───────────────────────────── 3. save in Mongo ─────────────────────────*/
     const pidataDoc = await Pidata.create({
       leadWithDetails: {
@@ -545,7 +606,7 @@ console.log(sfResp.data,"sfResp.data")
         totalIncludingVAT:totalIncludingVAT,
         subTotal:subTotal,
         totalPrice:totalPrice,
-        product: prodcutNameList   // store the whole array
+        product: req.body.prodcutNameList   // store the whole array
       },
       // salesforceResponseMatchScreening: {
        
@@ -556,8 +617,9 @@ console.log(sfResp.data,"sfResp.data")
       //   quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
       //   message:        sfResp.data?.Message        ?? ''
       // },
-      planname:planname,
-      subcategory:subcategory,
+      shareholders,
+      planname:type,
+      subcategory:CustomerType,
     });
  
     /*───────────────────────────── 4. reply to client ───────────────────────*/

@@ -108,7 +108,7 @@ const sendEmail = (email, quoteId,username) => {
 
 // 3) Payment Cron (runs every 30s)
 cron.schedule("*/50 * * * * *", async () => {
-  console.log("Payment Cron: Checking for records to send Payment email...");
+  // console.log("Payment Cron: Checking for records to send Payment email...");
 
   try {
     // Example: only pick records older than 1 minute
@@ -121,7 +121,7 @@ cron.schedule("*/50 * * * * *", async () => {
     });
 
     if (!unpaidRecords.length) {
-      console.log("No pending payments found at this time.");
+      // console.log("No pending payments found at this time.");
       return;
     }
 
@@ -135,7 +135,7 @@ cron.schedule("*/50 * * * * *", async () => {
       }`.trim();
 
       if (!email) {
-        console.log(`Record ${record._id} has no email, skipping Payment email.`);
+        // console.log(`Record ${record._id} has no email, skipping Payment email.`);
         continue;
       }
 
@@ -149,9 +149,9 @@ cron.schedule("*/50 * * * * *", async () => {
       );
 
       if (!updatedDoc) {
-        console.log(
-          `Record ${record._id} was already updated by another process. Skipping.`
-        );
+        // console.log(
+        //   `Record ${record._id} was already updated by another process. Skipping.`
+        // );
         continue;
       }
 
@@ -253,7 +253,7 @@ Don’t worry – we’ve saved all your details so you can pick up right where 
 
 // Cron Job to Check incomplete registrations (isProfile: false)
 cron.schedule("*/30 * * * * *", async () => {
-  console.log("Running Profile Cron to check profile completion status...");
+  // console.log("Running Profile Cron to check profile completion status...");
 
   try {
     // Only process records older than 1 minute (optional time filter)
@@ -283,7 +283,7 @@ cron.schedule("*/30 * * * * *", async () => {
       const username = `${leadWithDetails?.FirstName || ""} ${leadWithDetails?.LastName || ""}`.trim();
 
       if (!email) {
-        console.log(`Record ${record._id} has no email - skipping profile reminder.`);
+        // console.log(`Record ${record._id} has no email - skipping profile reminder.`);
         continue;
       }
 
@@ -298,20 +298,20 @@ cron.schedule("*/30 * * * * *", async () => {
 
       if (!updatedDoc) {
         // Means another process or iteration already updated isProfileEmailSent
-        console.log(`Record ${record._id} was already updated by another process. Skipping.`);
+        // console.log(`Record ${record._id} was already updated by another process. Skipping.`);
         continue;
       }
 
       // We have the "lock", so it's safe to send the email now
       await sendProfileEmail(email, quoteId, username);
-      console.log(`Profile completion reminder email sent to ${email} for record ${record._id}`);
+      // console.log(`Profile completion reminder email sent to ${email} for record ${record._id}`);
 
       // If you want to mark them as having completed their profile
       // you can also set isProfile = true if your business logic requires that
       updatedDoc.isProfile = true;
       await updatedDoc.save();
 
-      console.log(`Marked record ${updatedDoc._id} as isProfile=true and isProfileEmailSent=true.`);
+      // console.log(`Marked record ${updatedDoc._id} as isProfile=true and isProfileEmailSent=true.`);
     }
   } catch (error) {
     console.error("Error while running the profile cron job:", error);

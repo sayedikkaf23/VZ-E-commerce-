@@ -214,7 +214,7 @@ totalVat: number = 0;
     const finalData = {
       ...this.personalInfo,       // step‑1 data
       ...this.companyInfo,        // step‑2 data
-      quoteWithProductDetails:this.matchScoreResponse?.products   // whole object nested
+      prodcutNameList:this.matchScoreResponse?.products   // whole object nested
     };
    
  

@@ -28,8 +28,17 @@ const responseSchema = new mongoose.Schema({
     {
       productId: { type: String,required: true },
       productName: { type: String },
+      ProductFamily: { type: String },
+      ProductDescription: { type: String },
+      risk: { type: String },
+      ProductCurrencyName: { type: String },
       productQuantity: { type: Number },
-      productUnitPrice: { type: Number }
+      productUnitPrice: { type: Number },
+      ProductDiscount: { type: Number },
+      totalPrice: { type: Number },
+      totalPriceVat: { type: Number },
+      totalPriceVat: { type: Number },
+      vat: { type: Number },
     }
   ],
   total_including_Vat: { type: Number },
