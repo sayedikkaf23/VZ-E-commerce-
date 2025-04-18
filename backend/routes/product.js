@@ -1,8 +1,8 @@
 const express = require('express');
 const router  = express.Router();
-const { seedBusinessCategories, getBusinessCategories } = require('../controllers/businessCategorySeedController');
+const { bulkCreateProductFamilies, getBusinessCategories } = require('../controllers/businessCategorySeedController');
 
-router.post('/seedBusinessCategories', seedBusinessCategories);
-router.get ('/seedBusinessCategories', getBusinessCategories);
+router.post('/bulkCreateProductFamilies', bulkCreateProductFamilies);
+router.get ('/getProductFamilies', getBusinessCategories);
 
 module.exports = router;
