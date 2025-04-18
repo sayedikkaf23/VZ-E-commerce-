@@ -93,4 +93,7 @@ export class UserService {  // Changed the service name to UserService
   checkStatus(data: { CustomerId: string; CompanyName: string }): Observable<any> {
     return this.http.post(`${this.url}/user/checkStatus`, data); // POST request to check status
   }
+  createOpportunity(payload: any): Observable<any> {
+    return this.http.post(`${this.url}/user/createOpportunity`, payload); 
+  }
 }
