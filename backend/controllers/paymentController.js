@@ -742,10 +742,10 @@ async function payNowByTelr(req, res) {
   // }
 
   order_number = data.quotePaymentWithDetails.QuotePaymentId;
-  acountname = data.quoteWithProductDetails.AccountName;
+  acountname = data.leadWithDetails.FirstName;
   acountemail = data.quoteWithProductDetails.quoteEmail;
   order_amount = Number(
-    data.salesforceResponseMatchScreening.total_including_Vat
+    data.quoteWithProductDetails.totalIncludingVAT
   ).toFixed(2);
   const order_currency = "AED";
   const order_description = "payment_description";
@@ -784,10 +784,11 @@ async function payNowByTelr(req, res) {
             surname: "tler", // Leave empty if no surname is needed
           },
           // Address fields left empty to hide them
-          address: {
-            line1: "tler", // Address line 1 - left empty to avoid display
-            city: "tler", // City - left empty to avoid display
-            country: "tler", // Country - left empty to avoid display
+        address: 
+          {
+            line1: "101 Pine Ln Dummy",
+            city: "Dubai",
+            country: "AE"
           },
           // Optionally, leave out the phone field
           phone: "+911234569898", // Leave empty to avoid displaying the phone number
@@ -804,18 +805,18 @@ async function payNowByTelr(req, res) {
 
     const newOnlinePayForm = new OnlinePayment({
       transactionDetails: {
-        amount: data.salesforceResponseMatchScreening.total_including_Vat,
+        amount:  data.quoteWithProductDetails.totalIncludingVAT,
         quotePaymentId: order_number,
         //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
 
         // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
         // toCurrency: currency_convertingto,
-        proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
+        proformaInvoiceNumber: data.leadWithDetails.LeadId,
         currencyPaid: "AED",
         // amountPaid:existingUser.totalIncludingVAT,
       },
       customerDetails: {
-        name: data.quoteWithProductDetails.AccountName,
+        name: data.leadWithDetails.FirstName,
         id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
       },
 

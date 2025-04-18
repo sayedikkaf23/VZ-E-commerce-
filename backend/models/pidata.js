@@ -56,6 +56,7 @@ const pidataSchema = new mongoose.Schema(
     leadWithDetails: {
       Nationality: String,
       Phone: String,
+      dob: String,
       Origin__c: String,
       Email: String,
       LeadSource: String,

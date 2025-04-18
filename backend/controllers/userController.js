@@ -297,11 +297,18 @@ console.log(LeadId,"LeadId")
 
 exports.callSalesforceEndpoint = async (req, res) => {
   // Destructure fields from the request body
-  const { firstName, lastName, email, nationality, phone, dob, CustomerType,shareholders ,isProfile,planname} = req.body;
+  const { CustomerId, CompanyName } = req.body || {};
 
+  if (!CustomerId || !CompanyName) {
+    return res.status(400).json({
+      message: 'CustomerId and CompanyName are required'
+    });
+  }
 
-
-
+  const pidataDoc = await Pidata.findOne(
+    { 'quotePaymentWithDetails.QuotePaymentId': CustomerId }   // CustomerId == quotePaymentId
+  );
+  
 
 
   // Construct the JSON body to send to Salesforce
@@ -328,7 +335,19 @@ exports.callSalesforceEndpoint = async (req, res) => {
     const authToken = authResponse.data.token; // Assuming the token is in authResponse.data.token
 
     // Step 2: Get access token from Salesforce
-    
+    let CustomerType = pidataDoc?.subcategory ; // Default to "C" if not found
+
+    const nationalities = await Nationality.find();
+
+// 2. Get the original nationality value from pidata
+const nationalityValue = pidataDoc?.leadWithDetails?.Nationality || '';
+
+const matched = nationalities.find(
+  item => item.Value.toLowerCase() === nationalityValue.toLowerCase()
+);
+
+const NationalityISO = matched ? matched.Country : '';
+
 
     console.log(CustomerType,CustomerType == "C",CustomerType == "I")
     // Extract the Salesforce response data
@@ -349,15 +368,15 @@ exports.callSalesforceEndpoint = async (req, res) => {
         {
           UserId: 'ComplianceUAT',
           CompanyName: 'Virtuzone',
-          CustomerId: generateCustomerId(), 
+          CustomerId:pidataDoc.leadWithDetails.LeadId, 
 
           CustomerType: CustomerType,
-          FirstName: firstName,
+          FirstName: pidataDoc.leadWithDetails.FirstName,
           MiddleName: '',
-          LastName: lastName,
+          LastName: pidataDoc.leadWithDetails.LastName,
           Gender: '',
-          DOB: dob,
-          NationalityISOList: [nationality],
+          DOB: pidataDoc.leadWithDetails.dob,
+          NationalityISOList: [NationalityISO],
           PlaceOfBirth: '',
           CustomerIdType: '',
           CustomerIdNumber: '',
@@ -394,30 +413,38 @@ console.log(screeningResponse,"screeningResponse")
       subcategory = "business"
 
 
-      const formattedShareholders = shareholders.map(shareholder => ({
-        FirstName: shareholder.firstName || '',
-        MiddleName: shareholder.middleName || '',
-        LastName: shareholder.name || shareholder.lastName || '',
-        Nationality: shareholder.nationalityshareholder || '',
-        DOB: shareholder.dob || '',
-        Gender: shareholder.gender || ''
-      }));
-
+      const formattedShareholders = (pidataDoc.shareholders || []).map(shareholder => {
+        const parts = (shareholder.name || '').trim().split(/\s+/);
+        const firstName  = parts[0] || '';
+        const lastName   = parts.slice(1).join(' ') || '';
+      
+        return {
+          FirstName:  shareholder.firstName || firstName,
+          MiddleName: shareholder.middleName || '',
+          LastName:   shareholder.lastName || lastName,
+          Nationality: shareholder.nationalityshareholder || '',
+          DOB: shareholder.dob
+            ? new Date(shareholder.dob).toISOString().split('T')[0]
+            : '',
+          Gender: shareholder.gender || ''
+        };
+      });
+      
  
       screeningResponse = await axios.post(
         `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/Screening`,
         {
           UserId: 'ComplianceUAT',
           CompanyName: 'Virtuzone',
-          CustomerId: quotePayementId, // 🎯 Random ID
+          CustomerId: pidataDoc.leadWithDetails.LeadId, // 🎯 Random ID
 
           CustomerType: CustomerType,
-          FirstName: firstName,
+          FirstName: pidataDoc.leadWithDetails.FirstName,
           MiddleName: '',
-          LastName: lastName,
+          LastName: pidataDoc.leadWithDetails.LastName,
           Gender: '',
-          DOB: dob,
-          NationalityISOList: [nationality],
+          DOB: pidataDoc.leadWithDetails.dob,
+          NationalityISOList: [NationalityISO],
           PlaceOfBirth: '',
           CustomerIdType: '',
           CustomerIdNumber: '',
@@ -455,10 +482,20 @@ console.log(screeningResponse,"screeningResponse")
     // console.log('Screening Response:', screeningResponse.data);
     const { matchScore } = screeningResponse.data;
 
+    await Pidata.updateOne(
+      { 'quotePaymentWithDetails.QuotePaymentId': CustomerId },  // filter
+      {
+        $set: {
+          'screeningDetails.matchScore': matchScore
+        }
+      }
+    );
+    
+
     
 
     // Send a success response
-    res.status(200).json({ message: 'Data saved successfully', data: responseData ,screeningmatchScore:screeningResponse.data});
+    res.status(200).json({ message: 'Data saved successfully' ,screeningmatchScore:screeningResponse.data});
   } catch (error) {
     console.error('Error calling Salesforce endpoint:', error);
     res.status(500).json({ message: 'Error calling Salesforce endpoint', details: error.message });
@@ -594,6 +631,7 @@ const totalPrice = subTotal;
         Phone: phone,
         Origin__c: 'Website',     // or whatever source you want
         Status: 'Created',
+        dob: dob,
         LeadId: sfResp.data?.LeadId ,
       },
       quotePaymentWithDetails: {
