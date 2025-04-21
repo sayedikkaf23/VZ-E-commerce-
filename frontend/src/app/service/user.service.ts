@@ -97,9 +97,9 @@ export class UserService {  // Changed the service name to UserService
     return this.http.post(`${this.url}/user/createOpportunity`, payload); 
   }
   getServiceProducts(payload: {
-    ServiceNameCode: string;
-    SubTypeCode: string;
-    RiskCode: string;
+    ServiceNameCode: any;
+    SubTypeCode: any;
+    RiskCode: any;
   }): Observable<any> {
     return this.http.post(
       `${this.url}/service/service-products`,

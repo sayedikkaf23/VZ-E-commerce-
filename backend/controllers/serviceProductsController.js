@@ -1,13 +1,25 @@
 // controllers/serviceProductsController.js
+const CountryRisk = require("../models/CountryRisk");
+
+
 require('dotenv').config();
 const axios = require('axios');
+
  
 exports.getServiceProducts = async (req, res) => {
   try {
-    const { ServiceNameCode, SubTypeCode, RiskCode } = req.body;
+    let  { ServiceNameCode, SubTypeCode, RiskCode } = req.body;
  
- 
- 
+    const countryData = await CountryRisk.findOne({ country: RiskCode });
+
+    if (!countryData) {
+      return res.status(400).json({
+        message: 'Invalid country provided. Risk rating not found '
+      });
+    }
+
+    RiskCode = countryData.RiskRating;
+
     const requestBody = JSON.stringify({
       ServiceNameCode: ServiceNameCode,
       SubTypeCode: SubTypeCode,

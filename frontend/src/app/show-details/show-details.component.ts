@@ -194,10 +194,27 @@ export class ShowDetailsComponent implements AfterViewInit {
     }).then(result => {
       if (!result.isConfirmed) return;
 
+
+    const finalData = {
+      ...this.personalInfo, // Merge personal information (Step 1 data)
+      ...this.bankInfo // Merge bank information (Step 2 data)
+    };
+    let subTypeId = null;
+
+    if (finalData.Bank === 'Traditional Personal bank Account Opening') {
+      subTypeId = 11;
+    } else if (finalData.Bank === 'Digital Personal Bank Account Opening') {
+      subTypeId = 12;
+    } else if (finalData.Bank === 'All the above Bank Account Opening') {
+      subTypeId = 17;
+    } else {
+      throw new Error('Invalid Bank Type Selected ❌');
+    }
+
       const payload = {
-        ServiceNameCode: this.personalInfo.ServiceNameCode,
-        SubTypeCode:this.bankInfo.SubTypeCode,
-        RiskCode:this.bankInfo.RiskCode
+        ServiceNameCode: 1,
+        SubTypeCode:subTypeId,
+        RiskCode:finalData.nationality
       };
       
       this.isLoading = true;
