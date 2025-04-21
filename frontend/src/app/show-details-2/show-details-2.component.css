@@ -1,4 +1,19 @@
-/* Common Table Styles */
+/* 1) Give the name column a fixed/max width so it breaks naturally */
+.product-table th:first-child,
+.product-table td:first-child {
+  max-width: 250px;      /* tweak this until you get ~3 words/line */
+  white-space: normal;   /* allow wrapping */
+  word-break: break-word;/* break long words if needed */
+  vertical-align: top;   /* keep it starting at the top */
+}
+
+/* 2) Tweak line-height & padding for readability */
+.product-table td {
+  line-height: 1.4;      /* snug but not too tight */
+  padding: 8px 12px;     /* give it breathing room */
+}
+
+
 .table {
   width: 100%;
   border-collapse: collapse;

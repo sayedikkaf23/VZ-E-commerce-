@@ -25,6 +25,7 @@ export class ShowDetails2Component implements AfterViewInit {
   bankInfo: any = {};
   salesforceResponse: any;
   matchScoreResponse: any;
+  serviceProducts: any[] = [];
 
   quoteWithProductDetails: any;
 
@@ -64,6 +65,14 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
         // Prevent back navigation
         this.preventBackNavigation();
       }
+
+      const raw = localStorage.getItem('serviceProducts');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // ensure it’s always an array
+        this.serviceProducts = Array.isArray(parsed) ? parsed : [parsed];
+      }
+     
     }
   }
 
