@@ -7,12 +7,13 @@ import { ToastrService } from 'ngx-toastr';
 import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import enums
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 import { UserService } from '../service/user.service';
-import { GetnationalityService } from '../service/getnationality.service';
+import { AdminAuthService } from '../service/admin-auth.service';
+// import { GetnationalityService } from '../service/getnationality.service';
 import { DataStorageService } from '../service/data-storage.service';
-interface Nationality {
-  common: string;
-  country: string;
-}
+// interface Nationality {
+//   common: string;
+//   country: string;
+// }
 
 @Component({
   selector: 'app-virtual-receptionist',
@@ -21,7 +22,7 @@ interface Nationality {
 })
 export class VirtualReceptionistComponent {
   personalDetailsForm: FormGroup;
-  nationalities: Nationality[] = [];
+  nationalities: any[] = [];
   selectedNationality: string = '';
   SearchCountryField = SearchCountryField;  // Assign to use in template
   CountryISO = CountryISO;
@@ -36,7 +37,8 @@ export class VirtualReceptionistComponent {
     private cdRef: ChangeDetectorRef,
     private toastr: ToastrService,
     private userService: UserService,
-    private getnationalityService: GetnationalityService,
+    // private getnationalityService: GetnationalityService,
+    private adminAuthService: AdminAuthService,
     private dataStorageService: DataStorageService ,// Inject the service
 
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
@@ -69,12 +71,8 @@ export class VirtualReceptionistComponent {
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
-    this.getnationalityService.getNationality().subscribe((data) => {
-        this.nationalities = data.map((country: any) => ({
-          common: country.name.common,
-          country: country.name.country
-        }));
-       
+    this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
             this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
     // this.getnationalityService.getCountries().subscribe((data) => {

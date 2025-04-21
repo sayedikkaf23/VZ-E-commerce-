@@ -169,7 +169,7 @@ exports.getProductsByCountryRisk = async (req, res) => {
 
   exports.getAllBusinessCategories = async (req, res) => {
     try {
-      const categories = await BusinessCategory.find({ isActive: true }); // Only active
+      const categories = await BusinessCategory.find({  }); // Only active
   
       res.status(200).json({
         message: `${categories.length} active categories found`,

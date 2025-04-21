@@ -29,7 +29,9 @@
         <tbody>
           <tr *ngFor="let country of countryRisks">
             <td>{{ country.country }}</td>
-            <td>{{ country.risk }}</td>
+            <td>
+              {{ country.RiskRating === 1 ? 'Low' : country.RiskRating === 2 ? 'Medium' : country.RiskRating === 3 ? 'High' : 'Unknown' }}
+            </td>
             <td class="text-end td-action-data">
               <div class="dropdown">
                 <button class="btn btn-icon btn-sm btn-light dropdown-toggle arrow-none" data-bs-toggle="dropdown">
@@ -72,9 +74,9 @@
         </div>
         <div class="form-group" style="padding: 6px 15px;">
           <label class="form-label">Risk</label>
-          <select class="form-select styled-select" formControlName="risk">
+          <select class="form-select styled-select" formControlName="RiskRating">
             <ng-container *ngFor="let risk of riskList">
-              <option *ngIf="risk.isActive" [value]="risk.name">
+              <option *ngIf="risk.isActive" [value]="risk.riskRating">
               {{ risk.name }}
             </option>
             </ng-container>

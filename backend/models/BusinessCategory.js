@@ -7,14 +7,18 @@ const BusinessCategorySchema = new mongoose.Schema({
     unique: true,
     trim: true,
   },
-  isActive: {
-    type: Boolean,
-    default: true,
-  },
+  // isActive: {
+  //   type: Boolean,
+  //   default: true,
+  // },
   risk: {
     type: String,
     enum: ['Low', 'Medium', 'High'],
     default: 'Low',
+  },
+  Score: {
+    type: Number,
+    required: true,
   },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,

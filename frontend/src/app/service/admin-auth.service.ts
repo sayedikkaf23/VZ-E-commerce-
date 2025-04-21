@@ -114,12 +114,12 @@ getCountryRisks() {
 }
 
 // Add a new country risk
-addCountryRisk(data: { country: string, risk: string }) {
+addCountryRisk(data: { country: string, RiskRating: number }) {
   return this.http.post(`${this.url}/api/country-risk/add`, data);
 }
 
 // Update existing country risk
-updateCountryRisk(id: string, data: { country: string, risk: string }) {
+updateCountryRisk(id: string, data: { country: string, RiskRating: number }) {
   return this.http.put(`${this.url}/api/country-risk/update/${id}`, data);
 }
 
