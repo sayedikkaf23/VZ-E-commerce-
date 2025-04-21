@@ -2,7 +2,6 @@ import { isPlatformBrowser } from '@angular/common';
 import { Component, AfterViewInit, Inject, PLATFORM_ID, HostListener } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr'; // For toast notifications
-import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
 import { catchError, switchMap } from 'rxjs';
@@ -12,6 +11,8 @@ import { of } from 'rxjs';
 import Swal from 'sweetalert2';
 import { GetnationalityService } from '../service/getnationality.service';
 import { ChangeDetectorRef } from '@angular/core';
+import { UserService } from '../service/user.service';
+
 interface Nationality {
   common: string;
   country: string;
@@ -41,6 +42,7 @@ export class ShowDetailsComponent implements AfterViewInit {
     private dataStorageService: DataStorageService,
     private matchScoreStorageService: MatchScoreStorageService,
     private cdRef: ChangeDetectorRef,
+
     private getnationalityService: GetnationalityService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -182,68 +184,41 @@ export class ShowDetailsComponent implements AfterViewInit {
 
 
   submitData() {
-    const finalData = {
-      ...this.personalInfo,
-      ...this.bankInfo
-    };
-  
     Swal.fire({
       title: 'Confirm Your Data',
-      text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
+      text: "Once you move forward, you won't be able to edit your information.",
       icon: 'warning',
       showCancelButton: true,
-      confirmButtonColor: '#FA2E52',
       confirmButtonText: 'Yes, I confirm',
       cancelButtonText: 'Review Data'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const birthday = new Date(finalData.birthday);
-        const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
-  
-        // const payload = {
-        //   country: finalData.nationality,
-        // };
+    }).then(result => {
+      if (!result.isConfirmed) return;
 
-        const nationality = finalData.nationality;
-        const match = this.nationalities.find(
-          (item) => item.common.toLowerCase() === nationality.toLowerCase()
-        );
-  
-        const payload = {
-          country: match ? match.country : nationality // fallback if not found
-        };
-  
-        this.isLoading = true;
-  
-        this.userService.getProductsByCountryRisk(payload).pipe(
-          catchError((error) => {
-            console.error(error);
+      const payload = {
+        ServiceNameCode: this.personalInfo.ServiceNameCode,
+        SubTypeCode:this.bankInfo.SubTypeCode,
+        RiskCode:this.bankInfo.RiskCode
+      };
+      
+      this.isLoading = true;
+      this.userService.getServiceProducts(payload)
+        .pipe(
+          catchError(err => {
+            console.error(err);
             this.isLoading = false;
-            Swal.fire({
-              title: 'Error',
-              text: 'Something went wrong. Would you like to retry?',
-              icon: 'error',
-              showCancelButton: true,
-              confirmButtonText: 'Retry',
-              cancelButtonText: 'Cancel'
-            }).then((retryResult) => {
-              if (retryResult.isConfirmed) {
-                this.submitData();
-              }
-            });
-            return of(null); // gracefully complete the observable chain
+            this.toastr.error('Couldn’t load service products.', 'Error');
+            return of(null);
           })
-        ).subscribe((matchScoreResponse: any) => {
+        )
+        .subscribe(resp => {
           this.isLoading = false;
-  
-          if (matchScoreResponse) {
-            localStorage.setItem('finalData', JSON.stringify(finalData));
-            this.matchScoreStorageService.setMatchScoreResponse(matchScoreResponse);
-  console.log(matchScoreResponse, "matchScoreResponse")
-            this.router.navigate(['/ShowDetails-2']);
-          }
+          if (!resp) return;
+
+          // Store or pass along resp as needed…
+          localStorage.setItem('serviceProducts', JSON.stringify(resp));
+          // then navigate:
+          this.router.navigate(['/ShowDetails-2']);
         });
-      }
     });
   }
   

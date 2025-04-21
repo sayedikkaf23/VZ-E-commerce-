@@ -1,11 +1,21 @@
 // controllers/serviceProductsController.js
 require('dotenv').config();
 const axios = require('axios');
-
+ 
 exports.getServiceProducts = async (req, res) => {
   try {
     const { ServiceNameCode, SubTypeCode, RiskCode } = req.body;
-
+ 
+ 
+ 
+    const requestBody = JSON.stringify({
+      ServiceNameCode: ServiceNameCode,
+      SubTypeCode: SubTypeCode,
+      RiskCode: RiskCode,
+   
+ 
+    });
+ 
     // 1) grab Salesforce OAuth token
     const tokenResp = await axios.post(
       `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
@@ -20,28 +30,33 @@ exports.getServiceProducts = async (req, res) => {
         },
       }
     );
-
+ 
+    const salesforceUrl = tokenResp.data.instance_url;
+ 
+    const config = {
+      method: 'get',
+      maxBodyLength: Infinity,
+      url: `${salesforceUrl}/services/apexrest/VZAR_ServicesProducts/`,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${tokenResp.data.access_token}`,
+      },
+      data: requestBody,
+    };
+ 
+    const salesforceResponse = await axios.request(config);
     // 2) call the Apex REST endpoint as GET + params
-    const sfResp = await axios.get(
-      `${tokenResp.data.instance_url}/services/apexrest/VZAR_ServicesProducts/`,
-      {
-        headers: {
-          Authorization: `Bearer ${tokenResp.data.access_token}`,
-          'Content-Type': 'application/json'
-        },
-        params: { ServiceNameCode, SubTypeCode, RiskCode }
-      }
-    );
-    console.log('SF response data:', sfResp.data);
-
+ 
+   
     // 3) return the product payload
-    return res.status(200).json(sfResp.data);
-
+    return res.status(200).json(salesforceResponse.data);
+ 
   } catch (err) {
-    console.error('getServiceProducts error:', err.response?.data || err);
+    console.error('getServiceProducts error:', err || err);
     return res.status(500).json({
       message: 'Failed to fetch service products',
       error: err.response?.data || err.toString()
     });
   }
 };
+ 

@@ -96,8 +96,6 @@ export class UserService {  // Changed the service name to UserService
   createOpportunity(payload: any): Observable<any> {
     return this.http.post(`${this.url}/user/createOpportunity`, payload); 
   }
-
-
   getServiceProducts(payload: {
     ServiceNameCode: string;
     SubTypeCode: string;
@@ -109,4 +107,6 @@ export class UserService {  // Changed the service name to UserService
       { headers: { 'Content-Type': 'application/json' } }
     );
   }
+
+  
 }
