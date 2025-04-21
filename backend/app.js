@@ -23,6 +23,8 @@ const productFiltred=require("./routes/productFilterRoutes")
 const risk=require("./routes/riskRoutes")
 const currency=require("./routes/currencyRoute")
 const productRoute=require("./routes/product")
+const serviceProductsRouter = require('./routes/serviceProducts');
+
 var app = express();
 require('./controllers/mailerController');
 
@@ -71,6 +73,7 @@ app.use("/api/product-risk", productRiskRoutes);
 app.use("/api/customer", productFiltred);
 app.use("/currency", currency);
 app.use("/product", productRoute);
+app.use("/service", serviceProductsRouter);
 
 
 if (!process.env.SALESFORCE_USERNAME || !process.env.SALESFORCE_PASSWORD) {
