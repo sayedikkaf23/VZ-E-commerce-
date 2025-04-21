@@ -9,6 +9,7 @@ import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser
 import { UserService } from '../service/user.service';
 import { GetnationalityService } from '../service/getnationality.service';
 import { DataStorageService } from '../service/data-storage.service';
+import { AdminAuthService } from '../service/admin-auth.service';
 
  interface Nationality {
   common: string;
@@ -37,6 +38,8 @@ export class Step1Component implements OnInit {
     private cdRef: ChangeDetectorRef,
     private toastr: ToastrService,
     private userService: UserService,
+    private adminAuthService: AdminAuthService,
+
     private getnationalityService: GetnationalityService,
     private dataStorageService: DataStorageService ,// Inject the service
 
@@ -68,11 +71,11 @@ export class Step1Component implements OnInit {
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
 
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities = data.map((country: any) => ({
-        common: country.name.common,
-        country: country.name.country
-      }));
+   
+    this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
+       
+      
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
     

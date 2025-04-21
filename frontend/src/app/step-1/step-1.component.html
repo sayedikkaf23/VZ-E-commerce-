@@ -52,7 +52,7 @@
                 placeholder="Enter your Email ID"
               />
             </div>
-            <div class="form-field" *ngIf="nationalities.length > 0">
+            <!-- <div class="form-field" *ngIf="nationalities.length > 0">
               <label for="nationality">Nationality<span class="required">*</span></label>
               <select class="form-select" formControlName="nationality">
                 <option value="" disabled selected>Select Nationality</option>
@@ -60,8 +60,17 @@
                   {{ nationality.common }}
                 </option>
               </select>
+            </div> -->
+            <div class="form-field" *ngIf="nationalities.length > 0">
+              <label for="nationality">Country<span class="required">*</span></label>
+              <select class="form-select" formControlName="nationality">
+                <option value="" disabled selected>Select Country</option>
+                <option *ngFor="let nationality of nationalities" [value]="nationality.country">
+                  {{ nationality.country }}
+
+                </option>
+              </select>
             </div>
-            
             
             
             
