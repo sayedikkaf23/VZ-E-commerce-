@@ -230,8 +230,8 @@ export class ShowDetailsComponent implements AfterViewInit {
         .subscribe(resp => {
           this.isLoading = false;
           if (!resp) return;
-          localStorage.removeItem('step1Data');
-          localStorage.removeItem('step2Data');
+          // localStorage.removeItem('step1Data');
+          // localStorage.removeItem('step2Data');
           // Store or pass along resp as needed…
           localStorage.setItem('serviceProducts', JSON.stringify(resp));
           // then navigate:
