@@ -27,7 +27,7 @@ declare var $: any;
 })
 export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
   @ViewChild('dateInput') dateInput!: ElementRef;
-
+  businessCategories: any[] = [];
   formData: any = {
     CompanyName: '',
     CompanyIncorporated: '',
@@ -110,6 +110,29 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       this.updateShareholders();
 
       this.cdRef.detectChanges();
+    }
+  }
+
+
+  onCompanyLocationChange(value: string): void {
+    if (value === 'United Arab Emirates') {
+      // Call the API when "Yes" is selected
+      this.userService.getAllBusinessCategories().subscribe(
+        (response) => {
+          // Log for debugging
+          console.log('Categories response:', response);
+
+          // Assuming response structure: { message: string, data: Array }
+          this.businessCategories = response.data;
+          this.cdRef.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching business categories:', error);
+        }
+      );
+    } else {
+      // Optionally clear the categories if "No" is selected
+      this.businessCategories = [];
     }
   }
 

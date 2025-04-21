@@ -32,7 +32,7 @@
 
                 <fieldset>
                   <select class="form-select" id="CompanyIncorporated" [(ngModel)]="formData.CompanyIncorporated" style="border-color: transparent;"
-                      [ngModelOptions]="{ standalone: true }" >
+                      [ngModelOptions]="{ standalone: true }" (ngModelChange)="onCompanyLocationChange($event)">
                       <option value="" disabled>Select Country</option>
                       <option *ngFor="let nationality of nationalities" [value]="nationality">
                           {{ nationality }}
@@ -58,69 +58,19 @@
             <div class="form-field" *ngIf="formData.CompanyIncorporated == 'United Arab Emirates'">
               <label for="tradelicense">What are the type of activities mentioned on your trade license?: <span class="required">*</span></label>
               <fieldset>
-                <select name="tradelicense" id="tradelicense" class="form-select" [(ngModel)]="formData.tradelicense">
-                  <option value="" disabled selected>Select  Trade license</option>
-                  <!-- Options specific to each licensing type -->
-                  <!-- <option  value="Commercial License">Commercial License</option>
-                  <option  value="Professional License">Professional License</option>
-                  <option  value="Industrial License">Industrial License</option>
-                  <option  value="Tourism License">Tourism License</option> -->
-
-                    <!-- New Options -->
-                    <option value="Communications and broadcasting">Communications and broadcasting</option>
-                    <option value="Video and audio recordings">Video and audio recordings</option>
-                    <option value="Passenger transportation and car rental">Passenger transportation and car rental</option>
-                    <option value="Brokerage business">Brokerage business</option>
-                    <option value="Trading and distribution of different products">Trading and distribution of different products</option>
-                    <option value="Theaters and cinemas">Theaters and cinemas</option>
-                    <option value="Facility administration">Facility administration</option>
-                    <option value="Rental services">Rental services</option>
-                    <option value="Postal service">Postal service</option>
-                    <option value="Buying and selling livestock">Buying and selling livestock</option>
-                    <option value="Investment">Investment</option>
-                    <option value="Insurance">Insurance</option>
-                    <option value="Rental of office spaces and electronic equipment">Rental of office spaces and electronic equipment</option>
-                    <option value="Perfumery">Perfumery</option>
-                    <option value="Services for packing">Services for packing</option>
-                    <option value="Property investment">Property investment</option>
-                    <option value="Motor vehicle and motorcycle trading">Motor vehicle and motorcycle trading</option>
-                    <option value="Cleaning and surveillance services">Cleaning and surveillance services</option>
-                    <option value="Supermarket and stores">Supermarket and stores</option>
-                    <option value="Manufacturing">Manufacturing</option>
-                    <option value="Machines and appliances">Machines and appliances</option>
-                    <option value="Food processing">Food processing</option>
-                    <option value="Woodworking and wood products">Woodworking and wood products</option>
-                    <option value="Steel fabrication">Steel fabrication</option>
-                    <option value="Generation/Transmission of electricity">Generation/Transmission of electricity</option>
-                    <option value="Fabrication of textiles and products">Fabrication of textiles and products</option>
-                    <option value="Production of petroleum products">Production of petroleum products</option>
-                    <option value="Motorcycles and replacement parts">Motorcycles and replacement parts</option>
-                    <option value="Chemical manufacturing">Chemical manufacturing</option>
-                    <option value="Gold and precious stone cutting">Gold and precious stone cutting</option>
-                    <option value="Garment and rug">Garment and rug</option>
-                    <option value="Ship construction">Ship construction</option>
-                    <option value="Waste collection and disposal">Waste collection and disposal</option>
-                    <option value="Plastics manufacturing">Plastics manufacturing</option>
-                    <option value="Glass repair and lens cutting">Glass repair and lens cutting</option>
-                    <option value="Eyeglasses production">Eyeglasses production</option>
-                    <option value="Leather products manufacturing">Leather products manufacturing</option>
-                    <option value="Paper products manufacturing">Paper products manufacturing</option>
-                    <option value="Accounting and finance consultancy">Accounting and finance consultancy</option>
-                    <option value="Agriculture and soil consultancy">Agriculture and soil consultancy</option>
-                    <option value="Animal welfare society">Animal welfare society</option>
-                    <option value="Forum of businesspeople">Forum of businesspeople</option>
-                    <option value="Also, the business advisory council">Business advisory council</option>
-                    <option value="Management consultancy">Management consultancy</option>
-                    <option value="Facilities management organization">Facilities management organization</option>
-                    <option value="Marketing and information">Marketing and information</option>
-                    <option value="Hospitals and rehab facilities">Hospitals and rehab facilities</option>
-                    <option value="Insurance consultancy">Insurance consultancy</option>
-                    <option value="Beauty salons">Beauty salons</option>
-                    <option value="Legal assistance">Legal assistance</option>
-                    <option value="Translation and typing">Translation and typing</option>
-                    <option value="Representative offices">Representative offices</option>
-                    <option value="Social clubs and activities for social work">Social clubs and activities for social work</option>
-                </select>
+                <select
+                name="tradelicense"
+                id="tradelicense"
+                class="form-select"
+                [(ngModel)]="formData.tradelicense"
+              >
+                <option [ngValue]="null" disabled>
+                  What are the type of activities mentioned on your trade license?
+                </option>
+                <option *ngFor="let category of businessCategories" [value]="category.name">
+                  {{ category.name }}
+                </option>
+              </select>
               </fieldset>
             </div>
             <div class="form-field" *ngIf="formData.CompanyIncorporated">

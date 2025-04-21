@@ -35,6 +35,8 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
   step1Data: any = {};
   nationalities: string[] = [];
   nationalitiesData: string[] = [];
+  businessCategories: any[] = [];
+
 
   constructor(
     private formDataService: FormDataService,
@@ -69,6 +71,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges();
     });
 
+  
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
@@ -91,10 +94,34 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
         this.shareholders = parsedData.shareholders;
       }
 
+
       // Ensure correct number of shareholders
       this.updateShareholders();
 
       this.cdRef.detectChanges();
+    }
+
+  }
+
+  onCompanyLocationChange(value: string): void {
+    if (value === 'United Arab Emirates') {
+      // Call the API when "Yes" is selected
+      this.userService.getAllBusinessCategories().subscribe(
+        (response) => {
+          // Log for debugging
+          console.log('Categories response:', response);
+
+          // Assuming response structure: { message: string, data: Array }
+          this.businessCategories = response.data;
+          this.cdRef.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching business categories:', error);
+        }
+      );
+    } else {
+      // Optionally clear the categories if "No" is selected
+      this.businessCategories = [];
     }
   }
 
