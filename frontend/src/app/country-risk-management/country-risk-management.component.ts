@@ -30,7 +30,7 @@ export class CountryRiskManagementComponent implements OnInit {
   ) {
     this.editCountryForm = this.fb.group({
       country: [''],
-      risk: ['']
+      RiskRating: ['']
     });
   }
 
@@ -79,9 +79,11 @@ export class CountryRiskManagementComponent implements OnInit {
     this.isEditModalOpen = true;
     this.isAddingNew = false;
     this.selectedCountryId = country._id;
+    const riskMap: { [key: string]: number } = { Low: 1, Medium: 2, High: 3 };
+
     this.editCountryForm.patchValue({
       country: country.country,
-      risk: country.risk
+      RiskRating: riskMap[country.risk] || 0
     });
   }
 

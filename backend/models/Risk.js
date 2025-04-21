@@ -10,6 +10,10 @@ const RiskSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  riskRating: {
+    type: Number,
+    required: true
+  },
   countries: {
     type: [String], // Array of strings
     default: []
