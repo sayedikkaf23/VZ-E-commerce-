@@ -6,13 +6,13 @@ import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import { DataStorageService } from '../service/data-storage.service';
 import AOS from 'aos';
-import { switchMap, of } from 'rxjs';
+import { switchMap, of, map, tap, MonoTypeOperatorFunction, retryWhen, delay, take } from 'rxjs';
 import Swal from 'sweetalert2';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
-
-
+ 
+ 
 declare var $: any;
-
+ 
 @Component({
   selector: 'app-show-details-2',
   templateUrl: './show-details-2.component.html',
@@ -27,9 +27,9 @@ export class ShowDetails2Component implements AfterViewInit {
   matchScoreResponse: any;
   serviceProducts: any[] = [];
   selectedCountry: string = ''; // Initialize with an empty string or default country code if needed
-
+ 
   quoteWithProductDetails: any;
-
+ 
   constructor(
     private http: HttpClient,
     private toastr: ToastrService,
@@ -42,7 +42,7 @@ export class ShowDetails2Component implements AfterViewInit {
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
-
+ 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
@@ -56,17 +56,17 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
    if(this.isBrowser) {
       const step1Data = localStorage.getItem('step1Data');
       const step2Data = localStorage.getItem('step2Data');
-
+ 
       if (!step1Data || !step2Data) {
         this.router.navigate(['/home']);  // Navigate to home if there's no data
       } else {
         this.personalInfo = JSON.parse(step1Data);
         this.bankInfo = JSON.parse(step2Data);
-
+ 
         // Prevent back navigation
         // this.preventBackNavigation();
       }
-
+ 
       const raw = localStorage.getItem('serviceProducts');
       if (raw) {
         const parsed = JSON.parse(raw);
@@ -76,11 +76,11 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
      
     }
   }
-
+ 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
       AOS.init();
-
+ 
       $(window).scroll(function () {
         const height = $(window).scrollTop();
         if (height > 50) {
@@ -89,33 +89,33 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
           $('html').removeClass('sticky');
         }
       });
-
+ 
       $(document).ready(() => {
         $('.scrollToTop').click(function (event: any) {
           event.preventDefault();
           $('html, body').animate({ scrollTop: 0 }, 'slow');
           return false;
         });
-
+ 
         $('.navbar-toggle').click(function () {
           $('html').toggleClass('menu-show');
         });
-
+ 
         $('.header-menu-overlay').click(function () {
           $('html').removeClass('menu-show');
         });
-
+ 
         $('.sub-menu-toggle').click(() => {
           $(this).parent().toggleClass('submenu_active');
         });
       });
     }
   }
-
+ 
   // preventBackNavigation() {
   //   // Push the current route to history to prevent back navigation
   //   history.pushState(null, '', this.router.url);
-  
+ 
   //   // Listen for 'popstate' events to block back navigation
   //   window.addEventListener('popstate', (event) => {
   //     history.pushState(null, '', this.router.url);
@@ -127,25 +127,25 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
   //       }, 50);
   //   });
   // }
-  
+ 
   submitData() {
     if (!this.salesforceResponse || !this.salesforceResponse.data || !this.salesforceResponse.data.leadWithDetails) {
       console.error("salesforceResponse.data.leadWithDetails is not ready or missing");
       return;
     }
-
+ 
     const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
     if (!LeadId) {
       console.error("LeadId is not found in salesforceResponse.data.leadWithDetails");
       return;
     }
-
+ 
     const finalData = {
       ...this.personalInfo,
       ...this.bankInfo,
       LeadId
     };
-
+ 
     // Call the backend API to create a payment opportunity
     this.userService.createPaymentOpportunity(finalData).subscribe(
       (response: any) => {
@@ -161,42 +161,44 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       }
     );
   }
-
-
-
+ 
+ 
+ 
   getTotalAmountIncludingVAT(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
+ 
     return this.matchScoreResponse.products.reduce((total: number, product: {totalPriceVat: number}) => {
-    
+   
       return total + product.totalPriceVat;
     }, 0);
   }
-
+ 
   getTotalDiscountedAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
+ 
     return this.matchScoreResponse.products.reduce((total: number, product: { totalPrice: number}) => {
       const itemTotal = product.totalPrice ;
       return total + itemTotal;
     }, 0);
   }
-
+ 
   getTotalAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
+ 
     return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number}) => {
       const itemTotal = product.unitPrice * product.quantity ;
       return total + itemTotal;
     }, 0);
   }
+ 
+ 
   submitPaymentOpportunity() {
     // Check if serviceProducts is properly populated
     if (!this.serviceProducts || this.serviceProducts.length === 0) {
       this.toastr.error('No products available to submit.', 'Error');
       return;
     }
-  
+ 
     // Prepare the payload for the API request
     const paymentPayload = {
       firstName: this.personalInfo.firstName,
@@ -205,7 +207,9 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       nationality: this.personalInfo.nationality,
       phone: this.personalInfo.mobileNumber.number,
       dob: this.personalInfo.birthday,
-      productNameList: this.serviceProducts.map(product => ({
+      type: "Business Bank",
+      CustomerType: "I",
+      prodcutNameList: this.serviceProducts.map(product => ({
         ProductName: product.Product_Name,
         ProductFamily: "Traditional Services", // Example placeholder
         ProductDescription: "Service for UAE Resident", // Example placeholder
@@ -215,27 +219,94 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
         ProductDiscount: 0 // Assuming no discount
       }))
     };
-    console.log("dataaa",this.personalInfo)
-
-  
-    // Log the payload for debugging
     console.log("Sending Payment Opportunity Payload:", paymentPayload);
-  
-    // Call the API to create the payment opportunity
-    this.userService.createPaymentOpportunity(paymentPayload).subscribe(
-      (response) => {
+ 
+    // Call the first API to create the payment opportunity
+    this.userService.createPaymentOpportunity(paymentPayload).pipe(
+      retryWhen(errors =>
+        errors.pipe(
+          tap(() => console.log('First attempt failed. Prompting user to retry...')),
+          // Prompt user with a SweetAlert confirmation dialog
+          switchMap(() => {
+            return Swal.fire({
+              title: 'API Error',
+              text: 'Do you want to retry the request?',
+              icon: 'error',
+              showCancelButton: true,
+              confirmButtonText: 'Retry',
+              cancelButtonText: 'Cancel'
+            }).then(result => {
+              if (result.isConfirmed) {
+                return of(null); // User confirmed retry, so we trigger a retry
+              } else {
+                throw new Error('User canceled the retry');
+              }
+            });
+          }),
+          delay(2000), // Delay for 2 seconds before retrying
+          take(3) // Retry 3 times before failing
+        )
+      ),
+      switchMap((response) => {
         console.log('Payment opportunity created:', response);
-        this.router.navigate(['/payment-success']); // Navigate to the success page
-      },
-      (error) => {
-        console.error('Error creating payment opportunity:', error);
-        this.toastr.error('Failed to create payment opportunity', 'Error');
+ 
+        // Extract the QuotePaymentId from the response
+        const quotePaymentId = response.QuotePaymentId;
+  console.log(quotePaymentId)
+        // Prepare payload for the second API call
+        const payload = {
+          CustomerId: quotePaymentId,
+          CompanyName: 'Virtuzone'
+        };
+ 
+        // Call the second API (digicomplice) after the first one is successful
+        return this.userService.digicomplice(payload).pipe(
+          map(secondResponse => ({
+            quotePaymentId,
+            leadId: secondResponse?.screeningmatchScore?.customerId || null
+          }))
+        );
+      }),
+      switchMap(({ quotePaymentId, leadId }) => {
+        if (!leadId) {
+          throw new Error('Missing LeadId from screening response');
+        }
+ 
+        // Prepare the data for the third API call
+        const checkStatusData = {
+          CustomerId: leadId,
+          CompanyName: 'Virtuzone'
+        };
+ 
+        // Call the third API (checkStatus)
+        return this.userService.checkStatus(checkStatusData).pipe(
+          tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
+            if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+              this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+            } else {
+              window.alert(
+                'Your request has been submitted successfully. You will receive an email when your application is approved.'
+              );
+              this.router.navigate([`/failure/${quotePaymentId}`]);
+            }
+ 
+            // Clear local storage if needed
+            // localStorage.clear();
+          })
+        );
+      })
+    ).subscribe({
+      next: () => {},
+      error: (err) => {
+        this.toastr.error(err.message || 'An error occurred', 'Error');
+        console.error(err);
       }
-    );
+    });
   }
-  
-  
-  
-  
-  
+ 
+ 
+ 
+ 
+ 
 }
+ 
