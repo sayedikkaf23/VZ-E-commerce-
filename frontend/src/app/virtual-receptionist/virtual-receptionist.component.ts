@@ -52,6 +52,7 @@ export class VirtualReceptionistComponent {
       nationality: ['', Validators.required],
       mobileNumber: ['', Validators.required],
       birthday: ['', Validators.required],
+      countryRisk: ['', Validators.required]
     });
   }
 
@@ -90,6 +91,21 @@ export class VirtualReceptionistComponent {
     }
   }
 
+  onNationalityChange(event: Event): void {
+    const selectedCountry = (event.target as HTMLSelectElement).value;
+    const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
+  
+    if (selectedNationality) {
+      this.personalDetailsForm.patchValue({
+        countryRisk: selectedNationality.RiskRating
+      });
+    } else {
+      this.personalDetailsForm.patchValue({
+        countryRisk: ''
+      });
+    }
+  }
+
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard
   }
@@ -108,8 +124,10 @@ onSubmit() {
     const virtualdata = localStorage.getItem('virtualdata');
     
     const virtualdata1 = localStorage.getItem('virtualdata1');
+    const currentFormValue = this.personalDetailsForm.value;
 
     if (virtualdata && virtualdata1) {
+      const previousData = JSON.parse(virtualdata);
       // Update 'virtualdata' with current form values
       const updatedVirtualForm = {
         ...JSON.parse(virtualdata),
@@ -117,7 +135,17 @@ onSubmit() {
       };
 
       localStorage.setItem('virtualdata', JSON.stringify(updatedVirtualForm)); // Save updated 'mailform'
+ // Compare selected country with previously stored country
+ const previousCountry = (previousData?.nationality || '').trim();
+ const currentCountry = (currentFormValue?.nationality || '').trim();
 
+ if (previousCountry !== currentCountry) {
+ // Country has changed 
+ this.router.navigate(['/virtual-receptionist-1']);
+} else {
+ // Country is same 
+ this.router.navigate(['/virtual-receptionist-details']);
+}
       this.router.navigate(['/virtual-receptionist-details']);
       return; // Exit early to avoid further execution
     }

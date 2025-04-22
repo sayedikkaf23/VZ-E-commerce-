@@ -48,7 +48,7 @@ export class MailsManagementSummaryComponent {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-    this.preventBackNavigation(); // Prevent back navigation on this page
+    // this.preventBackNavigation(); // Prevent back navigation on this page
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
     // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
     this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
@@ -112,19 +112,19 @@ export class MailsManagementSummaryComponent {
     }
   }
 
-  preventBackNavigation() {
-    history.pushState(null, '', window.location.href);
+  // preventBackNavigation() {
+  //   history.pushState(null, '', window.location.href);
 
-    // Listen for popstate event to handle the back button navigation consistently
-    window.addEventListener('popstate', () => {
-      history.pushState(null, '', window.location.href);
-      this.toastr.error('Back navigation is disabled on this page.', 'Warning');
-      // Reload the page to reset the state
-      setTimeout(() => {
-        window.location.reload();
-      }, 50);
-    });
-  }
+  //   // Listen for popstate event to handle the back button navigation consistently
+  //   window.addEventListener('popstate', () => {
+  //     history.pushState(null, '', window.location.href);
+  //     this.toastr.error('Back navigation is disabled on this page.', 'Warning');
+  //     // Reload the page to reset the state
+  //     setTimeout(() => {
+  //       window.location.reload();
+  //     }, 50);
+  //   });
+  // }
 
   initializeJQueryFunctions() {
     $(document).ready(() => {

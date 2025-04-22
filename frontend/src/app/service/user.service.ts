@@ -43,6 +43,10 @@ export class UserService {  // Changed the service name to UserService
     return this.http.get(`${this.url}/risk/getAllBusinessCategories`);
   }
   
+  getBusinessCategoriesByRisk(riskRating: number): Observable<any> {
+    return this.http.get(`${this.url}/risk/getBusinessCategoriesByRisk?riskRating=${riskRating}`);
+  }
+
   callSalesforceQuoteService(payload:any): Observable<any> {
     return this.http.post(`${this.url}/user/callSalesforceQuoteService`, payload); // Sending the payload to the backend
   }

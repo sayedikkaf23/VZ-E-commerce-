@@ -50,7 +50,9 @@ export class CountryRiskManagementComponent implements OnInit {
 
   getCountryRisks(): void {
     this.adminAuthService.getCountryRisks().subscribe(
-      (res) => this.countryRisks = res,
+      (res: any[]) => {
+        this.countryRisks = res.sort((a, b) => a.country.localeCompare(b.country));
+      },
       (err) => {
         console.error('Error fetching countries:', err);
         this.toastr.error('Failed to fetch countries.');

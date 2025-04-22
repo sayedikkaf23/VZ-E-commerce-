@@ -106,6 +106,11 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
         this.shareholders = parsedData.shareholders;
       }
 
+       // Auto trigger the category API call if UAE is pre-filled
+    if (this.formData.CompanyIncorporated === 'United Arab Emirates') {
+      this.onCompanyLocationChange('United Arab Emirates');
+    }
+
       // Call updateShareholders() after loading from localStorage
       this.updateShareholders();
 
@@ -116,24 +121,31 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
 
   onCompanyLocationChange(value: string): void {
     if (value === 'United Arab Emirates') {
-      // Call the API when "Yes" is selected
-      this.userService.getAllBusinessCategories().subscribe(
-        (response) => {
-          // Log for debugging
-          console.log('Categories response:', response);
-
-          // Assuming response structure: { message: string, data: Array }
-          this.businessCategories = response.data;
-          this.cdRef.detectChanges();
-        },
-        (error) => {
-          console.error('Error fetching business categories:', error);
+      const storedStep2Data = localStorage.getItem('virtualdata');
+    
+      if (storedStep2Data) {
+        const parsedData = JSON.parse(storedStep2Data);
+        const riskRating = parsedData.countryRisk; 
+        console.log(riskRating);
+  
+        if (riskRating !== undefined && riskRating !== null) {
+          this.userService.getBusinessCategoriesByRisk(riskRating).subscribe(
+            (response) => {
+              console.log('Categories response:', response);
+              this.businessCategories = response.data.sort(
+                (a: any, b: any) => a.name.localeCompare(b.name)
+              );
+              this.cdRef.detectChanges();
+            },
+            (error) => {
+              console.error('Error fetching business categories:', error);
+            }
+          );
+        } else {
+          console.warn('No countryRisk found in mailform1');
         }
-      );
-    } else {
-      // Optionally clear the categories if "No" is selected
-      this.businessCategories = [];
-    }
+      }
+    } 
   }
 
   ngAfterViewInit() {
