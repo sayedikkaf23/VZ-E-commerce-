@@ -132,61 +132,35 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       console.error("salesforceResponse.data.leadWithDetails is not ready or missing");
       return;
     }
-  
+
     const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
     if (!LeadId) {
       console.error("LeadId is not found in salesforceResponse.data.leadWithDetails");
       return;
     }
-  
+
     const finalData = {
       ...this.personalInfo,
       ...this.bankInfo,
       LeadId
     };
-  
-    this.userService.uploadUserData(finalData).pipe(
-      switchMap(response => {
-        if (response.message) {
-          // Clear stored data
-          localStorage.removeItem('step1Data');
-          localStorage.removeItem('step2Data');
-  
-          const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
-          
-          // Call checkStatus API after successful data submission
-          const checkStatusData = {
-            CustomerId:LeadId, // Ensure customerId exists in personalInfo
-            CompanyName: "Virtuzone" // Ensure companyName exists in personalInfo
-          };
-  
-          return this.userService.checkStatus(checkStatusData).pipe(
-            switchMap(checkStatusResponse => {
-              console.log("Check Status Response:", checkStatusResponse);
-  
-              if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-                // Redirect to payment URL
-                this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
-                return of(null);
-              } else {
-                window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
-                this.router.navigate([`/failure/${quotePaymentId}`]);
-                return of(null);
-              }
-            })
-          );
-        } else {
-          throw new Error('Data submission failed');
-        }
-      })
-    ).subscribe(
-      () => {},
-      error => {
-        this.toastr.error(error.message || 'An error occurred', 'Error');
-        console.error(error);
+
+    // Call the backend API to create a payment opportunity
+    this.userService.createPaymentOpportunity(finalData).subscribe(
+      (response: any) => {
+        console.log("Payment Opportunity Created: ", response);
+        this.toastr.success('Payment Opportunity Created Successfully', 'Success');
+        // After successful creation, navigate to the payment page
+        const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
+        this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+      },
+      (error) => {
+        console.error("Error creating payment opportunity:", error);
+        this.toastr.error('An error occurred while creating payment opportunity', 'Error');
       }
     );
   }
+
 
 
   getTotalAmountIncludingVAT(): number {

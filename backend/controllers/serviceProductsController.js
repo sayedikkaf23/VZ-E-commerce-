@@ -74,7 +74,7 @@ exports.getServiceProducts = async (req, res) => {
 
 
 // Add a new method for creating an opportunity in Salesforce
-exports.createOpportunity = async (req, res) => {
+exports.createPaymentOpportunity = async (req, res) => {
   try {
     const { firstName, lastName, email, nationality, phone, dob, prodcutNameList } = req.body;
 

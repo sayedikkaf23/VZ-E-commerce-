@@ -37,8 +37,9 @@
               <tbody>
                 <tr *ngFor="let product of serviceProducts">
                   <td>{{ product.Product_Name }}</td>
-                  <td>N/A</td>
-                  <td class="currency">N/A</td>
+                  <td>1</td>
+                  <td class="currency"> {{ product.Currency_Code }}
+                    {{ product.price | number:'1.2-2' }}</td>
                 
                   <!-- show VAT as a percent -->
                   <td class="currency">

@@ -107,6 +107,9 @@ export class UserService {  // Changed the service name to UserService
       { headers: { 'Content-Type': 'application/json' } }
     );
   }
+  createPaymentOpportunity(payload: any): Observable<any> {
+    return this.http.post(`${this.url}/service/create-opportunity`, payload); 
+  }
 
   
 }
