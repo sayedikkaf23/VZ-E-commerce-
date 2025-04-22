@@ -1,4 +1,7 @@
 const Risk = require('../models/Risk');
+const Pidata = require('../models/pidata');
+
+// const CountryRisk = require("../models/CountryRisk");
 const ProductRisk = require("../models/ProductRisk");
 const CountryRisk = require("../models/CountryRisk");
 const BusinessCategory = require('../models/BusinessCategory'); // adjust path if needed
@@ -205,86 +208,65 @@ exports.getProductsByCountryRisk = async (req, res) => {
 
   exports.getProductsByCategoryAndCountryRisk = async (req, res) => {
     try {
-      const { categoryName, nationalities } = req.body;
+      const { customerCountry , ShareholderCountries,totalCusotmerSelected } = req.body;
+
+
+      const totalPossibleRating = totalCusotmerSelected * 3;
+      // const { customerCountry, ShareholderCountries, totalCusotmerSelected } = req.body;
+      const customerCountryData = await CountryRisk.findOne({ country: customerCountry }).lean();
   
-      if (!Array.isArray(nationalities) || nationalities.length === 0) {
-        return res.status(400).json({ message: 'A non-empty array of nationalities is required' });
+  if (!customerCountryData) {
+    return res.status(404).json({ message: `Customer country ${customerCountry} not found.` });
+  }
+  
+  const customerRiskRating = customerCountryData.RiskRating;
+
+  // 2. Get ShareholderCountries RiskRatings
+  const shareholderRiskRatings = [];
+
+  for (const country of ShareholderCountries) {
+    const countryData = await CountryRisk.findOne({ country }).lean();
+    if (countryData) {
+      shareholderRiskRatings.push({
+        country: countryData.country,
+        riskRating: countryData.RiskRating
+      });
+    } else {
+      shareholderRiskRatings.push({
+        country,
+        riskRating: 0   // if country not found, treat risk as 0
+      });
+    }
+  }
+
+  // 3. Calculate userRating
+  const customerRisk = customerRiskRating || 0;
+  const shareholderRiskSum = shareholderRiskRatings.reduce((sum, country) => sum + (country.riskRating || 0), 0);
+  const userRating = customerRisk + shareholderRiskSum;
+
+  console.log('Customer Risk Rating:', customerRisk);
+  console.log('Shareholder Risk Ratings:', shareholderRiskRatings);
+  console.log('User Rating (Customer + Shareholders):', userRating);
+    
+      const percentage = (userRating / totalPossibleRating) * 100;
+    
+      let computedRisk = 'Low';
+      if (percentage > 75) {
+        computedRisk = 'High';
+      } else if (percentage > 50) {
+        computedRisk = 'Medium';
       }
-  
-      const riskLevels = ['Low', 'Medium', 'High'];
-      const debugInfo = [];
-      let allCountryRisks = [];
-  
-      // Step 1: Loop through nationalities and collect risks
-      for (const nationality of nationalities) {
-        const nationalityDoc = await Nationality.findOne({ Value: nationality });
-        if (!nationalityDoc || !nationalityDoc.Country) {
-          debugInfo.push({ nationality, country: null, message: 'Country not found' });
-          continue;
-        }
-  
-        const country = nationalityDoc.Country;
-        const countryRiskDocs = await CountryRisk.find({ country });
-  
-        if (!countryRiskDocs || countryRiskDocs.length === 0) {
-          debugInfo.push({ nationality, country, message: 'No country risk found' });
-          continue;
-        }
-  
-        const risks = countryRiskDocs.map(r => r.risk);
-        allCountryRisks.push(...risks);
-        debugInfo.push({ nationality, country, risks });
-      }
-  
-      if (allCountryRisks.length === 0) {
-        return res.status(404).json({ message: 'No valid country risk data found for any nationality' });
-      }
-  
-      const maxCountryRiskIndex = allCountryRisks.reduce((max, risk) => {
-        const idx = riskLevels.indexOf(risk);
-        return idx > max ? idx : max;
-      }, -1);
-  
-      // CASE 1: If no categoryName provided → use only country risk
-      if (!categoryName) {
-        const finalRisk = riskLevels[maxCountryRiskIndex];
-        const products = await ProductRisk.find({ risk: finalRisk });
-  
-        return res.status(200).json({
-          appliedRisk: finalRisk,
-          from: 'country',
-          products,
-          debugInfo
-        });
-      }
-  
-      // CASE 2: Category is present → combine logic
-      const category = await BusinessCategory.findOne({ name: categoryName });
-      if (!category) {
-        return res.status(404).json({ message: 'Business category not found' });
-      }
-  
-      const categoryRisk = category.risk;
-      const categoryRiskIndex = riskLevels.indexOf(categoryRisk);
-  
-      let selectedRiskIndex = categoryRiskIndex;
-  
-      if (categoryRiskIndex > maxCountryRiskIndex) {
-        selectedRiskIndex = categoryRiskIndex;
-      } else {
-        selectedRiskIndex = Math.max(categoryRiskIndex, maxCountryRiskIndex);
-      }
-  
-      const finalRisk = riskLevels[selectedRiskIndex];
-      const products = await ProductRisk.find({ risk: finalRisk });
+
+
+
   
       return res.status(200).json({
-        appliedRisk: finalRisk,
-        from: 'category + country',
-        categoryRisk,
-        allCountryRisks,
-        products,
-        debugInfo
+        appliedRisk: computedRisk,
+        from: 'special category percentage logic',
+        percentage,
+        userRating,
+        totalPossibleRating,
+ 
       });
   
     } catch (err) {
