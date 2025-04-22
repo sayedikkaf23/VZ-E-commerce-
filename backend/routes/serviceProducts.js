@@ -1,6 +1,9 @@
 const express = require('express');
-const router  = express.Router();
-const { getServiceProducts } = require('../controllers/serviceProductsController');
+const router = express.Router();
+const serviceProductsController = require('../controllers/serviceProductsController');
 
-router.post('/service-products', getServiceProducts);
+// Define the routes
+router.post('/service-products', serviceProductsController.getServiceProducts);
+router.post('/create-opportunity', serviceProductsController.createOpportunity);
+
 module.exports = router;
