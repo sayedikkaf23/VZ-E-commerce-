@@ -1,6 +1,6 @@
 // controllers/serviceProductsController.js
 const CountryRisk = require("../models/CountryRisk");
-
+const Nationality=require("../models/nationalityModel")
 
 require('dotenv').config();
 const axios = require('axios');
@@ -73,12 +73,28 @@ exports.getServiceProducts = async (req, res) => {
 };
 
 
-// Add a new method for creating an opportunity in Salesforce
 exports.createPaymentOpportunity = async (req, res) => {
   try {
-    const { firstName, lastName, email, nationality, phone, dob, prodcutNameList } = req.body;
+    const { firstName, lastName, email, phone, dob, prodcutNameList,nationality } = req.body;
+// console.log(req.body)
+    // Log the RiskCode to ensure it's what you expect
+    // console.log("Received RiskCode:", RiskCode);
+    const cleanedPhone = phone.replace(/\s+/g, '');  // Removes all spaces
 
-    // 1) grab Salesforce OAuth token
+    // 1) Fetch nationality based on RiskCode (country)
+    const nationalityData = await Nationality.findOne({ Country:nationality });
+
+    if (!nationalityData) {
+      return res.status(400).json({
+        message: 'Invalid country provided. Nationality not found.',
+      });
+    }
+    // console.log("nationlity",nationalityData)
+
+    // Now we have the nationality value from the Nationality model
+    const nationalitys = nationalityData.Value;  // Assuming `Value` field stores the nationality
+    
+    // 2) Grab Salesforce OAuth token
     const tokenResp = await axios.post(
       `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
       null,
@@ -99,11 +115,13 @@ exports.createPaymentOpportunity = async (req, res) => {
       firstName: firstName,
       lastName: lastName,
       email: email,
-      nationality: nationality,
-      phone: phone,
+      nationality: nationalitys,  // Add nationality data fetched from Nationality model
+      phone: cleanedPhone,
       dob: dob,
       prodcutNameList: prodcutNameList,
     };
+
+    // console.log(requestBody)
 
     const config = {
       method: 'post',
@@ -116,16 +134,16 @@ exports.createPaymentOpportunity = async (req, res) => {
       data: JSON.stringify(requestBody),
     };
 
+    console.log(config)
     const salesforceResponse = await axios.request(config);
 
     return res.status(200).json(salesforceResponse.data);
 
   } catch (err) {
-    console.error('createOpportunity error:', err || err);
+    console.error('createOpportunity error:', err);
     return res.status(500).json({
       message: 'Failed to create opportunity',
-      error: err.response?.data || err.toString()
+      error: err.response?.data || err.toString(),
     });
   }
 };
- 

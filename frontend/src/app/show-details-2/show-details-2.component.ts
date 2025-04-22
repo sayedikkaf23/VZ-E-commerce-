@@ -26,6 +26,7 @@ export class ShowDetails2Component implements AfterViewInit {
   salesforceResponse: any;
   matchScoreResponse: any;
   serviceProducts: any[] = [];
+  selectedCountry: string = ''; // Initialize with an empty string or default country code if needed
 
   quoteWithProductDetails: any;
 
@@ -196,30 +197,35 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       return;
     }
   
-    // Create the payload for the API request
+    // Prepare the payload for the API request
     const paymentPayload = {
       firstName: this.personalInfo.firstName,
       lastName: this.personalInfo.lastName,
       email: this.personalInfo.email,
       nationality: this.personalInfo.nationality,
-      phone: this.personalInfo.phone,
-      dob: this.personalInfo.dob,
-      prodcutNameList: this.serviceProducts.map(product => ({
+      phone: this.personalInfo.mobileNumber.number,
+      dob: this.personalInfo.birthday,
+      productNameList: this.serviceProducts.map(product => ({
         ProductName: product.Product_Name,
-        ProductFamily: "Traditional Services", // Replace with the correct ProductFamily if available
-        ProductDescription: "Service for UAE Resident", // Replace with actual product description
+        ProductFamily: "Traditional Services", // Example placeholder
+        ProductDescription: "Service for UAE Resident", // Example placeholder
         ProductCurrencyName: product.Currency_Code,
         ProductUnitprice: product.price,
-        ProductQuantity: 1,  // Assuming quantity is 1, adjust if needed
-        ProductDiscount: 0 // Assuming no discount, replace with actual discount if applicable
+        ProductQuantity: 1,  // Assuming quantity is 1
+        ProductDiscount: 0 // Assuming no discount
       }))
     };
+    console.log("dataaa",this.personalInfo)
+
+  
+    // Log the payload for debugging
+    console.log("Sending Payment Opportunity Payload:", paymentPayload);
   
     // Call the API to create the payment opportunity
     this.userService.createPaymentOpportunity(paymentPayload).subscribe(
       (response) => {
         console.log('Payment opportunity created:', response);
-        this.router.navigate(['/payment-success']); // Or navigate to another success page
+        this.router.navigate(['/payment-success']); // Navigate to the success page
       },
       (error) => {
         console.error('Error creating payment opportunity:', error);
@@ -227,6 +233,9 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       }
     );
   }
+  
+  
+  
   
   
 }
