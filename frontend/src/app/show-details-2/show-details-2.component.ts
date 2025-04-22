@@ -63,7 +63,7 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
         this.bankInfo = JSON.parse(step2Data);
 
         // Prevent back navigation
-        this.preventBackNavigation();
+        // this.preventBackNavigation();
       }
 
       const raw = localStorage.getItem('serviceProducts');
@@ -111,21 +111,21 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
     }
   }
 
-  preventBackNavigation() {
-    // Push the current route to history to prevent back navigation
-    history.pushState(null, '', this.router.url);
+  // preventBackNavigation() {
+  //   // Push the current route to history to prevent back navigation
+  //   history.pushState(null, '', this.router.url);
   
-    // Listen for 'popstate' events to block back navigation
-    window.addEventListener('popstate', (event) => {
-      history.pushState(null, '', this.router.url);
-      // Display an optional warning message
-      this.toastr.error('Back navigation is disabled on this page.', 'Warning');
-       // Reload the page to reset the state
-        setTimeout(() => {
-          window.location.reload();
-        }, 50);
-    });
-  }
+  //   // Listen for 'popstate' events to block back navigation
+  //   window.addEventListener('popstate', (event) => {
+  //     history.pushState(null, '', this.router.url);
+  //     // Display an optional warning message
+  //     this.toastr.error('Back navigation is disabled on this page.', 'Warning');
+  //      // Reload the page to reset the state
+  //       setTimeout(() => {
+  //         window.location.reload();
+  //       }, 50);
+  //   });
+  // }
   
   submitData() {
     if (!this.salesforceResponse || !this.salesforceResponse.data || !this.salesforceResponse.data.leadWithDetails) {

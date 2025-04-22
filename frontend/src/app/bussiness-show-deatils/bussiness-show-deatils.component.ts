@@ -157,21 +157,21 @@ totalVat: number = 0;
     }
   }
  
-  preventBackNavigation() {
-    // Push the current route to history to prevent back navigation
-    history.pushState(null, '', this.router.url);
+  // preventBackNavigation() {
+  //   // Push the current route to history to prevent back navigation
+  //   history.pushState(null, '', this.router.url);
  
-    // Listen for 'popstate' events to block back navigation
-    window.addEventListener('popstate', (event) => {
-      history.pushState(null, '', this.router.url);
-      // Display an optional warning message
-      this.toastr.error('Back navigation is disabled on this page.', 'Warning');
-      // Reload the page to reset the state
-      setTimeout(() => {
-        window.location.reload();
-      }, 50);
-    });
-  }
+  //   // Listen for 'popstate' events to block back navigation
+  //   window.addEventListener('popstate', (event) => {
+  //     history.pushState(null, '', this.router.url);
+  //     // Display an optional warning message
+  //     this.toastr.error('Back navigation is disabled on this page.', 'Warning');
+  //     // Reload the page to reset the state
+  //     setTimeout(() => {
+  //       window.location.reload();
+  //     }, 50);
+  //   });
+  // }
  
   // submitData() {
   //   const finalData = {
