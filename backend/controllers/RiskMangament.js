@@ -169,7 +169,7 @@ exports.getProductsByCountryRisk = async (req, res) => {
 
   exports.getAllBusinessCategories = async (req, res) => {
     try {
-      const categories = await BusinessCategory.find({  }); // Only active
+      const categories = await BusinessCategory.find({  }); 
   
       res.status(200).json({
         message: `${categories.length} active categories found`,
@@ -180,6 +180,26 @@ exports.getProductsByCountryRisk = async (req, res) => {
       res.status(500).json({ message: 'Server error while fetching categories' });
     }
   };
+
+  exports.getBusinessCategoriesByRisk = async (req, res) => {
+    try {
+      const riskRating = parseInt(req.query.riskRating); // Accept query param as number (e.g., ?riskRating=2)
+  
+      if (isNaN(riskRating)) {
+        return res.status(400).json({ message: 'Valid riskRating parameter (as number) is required.' });
+      }
+  
+      const categories = await BusinessCategory.find({ Score: riskRating }); // Match on numeric Score
+  
+      res.status(200).json({
+        data: categories,
+      });
+    } catch (err) {
+      console.error('Error fetching categories by risk rating:', err);
+      res.status(500).json({ message: 'Server error while fetching categories by risk rating' });
+    }
+  };
+  
   
 
 

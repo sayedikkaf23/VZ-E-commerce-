@@ -52,6 +52,7 @@ export class MailsManagement1Component {
       nationality: ['', Validators.required],
       mobileNumber: ['', Validators.required],
       birthday: ['', Validators.required],
+      countryRisk: ['', Validators.required]
     });
   }
 
@@ -69,12 +70,7 @@ export class MailsManagement1Component {
     this.maxDate = `${year}-${month}-${day}`;
 
    
-    this.adminAuthService.getCountryRisks().subscribe((data) => {
-      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
-       
-      
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
-    });
+   
  
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects
@@ -93,7 +89,28 @@ export class MailsManagement1Component {
         this.personalDetailsForm.patchValue(formData);
       }
     }
+    this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
+       
+      
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
+    });
   }
+
+onNationalityChange(event: Event): void {
+  const selectedCountry = (event.target as HTMLSelectElement).value;
+  const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
+
+  if (selectedNationality) {
+    this.personalDetailsForm.patchValue({
+      countryRisk: selectedNationality.RiskRating
+    });
+  } else {
+    this.personalDetailsForm.patchValue({
+      countryRisk: ''
+    });
+  }
+}
 
   onSubmit() {
     // Check if 'mailform', 'mailform1', and 'mailform2' exist in localStorage
@@ -101,8 +118,10 @@ export class MailsManagement1Component {
       const mailform = localStorage.getItem('mailform');
 
       const mailform1 = localStorage.getItem('mailform1');
+      const currentFormValue = this.personalDetailsForm.value;
 
       if (mailform && mailform1) {
+        const previousData = JSON.parse(mailform);
         // Update 'mailform' with current form values
         const updatedMailForm = {
           ...JSON.parse(mailform),
@@ -111,7 +130,17 @@ export class MailsManagement1Component {
 
         localStorage.setItem('mailform', JSON.stringify(updatedMailForm)); // Save updated 'mailform'
 
+        // Compare selected country with previously stored country
+        const previousCountry = (previousData?.nationality || '').trim();
+        const currentCountry = (currentFormValue?.nationality || '').trim();
+
+        if (previousCountry !== currentCountry) {
+        // Country has changed 
+        this.router.navigate(['/mails-management-2']);
+      } else {
+        // Country is same 
         this.router.navigate(['/mails-management-details']);
+      }
         return; // Exit early to avoid further execution
       }
     }

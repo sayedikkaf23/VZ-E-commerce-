@@ -7,14 +7,14 @@ import { ToastrService } from 'ngx-toastr';
 import { CountryISO, SearchCountryField } from 'ngx-intl-tel-input'; // Import enums
 import { isPlatformBrowser } from '@angular/common'; // Import isPlatformBrowser to check the platform
 import { UserService } from '../service/user.service';
-import { GetnationalityService } from '../service/getnationality.service';
+// import { GetnationalityService } from '../service/getnationality.service';
 import { DataStorageService } from '../service/data-storage.service';
 import { AdminAuthService } from '../service/admin-auth.service';
 
- interface Nationality {
-  common: string;
-  country: string;
-}
+//  interface Nationality {
+//   common: string;
+//   country: string;
+// }
 
 @Component({
   selector: 'app-step-1',
@@ -23,7 +23,7 @@ import { AdminAuthService } from '../service/admin-auth.service';
 })
 export class Step1Component implements OnInit {
   personalDetailsForm: FormGroup;
-  nationalities: Nationality[] = [];
+  nationalities: any[] = [];
   selectedNationality: string = '';
   SearchCountryField = SearchCountryField;  // Assign to use in template
   CountryISO = CountryISO;  
@@ -40,7 +40,7 @@ export class Step1Component implements OnInit {
     private userService: UserService,
     private adminAuthService: AdminAuthService,
 
-    private getnationalityService: GetnationalityService,
+    // private getnationalityService: GetnationalityService,
     private dataStorageService: DataStorageService ,// Inject the service
 
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
@@ -54,6 +54,7 @@ export class Step1Component implements OnInit {
       nationality: ['', Validators.required],
       mobileNumber: ['', Validators.required],
       birthday: ['', Validators.required],
+      countryRisk: ['', Validators.required]
     });
   }
 
@@ -72,12 +73,7 @@ export class Step1Component implements OnInit {
     this.maxDate = `${year}-${month}-${day}`;
 
    
-    this.adminAuthService.getCountryRisks().subscribe((data) => {
-      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
-       
-      
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
-    });
+  
     
     
     // this.getnationalityService.getCountries().subscribe((data) => {
@@ -93,6 +89,28 @@ export class Step1Component implements OnInit {
         const formData = JSON.parse(storedData);
         this.personalDetailsForm.patchValue(formData);
       }
+    }
+
+    this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
+       
+      
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
+    });
+  }
+
+  onNationalityChange(event: Event): void {
+    const selectedCountry = (event.target as HTMLSelectElement).value;
+    const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
+  
+    if (selectedNationality) {
+      this.personalDetailsForm.patchValue({
+        countryRisk: selectedNationality.RiskRating
+      });
+    } else {
+      this.personalDetailsForm.patchValue({
+        countryRisk: ''
+      });
     }
   }
 
@@ -116,8 +134,9 @@ onSubmit() {
       const step1Data = localStorage.getItem('step1Data');
       const step2Data = localStorage.getItem('step2Data');
       const mailform2 = localStorage.getItem('mailform2');
-  
+      const currentFormValue = this.personalDetailsForm.value;
       if (step1Data && step2Data) {
+        
         // Update step-1 data with current form values
         const updatedStep1Data = {
           ...JSON.parse(step1Data),
@@ -126,11 +145,13 @@ onSubmit() {
   
         localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data)); // Save updated step-1 data
   
-        this.router.navigate(['/ShowDetails']);
+      this.router.navigate(['/ShowDetails']);
         return; // Exit early to avoid further execution
       }
 
       if (step1Data && mailform2) {
+        const previousData = JSON.parse(step1Data);
+        const mailform2Data = JSON.parse(mailform2);
         // Update step-1 data with current form values
         const updatedStep1Data = {
           ...JSON.parse(step1Data),
@@ -139,7 +160,21 @@ onSubmit() {
   
         localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data)); // Save updated step-1 data
   
-        this.router.navigate(['/BusinessBankShowDetails']);
+         // Compare selected country with previously stored country
+         const previousCountry = (previousData?.nationality || '').trim();
+         const currentCountry = (currentFormValue?.nationality || '').trim();
+ 
+         if (previousCountry !== currentCountry) {
+          // Country has changed → clear tradelicence
+          mailform2Data.tradelicense = '';
+
+          // Update mailform2 in localStorage
+          localStorage.setItem('mailform2', JSON.stringify(mailform2Data));
+          this.router.navigate(['/BusinessBankform']);
+       } else {
+         // Country is same 
+         this.router.navigate(['/BusinessBankShowDetails']);
+       }
         return; // Exit early to avoid further execution
       }
     }
