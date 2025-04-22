@@ -193,12 +193,16 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
  
  
   submitPaymentOpportunity() {
+    // Set isLoading to true to show the loader
+    this.isLoading = true;
+  
     // Check if serviceProducts is properly populated
     if (!this.serviceProducts || this.serviceProducts.length === 0) {
       this.toastr.error('No products available to submit.', 'Error');
+      this.isLoading = false;  // Hide the loader if there's no product
       return;
     }
- 
+  
     // Prepare the payload for the API request
     const paymentPayload = {
       firstName: this.personalInfo.firstName,
@@ -220,7 +224,7 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       }))
     };
     console.log("Sending Payment Opportunity Payload:", paymentPayload);
- 
+  
     // Call the first API to create the payment opportunity
     this.userService.createPaymentOpportunity(paymentPayload).pipe(
       retryWhen(errors =>
@@ -249,16 +253,17 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       ),
       switchMap((response) => {
         console.log('Payment opportunity created:', response);
- 
+  
         // Extract the QuotePaymentId from the response
         const quotePaymentId = response.QuotePaymentId;
-  console.log(quotePaymentId)
+        console.log(quotePaymentId)
+        
         // Prepare payload for the second API call
         const payload = {
           CustomerId: quotePaymentId,
           CompanyName: 'Virtuzone'
         };
- 
+  
         // Call the second API (digicomplice) after the first one is successful
         return this.userService.digicomplice(payload).pipe(
           map(secondResponse => ({
@@ -271,13 +276,13 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
         if (!leadId) {
           throw new Error('Missing LeadId from screening response');
         }
- 
+  
         // Prepare the data for the third API call
         const checkStatusData = {
           CustomerId: leadId,
           CompanyName: 'Virtuzone'
         };
- 
+  
         // Call the third API (checkStatus)
         return this.userService.checkStatus(checkStatusData).pipe(
           tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
@@ -289,20 +294,25 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
               );
               this.router.navigate([`/failure/${quotePaymentId}`]);
             }
- 
+  
             // Clear local storage if needed
             // localStorage.clear();
           })
         );
       })
     ).subscribe({
-      next: () => {},
+      next: () => {
+        // Successfully completed all steps
+        this.isLoading = false;  // Hide the loader when everything is done
+      },
       error: (err) => {
         this.toastr.error(err.message || 'An error occurred', 'Error');
         console.error(err);
+        this.isLoading = false;  // Hide the loader on error
       }
     });
   }
+  
  
  
  
