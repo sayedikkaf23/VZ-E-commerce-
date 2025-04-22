@@ -171,7 +171,7 @@
                       (click)="openDatePicker($event)" [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }"/>
                   </div>
                   <div class="form-field">
-                    <label class="shareholder-label">Nationality <span class="required">*</span></label>
+                    <label class="shareholder-label">Country <span class="required">*</span></label>
                     <!-- Apply new class here -->
                     <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder" [ngModelOptions]="{ standalone: true }" style="border-color: transparent;">
                       <option value="" disabled [ngValue]="null">Select Nationality</option>

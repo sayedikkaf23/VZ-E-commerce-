@@ -25,24 +25,43 @@
                         <div class="product-table-wrapper">
                           <table class="product-table">
                             <thead>
-                              <tr>
-                                <th>Product Name</th>
-                                <th>Quantity</th>
-                                <th>Unit Price</th>
-                                <th>Total Price</th>
-                                <th>Total Price (Including VAT)</th>
-                              </tr>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>VAT</th>                          <!-- new VAT column -->
+                                    <th>Total Price</th>
+                                    <th>Total (Inc. VAT)</th>
+                                  </tr>
                             </thead>
                             <tbody>
-                                <tr *ngFor="let product of matchScoreResponse?.products">
-
-                                <td>{{ product.name }}</td>
-                                <td>{{ product.quantity }}</td>
-                                <td class="currency">{{ product.currencyName }} {{ product.unitPrice | number:'1.2-2' }}</td>
-                                <td class="currency"> {{ product.totalPrice }}</td>
-
-                                <td class="currency">{{ product.currencyName }} {{ product.totalPriceVat | number:'1.2-2' }}</td>
-                              </tr>
+                                <tr *ngFor="let product of serviceProducts">
+                                    <td>{{ product.Product_Name }}</td>
+                                    <td>1</td>
+                                    <td class="currency"> {{ product.Currency_Code }}
+                                      {{ product.price | number:'1.2-2' }}</td>
+                                  
+                                    <!-- show VAT as a percent -->
+                                    <td class="currency">
+                                      {{ product.vat ? (product.vat + '%') : '0%' }}
+                                    </td>
+                                  
+                                    <!-- total price before VAT -->
+                                    <td class="currency">
+                                      {{ product.Currency_Code }}
+                                      {{ product.price | number:'1.2-2' }}
+                                    </td>
+                                  
+                                    <!-- total price including VAT -->
+                                    <td class="currency">
+                                      {{ product.Currency_Code }}
+                                      {{
+                                        (product.price * (1 + (product.vat || 0) / 100))
+                                        | number:'1.2-2'
+                                      }}
+                                    </td>
+                                  </tr>
+                                  
                             </tbody>
                           </table>
                         </div>

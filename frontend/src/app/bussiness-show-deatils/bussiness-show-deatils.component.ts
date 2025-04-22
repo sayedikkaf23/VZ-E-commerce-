@@ -29,7 +29,8 @@ export class BussinessShowDeatilsComponent {
   displayShareholders :any= [];
 totalDiscount: number = 0;
 totalVat: number = 0;
- 
+serviceProducts: any[] = [];
+
   companyInfo: any = {}; // To store bank service information (Step 2 data)
   shareholders :any= [];
  
@@ -49,6 +50,12 @@ totalVat: number = 0;
  
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
+      const raw = localStorage.getItem('BussinessServiceProducts');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        // ensure it’s always an array
+        this.serviceProducts = Array.isArray(parsed) ? parsed : [parsed];
+      }
       window.scrollTo(0, 0);
     }
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
