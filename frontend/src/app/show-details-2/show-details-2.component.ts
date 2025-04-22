@@ -189,6 +189,44 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       return total + itemTotal;
     }, 0);
   }
+  submitPaymentOpportunity() {
+    // Check if serviceProducts is properly populated
+    if (!this.serviceProducts || this.serviceProducts.length === 0) {
+      this.toastr.error('No products available to submit.', 'Error');
+      return;
+    }
+  
+    // Create the payload for the API request
+    const paymentPayload = {
+      firstName: this.personalInfo.firstName,
+      lastName: this.personalInfo.lastName,
+      email: this.personalInfo.email,
+      nationality: this.personalInfo.nationality,
+      phone: this.personalInfo.phone,
+      dob: this.personalInfo.dob,
+      prodcutNameList: this.serviceProducts.map(product => ({
+        ProductName: product.Product_Name,
+        ProductFamily: "Traditional Services", // Replace with the correct ProductFamily if available
+        ProductDescription: "Service for UAE Resident", // Replace with actual product description
+        ProductCurrencyName: product.Currency_Code,
+        ProductUnitprice: product.price,
+        ProductQuantity: 1,  // Assuming quantity is 1, adjust if needed
+        ProductDiscount: 0 // Assuming no discount, replace with actual discount if applicable
+      }))
+    };
+  
+    // Call the API to create the payment opportunity
+    this.userService.createPaymentOpportunity(paymentPayload).subscribe(
+      (response) => {
+        console.log('Payment opportunity created:', response);
+        this.router.navigate(['/payment-success']); // Or navigate to another success page
+      },
+      (error) => {
+        console.error('Error creating payment opportunity:', error);
+        this.toastr.error('Failed to create payment opportunity', 'Error');
+      }
+    );
+  }
   
   
 }
