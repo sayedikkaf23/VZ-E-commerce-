@@ -1,3 +1,105 @@
+
+/* Refine the modal content layout */
+.modal-body {
+  padding: 20px;
+  overflow-x: auto;
+}
+
+/* Fix the file view link styling */
+.view-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  /* background-color: #e9eaeb; */
+  /* color: #495057; */
+  /* border: 1px solid #ccc; */
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: bold;
+  text-decoration: none;
+  margin-top: 5px;
+  white-space: nowrap; /* Prevents text from wrapping */
+  transition: background-color 0.3s ease;
+}
+
+
+.view-link svg {
+  margin-right: 8px; /* Spacing between icon and text */
+}
+
+/* Adjust file item layout */
+.file-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  margin-bottom: 10px;
+}
+
+.file-item:hover {
+  background-color: #f1f1f1;
+  border-color: #bbb;
+}
+
+/* Adjust modal footer and close button */
+.modal-footer {
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  background-color: #f9f9f9;
+}
+
+.green-button {
+  background-color: #cf3339;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+  margin-top: 10px;
+}
+
+.green-button:hover {
+  background-color: #e63946;
+}
+
+.green-button:focus {
+  outline: none;
+}
+
+/* Optional: to adjust file list spacing */
+.file-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Remove text overflow issue for file names */
+.file-name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 80%; /* Control width */
+}
+
+/* Add responsive file handling */
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 90%;
+  }
+
+  .file-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
 .search-container {
   display: flex;
   flex-wrap: wrap; /* Responsive for smaller screens */
@@ -311,10 +413,10 @@
 
 /* View file link */
 .view-link {
-  height: 30px;
-  width: 30px;
+  /* height: 30px; */
+  /* width: 30px; */
   border-radius: 7px;
-  background-color: #ff2a47;
+  /* background-color: #ff2a47; */
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -322,9 +424,6 @@
   vertical-align: top;
 }
 
-.view-link:hover {
-  background-color: #030303;
-}
 
 /* No files message */
 .no-files {
