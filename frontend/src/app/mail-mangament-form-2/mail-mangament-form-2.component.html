@@ -28,7 +28,7 @@
                     id="resident"
                     class="form-select"
                     [(ngModel)]="formData.companylocation"
-                    (ngModelChange)="onCompanyLocationChange($event)"
+                    
                   >
                     <option value="" disabled selected>Is your company located in UAE?</option>
                     <option value="Yes">Yes</option>
@@ -69,6 +69,7 @@
       class="form-select"
       [(ngModel)]="formData.tradelicense"
       (change)="onCategoryChange($event)"
+      ng-reflect-model
     >
       <option value="" disabled>
         What are the type of activities mentioned on your trade license?

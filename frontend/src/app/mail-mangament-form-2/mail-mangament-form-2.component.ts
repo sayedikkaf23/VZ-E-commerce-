@@ -122,10 +122,19 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges();
     }
  
-    if (this.formData.companylocation === 'Yes') {
-      // reload the categories so the dropdown has options to select
-      this.onCompanyLocationChange('Yes');
-    }
+    this.userService.getAllBusinessCategories().subscribe(
+      (response) => {
+        // Log for debugging
+        console.log('Categories response:', response);
+
+       
+        this.businessCategories = response.data;
+        this.cdRef.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching business categories:', error);
+      }
+    );
   }
 
   onCategoryChange(event: Event): void {
@@ -163,27 +172,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     input.showPicker(); // Explicitly trigger the date picker
   }
  
-  onCompanyLocationChange(value: string): void {
-    if (value === 'Yes') {
-      // Call the API when "Yes" is selected
-      this.userService.getAllBusinessCategories().subscribe(
-        (response) => {
-          // Log for debugging
-          console.log('Categories response:', response);
-
-         
-          this.businessCategories = response.data;
-          this.cdRef.detectChanges();
-        },
-        (error) => {
-          console.error('Error fetching business categories:', error);
-        }
-      );
-    } else {
-      // Optionally clear the categories if "No" is selected
-      this.businessCategories = [];
-    }
-  }
+  
   ngAfterViewInit() {
     const Tooltip = (window as any).Tooltip;
     Tooltip.initAll();

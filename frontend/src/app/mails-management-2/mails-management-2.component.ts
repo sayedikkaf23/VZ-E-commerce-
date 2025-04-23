@@ -105,10 +105,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
         this.shareholders = parsedData.shareholders;
       }
 
-       // Auto trigger the category API call if UAE is pre-filled
-    if (this.formData.CompanyIncorporated === 'United Arab Emirates') {
-      this.onCompanyLocationChange('United Arab Emirates');
-    }
+   
 
 
       // Ensure correct number of shareholders
@@ -116,6 +113,21 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
 
       this.cdRef.detectChanges();
     }
+
+     
+    this.userService.getAllBusinessCategories().subscribe(
+      (response) => {
+        // Log for debugging
+        console.log('Categories response:', response);
+
+       
+        this.businessCategories = response.data;
+        this.cdRef.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching business categories:', error);
+      }
+    );
 
   }
 
@@ -145,27 +157,6 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
     }
   }
 
-  onCompanyLocationChange(value: string): void {
-    if (value === 'United Arab Emirates') {
-        
-        this.userService.getAllBusinessCategories().subscribe(
-          (response) => {
-            // Log for debugging
-            console.log('Categories response:', response);
-  
-           
-            this.businessCategories = response.data;
-            this.cdRef.detectChanges();
-          },
-          (error) => {
-            console.error('Error fetching business categories:', error);
-          }
-        );
-      } else {
-        // Optionally clear the categories if "No" is selected
-        this.businessCategories = [];
-      }
-  }
 
  
   ngAfterViewInit() {
