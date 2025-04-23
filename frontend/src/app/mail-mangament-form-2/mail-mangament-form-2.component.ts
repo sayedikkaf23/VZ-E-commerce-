@@ -147,30 +147,19 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   onCompanyLocationChange(value: string): void {
     if (value === 'Yes') {
       // Call the API when "Yes" is selected
-      const storedStep2Data = localStorage.getItem('step1Data');
-   
-      if (storedStep2Data) {
-        const parsedData = JSON.parse(storedStep2Data);
-        const riskRating = parsedData.countryRisk;
-        console.log(riskRating);
- 
-        if (riskRating !== undefined && riskRating !== null) {
-          this.userService.getBusinessCategoriesByRisk(riskRating).subscribe(
-            (response) => {
-              console.log('Categories response:', response);
-              this.businessCategories = response.data.sort(
-                (a: any, b: any) => a.name.localeCompare(b.name)
-              );
-              this.cdRef.detectChanges();
-            },
-            (error) => {
-              console.error('Error fetching business categories:', error);
-            }
-          );
-        } else {
-          console.warn('No countryRisk found in mailform1');
+      this.userService.getAllBusinessCategories().subscribe(
+        (response) => {
+          // Log for debugging
+          console.log('Categories response:', response);
+
+         
+          this.businessCategories = response.data;
+          this.cdRef.detectChanges();
+        },
+        (error) => {
+          console.error('Error fetching business categories:', error);
         }
-      }
+      );
     } else {
       // Optionally clear the categories if "No" is selected
       this.businessCategories = [];
