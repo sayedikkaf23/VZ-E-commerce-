@@ -92,6 +92,19 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
  
+    this.userService.getAllBusinessCategories().subscribe(
+      (response) => {
+        // Log for debugging
+        console.log('Categories response:', response);
+
+       
+        this.businessCategories = response.data;
+        this.cdRef.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching business categories:', error);
+      }
+    );
  
  
     // Retrieve Step 2 data from localStorage
@@ -122,19 +135,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges();
     }
  
-    this.userService.getAllBusinessCategories().subscribe(
-      (response) => {
-        // Log for debugging
-        console.log('Categories response:', response);
-
-       
-        this.businessCategories = response.data;
-        this.cdRef.detectChanges();
-      },
-      (error) => {
-        console.error('Error fetching business categories:', error);
-      }
-    );
+   
   }
 
   onCategoryChange(event: Event): void {
@@ -315,7 +316,7 @@ deleteShareholder(index: number) {
           customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
           BusinessActivityRisk: this.formData.BusinessActivityRisk,
           shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
-          totalCusotmerSelected: this.shareholders.length + 1,
+          totalCusotmerSelected: this.shareholders.length + 2,
         };
  
         // Call the API to get products by category and country risk

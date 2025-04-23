@@ -98,6 +98,20 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
+
+    this.userService.getAllBusinessCategories().subscribe(
+      (response) => {
+        // Log for debugging
+        console.log('Categories response:', response);
+
+       
+        this.businessCategories = response.data;
+        this.cdRef.detectChanges();
+      },
+      (error) => {
+        console.error('Error fetching business categories:', error);
+      }
+    );
     // Retrieve saved data from localStorage
     const storedStep2Data = localStorage.getItem('virtualdata1');
     if (storedStep2Data) {
@@ -117,19 +131,7 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
         this.shareholders = parsedData.shareholders;
       }
 
-      this.userService.getAllBusinessCategories().subscribe(
-        (response) => {
-          // Log for debugging
-          console.log('Categories response:', response);
-
-         
-          this.businessCategories = response.data;
-          this.cdRef.detectChanges();
-        },
-        (error) => {
-          console.error('Error fetching business categories:', error);
-        }
-      );
+      
 
       // Call updateShareholders() after loading from localStorage
       this.updateShareholders();
@@ -313,7 +315,7 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
           customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
           BusinessActivityRisk: this.formData.BusinessActivityRisk,
           shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
-          totalCusotmerSelected: this.shareholders.length + 1,
+          totalCusotmerSelected: this.shareholders.length + 2,
         };
 
         // Call the API to get products by category and country risk

@@ -285,7 +285,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
           customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
           BusinessActivityRisk: this.formData.BusinessActivityRisk,
           shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
-          totalCusotmerSelected: this.shareholders.length + 1,
+          totalCusotmerSelected: this.shareholders.length + 2,
         };
 
         // Call the API to get products by category and country risk
