@@ -130,31 +130,24 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
 
   onCompanyLocationChange(value: string): void {
     if (value === 'United Arab Emirates') {
-      const storedStep2Data = localStorage.getItem('mailform');
-    
-      if (storedStep2Data) {
-        const parsedData = JSON.parse(storedStep2Data);
-        const riskRating = parsedData.countryRisk; 
-        console.log(riskRating);
+        
+        this.userService.getAllBusinessCategories().subscribe(
+          (response) => {
+            // Log for debugging
+            console.log('Categories response:', response);
   
-        if (riskRating !== undefined && riskRating !== null) {
-          this.userService.getBusinessCategoriesByRisk(riskRating).subscribe(
-            (response) => {
-              console.log('Categories response:', response);
-              this.businessCategories = response.data.sort(
-                (a: any, b: any) => a.name.localeCompare(b.name)
-              );
-              this.cdRef.detectChanges();
-            },
-            (error) => {
-              console.error('Error fetching business categories:', error);
-            }
-          );
-        } else {
-          console.warn('No countryRisk found in mailform1');
-        }
+           
+            this.businessCategories = response.data;
+            this.cdRef.detectChanges();
+          },
+          (error) => {
+            console.error('Error fetching business categories:', error);
+          }
+        );
+      } else {
+        // Optionally clear the categories if "No" is selected
+        this.businessCategories = [];
       }
-    } 
   }
 
  
