@@ -453,3 +453,13 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* optional styling */
+.view-link {
+  color: #0d6efd;          /* bootstrap blue */
+  text-decoration: underline;
+  cursor: pointer;
+}
+.view-link:hover {
+  text-decoration: none;
+}

@@ -129,9 +129,12 @@
         </table>
       </div>
       <div class="modal-footer">
-        <p>Total Amount: <strong style="font-weight: bold; color: rgb(235, 55, 55);margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalAmount  | number:'1.0-2' }}</strong></p>
-        <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalVAT  | number:'1.0-2' }}</strong></p>
-        <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.total_including_Vat  | number:'1.0-2' }}</strong></p>
+        <p>Total Amount: <strong style="font-weight: bold; color: rgb(235, 55, 55);margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.subTotal | number:'1.0-2' }}</strong></p>
+        <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;"> {{
+          (salesforceResponseMatchScreening?.totalIncludingVAT -
+           salesforceResponseMatchScreening?.subTotal) | number:'1.0-2'
+        }}</strong></p>
+        <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">  {{ salesforceResponseMatchScreening?.totalIncludingVAT | number:'1.0-2' }} </strong></p>
       </div>
     </div>
   </div>
@@ -199,9 +202,15 @@
               <td>
                 <div *ngIf="detail.files && detail.files.length > 0; else noFile">
                   <div *ngFor="let file of detail.files">
-                    <a [href]="file.url" target="_blank">
-                      <img [src]="file.url" alt="{{ file.name }}" width="50" height="50" style="object-fit: cover; margin-right: 5px;" />
-                    </a>
+                    <a
+  [href]="file.url"
+  target="_blank"
+  rel="noopener noreferrer"
+  class="view-link"
+>
+  View file
+</a>
+
                   </div>
                 </div>
                 <ng-template #noFile>

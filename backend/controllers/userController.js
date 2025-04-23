@@ -335,7 +335,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
     const authToken = authResponse.data.token; // Assuming the token is in authResponse.data.token
 
     // Step 2: Get access token from Salesforce
-    let CustomerType = pidataDoc?.subcategory ; // Default to "C" if not found
+    let CustomerType = pidataDoc?.customerType ; // Default to "C" if not found
 
     const nationalities = await Nationality.find();
 
@@ -991,7 +991,7 @@ exports.getBusinessBank = async (req, res) => {
       {
         $lookup: {
           from: "userdetails", // The MongoDB *collection* name for UserDetails
-          localField: "quotePaymentWithDetails.QuotePaymentId",
+          localField: "quoteWithProductDetails.quotePaymentId",
           foreignField: "QuotePaymentId",
           as: "userDetails"
         }

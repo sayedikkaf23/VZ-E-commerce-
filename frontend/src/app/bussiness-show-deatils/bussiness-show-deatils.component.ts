@@ -240,8 +240,9 @@ serviceProducts: any[] = [];
       nationality: this.personalInfo.nationality,
       phone: this.personalInfo.mobileNumber.number,
       dob: this.personalInfo.birthday,
-      type: "Business Bank",
+      type: "Bank Account Opening",
       CustomerType: "C",
+      subcategory: "business",
       prodcutNameList: this.serviceProducts.map(product => ({
         ProductName: product.Product_Name,
         ProductFamily: "Traditional Services", // Example placeholder

@@ -214,11 +214,14 @@
                 <tr *ngFor="let item of paginatedRecords">
                   <td data-title="Service Name"> {{ item.planname }}
                   </td>
-                  <td data-title="Customer Name"> {{ item.quoteWithProductDetails?.AccountName }}</td>
+                  <td data-title="Customer Name">
+                    {{ item.leadWithDetails.FirstName + ' ' + item.leadWithDetails.LastName }}
+                  </td>
+                  
                   <td data-title="Tax Invoice Number"> {{ item.invoiceNumber || '—' }}
                   </td>
                   <td data-title="Tax Invoice Date"> {{ item.invoiceDate }}</td>
-                  <td data-title="Invoice Amount"> {{ item.salesforceResponseMatchScreening?.total_including_Vat |
+                  <td data-title="Invoice Amount"> {{ item.quoteWithProductDetails?.totalIncludingVAT |
                     number:'1.0-0' }}
                   </td>
                   <td>
@@ -544,8 +547,7 @@
 
 
   <!-- Modal -->
-  <div class="modal fade" id="servicedetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="servicedetailLabel" aria-hidden="true">
+  <div class="modal fade" id="servicedetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="servicedetailLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -566,43 +568,37 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let product of selectedRecord?.combinedProducts">
-                  <td data-title="Product">{{ product.productName }}</td>
-                  <td data-title="Quantity">{{ product.productQuantity || product.productQunatity }}</td>
-                  <td data-title="Unit Price">AED {{ product.productUnitPrice }}</td>
+                <!-- Updated: Using the correct response structure -->
+                <tr *ngFor="let product of selectedRecord?.quoteWithProductDetails?.product">
+                  <td data-title="Product">{{ product.ProductName }}</td>
+                  <td data-title="Quantity">{{ product.ProductQuantity || product.productQunatity }}</td>
+                  <td data-title="Unit Price">AED {{ product.ProductUnitprice }}</td>
                   <td data-title="Taxable Amount">AED {{ product.taxableAmount || 0 }}</td>
-                  <td data-title="VAT">AED {{ product.vat || 0 }}</td>
-                  <td data-title="Total">AED {{ product.total || (product.productUnitPrice * (product.productQuantity ||
-                    product.productQunatity)) }}</td>
+                  <td data-title="VAT">AED {{ product.VAT || 0 }}</td>
+                  <td data-title="Total">AED {{ product.Total || (product.ProductUnitprice * (product.ProductQuantity || product.productQunatity)) }}</td>
                 </tr>
-
-
-
               </tbody>
             </table>
           </div>
           <ul class="service_total">
             <li>
               <p>Grand Total Without VAT:</p>
-              <b>AED {{ selectedRecord?.calculatedSubTotal | number: '1.2-2' }} </b>
+              <b>AED {{ selectedRecord?.quoteWithProductDetails?.subTotal | number: '1.2-2' }}</b>
             </li>
             <li>
               <p>VAT:</p>
-              <b>AED {{ selectedRecord?.calculatedVAT | number: '1.2-2' }}</b>
+              <b>AED {{ selectedRecord?.quoteWithProductDetails?.totalIncludingVAT - selectedRecord?.quoteWithProductDetails?.subTotal | number: '1.2-2' }}</b>
             </li>
             <li class="total">
               <b>Total Including VAT:</b>
-              <b class="price">AED {{ selectedRecord?.calculatedTotalIncludingVAT | number: '1.2-2' }}</b>
+              <b class="price">AED {{ selectedRecord?.quoteWithProductDetails?.totalPrice | number: '1.2-2' }}</b>
             </li>
           </ul>
         </div>
-        <!-- <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Understood</button>
-        </div> -->
       </div>
     </div>
   </div>
+  
 
   <!-- Modal -->
   <div class="modal fade" id="additionalfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

@@ -120,7 +120,7 @@ exports.getServiceProducts = async (req, res) => {
  
 exports.createPaymentOpportunity = async (req, res) => {
   try {
-    const { firstName, lastName, email, phone, dob, prodcutNameList,nationality,type,CustomerType,    shareholders = []  } = req.body;
+    const { firstName, lastName, email, phone, dob, prodcutNameList,nationality,type,CustomerType, subcategory,   shareholders = []  } = req.body;
 // console.log(req.body)
     // Log the RiskCode to ensure it's what you expect
     // console.log("Received RiskCode:", RiskCode);
@@ -250,7 +250,8 @@ console.log("salesforceResponse",salesforceResponse.data)
       // },
       shareholders,
       planname:type,
-      subcategory:CustomerType,
+      subcategory:subcategory,
+      customerType:CustomerType,
     });
  
  

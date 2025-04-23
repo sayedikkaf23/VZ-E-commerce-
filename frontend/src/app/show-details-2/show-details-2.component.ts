@@ -210,7 +210,8 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       nationality: this.personalInfo.nationality,
       phone: this.personalInfo.mobileNumber.number,
       dob: this.personalInfo.birthday,
-      type: "Business Bank",
+      type: "Bank Account Opening",
+      subcategory: "personal",
       CustomerType: "I",
       prodcutNameList: this.serviceProducts.map(product => ({
         ProductName: product.Product_Name,
