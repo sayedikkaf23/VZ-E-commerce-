@@ -24,40 +24,46 @@
                         </div>
                         <table class="product-table">
                             <thead>
-                              <tr>
-                                <th>Product Name</th>
-                                <th>Currency Code</th>
-                                <th>Product Code</th>
-                                <th>Status</th>
-                                <th>Price</th>
-                                <th>VAT</th>
-                                <th>Total Price (Including VAT)</th>
-                              </tr>
+                                <tr>
+                                    <th>Product Name</th>
+                                    <th>Quantity</th>
+                                    <th>Unit Price</th>
+                                    <th>VAT</th> <!-- new VAT column -->
+                                    <th>Total Price</th>
+                                    <th>Total (Inc. VAT)</th>
+                                </tr>
                             </thead>
                             <tbody>
-                              <tr *ngFor="let product of serviceProducts">
-                                <td>{{ product.Product_Name }}</td>
-                                <td>{{ product.Currency_Code }}</td>
-                                <td>{{ product.Product_Code }}</td>
-                                <td>{{ product.Status }}</td>
-                                <td class="currency">
-                                  {{ product.Currency_Code }} {{ product.price | number:'1.2-2' }}
-                                </td>
-                                <td class="currency">
-                                  {{ product.vat ? (product.vat + '%') : '0%' }}
-                                </td>
-                                <td class="currency">
-                                  {{ product.Currency_Code }}
-                                  {{
-                                    (product.price * (1 + (product.vat || 0) / 100))
-                                    | number:'1.2-2'
-                                  }}
-                                </td>
-                              </tr>
+                                <tr *ngFor="let product of serviceProducts">
+                                    <td>{{ product.Product_Name }}</td>
+                                    <td>1</td>
+                                    <td class="currency"> {{ product.Currency_Code }}
+                                        {{ product.price | number:'1.2-2' }}</td>
+
+                                    <!-- show VAT as a percent -->
+                                    <td class="currency">
+                                        {{ product.vat ? (product.vat + '%') : '0%' }}
+                                    </td>
+
+                                    <!-- total price before VAT -->
+                                    <td class="currency">
+                                        {{ product.Currency_Code }}
+                                        {{ product.price | number:'1.2-2' }}
+                                    </td>
+
+                                    <!-- total price including VAT -->
+                                    <td class="currency">
+                                        {{ product.Currency_Code }}
+                                        {{
+                                        (product.price * (1 + (product.vat || 0) / 100))
+                                        | number:'1.2-2'
+                                        }}
+                                    </td>
+                                </tr>
                             </tbody>
-                          </table>
-                          
-                          
+                        </table>
+
+
                     </div>
                 </div>
 
@@ -92,7 +98,7 @@
                     </div>
                 </div> -->
             </div>
-            <button (click)="submitData()" class="btn primary-btn"  style="width: 1200px;">Pay Now</button>
+            <button (click)="submitData()" class="btn primary-btn" style="width: 1200px;">Pay Now</button>
         </div>
     </section>
 
