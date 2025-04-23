@@ -11,12 +11,21 @@ import Swal from 'sweetalert2';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
  
 declare var $: any;
- 
+ // Define a Shareholder interface
+interface Shareholder {
+  name: string;
+  shareholderPercentage: string;
+  dob: string;
+  nationalityshareholder: string;
+  countryRisk: string;
+}
+
 @Component({
   selector: 'app-bussiness-show-deatils',
   templateUrl: './bussiness-show-deatils.component.html',
   styleUrl: './bussiness-show-deatils.component.css'
 })
+
 export class BussinessShowDeatilsComponent {
   isLoading = false;
   isBrowser: boolean;
@@ -32,8 +41,8 @@ totalVat: number = 0;
 serviceProducts: any[] = [];
 
   companyInfo: any = {}; // To store bank service information (Step 2 data)
-  shareholders :any= [];
- 
+  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' }]; // Initialize with one shareholder
+
   constructor(
     private http: HttpClient,
     private toastr: ToastrService,
@@ -217,11 +226,12 @@ serviceProducts: any[] = [];
  
   submitData() {
     const finalData = {
-      ...this.personalInfo,
-      ...this.companyInfo,
+      ...this.personalInfo, // Merge personal information (Step 1 data)
+      ...this.companyInfo,  // Merge company information (Step 2 data)
       prodcutNameList: this.matchScoreResponse?.products
     };
- 
+  
+    // Prepare the paymentPayload and include shareholders' information
     const paymentPayload = {
       firstName: this.personalInfo.firstName,
       lastName: this.personalInfo.lastName,
@@ -239,22 +249,32 @@ serviceProducts: any[] = [];
         ProductUnitprice: product.price,
         ProductQuantity: 1,  // Assuming quantity is 1
         ProductDiscount: 0 // Assuming no discount
+      })),
+      shareholders: this.shareholders.map(shareholder => ({
+        name: shareholder.name,
+        shareholderPercentage: shareholder.shareholderPercentage,
+        dob: shareholder.dob,
+        nationalityshareholder: shareholder.nationalityshareholder,
+        countryRisk: shareholder.countryRisk
       }))
     };
-    console.log("payload",paymentPayload)
+  
+    console.log("paymentPayload", paymentPayload);
+  
+    // Call the API to create payment opportunity
     this.userService.createPaymentOpportunity(paymentPayload).pipe(
       switchMap(response => {
         if (!response?.salesforce?.QuotePaymentId) {
           throw new Error('Missing QuotePaymentId from Salesforce');
         }
- 
+  
         const quotePaymentId = response.salesforce.QuotePaymentId;
- 
+  
         const payload = {
-          CustomerId:  quotePaymentId,
+          CustomerId: quotePaymentId,
           CompanyName: 'Virtuzone'
         };
- 
+  
         return this.userService.digicomplice(payload).pipe(
           map(secondResponse => ({
             quotePaymentId,
@@ -262,17 +282,17 @@ serviceProducts: any[] = [];
           }))
         );
       }),
- 
+  
       switchMap(({ quotePaymentId, leadId }) => {
         if (!leadId) {
           throw new Error('Missing LeadId from screening response');
         }
- 
+  
         const checkStatusData = {
           CustomerId: leadId,
           CompanyName: 'Virtuzone'
         };
- 
+  
         return this.userService.checkStatus(checkStatusData).pipe(
           tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
             if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
@@ -283,7 +303,7 @@ serviceProducts: any[] = [];
               );
               this.router.navigate(['/']);
             }
- 
+  
             // Clear local storage
             localStorage.removeItem('step1Data');
             localStorage.removeItem('mailform');
@@ -301,7 +321,7 @@ serviceProducts: any[] = [];
       }
     });
   }
- 
+  
  
   showError(errorMessage: string): void {
     this.toastr.error(errorMessage || 'Error submitting data', 'Error', {
