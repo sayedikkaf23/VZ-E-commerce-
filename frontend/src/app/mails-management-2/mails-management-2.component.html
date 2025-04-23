@@ -32,7 +32,7 @@
 
                 <fieldset>
                   <select class="form-select" id="CompanyIncorporated" [(ngModel)]="formData.CompanyIncorporated" style="border-color: transparent;"
-                      [ngModelOptions]="{ standalone: true }"  (ngModelChange)="onCompanyLocationChange($event)">
+                      [ngModelOptions]="{ standalone: true }">
                       <option value="" disabled>Select Country</option>
                       <option *ngFor="let nationality of nationalities" [value]="nationality.country">
                           {{ nationality.country }}
