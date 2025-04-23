@@ -32,7 +32,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     shareholdercount:'',
     type: 'Business Bank',
     CustomerType: 'C',
-    tradelicense: null ,
+    tradelicense: '' ,
     Companylicensed: '',
     BusinessActivityRisk: ''
   };
