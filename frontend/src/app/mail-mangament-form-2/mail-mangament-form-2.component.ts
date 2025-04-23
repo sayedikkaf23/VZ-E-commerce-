@@ -33,7 +33,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     type: 'Business Bank',
     CustomerType: 'C',
     tradelicense: null ,
-    Companylicensed: null,
+    Companylicensed: '',
     BusinessActivityRisk: ''
   };
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' }]; // Initialize with one shareholder
