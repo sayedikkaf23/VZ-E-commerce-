@@ -258,9 +258,10 @@ i: any;
 // VirtualReceptionist2Component.ts
 
 
+ 
 submitData() {
   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
-
+ 
   Swal.fire({
     title: 'Confirm Your Data',
     text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
@@ -272,40 +273,62 @@ submitData() {
   }).then((result) => {
     if (result.isConfirmed) {
       const birthday = new Date(mergedData.birthday);
-
+ 
       const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
-
+ 
       const nationality = mergedData.nationality;
       const match = this.nationalities.find(
         (item) => item.common.toLowerCase() === nationality.toLowerCase()
       );
-
-      const payload = {
-        countries: [match ? match.country : nationality]  // e.g. ["India"] or ["Indian"]
-      };
+ 
       // const payload = {
-      //   country: mergedData.nationality,
+      //   countries: [match ? match.country : nationality]  // e.g. ["India"] or ["Indian"]
       // };
-
+      const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
+ 
+// 4. Final payload
+let riskCode;
+switch (appliedRiskData.appliedRisk) {
+  case 'Low':
+    riskCode = 1;
+    break;
+  case 'Medium':
+    riskCode = 2;
+    break;
+  case 'High':
+    riskCode = 3;
+    break;
+  default:
+    riskCode = 0; // Default to 0 if no match
+    break;
+}
+ 
+ 
+  const payload = {
+    ServiceNameCode: 2,
+    SubTypeCode:16,
+    RiskCode:riskCode,
+ 
+  };
       this.isLoading = true;
-
-      this.mailManagementService.getProductsByCountryRisk(payload).subscribe(
+ 
+      this.mailManagementService.getServiceProducts(payload).subscribe(
         (response: any) => {
           this.isLoading = false;
-
+ 
           // Store final merged data
           localStorage.setItem('finalDataMail', JSON.stringify(mergedData));
-
+          localStorage.setItem('MailServiceProducts', JSON.stringify(response));
           // Save product data
           this.matchScoreStorageService.setMatchScoreResponse(response);
-
+ 
           // Navigate to summary page
           this.router.navigate(['/mails-summary']);
         },
         (error) => {
           this.isLoading = false;
           console.error(error);
-
+ 
           Swal.fire({
             title: 'Error',
             text: 'Something went wrong. Would you like to retry?',

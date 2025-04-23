@@ -15,7 +15,7 @@ declare var $: any;
 @Component({
   selector: 'app-virtual-reception-summary',
   templateUrl: './virtual-reception-summary.component.html',
-  styleUrl: './virtual-reception-summary.component.css'
+  styleUrl: './virtual-reception-summary.component.css',
 })
 export class VirtualReceptionSummaryComponent implements AfterViewInit {
   isLoading = false;
@@ -29,7 +29,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
   companyInfo: any = {};
   shareholders: any = [];
   matchScoreResponse: any;
-  serviceProducts: any[] = [];  // Array to store the product details
+  serviceProducts: any[] = []; // Array to store the product details
 
   constructor(
     private http: HttpClient,
@@ -52,18 +52,21 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
       if (storedProductData) {
         const productData = JSON.parse(storedProductData);
         // If the data is an object, wrap it in an array
-        this.serviceProducts = Array.isArray(productData) ? productData : [productData];
-        console.log("Retrieved Products from localStorage: ", this.serviceProducts);
+        this.serviceProducts = Array.isArray(productData)
+          ? productData
+          : [productData];
+        console.log(
+          'Retrieved Products from localStorage: ',
+          this.serviceProducts
+        );
       } else {
-        console.log("No products found in localStorage.");
+        console.log('No products found in localStorage.');
       }
-    
-    
     }
     // this.preventBackNavigation(); // Prevent back navigation on this page
    
     // this.quoteWithProductDetails = this.matchScoreResponse?.data;
-    
+
     // if (!this.salesforceResponse) {
     //   Swal.fire({
     //     title: 'Session Expired',
@@ -90,12 +93,25 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
         this.companyInfo = JSON.parse(mailform2 || '{}');
 
         const shareholdersFromMailform2 = this.companyInfo.shareholders || [];
-        const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
+        const additionalShareholderInfo = mailform3
+          ? JSON.parse(mailform3)
+          : { companyTradeLicense: '', shareholders: [] };
 
-        const mergedShareholders = additionalShareholderInfo.shareholders.length > 0 
-          ? additionalShareholderInfo.shareholders 
-          : shareholdersFromMailform2;
+        const mergedShareholders =
+          additionalShareholderInfo.shareholders.length > 0
+            ? additionalShareholderInfo.shareholders
+            : shareholdersFromMailform2;
 
+        if (
+          !this.salesforceResponse ||
+          !this.salesforceResponse.data ||
+          !this.salesforceResponse.data.leadWithDetails
+        ) {
+          console.error(
+            'salesforceResponse.data.leadWithDetails is not ready or missing'
+          );
+          return;
+        }
 
 
       
@@ -240,7 +256,10 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
               window.alert(
                 'Your request has been submitted successfully. You will receive an email when your application is approved.'
               );
-              this.router.navigate(['/']);
+                     localStorage.removeItem('virtualdata');
+        localStorage.removeItem('virtualdata1');
+        localStorage.removeItem('virtualdata2');
+              this.router.navigate([`/failure/${quotePaymentId}`]);
             }
           })
         );
@@ -258,39 +277,51 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
   
   getTotalAmountIncludingVAT(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
-    return this.matchScoreResponse.products.reduce((total: number, product: {totalPriceVat: number}) => {
-    
-      return total + product.totalPriceVat;
-    }, 0);
+
+    return this.matchScoreResponse.products.reduce(
+      (total: number, product: { totalPriceVat: number }) => {
+        return total + product.totalPriceVat;
+      },
+      0
+    );
   }
 
   getTotalDiscountedAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
-    return this.matchScoreResponse.products.reduce((total: number, product: { totalPrice: number}) => {
-      const itemTotal = product.totalPrice ;
-      return total + itemTotal;
-    }, 0);
+
+    return this.matchScoreResponse.products.reduce(
+      (total: number, product: { totalPrice: number }) => {
+        const itemTotal = product.totalPrice;
+        return total + itemTotal;
+      },
+      0
+    );
   }
 
   getTotalAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
-    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number}) => {
-      const itemTotal = product.unitPrice * product.quantity ;
-      return total + itemTotal;
-    }, 0);
+
+    return this.matchScoreResponse.products.reduce(
+      (total: number, product: { unitPrice: number; quantity: number }) => {
+        const itemTotal = product.unitPrice * product.quantity;
+        return total + itemTotal;
+      },
+      0
+    );
   }
 
   showError(errorMessage: string): void {
     this.toastr.error(errorMessage || 'Error submitting data', 'Error', {
-      positionClass: this.getToastPosition()
+      positionClass: this.getToastPosition(),
     });
   }
 
   getToastPosition(): string {
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    const scrollPosition =
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop ||
+      0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left';
   }
 }

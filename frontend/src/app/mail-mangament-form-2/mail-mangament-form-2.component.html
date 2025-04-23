@@ -68,6 +68,7 @@
       id="tradelicense"
       class="form-select"
       [(ngModel)]="formData.tradelicense"
+      (change)="onCategoryChange($event)"
     >
       <option [ngValue]="null" disabled>
         What are the type of activities mentioned on your trade license?
@@ -141,6 +142,27 @@
                   <option value="AED 50,001-150,000">AED 50,001-150,000</option>
                   <option value="AED 50,001-150,000">AED 50,001-150,000</option>
                   <option value="AED 500,000+">AED 500,000+</option>
+                </select>
+              </fieldset>
+            </div>
+            <div class="form-field">
+              <label for="Bank">Do you wish to apply for?<span class="required">*</span></label>
+
+              <fieldset>
+                <select
+                  name="Bank"
+                  id="Bank"
+                  class="form-select"
+                  [(ngModel)]="formData.Bank"
+                >
+                  <option value="" disabled selected>
+                    Do you wish to apply for?
+                  </option>
+                  <option value="Digital Personal Bank Account Opening">Digital Personal Bank Account Opening</option>
+                  <option value="Traditional Personal bank Account Opening">Traditional Personal bank Account Opening</option>
+                  <option value="All the above Bank Account Opening">All the above Bank Account Opening</option>
+                  <!-- <option value="All the above Bank Account Opening">All the above Bank Account Opening</option> -->
+
                 </select>
               </fieldset>
             </div>

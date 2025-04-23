@@ -8,7 +8,7 @@ import { DataStorageService } from '../service/data-storage.service';
 import AOS from 'aos';
 import Swal from 'sweetalert2';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
-import { map, switchMap } from 'rxjs';
+import { map, switchMap, tap } from 'rxjs';
 
 declare var $: any;
 
@@ -29,6 +29,7 @@ export class MailsManagementSummaryComponent {
   companyInfo: any = {};
   shareholders: any = [];
   matchScoreResponse: any;
+  serviceProducts: any[] = []; // Array to store the product details
 
   constructor(
     private http: HttpClient,
@@ -47,25 +48,28 @@ export class MailsManagementSummaryComponent {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
+      const storedProductData = localStorage.getItem('MailServiceProducts');
+      if (storedProductData) {
+        const productData = JSON.parse(storedProductData);
+        // If the data is an object, wrap it in an array
+        this.serviceProducts = Array.isArray(productData) ? productData : [productData];
+        console.log("Retrieved Products from localStorage: ", this.serviceProducts);
+      } else {
+        console.log("No products found in localStorage.");
+      }
+    
     }
     // this.preventBackNavigation(); // Prevent back navigation on this page
-    this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
-    // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
-    this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
-    this.quoteWithProductDetails =
-  this.matchScoreResponse?.results?.[0]?.products || [];
-
+   
     
-  if (this.isBrowser) {
+ 
       const mailform = localStorage.getItem('mailform');
       const mailform2 = localStorage.getItem('mailform1');
       const mailform3 = localStorage.getItem('mailform2');
     
-      if (!mailform || !mailform2) {
-        this.router.navigate(['/home']);
-      } else {
-        this.personalInfo = JSON.parse(mailform);
-        this.companyInfo = JSON.parse(mailform2);
+  
+        this.personalInfo = mailform ? JSON.parse(mailform) : {};
+        this.companyInfo = JSON.parse(mailform2 || '{}');
 
         const shareholdersFromMailform2 = this.companyInfo.shareholders || [];
         const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
@@ -77,16 +81,6 @@ export class MailsManagementSummaryComponent {
 
 
 
-          if (!this.salesforceResponse || !this.salesforceResponse.data || !this.salesforceResponse.data.leadWithDetails) {
-            console.error("salesforceResponse.data.leadWithDetails is not ready or missing");
-            return;
-          }
-          
-          const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
-          if (!LeadId) {
-            console.error("LeadId is not found in salesforceResponse.data.leadWithDetails");
-          }
-      
 
 
         const mergedData = {
@@ -94,15 +88,14 @@ export class MailsManagementSummaryComponent {
           ...this.companyInfo,
           companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
           shareholders: mergedShareholders,
-          LeadId
+        
         };
 
         localStorage.setItem('mergedData', JSON.stringify(mergedData));
         this.displayShareholders = Array.isArray(mergedData.shareholders)
           ? mergedData.shareholders
           : Object.values(mergedData.shareholders || []);
-      }
-    }
+   
   }
 
   ngAfterViewInit(): void {
@@ -148,60 +141,158 @@ export class MailsManagementSummaryComponent {
     });
   }
   
-  submitData() {
-    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+  // submitData() {
+  //   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
   
-    // Extract LeadId safely
-    const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
-    if (!LeadId) {
-      console.error("LeadId is missing from mergedData");
-      this.toastr.error("Lead ID not found, submission failed.");
-      return;
-    }
+  //   // Extract LeadId safely
+  //   const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
+  //   if (!LeadId) {
+  //     console.error("LeadId is missing from mergedData");
+  //     this.toastr.error("Lead ID not found, submission failed.");
+  //     return;
+  //   }
   
-    this.userService.mailform(mergedData).pipe(
-      switchMap(response => {
-        // Retrieve quotePaymentId from the response instead of salesforceResponse
-        const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
+  //   this.userService.mailform(mergedData).pipe(
+  //     switchMap(response => {
+  //       // Retrieve quotePaymentId from the response instead of salesforceResponse
+  //       const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
   
-        if (!quotePaymentId) {
-          throw new Error('Quote Payment ID is missing');
-        }
+  //       if (!quotePaymentId) {
+  //         throw new Error('Quote Payment ID is missing');
+  //       }
   
-        // Clear localStorage
-        localStorage.removeItem('mailform');
+  //       // Clear localStorage
+  //       localStorage.removeItem('mailform');
+  //       localStorage.removeItem('mailform1');
+  //       localStorage.removeItem('mailform2');
+  
+  //       const checkStatusData = {
+  //         CustomerId: LeadId,
+  //         CompanyName: "Virtuzone"
+  //       };
+  
+  //       return this.userService.checkStatus(checkStatusData).pipe(
+  //         map((checkStatusResponse: any) => ({ checkStatusResponse, quotePaymentId }))
+  //       );
+  //     })
+  //   ).subscribe(
+  //     (result: any) => {
+  //       console.log("Check Status Response:", result.checkStatusResponse);
+  
+  //       if (result.checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+  //         this.router.navigate([`/onlinepayment/${result.quotePaymentId}`]);
+  //       } else {
+  //         window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
+  //         this.router.navigate(['/']);
+  //       }
+  //     },
+  //     (error) => {
+  //       console.error('Error submitting data:', error);
+  //       this.toastr.error(error.message || 'An error occurred', 'Error');
+  //     }
+  //   );
+  // }
+  
+  
+    submitData() {
+      const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+      
+      console.log(mergedData, "mergedData");
+    
+      // Ensure LeadId is present
+   
+  
+      // Check if mergedData contains shareholders
+      const shareholdersData = mergedData?.shareholders || [];
+    
+      // Create payment opportunity payload
+      const paymentPayload = {
+        firstName: this.personalInfo.firstName,
+        lastName: this.personalInfo.lastName,
+        email: this.personalInfo.email,
+        nationality: this.personalInfo.nationality,
+        phone: this.personalInfo.mobileNumber.number,
+        dob: this.personalInfo.birthday,
+        type: "Mail Management",
+        CustomerType: "C",
+        prodcutNameList: this.serviceProducts.map(product => ({
+          ProductName: product.Product_Name,
+          ProductFamily: "Mail Management",
+          ProductDescription: "Service for UAE Resident",
+          ProductCurrencyName: product.Currency_Code,
+          ProductUnitprice: product.price,
+          ProductQuantity: 1,  // Assuming quantity is 1
+          ProductDiscount: 0 // Assuming no discount
+        })),
+        shareholders: shareholdersData.map((shareholder: {
+          name: any;
+          shareholderPercentage: any;
+          dob: any;
+          nationalityshareholder: any;
+          countryRisk: any;
+          files: any[];
+        }) => ({
+          name: shareholder.name,
+          shareholderPercentage: shareholder.shareholderPercentage,
+          dob: shareholder.dob,
+          nationalityshareholder: shareholder.nationalityshareholder,
+          countryRisk: shareholder.countryRisk,
+          files: shareholder.files || []  // Default to empty array if files are undefined
+        }))
+      };
+    
+      // Call createPaymentOpportunity API
+      this.userService.createPaymentOpportunity(paymentPayload).pipe(
+        switchMap((paymentOpportunityResponse) => {
+          // After creating payment opportunity, call digicomplice API
+          const payload = {
+            CustomerId: paymentOpportunityResponse.QuotePaymentId,
+            CompanyName: 'Virtuzone'
+          };
+    
+          return this.userService.digicomplice(payload).pipe(
+            map(secondResponse => ({
+              quotePaymentId: paymentOpportunityResponse.QuotePaymentId,
+              leadId: secondResponse?.screeningmatchScore?.customerId || null
+            }))
+          );
+        })
+      ).pipe(
+        switchMap(({ quotePaymentId, leadId }) => {
+          if (!leadId) {
+            throw new Error('Missing LeadId from screening response');
+          }
+    
+          const checkStatusData = {
+            CustomerId: leadId,
+            CompanyName: 'Virtuzone'
+          };
+    
+          return this.userService.checkStatus(checkStatusData).pipe(
+            tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
+              if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+                this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+              } else {
+                window.alert(
+                  'Your request has been submitted successfully. You will receive an email when your application is approved.'
+                );
+                       localStorage.removeItem('mailform');
         localStorage.removeItem('mailform1');
         localStorage.removeItem('mailform2');
-  
-        const checkStatusData = {
-          CustomerId: LeadId,
-          CompanyName: "Virtuzone"
-        };
-  
-        return this.userService.checkStatus(checkStatusData).pipe(
-          map((checkStatusResponse: any) => ({ checkStatusResponse, quotePaymentId }))
-        );
-      })
-    ).subscribe(
-      (result: any) => {
-        console.log("Check Status Response:", result.checkStatusResponse);
-  
-        if (result.checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-          this.router.navigate([`/onlinepayment/${result.quotePaymentId}`]);
-        } else {
-          window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
-          this.router.navigate(['/']);
+                this.router.navigate([`/failure/${quotePaymentId}`]);
+              }
+            })
+          );
+        })
+      ).subscribe(
+        () => {},
+        (error) => {
+          console.error('Error submitting data:', error);
+          this.toastr.error(error.message || 'An error occurred', 'Error');
         }
-      },
-      (error) => {
-        console.error('Error submitting data:', error);
-        this.toastr.error(error.message || 'An error occurred', 'Error');
-      }
-    );
-  }
-  
-  
-  
+      );
+    }
+    
 
   showError(errorMessage: string): void {
     this.toastr.error(errorMessage || 'Error submitting data', 'Error', {
