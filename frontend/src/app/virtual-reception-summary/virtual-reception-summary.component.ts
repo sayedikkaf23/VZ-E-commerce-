@@ -15,7 +15,7 @@ declare var $: any;
 @Component({
   selector: 'app-virtual-reception-summary',
   templateUrl: './virtual-reception-summary.component.html',
-  styleUrl: './virtual-reception-summary.component.css'
+  styleUrl: './virtual-reception-summary.component.css',
 })
 export class VirtualReceptionSummaryComponent implements AfterViewInit {
   isLoading = false;
@@ -29,7 +29,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
   companyInfo: any = {};
   shareholders: any = [];
   matchScoreResponse: any;
-  serviceProducts: any[] = [];  // Array to store the product details
+  serviceProducts: any[] = []; // Array to store the product details
 
   constructor(
     private http: HttpClient,
@@ -52,20 +52,24 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
       if (storedProductData) {
         const productData = JSON.parse(storedProductData);
         // If the data is an object, wrap it in an array
-        this.serviceProducts = Array.isArray(productData) ? productData : [productData];
-        console.log("Retrieved Products from localStorage: ", this.serviceProducts);
+        this.serviceProducts = Array.isArray(productData)
+          ? productData
+          : [productData];
+        console.log(
+          'Retrieved Products from localStorage: ',
+          this.serviceProducts
+        );
       } else {
-        console.log("No products found in localStorage.");
+        console.log('No products found in localStorage.');
       }
-    
-    
     }
     // this.preventBackNavigation(); // Prevent back navigation on this page
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
     // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
-    this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
+    this.matchScoreResponse =
+      this.matchScoreStorageService.getMatchScoreResponse();
     // this.quoteWithProductDetails = this.matchScoreResponse?.data;
-    
+
     // if (!this.salesforceResponse) {
     //   Swal.fire({
     //     title: 'Session Expired',
@@ -80,12 +84,12 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     //     }
     //   });
     // } else if (this.isBrowser) {
-    console.log(this.matchScoreResponse,"ss")
+    console.log(this.matchScoreResponse, 'ss');
     this.quoteWithProductDetails =
-    this.matchScoreResponse?.results?.[0]?.products || [];
-  console.log( this.quoteWithProductDetails,"product")
-    
-      if (this.isBrowser) {
+      this.matchScoreResponse?.results?.[0]?.products || [];
+    console.log(this.quoteWithProductDetails, 'product');
+
+    if (this.isBrowser) {
       const mailform = localStorage.getItem('virtualdata');
       const mailform2 = localStorage.getItem('virtualdata1');
       const mailform3 = localStorage.getItem('virtualdata2');
@@ -97,31 +101,39 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
         this.companyInfo = JSON.parse(mailform2);
 
         const shareholdersFromMailform2 = this.companyInfo.shareholders || [];
-        const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
+        const additionalShareholderInfo = mailform3
+          ? JSON.parse(mailform3)
+          : { companyTradeLicense: '', shareholders: [] };
 
-        const mergedShareholders = additionalShareholderInfo.shareholders.length > 0 
-          ? additionalShareholderInfo.shareholders 
-          : shareholdersFromMailform2;
+        const mergedShareholders =
+          additionalShareholderInfo.shareholders.length > 0
+            ? additionalShareholderInfo.shareholders
+            : shareholdersFromMailform2;
 
+        if (
+          !this.salesforceResponse ||
+          !this.salesforceResponse.data ||
+          !this.salesforceResponse.data.leadWithDetails
+        ) {
+          console.error(
+            'salesforceResponse.data.leadWithDetails is not ready or missing'
+          );
+          return;
+        }
 
-
-          if (!this.salesforceResponse || !this.salesforceResponse.data || !this.salesforceResponse.data.leadWithDetails) {
-            console.error("salesforceResponse.data.leadWithDetails is not ready or missing");
-            return;
-          }
-          
-          const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
-          if (!LeadId) {
-            console.error("LeadId is not found in salesforceResponse.data.leadWithDetails");
-          }
-      
+        const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
+        if (!LeadId) {
+          console.error(
+            'LeadId is not found in salesforceResponse.data.leadWithDetails'
+          );
+        }
 
         const mergedData = {
           ...this.personalInfo,
           ...this.companyInfo,
           companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
           shareholders: mergedShareholders,
-          LeadId
+          LeadId,
         };
 
         localStorage.setItem('mergedData', JSON.stringify(mergedData));
@@ -177,92 +189,117 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
 
   submitData() {
     const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
-  
+
     // Ensure LeadId is present
     const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
     if (!LeadId) {
-      console.error("LeadId is missing from mergedData");
-      this.toastr.error("Lead ID not found, submission failed.");
+      console.error('LeadId is missing from mergedData');
+      this.toastr.error('Lead ID not found, submission failed.');
       return;
     }
-  
-    this.userService.virtualForm(mergedData).pipe(
-      switchMap(response => {
-        // Extract quotePaymentId safely
-        const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
 
-  
-        if (!quotePaymentId) {
-          throw new Error('Quote Payment ID is missing');
+    this.userService
+      .virtualForm(mergedData)
+      .pipe(
+        switchMap((response) => {
+          // Extract quotePaymentId safely
+          const quotePaymentId =
+            this.salesforceResponse?.data?.quotePaymentWithDetails
+              ?.QuotePaymentId;
+
+          if (!quotePaymentId) {
+            throw new Error('Quote Payment ID is missing');
+          }
+
+          // Clear localStorage
+          localStorage.removeItem('virtualdata');
+          localStorage.removeItem('virtualdata1');
+          localStorage.removeItem('virtualdata2');
+
+          const checkStatusData = {
+            CustomerId: LeadId,
+            CompanyName: 'Virtuzone',
+          };
+
+          return this.userService
+            .checkStatus(checkStatusData)
+            .pipe(
+              map((checkStatusResponse: any) => ({
+                checkStatusResponse,
+                quotePaymentId,
+              }))
+            );
+        })
+      )
+      .subscribe(
+        (result: { checkStatusResponse: any; quotePaymentId: string }) => {
+          console.log('Check Status Response:', result.checkStatusResponse);
+
+          if (
+            result.checkStatusResponse.data.CustomerStatus === 'Auto Approved'
+          ) {
+            this.router.navigate([`/onlinepayment/${result.quotePaymentId}`]);
+          } else {
+            window.alert(
+              'Your request has been submitted successfully. You will receive an email when your application is approved.'
+            );
+            this.router.navigate(['/']);
+          }
+        },
+        (error) => {
+          console.error('Error submitting data:', error);
+          this.toastr.error(error.message || 'An error occurred', 'Error');
         }
-  
-        // Clear localStorage
-        localStorage.removeItem('virtualdata');
-        localStorage.removeItem('virtualdata1');
-        localStorage.removeItem('virtualdata2');
-  
-        const checkStatusData = {
-          CustomerId: LeadId,
-          CompanyName: "Virtuzone"
-        };
-  
-        return this.userService.checkStatus(checkStatusData).pipe(
-          map((checkStatusResponse: any) => ({ checkStatusResponse, quotePaymentId }))
-        );
-      })
-    ).subscribe(
-      (result: { checkStatusResponse: any; quotePaymentId: string }) => {
-        console.log("Check Status Response:", result.checkStatusResponse);
-  
-        if (result.checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-          this.router.navigate([`/onlinepayment/${result.quotePaymentId}`]);
-        } else {
-          window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
-          this.router.navigate(['/']);
-        }
-      },
-      (error) => {
-        console.error('Error submitting data:', error);
-        this.toastr.error(error.message || 'An error occurred', 'Error');
-      }
-    );
+      );
   }
-  
+
   getTotalAmountIncludingVAT(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
-    return this.matchScoreResponse.products.reduce((total: number, product: {totalPriceVat: number}) => {
-    
-      return total + product.totalPriceVat;
-    }, 0);
+
+    return this.matchScoreResponse.products.reduce(
+      (total: number, product: { totalPriceVat: number }) => {
+        return total + product.totalPriceVat;
+      },
+      0
+    );
   }
 
   getTotalDiscountedAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
-    return this.matchScoreResponse.products.reduce((total: number, product: { totalPrice: number}) => {
-      const itemTotal = product.totalPrice ;
-      return total + itemTotal;
-    }, 0);
+
+    return this.matchScoreResponse.products.reduce(
+      (total: number, product: { totalPrice: number }) => {
+        const itemTotal = product.totalPrice;
+        return total + itemTotal;
+      },
+      0
+    );
   }
 
   getTotalAmount(): number {
     if (!this.matchScoreResponse?.products) return 0;
-  
-    return this.matchScoreResponse.products.reduce((total: number, product: { unitPrice: number; quantity: number}) => {
-      const itemTotal = product.unitPrice * product.quantity ;
-      return total + itemTotal;
-    }, 0);
+
+    return this.matchScoreResponse.products.reduce(
+      (total: number, product: { unitPrice: number; quantity: number }) => {
+        const itemTotal = product.unitPrice * product.quantity;
+        return total + itemTotal;
+      },
+      0
+    );
   }
 
   showError(errorMessage: string): void {
     this.toastr.error(errorMessage || 'Error submitting data', 'Error', {
-      positionClass: this.getToastPosition()
+      positionClass: this.getToastPosition(),
     });
   }
 
   getToastPosition(): string {
-    const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+    const scrollPosition =
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      document.body.scrollTop ||
+      0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left';
   }
 }
