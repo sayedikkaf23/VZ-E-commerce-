@@ -222,7 +222,27 @@ serviceProducts: any[] = [];
       prodcutNameList: this.matchScoreResponse?.products
     };
  
-    this.userService.createOpportunity(finalData).pipe(
+    const paymentPayload = {
+      firstName: this.personalInfo.firstName,
+      lastName: this.personalInfo.lastName,
+      email: this.personalInfo.email,
+      nationality: this.personalInfo.nationality,
+      phone: this.personalInfo.mobileNumber.number,
+      dob: this.personalInfo.birthday,
+      type: "Business Bank",
+      CustomerType: "C",
+      prodcutNameList: this.serviceProducts.map(product => ({
+        ProductName: product.Product_Name,
+        ProductFamily: "Traditional Services", // Example placeholder
+        ProductDescription: "Service for UAE Resident", // Example placeholder
+        ProductCurrencyName: product.Currency_Code,
+        ProductUnitprice: product.price,
+        ProductQuantity: 1,  // Assuming quantity is 1
+        ProductDiscount: 0 // Assuming no discount
+      }))
+    };
+    console.log("payload",paymentPayload)
+    this.userService.createPaymentOpportunity(paymentPayload).pipe(
       switchMap(response => {
         if (!response?.salesforce?.QuotePaymentId) {
           throw new Error('Missing QuotePaymentId from Salesforce');
