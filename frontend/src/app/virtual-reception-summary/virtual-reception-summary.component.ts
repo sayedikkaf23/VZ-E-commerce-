@@ -8,7 +8,7 @@ import { DataStorageService } from '../service/data-storage.service';
 import AOS from 'aos';
 import Swal from 'sweetalert2';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
-import { map, of, switchMap } from 'rxjs';
+import { map, of, switchMap, tap } from 'rxjs';
 
 declare var $: any;
 
@@ -61,9 +61,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     
     }
     // this.preventBackNavigation(); // Prevent back navigation on this page
-    this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
-    // this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
-    this.matchScoreResponse = this.matchScoreStorageService.getMatchScoreResponse();
+   
     // this.quoteWithProductDetails = this.matchScoreResponse?.data;
     
     // if (!this.salesforceResponse) {
@@ -80,21 +78,16 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     //     }
     //   });
     // } else if (this.isBrowser) {
-    console.log(this.matchScoreResponse,"ss")
-    this.quoteWithProductDetails =
-    this.matchScoreResponse?.results?.[0]?.products || [];
-  console.log( this.quoteWithProductDetails,"product")
+ 
     
-      if (this.isBrowser) {
+
       const mailform = localStorage.getItem('virtualdata');
       const mailform2 = localStorage.getItem('virtualdata1');
       const mailform3 = localStorage.getItem('virtualdata2');
 
-      if (!mailform || !mailform2) {
-        this.router.navigate(['/home']);
-      } else {
-        this.personalInfo = JSON.parse(mailform);
-        this.companyInfo = JSON.parse(mailform2);
+   
+        this.personalInfo = mailform ? JSON.parse(mailform) : {};
+        this.companyInfo = JSON.parse(mailform2 || '{}');
 
         const shareholdersFromMailform2 = this.companyInfo.shareholders || [];
         const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
@@ -105,15 +98,6 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
 
 
 
-          if (!this.salesforceResponse || !this.salesforceResponse.data || !this.salesforceResponse.data.leadWithDetails) {
-            console.error("salesforceResponse.data.leadWithDetails is not ready or missing");
-            return;
-          }
-          
-          const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
-          if (!LeadId) {
-            console.error("LeadId is not found in salesforceResponse.data.leadWithDetails");
-          }
       
 
         const mergedData = {
@@ -121,15 +105,14 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
           ...this.companyInfo,
           companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
           shareholders: mergedShareholders,
-          LeadId
+          
         };
 
         localStorage.setItem('mergedData', JSON.stringify(mergedData));
         this.displayShareholders = Array.isArray(mergedData.shareholders)
           ? mergedData.shareholders
           : Object.values(mergedData.shareholders || []);
-      }
-    }
+  
   }
 
   ngAfterViewInit(): void {
@@ -177,56 +160,101 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
 
   submitData() {
     const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+    
+    console.log(mergedData, "mergedData");
   
     // Ensure LeadId is present
-    const LeadId = this.salesforceResponse?.data?.leadWithDetails?.LeadId;
-    if (!LeadId) {
-      console.error("LeadId is missing from mergedData");
-      this.toastr.error("Lead ID not found, submission failed.");
-      return;
-    }
-  
-    this.userService.virtualForm(mergedData).pipe(
-      switchMap(response => {
-        // Extract quotePaymentId safely
-        const quotePaymentId = this.salesforceResponse?.data?.quotePaymentWithDetails?.QuotePaymentId;
+ 
 
+    // Check if mergedData contains shareholders
+    const shareholdersData = mergedData?.shareholders || [];
   
-        if (!quotePaymentId) {
-          throw new Error('Quote Payment ID is missing');
+    // Create payment opportunity payload
+    const paymentPayload = {
+      firstName: this.personalInfo.firstName,
+      lastName: this.personalInfo.lastName,
+      email: this.personalInfo.email,
+      nationality: this.personalInfo.nationality,
+      phone: this.personalInfo.mobileNumber.number,
+      dob: this.personalInfo.birthday,
+      type: "Virtual Receptionist",
+      CustomerType: "C",
+      prodcutNameList: this.serviceProducts.map(product => ({
+        ProductName: product.Product_Name,
+        ProductFamily: "Virtual Receptionist",
+        ProductDescription: "Service for UAE Resident",
+        ProductCurrencyName: product.Currency_Code,
+        ProductUnitprice: product.price,
+        ProductQuantity: 1,  // Assuming quantity is 1
+        ProductDiscount: 0 // Assuming no discount
+      })),
+      shareholders: shareholdersData.map((shareholder: {
+        name: any;
+        shareholderPercentage: any;
+        dob: any;
+        nationalityshareholder: any;
+        countryRisk: any;
+        files: any[];
+      }) => ({
+        name: shareholder.name,
+        shareholderPercentage: shareholder.shareholderPercentage,
+        dob: shareholder.dob,
+        nationalityshareholder: shareholder.nationalityshareholder,
+        countryRisk: shareholder.countryRisk,
+        files: shareholder.files || []  // Default to empty array if files are undefined
+      }))
+    };
+  
+    // Call createPaymentOpportunity API
+    this.userService.createPaymentOpportunity(paymentPayload).pipe(
+      switchMap((paymentOpportunityResponse) => {
+        // After creating payment opportunity, call digicomplice API
+        const payload = {
+          CustomerId: paymentOpportunityResponse.QuotePaymentId,
+          CompanyName: 'Virtuzone'
+        };
+  
+        return this.userService.digicomplice(payload).pipe(
+          map(secondResponse => ({
+            quotePaymentId: paymentOpportunityResponse.QuotePaymentId,
+            leadId: secondResponse?.screeningmatchScore?.customerId || null
+          }))
+        );
+      })
+    ).pipe(
+      switchMap(({ quotePaymentId, leadId }) => {
+        if (!leadId) {
+          throw new Error('Missing LeadId from screening response');
         }
   
-        // Clear localStorage
-        localStorage.removeItem('virtualdata');
-        localStorage.removeItem('virtualdata1');
-        localStorage.removeItem('virtualdata2');
-  
         const checkStatusData = {
-          CustomerId: LeadId,
-          CompanyName: "Virtuzone"
+          CustomerId: leadId,
+          CompanyName: 'Virtuzone'
         };
   
         return this.userService.checkStatus(checkStatusData).pipe(
-          map((checkStatusResponse: any) => ({ checkStatusResponse, quotePaymentId }))
+          tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
+            if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+              this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+            } else {
+              window.alert(
+                'Your request has been submitted successfully. You will receive an email when your application is approved.'
+              );
+              this.router.navigate(['/']);
+            }
+          })
         );
       })
     ).subscribe(
-      (result: { checkStatusResponse: any; quotePaymentId: string }) => {
-        console.log("Check Status Response:", result.checkStatusResponse);
-  
-        if (result.checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-          this.router.navigate([`/onlinepayment/${result.quotePaymentId}`]);
-        } else {
-          window.alert("Your request has been submitted successfully. You will receive an email when your application is approved.");
-          this.router.navigate(['/']);
-        }
-      },
+      () => {},
       (error) => {
         console.error('Error submitting data:', error);
         this.toastr.error(error.message || 'An error occurred', 'Error');
       }
     );
   }
+  
+  
   
   getTotalAmountIncludingVAT(): number {
     if (!this.matchScoreResponse?.products) return 0;
