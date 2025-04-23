@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef, OnInit, AfterViewInit, Inject, PLATFORM_ID } from '@angular/core';
 import { ChangeDetectionStrategy } from '@angular/core';
-import { GetnationalityService } from '../service/getnationality.service';
+// import { GetnationalityService } from '../service/getnationality.service';
+import { AdminAuthService } from '../service/admin-auth.service';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormDataService } from '../service/form-data.service';
@@ -28,15 +29,15 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
     Companylicensed: '',
   };
 
-  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }];
+  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' }];
 
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {};
-  nationalities: string[] = [];
+  nationalities: any[] = [];
   nationalitiesData: string[] = [];
   businessCategories: any[] = [];
-
+  personalInfo: any;
 
   constructor(
     private formDataService: FormDataService,
@@ -45,7 +46,8 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
     private toastr: ToastrService,
     private router: Router,
     private cdRef: ChangeDetectorRef,
-    private getnationalityService: GetnationalityService,
+    private adminAuthService: AdminAuthService,
+    // private getnationalityService: GetnationalityService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.step1Data = this.formDataService.getmailformData();
@@ -55,20 +57,27 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     // Load nationality data
-    this.getnationalityService.getCountries().subscribe((data) => {
-      // Map and trim whitespace, sort case-insensitively
-      this.nationalities = data
-        .map((country: { name: { common: string } }) => country.name.common.trim())
-        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    // this.getnationalityService.getCountries().subscribe((data) => {
+    //   // Map and trim whitespace, sort case-insensitively
+    //   this.nationalities = data
+    //     .map((country: { name: { common: string } }) => country.name.common.trim())
+    //     .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
     
-      // Trigger change detection to update the view
-      this.cdRef.detectChanges();
-    });
+    //   // Trigger change detection to update the view
+    //   this.cdRef.detectChanges();
+    // });
     
 
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
-      this.cdRef.detectChanges();
+    // this.getnationalityService.getNationality().subscribe((data) => {
+    //   this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
+    //   this.cdRef.detectChanges();
+    // });
+
+    this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
+       
+      
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
 
   
@@ -106,6 +115,17 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges();
     }
 
+  }
+
+  onNationalityChange(event: Event, shareholder: any): void {
+    const selectedCountry = (event.target as HTMLSelectElement).value;
+    const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
+  
+    if (selectedNationality) {
+      shareholder.countryRisk = selectedNationality.RiskRating;
+    } else {
+      shareholder.countryRisk = '';
+    }
   }
 
   onCompanyLocationChange(value: string): void {
@@ -202,7 +222,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
 
     // Add shareholders if needed
     while (this.shareholders.length < count) {
-      this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+      this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' });
     }
 
     // Remove extra shareholders if needed
@@ -253,15 +273,46 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
           ...this.formData,
           shareholders: this.shareholders
         };
+        const mailform = localStorage.getItem('mailform');
+        this.personalInfo = mailform ? JSON.parse(mailform) : {};
         
         // Save Step 2 data to localStorage
         localStorage.setItem('mailform1', JSON.stringify(combinedFormData));
+        // Prepare payload for the API call using Step 1 and Shareholders data
+        const payload = {
+          customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
+          shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
+          totalCusotmerSelected: this.shareholders.length + 1,
+        };
 
-        if (this.formData.CompanyIncorporated === 'United Arab Emirates') {
-          this.router.navigate(['/mails-management-3']);
-        } else {
-          this.router.navigate(['/mails-management-details']);
-        }
+        // Call the API to get products by category and country risk
+        this.userService.getProductsByCategoryAndCountryRisk(payload).subscribe(
+          (response) => {
+            console.log('API Response:', response);
+
+            const appliedRiskData = {
+              appliedRisk: response.appliedRisk, // Assuming the response contains 'appliedRisk'
+              percentage: response.percentage, // Assuming the response contains 'percentage'
+              userRating: response.userRating, // Assuming the response contains 'userRating'
+              totalPossibleRating: response.totalPossibleRating // Assuming the response contains 'totalPossibleRating'
+            };
+
+            // Save the appliedRisk data to localStorage
+            localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
+            // Handle the response (e.g., store the products in a variable or pass to the next page)
+
+            if (this.formData.CompanyIncorporated === 'United Arab Emirates') {
+              this.router.navigate(['/mails-management-3']);
+            } else {
+              this.router.navigate(['/mails-management-details']);
+            }
+          },
+          (error) => {
+            console.error('API Error:', error);
+            this.toastr.error('Failed to fetch products.', 'API Error');
+          }
+        );
+       
       }
     }
   }

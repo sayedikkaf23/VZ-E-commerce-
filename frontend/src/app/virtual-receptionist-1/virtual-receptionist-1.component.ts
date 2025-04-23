@@ -17,7 +17,8 @@ import AOS from 'aos';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
-import { GetnationalityService } from '../service/getnationality.service';
+import { AdminAuthService } from '../service/admin-auth.service';
+// import { GetnationalityService } from '../service/getnationality.service';
 declare var $: any;
 
 @Component({
@@ -43,14 +44,16 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       shareholderPercentage: '',
       dob: '',
       nationalityshareholder: '',
+      countryRisk: '' 
     },
   ]; // Initialize with one shareholder
 
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
-  nationalities: string[] = []; 
+  nationalities: any[] = []; 
   nationalitiesData: string[] = []; 
+  personalInfo: any;
 
   constructor(
     private formDataService: FormDataService,
@@ -59,7 +62,8 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
     private toastr: ToastrService,
     private router: Router,
     private cdRef: ChangeDetectorRef,
-    private getnationalityService: GetnationalityService,
+    // private getnationalityService: GetnationalityService,
+    private adminAuthService: AdminAuthService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // Retrieve Step 1 data from the service when Step 2 initializes
@@ -73,21 +77,26 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       window.scrollTo(0, 0);
     }
     // Retrieve countries and nationalities
-    this.getnationalityService.getCountries().subscribe((data) => {
-      // Map and trim whitespace, sort case-insensitively
-      this.nationalities = data
-        .map((country: { name: { common: string } }) => country.name.common.trim())
-        .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
+    // this.getnationalityService.getCountries().subscribe((data) => {
+    //   // Map and trim whitespace, sort case-insensitively
+    //   this.nationalities = data
+    //     .map((country: { name: { common: string } }) => country.name.common.trim())
+    //     .sort((a: string, b: string) => a.toLowerCase().localeCompare(b.toLowerCase()));
     
-      // Trigger change detection to update the view
-      this.cdRef.detectChanges();
-    });
+    //   // Trigger change detection to update the view
+    //   this.cdRef.detectChanges();
+    // });
 
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
-      this.cdRef.detectChanges();
+    // this.getnationalityService.getNationality().subscribe((data) => {
+    //   this.nationalitiesData = data.map((country: { name: { common: any; }; }) => country.name.common);
+    //   this.cdRef.detectChanges();
+    // });
+    this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
+       
+      
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
-
     // Retrieve saved data from localStorage
     const storedStep2Data = localStorage.getItem('virtualdata1');
     if (storedStep2Data) {
@@ -118,6 +127,16 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
     }
   }
 
+  onNationalityChange(event: Event, shareholder: any): void {
+    const selectedCountry = (event.target as HTMLSelectElement).value;
+    const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
+  
+    if (selectedNationality) {
+      shareholder.countryRisk = selectedNationality.RiskRating;
+    } else {
+      shareholder.countryRisk = '';
+    }
+  }
 
   onCompanyLocationChange(value: string): void {
     if (value === 'United Arab Emirates') {
@@ -286,14 +305,46 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
           shareholders: this.shareholders,
         };
 
+        const mailform = localStorage.getItem('virtualdata');
+        this.personalInfo = mailform ? JSON.parse(mailform) : {};
+
         // Save Step 2 data to localStorage
         localStorage.setItem('virtualdata1', JSON.stringify(combinedFormData));
+        // Prepare payload for the API call using Step 1 and Shareholders data
+         const payload = {
+          customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
+          shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
+          totalCusotmerSelected: this.shareholders.length + 1,
+        };
 
-        if (this.formData.CompanyIncorporated === 'United Arab Emirates') {
-          this.router.navigate(['/virtual-receptionist-2']);
-        } else {
-          this.router.navigate(['/virtual-receptionist-details']);
-        }
+        // Call the API to get products by category and country risk
+        this.userService.getProductsByCategoryAndCountryRisk(payload).subscribe(
+          (response) => {
+            console.log('API Response:', response);
+
+            const appliedRiskData = {
+              appliedRisk: response.appliedRisk, // Assuming the response contains 'appliedRisk'
+              percentage: response.percentage, // Assuming the response contains 'percentage'
+              userRating: response.userRating, // Assuming the response contains 'userRating'
+              totalPossibleRating: response.totalPossibleRating // Assuming the response contains 'totalPossibleRating'
+            };
+
+            // Save the appliedRisk data to localStorage
+            localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
+            // Handle the response (e.g., store the products in a variable or pass to the next page)
+
+            if (this.formData.CompanyIncorporated === 'United Arab Emirates') {
+              this.router.navigate(['/virtual-receptionist-2']);
+            } else {
+              this.router.navigate(['/virtual-receptionist-details']);
+            }
+          },
+          (error) => {
+            console.error('API Error:', error);
+            this.toastr.error('Failed to fetch products.', 'API Error');
+          }
+        );
+       
       }
     }
   }
