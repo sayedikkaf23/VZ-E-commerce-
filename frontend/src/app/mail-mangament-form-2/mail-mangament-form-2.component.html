@@ -144,6 +144,27 @@
                 </select>
               </fieldset>
             </div>
+            <div class="form-field">
+              <label for="Bank">Do you wish to apply for?<span class="required">*</span></label>
+
+              <fieldset>
+                <select
+                  name="Bank"
+                  id="Bank"
+                  class="form-select"
+                  [(ngModel)]="formData.Bank"
+                >
+                  <option value="" disabled selected>
+                    Do you wish to apply for?
+                  </option>
+                  <option value="Digital Personal Bank Account Opening">Digital Personal Bank Account Opening</option>
+                  <option value="Traditional Personal bank Account Opening">Traditional Personal bank Account Opening</option>
+                  <option value="All the above Bank Account Opening">All the above Bank Account Opening</option>
+                  <!-- <option value="All the above Bank Account Opening">All the above Bank Account Opening</option> -->
+
+                </select>
+              </fieldset>
+            </div>
             <div class="shareholder-row shareholder-section"> <!-- Apply new class here -->
               <h3 style="margin-bottom: 30px;">Shareholders List</h3>
               <div class="form-group shareholder-details" *ngFor="let shareholder of shareholders; let i = index">

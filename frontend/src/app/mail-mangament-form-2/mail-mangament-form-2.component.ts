@@ -27,6 +27,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   formData: any = {
     companylocation: '',
     // jurisdiction: '',
+    Bank:'',
     Turnover: '',
     shareholdercount:'',
     type: 'Business Bank',
@@ -103,6 +104,8 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
         companylocation: parsedData.companylocation,
         jurisdiction: parsedData.jurisdiction,
         Turnover: parsedData.Turnover,
+        Bank: parsedData.Bank,
+
         shareholdercount: parsedData.shareholdercount,
         type: parsedData.type,
         Companylicensed: parsedData.Companylicensed,
