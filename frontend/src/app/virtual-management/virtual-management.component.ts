@@ -214,13 +214,39 @@ export class VirtualManagementComponent implements OnInit {
   showDocumentModal: boolean = false;
   salesforceResponseMatchScreening: any = {}; // Declare this at the top
  
-  openProductModal(user: any): void {
-    console.log('Product Modal Opened', user); // Debug
-    this.salesforceResponseMatchScreening = user.salesforceResponseMatchScreening; // ✅ Store the full object
-    this.selectedProducts = this.salesforceResponseMatchScreening?.products || [];
-    console.log('Products:', this.selectedProducts); // Debug
+  openProductModal(row: any): void {
+    /* 1️⃣  locate the quote block (works for both old & new payloads) */
+    const quote =
+      row?.quoteWithProductDetails ||           // current structure
+      row?.salesforceResponseMatchScreening ||  // your older structure
+      null;
+  
+   
+  
+    /* 2️⃣  normalise every product so the template can stay the same */
+    this.selectedProducts = (quote.product || quote.products || []).map((p: { ProductQuantity: any; productQuantity: any; ProductUnitprice: any; productUnitPrice: any; ProductName: any; productName: any; }) => {
+      const qty   = p.ProductQuantity  ?? p.productQuantity  ?? 1;
+      const price = p.ProductUnitprice ?? p.productUnitPrice ?? 0;
+  
+      return {
+        productName:      p.ProductName      ?? p.productName      ?? '',
+        productQuantity:  qty,
+        productUnitPrice: price,
+        total:            qty * price
+      };
+    });
+  
+    /* 3️⃣  expose totals for the modal footer */
+    this.salesforceResponseMatchScreening = {
+      subTotal:           quote.subTotal            ?? 0,
+      totalIncludingVAT:  quote.totalIncludingVAT   ?? 0,
+      totalVAT:          (quote.totalIncludingVAT   ?? 0) - (quote.subTotal ?? 0)
+    };
+  
+    /* 4️⃣  open the modal */
     this.showProductModal = true;
   }
+  
  
   closeProductModal(): void {
     this.showProductModal = false;
