@@ -225,6 +225,7 @@ serviceProducts: any[] = [];
  
  
   submitData() {
+    this.isLoading = true;
     const finalData = {
       ...this.personalInfo, // Merge personal information (Step 1 data)
       ...this.companyInfo,  // Merge company information (Step 2 data)
@@ -314,8 +315,12 @@ serviceProducts: any[] = [];
         );
       })
     ).subscribe({
-      next: () => {},
+      next: () => {
+        this.isLoading = false; 
+      },
       error: err => {
+        this.isLoading = false; 
+
         this.toastr.error(err.message || 'An error occurred', 'Error');
         console.error(err);
       }
