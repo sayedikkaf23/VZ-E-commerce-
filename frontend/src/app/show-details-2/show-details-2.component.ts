@@ -267,6 +267,10 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
               window.alert(
                 'Your request has been submitted successfully. You will receive an email when your application is approved.'
               );
+
+                     localStorage.removeItem('step1Data');
+        localStorage.removeItem('step2Data');
+    
               this.router.navigate([`/failure/${quotePaymentId}`]);
             }
  

@@ -239,6 +239,20 @@ const shareholderNationalities = (finalData.shareholders ?? [])
 const nationalities = [mainNationality, ...shareholderNationalities];
 const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
  
+
+
+let subTypeId = null;
+
+    if (finalData.Bank === 'Traditional Corporate Bank Account Opening') {
+      subTypeId = 13;
+    } else if (finalData.Bank === 'Digital Corporate Bank Account Opening') {
+      subTypeId = 14;
+    } else if (finalData.Bank === 'Any of the above') {
+      subTypeId = 13;
+    } else {
+      throw new Error('Invalid Bank Type Selected ❌');
+    }
+
 // 4. Final payload
 let riskCode;
 switch (appliedRiskData.appliedRisk) {
@@ -259,7 +273,7 @@ switch (appliedRiskData.appliedRisk) {
  
   const payload = {
     ServiceNameCode: 1,
-    SubTypeCode:14,
+    SubTypeCode:subTypeId,
     RiskCode:riskCode,
  
   };
