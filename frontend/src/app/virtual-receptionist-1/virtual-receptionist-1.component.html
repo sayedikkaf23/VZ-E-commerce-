@@ -34,8 +34,8 @@
                   <select class="form-select" id="CompanyIncorporated" [(ngModel)]="formData.CompanyIncorporated" style="border-color: transparent;"
                       [ngModelOptions]="{ standalone: true }" (ngModelChange)="onCompanyLocationChange($event)">
                       <option value="" disabled>Select Country</option>
-                      <option *ngFor="let nationality of nationalities" [value]="nationality">
-                          {{ nationality }}
+                      <option *ngFor="let nationality of nationalities" [value]="nationality.country">
+                          {{ nationality.country }}
                       </option>
                   </select>
                 </fieldset>
@@ -159,11 +159,11 @@
                       (click)="openDatePicker($event)"  [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }" />
                   </div>
                   <div class="form-field">
-                    <label class="shareholder-label">Nationality <span class="required">*</span></label>
+                    <label class="shareholder-label">Country <span class="required">*</span></label>
                     <!-- Apply new class here -->
-                    <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder" [ngModelOptions]="{ standalone: true }" style="border-color: transparent;">
-                      <option value="" disabled [ngValue]="null">Select Nationality</option>
-                      <option *ngFor="let nationality of nationalitiesData" [value]="nationality">{{ nationality }}</option>
+                    <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder" [ngModelOptions]="{ standalone: true }" (change)="onNationalityChange($event, shareholder)" style="border-color: transparent;">
+                      <option value="" disabled [ngValue]="null">Select Country</option>
+                      <option *ngFor="let nationality of nationalities" [value]="nationality.country">{{ nationality.country }}</option>
                     </select>
                     
                   </div>
