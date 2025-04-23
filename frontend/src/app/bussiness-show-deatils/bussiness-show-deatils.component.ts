@@ -320,12 +320,27 @@ serviceProducts: any[] = [];
       },
       error: err => {
         this.isLoading = false; 
-
+  
+        // Show SweetAlert with retry option
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.message || 'An error occurred',
+          showCancelButton: true,
+          confirmButtonText: 'Retry',
+          cancelButtonText: 'Cancel',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.submitData(); // Retry the API call
+          }
+        });
+  
         this.toastr.error(err.message || 'An error occurred', 'Error');
         console.error(err);
       }
     });
   }
+  
   
  
   showError(errorMessage: string): void {
