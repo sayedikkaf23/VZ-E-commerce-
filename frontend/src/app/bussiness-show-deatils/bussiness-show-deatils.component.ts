@@ -264,11 +264,11 @@ serviceProducts: any[] = [];
     // Call the API to create payment opportunity
     this.userService.createPaymentOpportunity(paymentPayload).pipe(
       switchMap(response => {
-        if (!response?.salesforce?.QuotePaymentId) {
+        if (!response?.QuotePaymentId) {
           throw new Error('Missing QuotePaymentId from Salesforce');
         }
   
-        const quotePaymentId = response.salesforce.QuotePaymentId;
+        const quotePaymentId = response.QuotePaymentId;
   
         const payload = {
           CustomerId: quotePaymentId,
