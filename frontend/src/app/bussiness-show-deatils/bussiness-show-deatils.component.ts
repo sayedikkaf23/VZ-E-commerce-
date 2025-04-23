@@ -307,6 +307,7 @@ serviceProducts: any[] = [];
   
             // Clear local storage
             localStorage.removeItem('step1Data');
+            localStorage.removeItem('finalDatabussiness');
             localStorage.removeItem('mailform');
             localStorage.removeItem('step2Data');
             localStorage.removeItem('mailform2');

@@ -181,8 +181,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     console.log(mergedData, "mergedData");
   
     // Ensure LeadId is present
- 
-
+  
     // Check if mergedData contains shareholders
     const shareholdersData = mergedData?.shareholders || [];
   
@@ -257,25 +256,42 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
               window.alert(
                 'Your request has been submitted successfully. You will receive an email when your application is approved.'
               );
-                     localStorage.removeItem('virtualdata');
-        localStorage.removeItem('virtualdata1');
-        localStorage.removeItem('virtualdata2');
+              localStorage.removeItem('virtualdata');
+              localStorage.removeItem('virtualdata1');
+              localStorage.removeItem('virtualdata2');
+              localStorage.removeItem('finalDataVirtual');
               this.router.navigate([`/failure/${quotePaymentId}`]);
             }
           })
         );
       })
-    ).subscribe(
-      () => {
+    ).subscribe({
+      next: () => {
         this.isLoading = false;
       },
-      (error) => {
+      error: (err) => {
         this.isLoading = false;
-        console.error('Error submitting data:', error);
-        this.toastr.error(error.message || 'An error occurred', 'Error');
+        
+        // Show SweetAlert with retry option
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.message || 'An error occurred',
+          showCancelButton: true,
+          confirmButtonText: 'Retry',
+          cancelButtonText: 'Cancel',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.submitData(); // Retry the API call
+          }
+        });
+  
+        this.toastr.error(err.message || 'An error occurred', 'Error');
+        console.error(err);
       }
-    );
+    });
   }
+  
   
   
   

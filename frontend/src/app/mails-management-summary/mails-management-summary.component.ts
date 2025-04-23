@@ -194,108 +194,124 @@ export class MailsManagementSummaryComponent {
   // }
   
   
-    submitData() {
-      this.isLoading = true;
-      const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
-      
-      console.log(mergedData, "mergedData");
+  submitData() {
+    this.isLoading = true;
+    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
     
-      // Ensure LeadId is present
-   
+    console.log(mergedData, "mergedData");
   
-      // Check if mergedData contains shareholders
-      const shareholdersData = mergedData?.shareholders || [];
-    
-      // Create payment opportunity payload
-      const paymentPayload = {
-        firstName: this.personalInfo.firstName,
-        lastName: this.personalInfo.lastName,
-        email: this.personalInfo.email,
-        nationality: this.personalInfo.nationality,
-        phone: this.personalInfo.mobileNumber.number,
-        dob: this.personalInfo.birthday,
-        type: "Mail Management",
-        CustomerType: "C",
-        prodcutNameList: this.serviceProducts.map(product => ({
-          ProductName: product.Product_Name,
-          ProductFamily: "Mail Management",
-          ProductDescription: "Service for UAE Resident",
-          ProductCurrencyName: product.Currency_Code,
-          ProductUnitprice: product.price,
-          ProductQuantity: 1,  // Assuming quantity is 1
-          ProductDiscount: 0 // Assuming no discount
-        })),
-        shareholders: shareholdersData.map((shareholder: {
-          name: any;
-          shareholderPercentage: any;
-          dob: any;
-          nationalityshareholder: any;
-          countryRisk: any;
-          files: any[];
-        }) => ({
-          name: shareholder.name,
-          shareholderPercentage: shareholder.shareholderPercentage,
-          dob: shareholder.dob,
-          nationalityshareholder: shareholder.nationalityshareholder,
-          countryRisk: shareholder.countryRisk,
-          files: shareholder.files || []  // Default to empty array if files are undefined
-        }))
-      };
-    
-      // Call createPaymentOpportunity API
-      this.userService.createPaymentOpportunity(paymentPayload).pipe(
-        switchMap((paymentOpportunityResponse) => {
-          // After creating payment opportunity, call digicomplice API
-          const payload = {
-            CustomerId: paymentOpportunityResponse.QuotePaymentId,
-            CompanyName: 'Virtuzone'
-          };
-    
-          return this.userService.digicomplice(payload).pipe(
-            map(secondResponse => ({
-              quotePaymentId: paymentOpportunityResponse.QuotePaymentId,
-              leadId: secondResponse?.screeningmatchScore?.customerId || null
-            }))
-          );
-        })
-      ).pipe(
-        switchMap(({ quotePaymentId, leadId }) => {
-          if (!leadId) {
-            throw new Error('Missing LeadId from screening response');
-          }
-    
-          const checkStatusData = {
-            CustomerId: leadId,
-            CompanyName: 'Virtuzone'
-          };
-    
-          return this.userService.checkStatus(checkStatusData).pipe(
-            tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
-              if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-                this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
-              } else {
-                window.alert(
-                  'Your request has been submitted successfully. You will receive an email when your application is approved.'
-                );
-                       localStorage.removeItem('mailform');
-        localStorage.removeItem('mailform1');
-        localStorage.removeItem('mailform2');
-                this.router.navigate([`/failure/${quotePaymentId}`]);
-              }
-            })
-          );
-        })
-      ).subscribe(
-        () => {
-          this.isLoading = false; 
-        },
-        (error) => {
-          this.isLoading = false; 
-          console.error('Error submitting data:', error);
-          this.toastr.error(error.message || 'An error occurred', 'Error');
+    // Ensure LeadId is present
+  
+    // Check if mergedData contains shareholders
+    const shareholdersData = mergedData?.shareholders || [];
+  
+    // Create payment opportunity payload
+    const paymentPayload = {
+      firstName: this.personalInfo.firstName,
+      lastName: this.personalInfo.lastName,
+      email: this.personalInfo.email,
+      nationality: this.personalInfo.nationality,
+      phone: this.personalInfo.mobileNumber.number,
+      dob: this.personalInfo.birthday,
+      type: "Mail Management",
+      CustomerType: "C",
+      prodcutNameList: this.serviceProducts.map(product => ({
+        ProductName: product.Product_Name,
+        ProductFamily: "Mail Management",
+        ProductDescription: "Service for UAE Resident",
+        ProductCurrencyName: product.Currency_Code,
+        ProductUnitprice: product.price,
+        ProductQuantity: 1,  // Assuming quantity is 1
+        ProductDiscount: 0 // Assuming no discount
+      })),
+      shareholders: shareholdersData.map((shareholder: {
+        name: any;
+        shareholderPercentage: any;
+        dob: any;
+        nationalityshareholder: any;
+        countryRisk: any;
+        files: any[];
+      }) => ({
+        name: shareholder.name,
+        shareholderPercentage: shareholder.shareholderPercentage,
+        dob: shareholder.dob,
+        nationalityshareholder: shareholder.nationalityshareholder,
+        countryRisk: shareholder.countryRisk,
+        files: shareholder.files || []  // Default to empty array if files are undefined
+      }))
+    };
+  
+    // Call createPaymentOpportunity API
+    this.userService.createPaymentOpportunity(paymentPayload).pipe(
+      switchMap((paymentOpportunityResponse) => {
+        // After creating payment opportunity, call digicomplice API
+        const payload = {
+          CustomerId: paymentOpportunityResponse.QuotePaymentId,
+          CompanyName: 'Virtuzone'
+        };
+  
+        return this.userService.digicomplice(payload).pipe(
+          map(secondResponse => ({
+            quotePaymentId: paymentOpportunityResponse.QuotePaymentId,
+            leadId: secondResponse?.screeningmatchScore?.customerId || null
+          }))
+        );
+      })
+    ).pipe(
+      switchMap(({ quotePaymentId, leadId }) => {
+        if (!leadId) {
+          throw new Error('Missing LeadId from screening response');
         }
-      );
-    }
+  
+        const checkStatusData = {
+          CustomerId: leadId,
+          CompanyName: 'Virtuzone'
+        };
+  
+        return this.userService.checkStatus(checkStatusData).pipe(
+          tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
+            if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+              this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+            } else {
+              window.alert(
+                'Your request has been submitted successfully. You will receive an email when your application is approved.'
+              );
+              localStorage.removeItem('mailform');
+              localStorage.removeItem('finalDataMail');
+              localStorage.removeItem('mailform1');
+              localStorage.removeItem('mailform2');
+              this.router.navigate([`/failure/${quotePaymentId}`]);
+            }
+          })
+        );
+      })
+    ).subscribe({
+      next: () => {
+        this.isLoading = false; 
+      },
+      error: (err) => {
+        this.isLoading = false; 
+  
+        // Show SweetAlert with retry option
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err.message || 'An error occurred',
+          showCancelButton: true,
+          confirmButtonText: 'Retry',
+          cancelButtonText: 'Cancel',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            this.submitData(); // Retry the API call
+          }
+        });
+  
+        this.toastr.error(err.message || 'An error occurred', 'Error');
+        console.error(err);
+      }
+    });
+  }
+  
     
 
   showError(errorMessage: string): void {
