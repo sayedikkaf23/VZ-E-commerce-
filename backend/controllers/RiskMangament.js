@@ -208,65 +208,47 @@ exports.getProductsByCountryRisk = async (req, res) => {
 
   exports.getProductsByCategoryAndCountryRisk = async (req, res) => {
     try {
-      const { customerCountry , ShareholderCountries,totalCusotmerSelected } = req.body;
-
-
+      const { customerCountryRisk, shareholderCountriesRisk, totalCusotmerSelected } = req.body;
+  
       const totalPossibleRating = totalCusotmerSelected * 3;
-      // const { customerCountry, ShareholderCountries, totalCusotmerSelected } = req.body;
-      const customerCountryData = await CountryRisk.findOne({ country: customerCountry }).lean();
   
-  if (!customerCountryData) {
-    return res.status(404).json({ message: `Customer country ${customerCountry} not found.` });
-  }
+      // Assuming customerCountryRisk is the RiskRating directly provided for the customer
+      const customerRiskRating = customerCountryRisk;
   
-  const customerRiskRating = customerCountryData.RiskRating;
-
-  // 2. Get ShareholderCountries RiskRatings
-  const shareholderRiskRatings = [];
-
-  for (const country of ShareholderCountries) {
-    const countryData = await CountryRisk.findOne({ country }).lean();
-    if (countryData) {
-      shareholderRiskRatings.push({
-        country: countryData.country,
-        riskRating: countryData.RiskRating
-      });
-    } else {
-      shareholderRiskRatings.push({
-        country,
-        riskRating: 0   // if country not found, treat risk as 0
-      });
-    }
-  }
-
-  // 3. Calculate userRating
-  const customerRisk = customerRiskRating || 0;
-  const shareholderRiskSum = shareholderRiskRatings.reduce((sum, country) => sum + (country.riskRating || 0), 0);
-  const userRating = customerRisk + shareholderRiskSum;
-
-  console.log('Customer Risk Rating:', customerRisk);
-  console.log('Shareholder Risk Ratings:', shareholderRiskRatings);
-  console.log('User Rating (Customer + Shareholders):', userRating);
-    
+      if (customerRiskRating === undefined) {
+        return res.status(400).json({ message: 'Customer country risk rating is required.' });
+      }
+  
+      // 2. Get ShareholderCountries RiskRatings from the provided array
+      const shareholderRiskRatings = shareholderCountriesRisk || [];
+  
+      // 3. Calculate userRating
+      const customerRisk = customerRiskRating || 0;
+      const shareholderRiskSum = shareholderRiskRatings.reduce((sum, riskRating) => sum + (riskRating || 0), 0);
+      const userRating = customerRisk + shareholderRiskSum;
+  
+      console.log('Customer Risk Rating:', customerRisk);
+      console.log('Shareholder Risk Ratings:', shareholderRiskRatings);
+      console.log('User Rating (Customer + Shareholders):', userRating);
+  
       const percentage = (userRating / totalPossibleRating) * 100;
-    
+
+ const  Fixedpercentage = parseFloat((percentage.toFixed(2)));
+
+ 
       let computedRisk = 'Low';
       if (percentage > 75) {
         computedRisk = 'High';
       } else if (percentage > 50) {
         computedRisk = 'Medium';
       }
-
-
-
   
       return res.status(200).json({
         appliedRisk: computedRisk,
-        from: 'special category percentage logic',
-        percentage,
+        message: 'success',
+        Fixedpercentage,
         userRating,
         totalPossibleRating,
- 
       });
   
     } catch (err) {
