@@ -5,7 +5,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { FormDataService } from '../service/form-data.service';
 import { UserService } from '../service/user.service';
-import { GetnationalityService } from '../service/getnationality.service';
+// import { GetnationalityService } from '../service/getnationality.service';
+import { AdminAuthService } from '../service/admin-auth.service';
 import AOS from 'aos';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
@@ -34,7 +35,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     Companylicensed: null,
  
   };
-  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
+  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' }]; // Initialize with one shareholder
  
   // openDatePicker() {
   //   if (this.dateInput && this.dateInput.nativeElement) {
@@ -47,7 +48,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
-  nationalities: string[] = []; // Initialize as an empty array
+  nationalities: any[] = []; // Initialize as an empty array
   nationalitiesData: string[] = []; // Initialize as an empty array
   businessCategories: any[] = [];
   personalInfo: any;
@@ -57,9 +58,10 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     private formDataService: FormDataService,
     private http: HttpClient,
     private userService: UserService,
-    private getnationalityService: GetnationalityService,
+    // private getnationalityService: GetnationalityService,
     private toastr: ToastrService,
     private router: Router,
+    private adminAuthService: AdminAuthService,
     private cdRef: ChangeDetectorRef,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -78,8 +80,14 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     // });
    
  
-    this.getnationalityService.getNationality().subscribe((data) => {
-      this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+    // this.getnationalityService.getNationality().subscribe((data) => {
+    //   this.nationalities =  data.map((country: { name: { common: any; }; }) => country.name.common); // Get the Label values
+    //   this.cdRef.detectChanges(); // Trigger change detection to update the view
+    // });
+    this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
+       
+      
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
  
@@ -113,6 +121,17 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     if (this.formData.companylocation === 'Yes') {
       // reload the categories so the dropdown has options to select
       this.onCompanyLocationChange('Yes');
+    }
+  }
+
+  onNationalityChange(event: Event, shareholder: any): void {
+    const selectedCountry = (event.target as HTMLSelectElement).value;
+    const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
+  
+    if (selectedNationality) {
+      shareholder.countryRisk = selectedNationality.RiskRating;
+    } else {
+      shareholder.countryRisk = '';
     }
   }
  
@@ -219,6 +238,7 @@ deleteShareholder(index: number) {
         shareholderPercentage: '',
         dob: '',
         nationalityshareholder: '',
+        countryRisk: ''
       });
     }
  
@@ -294,8 +314,8 @@ deleteShareholder(index: number) {
   console.log(this.step1Data, 'step1Data',combinedFormData)
         // Prepare payload for the API call using Step 1 and Shareholders data
         const payload = {
-          customerCountry: this.personalInfo.nationality, // This is the customer country from Step 1
-          ShareholderCountries: this.shareholders.map(shareholder => shareholder.nationalityshareholder), // Assuming 'nationalityshareholder' property
+          customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
+          shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
           totalCusotmerSelected: this.shareholders.length + 1,
         };
  
