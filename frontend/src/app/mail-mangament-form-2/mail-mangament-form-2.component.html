@@ -58,7 +58,7 @@
 </div>
 
 
-<div class="form-field" *ngIf="formData.companylocation === 'Yes'">
+<div class="form-field">
   <label for="tradelicense">
     What are the type of activities mentioned on your trade license?: <span class="required">*</span>
   </label>
@@ -70,7 +70,7 @@
       [(ngModel)]="formData.tradelicense"
       (change)="onCategoryChange($event)"
     >
-      <option [ngValue]="null" disabled>
+      <option value="" disabled>
         What are the type of activities mentioned on your trade license?
       </option>
       <option *ngFor="let category of businessCategories" [value]="category.name">
@@ -158,9 +158,12 @@
                   <option value="" disabled selected>
                     Do you wish to apply for?
                   </option>
-                  <option value="Digital Personal Bank Account Opening">Digital Personal Bank Account Opening</option>
-                  <option value="Traditional Personal bank Account Opening">Traditional Personal bank Account Opening</option>
-                  <option value="All the above Bank Account Opening">All the above Bank Account Opening</option>
+                  <option value="Traditional Corporate Bank Account Opening">Traditional Corporate Bank Account Opening 
+                  </option>
+                  <option value="Digital Corporate Bank Account Opening">Digital Corporate Bank Account Opening 
+                  </option>
+                  <option value="Any of the above">Any of the above
+                </option>
                   <!-- <option value="All the above Bank Account Opening">All the above Bank Account Opening</option> -->
 
                 </select>

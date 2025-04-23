@@ -55,7 +55,7 @@
               </fieldset>
             </div>
 
-            <div class="form-field" *ngIf="formData.CompanyIncorporated == 'United Arab Emirates'">
+            <div class="form-field" >
               <label for="tradelicense">What are the type of activities mentioned on your trade license?: <span class="required">*</span></label>
               <fieldset>
                 <select
@@ -65,7 +65,7 @@
                 [(ngModel)]="formData.tradelicense"
                 (change)="onCategoryChange($event)"
               >
-                <option [ngValue]="null" disabled>
+                <option value="" disabled>
                   What are the type of activities mentioned on your trade license?
                 </option>
                 <option *ngFor="let category of businessCategories" [value]="category.name">
