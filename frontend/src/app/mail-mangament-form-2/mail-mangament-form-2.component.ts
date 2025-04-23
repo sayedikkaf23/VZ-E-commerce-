@@ -34,7 +34,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     CustomerType: 'C',
     tradelicense: null ,
     Companylicensed: null,
- 
+    BusinessActivityRisk: ''
   };
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' }]; // Initialize with one shareholder
  
@@ -110,6 +110,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
         type: parsedData.type,
         Companylicensed: parsedData.Companylicensed,
         tradelicense: parsedData.tradelicense,
+        BusinessActivityRisk: parsedData.BusinessActivityRisk
       };
      
       // Update shareholders if it exists in the parsed data
@@ -124,6 +125,21 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     if (this.formData.companylocation === 'Yes') {
       // reload the categories so the dropdown has options to select
       this.onCompanyLocationChange('Yes');
+    }
+  }
+
+  onCategoryChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedCategoryName = selectElement.value;
+  
+    const selectedCategory = this.businessCategories.find(
+      (cat: any) => cat.name === selectedCategoryName
+    );
+  
+    if (selectedCategory) {
+      this.formData.BusinessActivityRisk = selectedCategory.Score; // Store Score in formData
+    } else {
+      this.formData.BusinessActivityRisk = null; // Optional fallback
     }
   }
 
@@ -290,6 +306,7 @@ deleteShareholder(index: number) {
         formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
         formDataToSend.append('Turnover', this.formData.Turnover);
         formDataToSend.append('CustomerType', this.formData.CustomerType);
+        formDataToSend.append('BusinessActivityRisk',this.formData.BusinessActivityRisk)
  
         this.shareholders.forEach((shareholder, index) => {
           formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
@@ -307,6 +324,7 @@ deleteShareholder(index: number) {
         // Prepare payload for the API call using Step 1 and Shareholders data
         const payload = {
           customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
+          BusinessActivityRisk: this.formData.BusinessActivityRisk,
           shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
           totalCusotmerSelected: this.shareholders.length + 1,
         };

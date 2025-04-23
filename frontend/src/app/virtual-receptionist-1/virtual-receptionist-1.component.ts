@@ -36,6 +36,7 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
     tradelicense: '',
     shareholdercount: '',
     Companylicensed: '',
+    BusinessActivityRisk: ''
   };
 
   shareholders: any[] = [
@@ -109,6 +110,7 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
         tradelicense: parsedData.tradelicense,
         shareholdercount: parsedData.shareholdercount,
         Companylicensed: parsedData.Companylicensed,
+        BusinessActivityRisk: parsedData.BusinessActivityRisk
       };
 
       if (parsedData.shareholders) {
@@ -124,6 +126,20 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       this.updateShareholders();
 
       this.cdRef.detectChanges();
+    }
+  }
+
+  onCategoryChange(event: Event): void {
+    const selectElement = event.target as HTMLSelectElement;
+    const selectedCategoryName = selectElement.value;
+  
+    const selectedCategory = this.businessCategories.find(
+      (cat: any) => cat.name === selectedCategoryName
+    );
+    if (selectedCategory) {
+      this.formData.BusinessActivityRisk = selectedCategory.Score; // Store Score in formData
+    } else {
+      this.formData.BusinessActivityRisk = null; // Optional fallback
     }
   }
 
@@ -288,6 +304,7 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
         formDataToSend.append('Website', this.formData.Website);
         formDataToSend.append('tradelicense', this.formData.tradelicense);
         formDataToSend.append('Companylicensed', this.formData.Companylicensed);
+        formDataToSend.append('BusinessActivityRisk', this.formData.BusinessActivityRisk);
         this.shareholders.forEach((shareholder, index) => {
           formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
         });
@@ -305,6 +322,7 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
         // Prepare payload for the API call using Step 1 and Shareholders data
          const payload = {
           customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
+          BusinessActivityRisk: this.formData.BusinessActivityRisk,
           shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
           totalCusotmerSelected: this.shareholders.length + 1,
         };

@@ -63,6 +63,7 @@
                 id="tradelicense"
                 class="form-select"
                 [(ngModel)]="formData.tradelicense"
+                (change)="onCategoryChange($event)"
               >
                 <option [ngValue]="null" disabled>
                   What are the type of activities mentioned on your trade license?
