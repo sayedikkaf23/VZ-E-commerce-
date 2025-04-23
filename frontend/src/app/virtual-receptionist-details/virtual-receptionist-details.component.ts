@@ -40,6 +40,7 @@ export class VirtualReceptionistDetailsComponent {
   companyInfo: any = {}; // To store bank service information (Step 2 data)
   shareholders: any = [];
   uploadedFiles: File[][] = []; // Initialize as an empty array
+
   i: any;
   tradeLicenseFileurl: any;
   constructor(
@@ -59,7 +60,7 @@ export class VirtualReceptionistDetailsComponent {
   }
 
   ngOnInit(): void {
-
+    
     this.getnationalityService.getNationality().subscribe((data) => {
       this.nationalities = data.map((country: any) => ({
         common: country.name.common,
@@ -118,6 +119,8 @@ export class VirtualReceptionistDetailsComponent {
 
       // console.log("Merged Data:", mergedData, this.displayShareholders);
     }
+
+    
 
     // console.log(this.displayShareholders, "sas");
   }
@@ -253,7 +256,7 @@ export class VirtualReceptionistDetailsComponent {
   submitData() {
     // Combine personalInfo and bankInfo into finalData
     const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
-
+ 
     // Show a SweetAlert confirmation dialog
     Swal.fire({
       title: 'Confirm Your Data',
@@ -272,7 +275,7 @@ export class VirtualReceptionistDetailsComponent {
           .getDate()
           .toString()
           .padStart(2, '0')}/${birthday.getFullYear()}`;
-
+ 
         // const payload = {
         //   firstName: mergedData.firstName,
         //   lastName: mergedData.lastName,
@@ -287,7 +290,7 @@ export class VirtualReceptionistDetailsComponent {
         //   isProfile: false,
         //   tradeLicenseFileUrl: this.tradeLicenseFileurl,
         // };
-
+ 
         // const payload = {
         //   country: mergedData.nationality,
         // };
@@ -295,77 +298,50 @@ export class VirtualReceptionistDetailsComponent {
       const match = this.nationalities.find(
         (item) => item.common.toLowerCase() === nationality.toLowerCase()
       );
-
-      const payload = {
-        countries: [match ? match.country : nationality]  // e.g. ["India"] or ["Indian"]
-      };
-
+ 
+   
+      const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
+ 
+      // 4. Final payload
+      let riskCode;
+      switch (appliedRiskData.appliedRisk) {
+        case 'Low':
+          riskCode = 1;
+          break;
+        case 'Medium':
+          riskCode = 2;
+          break;
+        case 'High':
+          riskCode = 3;
+          break;
+        default:
+          riskCode = 0; // Default to 0 if no match
+          break;
+      }
+       
+       
+        const payload = {
+          ServiceNameCode: 3,
+          SubTypeCode:15,
+          RiskCode:riskCode,
+       
+        };
         this.isLoading = true; // Show loading indicator if necessary
-
-        // First API call to callSalesforceEndpoint
-        // this.virtualManagementService
-        //   .callSalesforceEndpoint(payload)
-        //   .pipe(
-        //     switchMap((response: any) => {
-        //       // Store the Salesforce response if needed
-        //       this.dataStorageService.setSalesforceResponse(response);
-
-        //       // Prepare payload for the second API call
-        //       const quotePayload = {
-        //         lead_source: response.data.leadWithDetails.LeadSource,
-        //         currencyCode: response.data.quotePaymentWithDetails.Currency,
-        //         quotePaymentId:
-        //           response.data.quotePaymentWithDetails.QuotePaymentId,
-        //         account_id: response.data.quotePaymentWithDetails.AccountId,
-        //         payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`,
-        //       };
-
-        //       // Call the second API
-        //       return this.userService
-        //         .callSalesforceQuoteService(quotePayload)
-        //         .pipe(
-        //           switchMap((quoteResponse: any) => {
-        //             // Prepare payload for the third API call
-        //             const matchScorePayload = {
-        //               quotePaymentId: quotePayload.quotePaymentId,
-        //               accountId: quotePayload.account_id,
-        //               leadId: response.data.leadWithDetails.LeadId,
-        //               matchScore: response.screeningmatchScore.matchScore,
-        //             };
-
-        //             // Call the third API
-        //             return this.userService.MatchScoreProductService(
-        //               matchScorePayload
-        //             );
-        //           })
-        //         );
-        //     })
-        //   )
-        //   .subscribe(
-        //     (quoteResponse: any) => {
-        //       // Successful API calls: hide loader, store final data, and navigate to the summary page
-        //       this.isLoading = false;
-        //       localStorage.setItem(
-        //         'finalDataVirtual',
-        //         JSON.stringify(mergedData)
-        //       );
-        //       this.matchScoreStorageService.setMatchScoreResponse(
-        //         quoteResponse
-        //       );
-        //       this.router.navigate(['/virtual-summary']); // Replace with your actual route
-        //     },
-
-        this.virtualManagementService.getProductsByCountryRisk(payload).subscribe(
+ 
+   
+ 
+        this.virtualManagementService.getServiceProducts(payload).subscribe(
           (response: any) => {
             this.isLoading = false;
-  
+ 
             // Store final merged data
             localStorage.setItem('finalDataVirtual', JSON.stringify(mergedData));
-  
+ 
             // Save product data
+            localStorage.setItem('VirtualServiceProducts', JSON.stringify(response));
             console.log(response.data,"s")
             this.matchScoreStorageService.setMatchScoreResponse(response);
-  
+ 
             // Navigate to summary page
             this.router.navigate(['/virtual-summary']);
           },

@@ -29,4 +29,15 @@ export class VirtualManagementService {
   getProductsByCountryRisk(payload:any): Observable<any> {
     return this.http.post(`${this.url}/risk/getProductsByCountryRisk`, payload); // Sending the payload to the backend
   }
+  getServiceProducts(payload: {
+    ServiceNameCode: any;
+    SubTypeCode: any;
+    RiskCode: any;
+  }): Observable<any> {
+    return this.http.post(
+      `${this.url}/service/service-products`,
+      payload,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
+  }
 }

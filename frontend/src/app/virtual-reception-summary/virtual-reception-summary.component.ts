@@ -29,6 +29,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
   companyInfo: any = {};
   shareholders: any = [];
   matchScoreResponse: any;
+  serviceProducts: any[] = [];  // Array to store the product details
 
   constructor(
     private http: HttpClient,
@@ -47,6 +48,17 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
+      const storedProductData = localStorage.getItem('VirtualServiceProducts');
+      if (storedProductData) {
+        const productData = JSON.parse(storedProductData);
+        // If the data is an object, wrap it in an array
+        this.serviceProducts = Array.isArray(productData) ? productData : [productData];
+        console.log("Retrieved Products from localStorage: ", this.serviceProducts);
+      } else {
+        console.log("No products found in localStorage.");
+      }
+    
+    
     }
     // this.preventBackNavigation(); // Prevent back navigation on this page
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
