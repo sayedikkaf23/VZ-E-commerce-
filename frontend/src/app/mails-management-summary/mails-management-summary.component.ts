@@ -195,6 +195,7 @@ export class MailsManagementSummaryComponent {
   
   
     submitData() {
+      this.isLoading = true;
       const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
       
       console.log(mergedData, "mergedData");
@@ -285,8 +286,11 @@ export class MailsManagementSummaryComponent {
           );
         })
       ).subscribe(
-        () => {},
+        () => {
+          this.isLoading = false; 
+        },
         (error) => {
+          this.isLoading = false; 
           console.error('Error submitting data:', error);
           this.toastr.error(error.message || 'An error occurred', 'Error');
         }
