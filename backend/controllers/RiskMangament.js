@@ -208,7 +208,7 @@ exports.getProductsByCountryRisk = async (req, res) => {
 
   exports.getProductsByCategoryAndCountryRisk = async (req, res) => {
     try {
-      const { customerCountryRisk, shareholderCountriesRisk, totalCusotmerSelected } = req.body;
+      const { customerCountryRisk, shareholderCountriesRisk, totalCusotmerSelected, BusisnessActivityRisk } = req.body;
   
       const totalPossibleRating = totalCusotmerSelected * 3;
   
@@ -225,7 +225,7 @@ exports.getProductsByCountryRisk = async (req, res) => {
       // 3. Calculate userRating
       const customerRisk = customerRiskRating || 0;
       const shareholderRiskSum = shareholderRiskRatings.reduce((sum, riskRating) => sum + (riskRating || 0), 0);
-      const userRating = customerRisk + shareholderRiskSum;
+      const userRating = customerRisk + shareholderRiskSum + BusisnessActivityRisk;
   
       console.log('Customer Risk Rating:', customerRisk);
       console.log('Shareholder Risk Ratings:', shareholderRiskRatings);
