@@ -177,58 +177,49 @@
  
    
   <div *ngIf="showModal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 class="modal-title">Shareholder Details</h3>
-        <span class="close-btn" (click)="closeModal()">&times;</span>
-      </div>
-      <div class="modal-body">
-        <table class="table">
-          <thead>
-            <tr>
-              <th scope="col">Shareholder Name</th>
-              <th scope="col">Shareholder (%)</th>
-              <th scope="col">Date of Birth</th>
-              <th scope="col">Nationality</th>
-              <th scope="col">Files</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let detail of selectedMailDetails">
-              <td>{{ detail.name }}</td>
-              <td>{{ detail.shareholderPercentage }}%</td>
-              <td>{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
-              <td>{{ detail.nationalityshareholder }}</td>
-              <td>
-                <div *ngIf="detail.files && detail.files.length > 0; else noFile">
-                  <div *ngFor="let file of detail.files">
-                    <a
-  [href]="file.url"
-  target="_blank"
-  rel="noopener noreferrer"
-  class="view-link"
->
-  View file
-</a>
+    <!-- Refined modal layout -->
+<div class="modal-content">
+  <div class="modal-header">
+    <h3 class="modal-title">Shareholder Details</h3>
+    <span class="close-btn" (click)="closeModal()">&times;</span>
+  </div>
+  <div class="modal-body">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Shareholder Name</th>
+          <th>Shareholder (%)</th>
+          <th>Date of Birth</th>
+          <th>Nationality</th>
+          <th>Files</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let detail of selectedMailDetails">
+          <td>{{ detail.name }}</td>
+          <td>{{ detail.shareholderPercentage }}%</td>
+          <td>{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ detail.nationalityshareholder }}</td>
+          <td>
+            <div *ngIf="detail.files?.length > 0; else noFile">
+              <div *ngFor="let file of detail.files">
+                <a [href]="file.url" target="_blank" class="view-link">View file</a>
+              </div>
+            </div>
+            <ng-template #noFile>
+              <span>No file</span>
+            </ng-template>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div *ngIf="!selectedMailDetails.length" class="no-files">No shareholders available</div>
+  </div>
+  <div class="modal-footer">
+    <button class="green-button" (click)="closeModal()">Close</button>
+  </div>
+</div>
 
-                  </div>
-                </div>
-                <ng-template #noFile>
-                  <span>No file</span>
-                </ng-template>
-              </td>
-             
-             
-            </tr>
-          </tbody>
-        </table>
-         <div *ngIf="!selectedMailDetails.length" class="no-files">No shareholders available</div>
-
-      </div>
-      <div class="modal-footer">
-        <button class="green-button" (click)="closeModal()">Close</button>
-      </div>
-    </div>
   </div>
  
   </div>
