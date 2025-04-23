@@ -24,7 +24,7 @@
           <div class="col-md-6 col-12" *ngFor="let service of services.slice(0, 2); let i = index">
             <div class="box" data-aos="fade-up">
               <div class="image">
-                <img [src]="'https://ecommerce.yeepeey.com/' + service.icon.split('\\').join('/')" alt="{{ service.serviceName }}" height="298" width="642" />
+                <img [src]="i === 0 ? 'assets/images/bank.jpeg' : 'assets/images/mail.jpeg'" height="298" width="642" />
               </div>
               <div class="icon">
                 <svg width="145" height="102" viewBox="0 0 145 102" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -60,7 +60,7 @@
           <div class="col-md-6 col-12" *ngFor="let service of services.slice(2); let i = index">
             <div class="box" >
               <div class="image">
-                <img [src]="'https://ecommerce.yeepeey.com/' + service.icon.split('\\').join('/')" alt="{{ service.serviceName }}" height="366" width="313" />
+                <img src="assets/images/virtual.jpeg" height="366" width="313" />
               </div>
               <div class="icon">
                 <svg width="145" height="102" viewBox="0 0 145 102" fill="none" xmlns="http://www.w3.org/2000/svg">
