@@ -36,6 +36,7 @@ selectedProducts: any[] = [];
 selectedDocuments: any[] = [];
 showProductModal: boolean = false;
 showDocumentModal: boolean = false;
+  createdDate: Date | undefined;
  
   constructor(private mailManagementService: MailManagementService) {}
  
@@ -49,7 +50,10 @@ showDocumentModal: boolean = false;
       next: (response) => {
         console.log(response); // Check the response
         this.mailList = response.data;
-        this.filteredMailList = [...this.mailList];
+        console.log(this.mailList[0].createdAt);
+        this.filteredMailList = [...this.mailList].sort((a, b) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
         this.totalRecords = response.totalRecords;
         this.totalPages = response.totalPages;
         this.currentPage = page;

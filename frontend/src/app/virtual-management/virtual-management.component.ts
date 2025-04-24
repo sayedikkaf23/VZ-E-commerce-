@@ -50,7 +50,9 @@ export class VirtualManagementComponent implements OnInit {
           }
         */
         this.clientList = response.data;
-        this.filteredClientList = [...this.clientList]; // for additional filtering
+        this.filteredClientList = [...this.clientList].sort((a, b) => {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
         this.totalRecords = response.totalRecords;
         this.totalPages = response.totalPages;
         this.currentPage = page;
