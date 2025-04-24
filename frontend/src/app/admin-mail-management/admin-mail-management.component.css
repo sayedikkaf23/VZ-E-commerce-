@@ -556,7 +556,7 @@
 /* optional styling */
 .view-link {
   color: #0d6efd;          /* bootstrap blue */
-  text-decoration: underline;
+  text-decoration: none;
   cursor: pointer;
 }
 .view-link:hover {
