@@ -201,6 +201,8 @@
               <thead>
                 <tr>
                   <th scope="col">Service Name</th>
+                  <th scope="col">Sub Type</th>
+
                   <th scope="col">Customer Name</th>
                   <th scope="col">Tax Invoice Number</th>
                   <th scope="col">Tax Invoice Date</th>
@@ -213,6 +215,8 @@
               <tbody>
                 <tr *ngFor="let item of paginatedRecords">
                   <td data-title="Service Name"> {{ item.planname }}
+                  </td>
+                  <td data-title="Service Name"> {{ item.subcategory }}
                   </td>
                   <td data-title="Customer Name">
                     {{ item.leadWithDetails.FirstName + ' ' + item.leadWithDetails.LastName }}
