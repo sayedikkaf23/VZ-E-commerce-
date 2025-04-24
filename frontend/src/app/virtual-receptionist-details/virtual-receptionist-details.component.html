@@ -31,7 +31,7 @@
                   <tr><th>First Name:</th><td>{{ personalInfo.firstName }}</td></tr>
                   <tr><th>Last Name:</th><td>{{ personalInfo.lastName }}</td></tr>
                   <tr><th>Email ID:</th><td>{{ personalInfo.email }}</td></tr>
-                  <tr><th>Nationality:</th><td>{{ personalInfo.nationality }}</td></tr>
+                  <tr><th>Country:</th><td>{{ personalInfo.nationality }}</td></tr>
                   <tr><th>Date of Birth:</th><td>{{ personalInfo.birthday  | date:'dd-MM-yyyy' }}</td></tr>
                   <tr><th>Phone Number:</th><td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td></tr>
                 </tbody>
@@ -42,7 +42,7 @@
           <div class="col-md-12 mb-4">
             <div class="box-light">
               <div class="d-flex align-items-center justify-content-between">
-                <h4>Personal Bank Service</h4>
+                <h4>tVirtual Receptionist Service</h4>
                 <a [routerLink]="['/virtual-receptionist-1']" class="btn-edit">Edit</a>
               </div>
               <table class="w-100">
@@ -70,7 +70,7 @@
               </div>
               <table class="w-100">
                 <thead>
-                  <tr><th>Name</th><th>Shareholder %</th><th>Date of Birth</th><th>Nationality</th></tr>
+                  <tr><th>Name</th><th>Shareholder %</th><th>Date of Birth</th><th>Country</th></tr>
                 </thead>
                 <tbody>
                   <ng-container *ngFor="let shareholder of displayShareholders">
