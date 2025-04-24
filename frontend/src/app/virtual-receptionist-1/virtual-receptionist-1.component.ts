@@ -105,7 +105,9 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
         console.log('Categories response:', response);
 
        
-        this.businessCategories = response.data;
+        this.businessCategories = response.data.sort(
+          (a: any, b: any) => a.name.localeCompare(b.name)
+        );
         this.cdRef.detectChanges();
       },
       (error) => {
