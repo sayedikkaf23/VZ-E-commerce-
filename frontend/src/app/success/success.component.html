@@ -12,7 +12,7 @@
                     <h5>Hooray! You have completed your payment</h5>
                     <hr/>
                     <h6>AMOUNT PAID</h6>
-                    <h2 *ngIf="piData">AED {{ piData.salesforceResponseMatchScreening.total_including_Vat | number: '1.2-2' }}</h2>
+                    <h2 *ngIf="piData">AED {{ piData.quoteWithProductDetails.totalIncludingVAT | number: '1.2-2' }}</h2>
 
                     <div class="pmnotes">
                         <strong>Note:</strong> You will receive the payment confirmation receipt & the invoice for your services via your registered <b>E-mail ID</b>.
