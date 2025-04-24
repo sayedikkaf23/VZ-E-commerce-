@@ -283,7 +283,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
         // Prepare payload for the API call using Step 1 and Shareholders data
         const payload = {
           customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
-          BusinessActivityRisk: this.formData.BusinessActivityRisk,
+          BusisnessActivityRisk: this.formData.BusinessActivityRisk,
           shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
           totalCusotmerSelected: this.shareholders.length + 2,
         };
