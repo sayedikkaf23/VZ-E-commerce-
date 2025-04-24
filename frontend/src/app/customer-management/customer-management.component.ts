@@ -44,11 +44,21 @@ export class CustomerManagementComponent implements OnInit {
             totalPages: 10
           }
         */
-        this.userList = response.data;             // The table will display this page's data
-        this.totalRecords = response.totalRecords; // For info
-        this.totalPages = response.totalPages;     // For pagination UI
-        this.currentPage = page;                   // Track the current page
-      },
+          
+            // 1) sort descending by createdAt
+              // 1) sort descending by createdAt, annotate a and b as any
+              this.userList = (response.data as any[])
+                .sort((a: any, b: any) =>
+                  new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                );
+              // 2) then set up pagination
+              this.totalRecords = response.totalRecords;
+              this.totalPages   = response.totalPages;
+              this.currentPage  = page;
+            },
+            
+                       // Track the current page
+      
       error: (err) => {
         console.error('Error fetching user details:', err);
       },

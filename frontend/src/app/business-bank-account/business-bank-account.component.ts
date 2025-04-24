@@ -49,29 +49,26 @@ export class BusinessBankAccountComponent implements OnInit {
     this.fetchUserDetails(this.currentPage, this.itemsPerPage);
  
   }
- 
   fetchUserDetails(page: number, limit: number): void {
     this.isLoading = true;
     this.adminAuthService.getBusinessBank(page, limit).subscribe({
       next: (response) => {
-        /*
-          Expect response like:
-          {
-            data: [...],
-            totalRecords: number,
-            totalPages: number,
-            currentPage: number,
-            pageSize: number
-          }
-        */
-        this.userList = response.data;            // The items for this page
+        // ── 1) sort by createdAt descending so newest records come first
+        const sortedData = (response.data as any[]).sort((a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+  
+        // ── 2) assign lists
+        this.userList         = sortedData;
+        this.filteredUserList = [...sortedData];
+  
+        // ── 3) pagination meta
         this.totalRecords = response.totalRecords;
-        this.totalPages = response.totalPages;    
-        this.currentPage = response.currentPage;  // or 'page'
- 
-        // If you have additional logic like checkColumnData():
+        this.totalPages   = response.totalPages;
+        this.currentPage  = response.currentPage;
+        
+        // any other post-fetch logic…
         this.checkColumnData();
- 
       },
       error: (err) => {
         console.error('Error fetching user details:', err);
@@ -81,6 +78,7 @@ export class BusinessBankAccountComponent implements OnInit {
       }
     });
   }
+  
  
   checkColumnData(): void {
     this.hasSalaryData = this.userList.some((user) => !!user.salary);

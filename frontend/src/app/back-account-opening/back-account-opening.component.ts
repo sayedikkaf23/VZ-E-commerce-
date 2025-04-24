@@ -33,22 +33,20 @@ export class BackAccountOpeningComponent implements OnInit {
     this.isLoading = true;
     this.adminAuthService.getPersonalBank(page, limit).subscribe({
       next: (response) => {
-        /*
-          Expected shape:
-          {
-            data: [...],
-            totalRecords: number,
-            totalPages: number,
-            currentPage: number,
-            pageSize: number
-          }
-        */
-        this.userList = response.data;
-        this.filteredUserList = [...this.userList];
- 
+        // 1) sort descending by createdAt (newest first)
+        const sortedData = (response.data as any[])
+          .sort((a: any, b: any) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+  
+        // 2) assign both userList & filteredUserList
+        this.userList = sortedData;
+        this.filteredUserList = [...sortedData];
+  
+        // 3) pagination
         this.totalRecords = response.totalRecords;
-        this.totalPages = response.totalPages;
-        this.currentPage = response.currentPage;  // or just 'page'
+        this.totalPages   = response.totalPages;
+        this.currentPage  = response.currentPage;
       },
       error: (error) => {
         console.error('Error fetching user details:', error);
@@ -58,7 +56,7 @@ export class BackAccountOpeningComponent implements OnInit {
       }
     });
   }
- 
+  
   nextPage(): void {
     if (this.currentPage < this.totalPages && !this.isLoading) {
       this.fetchUserDetails(this.currentPage + 1, this.itemsPerPage);

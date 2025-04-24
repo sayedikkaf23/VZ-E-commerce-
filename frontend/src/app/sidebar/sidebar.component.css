@@ -1,4 +1,32 @@
 .detils-sidebar {
     overflow-y: hidden; /* Hide vertical scrollbar */
   }
+  .invoice-summary {
+    text-align: left;
+    margin: 1rem 0;
+  }
+  
+  .invoice-summary .invoice-msg {
+    margin: 0;
+    font-size: 1rem;
+    color: #555;
+  }
+  
+  .invoice-summary .invoice-greeting {
+    margin: 0.25rem 0 0.75rem;
+    font-size: 1.5rem;
+  }
+  
+  .invoice-summary .invoice-text {
+    margin: 0;
+    line-height: 1.4;
+    font-size: 1rem;
+  }
+  
+  .invoice-summary .invoice-amount {
+    margin: 0.5rem 0 0;
+    font-size: 2rem;
+    font-weight: bold;
+    color: #e33737;
+  }
   

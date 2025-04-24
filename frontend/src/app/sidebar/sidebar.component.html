@@ -32,8 +32,14 @@
               <h3>{{ sidebarData?.msg }}</h3>
               <h2>{{ piData?.leadWithDetails.FirstName }}!</h2>
               <hr/>
-              <p>{{ sidebarData?.prominvoiceText }} <br/>No - <b>{{ piData?.quoteWithProductDetails.quotePaymentId }}</b> is </p>
-              <h2>AED {{ piData?.quoteWithProductDetails.totalIncludingVAT | number: '1.2-2' }}</h2>
+              <p class="invoice-text">
+                Your Payment for <strong>{{ piData?.planname }}</strong><br/>
+                No – <strong>{{ piData?.quoteWithProductDetails.quotePaymentId }}</strong> is
+              </p>
+            
+              <h2 class="invoice-amount">
+                AED <strong>{{ piData?.quoteWithProductDetails.totalIncludingVAT | number:'1.2-2' }}</strong>
+              </h2>
   
       </div>
       <div class="col-auto d-none d-md-block">
