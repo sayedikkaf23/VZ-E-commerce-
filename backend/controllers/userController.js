@@ -863,25 +863,11 @@ exports.getPersonalBank = async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const skip = (page - 1) * limit;
  
-    // 2) Build Aggregation Pipeline
+    // 2) Build Aggregation Pipeline (No more userdetails lookup)
     const pipeline = [
       // Match only the subcategory = 'personal'
       { $match: { subcategory: 'personal' } },
- 
-      // $lookup to pull in matching UserDetails documents
-      {
-        $lookup: {
-          from: 'userdetails', // The actual Mongo collection name for UserDetails
-          localField: 'quotePaymentWithDetails.QuotePaymentId',
-          foreignField: 'QuotePaymentId',
-          as: 'userDetails'
-        }
-      },
- 
-      // Only keep docs that actually have userDetails (an array with at least one element)
-      // If you only want exactly one userDetails doc, you can $unwind to flatten
-      { $unwind: '$userDetails' },
- 
+
       // Now we use $facet to get total count & the paginated docs in one go
       {
         $facet: {
@@ -897,11 +883,6 @@ exports.getPersonalBank = async (req, res) => {
     // 3) Execute the aggregation
     const aggResult = await Pidata.aggregate(pipeline);
    
-    // The structure of aggResult[0] is something like:
-    // {
-    //   metadata: [ { total: 42 } ],
-    //   data: [ { ...doc1... }, { ...doc2... }, ... up to limit ]
-    // }
     const meta = aggResult[0]?.metadata?.[0] || {};
     const totalRecords = meta.total || 0; // If none found, total will be 0
     const data = aggResult[0]?.data || [];
@@ -909,19 +890,12 @@ exports.getPersonalBank = async (req, res) => {
     // 4) totalPages from totalRecords
     const totalPages = Math.ceil(totalRecords / limit);
  
-    // 5) For each doc, optionally do your KYC status call
-    //    Then push to final array.
-    //    Because these docs have a userDetails property from the pipeline,
-    //    there's no need to skip them — they already have userDetails.
+    // 5) For each doc, call external KYC status API
     const mergedResults = [];
- 
-    // For each doc, call external KYC
-    // (Remember these docs are plain JS objects from aggregation, not Mongoose documents.)
-    // The docs have 'userDetails' because of $unwind
+
     for (const doc of data) {
       let kycStatus = 'Unknown';
       try {
-        // If doc.leadWithDetails?.LeadId is present, call KYC
         const leadId = doc?.leadWithDetails?.LeadId;
         if (leadId) {
           const authResponse = await axios.post(
@@ -938,8 +912,8 @@ exports.getPersonalBank = async (req, res) => {
             }
           );
           kycStatus = authResponse.data?.CustomerStatus || 'Unknown';
- 
-          // Optionally update the original Pidata doc
+
+          // Optionally update the original Pidata doc with KYC status
           await Pidata.updateOne(
             { _id: doc._id },
             { $set: { kycStatus } }
@@ -948,17 +922,16 @@ exports.getPersonalBank = async (req, res) => {
       } catch (error) {
         console.error('Error fetching KYC status:', error.message);
       }
- 
+
       // Attach the KYC status
-      // doc.userDetails is already there from $unwind
       doc.kycStatus = kycStatus;
- 
+
       mergedResults.push(doc);
     }
  
-    // 6) Return the final array
+    // 6) Return the final array with paginated results and KYC status
     res.status(200).json({
-      data: mergedResults, // Up to 'limit' docs with userDetails
+      data: mergedResults, // Up to 'limit' docs with KYC status
       totalRecords,
       totalPages,
       currentPage: page,
@@ -975,6 +948,7 @@ exports.getPersonalBank = async (req, res) => {
 
 
 
+
 exports.getBusinessBank = async (req, res) => {
   try {
     // 1) Extract page & limit from query (fallback to page=1, limit=10)
@@ -982,28 +956,15 @@ exports.getBusinessBank = async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 10;
     const skip = (page - 1) * limit;
  
-    // 2) Build Aggregation Pipeline
+    // 2) Build Aggregation Pipeline (No more userdetails lookup)
     const pipeline = [
-      // Match only the subcategory = "business"
-      { $match: { subcategory: "business" } },
- 
-      // $lookup to pull in matching UserDetails documents
-      {
-        $lookup: {
-          from: "userdetails", // The MongoDB *collection* name for UserDetails
-          localField: "quoteWithProductDetails.quotePaymentId",
-          foreignField: "QuotePaymentId",
-          as: "userDetails"
-        }
-      },
- 
-      // Only keep docs that actually have userDetails
-      { $unwind: "$userDetails" },
- 
+      // Match only the subcategory = 'business'
+      { $match: { subcategory: 'business' } },
+
       // Use $facet to get total count and paginated docs in one shot
       {
         $facet: {
-          metadata: [{ $count: "total" }], // This counts all matching docs
+          metadata: [{ $count: 'total' }], // This counts all matching docs
           data: [
             { $skip: skip },
             { $limit: limit }
@@ -1014,80 +975,20 @@ exports.getBusinessBank = async (req, res) => {
  
     // 3) Execute the aggregation
     const aggResult = await Pidata.aggregate(pipeline);
- 
-    // The structure of aggResult[0] is like:
-    // {
-    //   metadata: [ { total: 42 } ],
-    //   data: [ { ...doc1... }, { ...doc2... }, ... up to limit ]
-    // }
+   
+    // Structure of aggResult[0]
     const meta = aggResult[0]?.metadata?.[0] || {};
-    const totalRecords = meta.total || 0;
+    const totalRecords = meta.total || 0; // If none found, total will be 0
     const data = aggResult[0]?.data || [];
  
-    // Calculate totalPages
+    // Calculate totalPages from totalRecords
     const totalPages = Math.ceil(totalRecords / limit);
  
-    // 4) Optionally authenticate for the KYC calls
-    // const authResponse = await axios.post(
-    //   `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
-    //   {
-    //     username: "VirtuUAT",
-    //     password: "VirtuApiuat@123",
-    //     CompanyName: "Virtuzone",
-    //   },
-    //   {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //   }
-    // );
-    // const authToken = authResponse.data?.token;
- 
-    // 5) Loop over the final data to call KYC and attach kycStatus
-    // const mergedResults = [];
- 
-    // for (const doc of data) {
-    //   let kycStatus = "Unknown";
- 
-    //   // If there's a leadId, call the KYC status
-    //   const leadId = doc?.leadWithDetails?.LeadId;
-    //   if (leadId && authToken) {
-    //     try {
-    //       const statusResponse = await axios.post(
-    //         `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
-    //         {
-    //           CustomerId: leadId,
-    //           CompanyName: "Virtuzone",
-    //         },
-    //         {
-    //           headers: {
-    //             "Content-Type": "application/json",
-    //             Authorization: `Bearer ${authToken}`,
-    //           },
-    //         }
-    //       );
-    //       kycStatus = statusResponse.data?.CustomerStatus || "Unknown";
- 
-    //       // Optionally update Pidata doc with KYC
-    //       await Pidata.updateOne(
-    //         { _id: doc._id },
-    //         { $set: { kycStatus } }
-    //       );
-    //     } catch (error) {
-    //       console.error("Error fetching KYC status:", error.message);
-    //     }
-    //   }
- 
-    //   // Attach kycStatus
-    //   doc.kycStatus = kycStatus;
- 
-    //   // Push to final
-    //   mergedResults.push(doc);
-    // }
- 
-    // 6) Return the final array + pagination info
+    // 4) Optionally perform any other additional logic (e.g., KYC status) if required
+
+    // 5) Return the final array + pagination info
     res.status(200).json({
-      data: data,
+      data: data, // Paginated data from the business category
       totalRecords,
       totalPages,
       currentPage: page,
@@ -1102,6 +1003,7 @@ exports.getBusinessBank = async (req, res) => {
     });
   }
 };
+
 
 
 exports.submitService = async (req, res) => {

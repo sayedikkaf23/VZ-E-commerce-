@@ -36,7 +36,7 @@
             <th scope="col">Name</th>
             <th scope="col">Email</th>
             <!-- <th scope="col">Employment Status</th> -->
-            <th scope="col">Turn Over</th>
+            <!-- <th scope="col">Turn Over</th> -->
             <!-- <th scope="col">Bank Type</th> -->
             <th scope="col">Quote Payment ID </th>
  
@@ -53,7 +53,7 @@
             <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
             <td>{{ user.leadWithDetails.Email }}</td>
             <!-- <td>{{ user.quoteWithProductDetails?.status }}</td> -->
-            <td>{{ user.userDetails.Turnover }}</td>
+            <!-- <td>{{ user.userDetails.Turnover }}</td> -->
             <td>{{ user.quotePaymentWithDetails.QuotePaymentId }}</td>
  
             <!-- <td>{{ user.salesPersonDetails?.salesPersonName }}</td> -->
@@ -103,9 +103,12 @@
           </table>
         </div>
         <div class="modal-footer">
-          <p>Total Amount: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalAmount  | number:'1.0-2'}}</strong></p>
-          <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalVAT  | number:'1.0-2'}}</strong></p>
-          <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.total_including_Vat  | number:'1.0-2'}}</strong></p>
+          <p>Total Amount: <strong style="font-weight: bold; color: rgb(235, 55, 55);margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.subTotal | number:'1.0-2' }}</strong></p>
+          <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;"> {{
+            (salesforceResponseMatchScreening?.totalIncludingVAT -
+             salesforceResponseMatchScreening?.subTotal) | number:'1.0-2'
+          }}</strong></p>
+          <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">  {{ salesforceResponseMatchScreening?.totalIncludingVAT | number:'1.0-2' }} </strong></p>
         </div>
       </div>
     </div>

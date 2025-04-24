@@ -342,7 +342,7 @@ get endEntry(): number {
   openShareholderModal(shareholders: any[],addAdditionalFile:any[]): void {
     this.selectedShareholders = shareholders;
     this.selectedaddAdditionalFile = addAdditionalFile;
-    // console.log( this.selectedaddAdditionalFile)
+    console.log( this.selectedShareholders)
     this.showModal = true;
   }
  
