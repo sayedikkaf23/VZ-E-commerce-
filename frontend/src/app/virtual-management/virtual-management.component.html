@@ -186,9 +186,7 @@
             <td>
               <div *ngIf="detail.files && detail.files.length > 0; else noFile">
                 <div *ngFor="let file of detail.files">
-                  <a [href]="file.url" target="_blank">
-                    <img [src]="file.url" alt="{{ file.name }}" width="50" height="50" style="object-fit: cover; margin-right: 5px;" />
-                  </a>
+                  <a [href]="file.url" target="_blank" class="view-link">View file</a>
                 </div>
               </div>
               <ng-template #noFile>
