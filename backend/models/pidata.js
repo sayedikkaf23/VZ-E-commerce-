@@ -122,6 +122,11 @@ const pidataSchema = new mongoose.Schema(
     tradeLicenseFileUrl: { type: String },
     salesforceResponseMatchScreening: responseSchema,
     invoiceDate: { type: String },
+    payment_status: {
+      type: String,
+      default: "unpaid"
+    },
+    
     invoiceNumber: { type: String },
     kycStatus: { type: String ,default: 'Pending'},
     shareholders: [shareholderSchema],

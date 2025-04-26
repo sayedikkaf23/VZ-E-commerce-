@@ -207,6 +207,8 @@
                   <th scope="col">Tax Invoice Number</th>
                   <th scope="col">Tax Invoice Date</th>
                   <th>Invoice Amount</th>
+                  <th scope="col">Payment Status</th>
+
                   <th>Details</th>
                   <th>View File</th>
                   <th>Upload File</th>
@@ -221,13 +223,16 @@
                   <td data-title="Customer Name">
                     {{ item.leadWithDetails.FirstName + ' ' + item.leadWithDetails.LastName }}
                   </td>
-                  
+
                   <td data-title="Tax Invoice Number"> {{ item.invoiceNumber || '—' }}
                   </td>
-                  <td data-title="Tax Invoice Date"> {{ item.invoiceDate }}</td>
+                  <td data-title="Tax Invoice Number"> {{ item.invoiceNumber || '—' }}
+                  </td>
+                  
                   <td data-title="Invoice Amount"> {{ item.quoteWithProductDetails?.totalIncludingVAT |
                     number:'1.0-0' }}
                   </td>
+                  <td> {{ item.payment_status }}</td>
                   <td>
                     <a href="#servicedetail" data-bs-toggle="modal" class="detail_btn"
                       (click)="viewDetails(item); $event.preventDefault()">
@@ -505,10 +510,8 @@
                 </div>
               </div>
               <div class="col-md-6">
-                <div class="image-upload image-upload-lg"  (dragover)="onDragOver($event)"
-                (dragleave)="onDragLeave($event)"
-                (drop)="onDrop($event)"
-                [class.dragging]="isDragging">
+                <div class="image-upload image-upload-lg" (dragover)="onDragOver($event)"
+                  (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" [class.dragging]="isDragging">
                   <input type="file" class="d-none" id="img_upload" (change)="onFilesSelected($event)"
                     accept=".pdf,.doc,.docx,.jpg,.png" />
                   <label class="image-edit-btn image-upload-btn" for="img_upload">
@@ -551,7 +554,8 @@
 
 
   <!-- Modal -->
-  <div class="modal fade" id="servicedetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="servicedetailLabel" aria-hidden="true">
+  <div class="modal fade" id="servicedetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="servicedetailLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
       <div class="modal-content">
         <div class="modal-header">
@@ -579,7 +583,8 @@
                   <td data-title="Unit Price">AED {{ product.ProductUnitprice }}</td>
                   <td data-title="Taxable Amount">AED {{ product.taxableAmount || 0 }}</td>
                   <td data-title="VAT">AED {{ product.VAT || 0 }}</td>
-                  <td data-title="Total">AED {{ product.Total || (product.ProductUnitprice * (product.ProductQuantity || product.productQunatity)) }}</td>
+                  <td data-title="Total">AED {{ product.Total || (product.ProductUnitprice * (product.ProductQuantity ||
+                    product.productQunatity)) }}</td>
                 </tr>
               </tbody>
             </table>
@@ -591,7 +596,8 @@
             </li>
             <li>
               <p>VAT:</p>
-              <b>AED {{ selectedRecord?.quoteWithProductDetails?.totalIncludingVAT - selectedRecord?.quoteWithProductDetails?.subTotal | number: '1.2-2' }}</b>
+              <b>AED {{ selectedRecord?.quoteWithProductDetails?.totalIncludingVAT -
+                selectedRecord?.quoteWithProductDetails?.subTotal | number: '1.2-2' }}</b>
             </li>
             <li class="total">
               <b>Total Including VAT:</b>
@@ -602,7 +608,7 @@
       </div>
     </div>
   </div>
-  
+
 
   <!-- Modal -->
   <div class="modal fade" id="additionalfile" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

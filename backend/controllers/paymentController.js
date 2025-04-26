@@ -998,6 +998,7 @@ console.log(response2,"response 2 data")
           $set: {
             invoiceDate,
             invoiceNumber,
+            payment_status: "Paid"
           },
         }
       );
