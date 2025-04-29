@@ -18,10 +18,10 @@ export class MailsManagement3Component implements OnInit {
   formData: FormGroup;
   shareholdersData: any[] = [];
   uploadedFiles: File[][] = [];
-  uploadedFileNames: { [key: string]: { name: string; url: string }[] } = {};
+  uploadedFileNames: { [key: string]: { name: string; url: string; type: string; }[] } = {};
 
   // Instead of File[], we'll store the trade license file info as { name: string; url: string }[]
-  companyTradeLicenseFile: { name: string; url: string }[] = [];
+  companyTradeLicenseFile: { name: string; url: string, type: string }[] = [];
 
   isLoading = false;
 
@@ -137,7 +137,7 @@ export class MailsManagement3Component implements OnInit {
             body: file
           }).then(() => {
             // Store file info as { name, url }
-            this.companyTradeLicenseFile = [{ name: file.name, url: presignedUrl }];
+            this.companyTradeLicenseFile = [{ name: file.name, url: presignedUrl , type:'Trade License' }];
             // Update the form control for the file name
             this.formData.get('companyTradeLicenseFileName')?.setValue(file.name);
             this.isLoading = false;
@@ -178,10 +178,8 @@ export class MailsManagement3Component implements OnInit {
             method: 'PUT',
             headers: { 'Content-Type': file.type },
             body: file,
-          })
-          .then(() => {
-            this.uploadedFileNames[index].push({ name: file.name, url: presignedUrl });
           });
+          this.uploadedFileNames[index].push({ name: file.name, type: 'Shareholder docs',  url: presignedUrl });
         })
       );
 
@@ -240,7 +238,7 @@ export class MailsManagement3Component implements OnInit {
         })),
   
         // Keep track of all uploaded file names
-        uploadedFileNames: this.uploadedFileNames
+        uploadedFileNames: this.companyTradeLicenseFile
       };
   
       localStorage.setItem('mailform2', JSON.stringify(dataToSave));

@@ -18,6 +18,7 @@ const shareholderSchema = new mongoose.Schema({
     {
       name: { type: String },
       url: { type: String },
+      type: {type: String},
       _id: mongoose.Schema.Types.ObjectId
     }
   ]
@@ -142,7 +143,15 @@ const pidataSchema = new mongoose.Schema(
         type: { type: String, required: true },
       }
     ],
+    uploadedFileNames: [
+      {
+        name: { type: String },
+        url: { type: String },
+        type: { type: String },
+      }
+    ],
   },
+  
   {
     timestamps: true, // <<--- This adds createdAt and updatedAt
   }

@@ -22,10 +22,10 @@ export class VirtualReceptionist2Component implements OnInit {
 
   // For storing uploaded files & file names
   uploadedFiles: File[][] = [];
-  uploadedFileNames: { [key: number]: { name: string; url: string }[] } = {};
+  uploadedFileNames: { [key: number]: { name: string; url: string; type: string;}[] } = {};
 
   // For the company trade license, we store an array of { name, url }
-  companyTradeLicenseFile: { name: string; url: string }[] = [];
+  companyTradeLicenseFile: { name: string; url: string; type: string;}[] = [];
 
   isLoading = false;
 
@@ -174,7 +174,7 @@ export class VirtualReceptionist2Component implements OnInit {
             body: file
           }).then(() => {
             // Once uploaded, store file info in our array
-            this.companyTradeLicenseFile = [{ name: file.name, url: presignedUrl }];
+            this.companyTradeLicenseFile = [{ name: file.name, url: presignedUrl, type: "Trade License" }];
 
             // Update the form control for "companyTradeLicenseFile"
             this.formData.get('companyTradeLicenseFile')?.setValue(file.name);
@@ -226,7 +226,7 @@ export class VirtualReceptionist2Component implements OnInit {
           })
             .then(() => {
               // Once uploaded, push the file info
-              this.uploadedFileNames[index].push({ name: file.name, url: presignedUrl });
+              this.uploadedFileNames[index].push({ name: file.name, url: presignedUrl, type: " Shareholder docs" });
             });
         })
       );
@@ -284,7 +284,8 @@ export class VirtualReceptionist2Component implements OnInit {
           // Overwrite 'files' with the actual S3 URLs
           files: this.uploadedFileNames[idx] || []
         })),
-        uploadedFileNames: this.uploadedFileNames
+        uploadedFileNames: this.companyTradeLicenseFile
+
       };
 
       // Save to localStorage for retrieval later

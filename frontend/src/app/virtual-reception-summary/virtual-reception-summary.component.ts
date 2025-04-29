@@ -27,6 +27,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
   showAll = false;
   displayShareholders: any = [];
   companyInfo: any = {};
+  tradeLicense: any = {};
   shareholders: any = [];
   matchScoreResponse: any;
   serviceProducts: any[] = []; // Array to store the product details
@@ -91,6 +92,8 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
    
         this.personalInfo = mailform ? JSON.parse(mailform) : {};
         this.companyInfo = JSON.parse(mailform2 || '{}');
+        this.tradeLicense = JSON.parse(mailform3 || '{}');
+        
 
         const shareholdersFromMailform2 = this.companyInfo.shareholders || [];
         const additionalShareholderInfo = mailform3
@@ -121,7 +124,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
           ...this.companyInfo,
           companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
           shareholders: mergedShareholders,
-          
+          ...this.tradeLicense
         };
 
         localStorage.setItem('mergedData', JSON.stringify(mergedData));
@@ -195,6 +198,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
       dob: this.personalInfo.birthday,
       type: "Virtual Receptionist",
       CustomerType: "C",
+      uploadedFileNames: this.tradeLicense.uploadedFileNames,
       prodcutNameList: this.serviceProducts.map(product => ({
         ProductName: product.Product_Name,
         ProductFamily: "Virtual Receptionist",

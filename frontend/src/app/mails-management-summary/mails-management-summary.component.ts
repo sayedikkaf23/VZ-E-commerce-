@@ -22,6 +22,7 @@ export class MailsManagementSummaryComponent {
   isBrowser: boolean;
   personalInfo: any = {};
   bankInfo: any = {};
+  tradeLicenseFile: any = {};
   salesforceResponse: any;
   quoteWithProductDetails: any;
   showAll = false;
@@ -70,6 +71,7 @@ export class MailsManagementSummaryComponent {
   
         this.personalInfo = mailform ? JSON.parse(mailform) : {};
         this.companyInfo = JSON.parse(mailform2 || '{}');
+        this.tradeLicenseFile = mailform3 ? JSON.parse(mailform3) : {};
 
         const shareholdersFromMailform2 = this.companyInfo.shareholders || [];
         const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
@@ -88,7 +90,7 @@ export class MailsManagementSummaryComponent {
           ...this.companyInfo,
           companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
           shareholders: mergedShareholders,
-        
+          ...this.tradeLicenseFile,
         };
 
         localStorage.setItem('mergedData', JSON.stringify(mergedData));
@@ -199,7 +201,8 @@ export class MailsManagementSummaryComponent {
     const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
     
     console.log(mergedData, "mergedData");
-  
+    const uploadedFileNames = mergedData?.uploadedFileNames || [];
+   
     // Ensure LeadId is present
   
     // Check if mergedData contains shareholders
@@ -215,6 +218,7 @@ export class MailsManagementSummaryComponent {
       dob: this.personalInfo.birthday,
       type: "Mail Management",
       CustomerType: "C",
+      uploadedFileNames: uploadedFileNames,
       prodcutNameList: this.serviceProducts.map(product => ({
         ProductName: product.Product_Name,
         ProductFamily: "Mail Management",
