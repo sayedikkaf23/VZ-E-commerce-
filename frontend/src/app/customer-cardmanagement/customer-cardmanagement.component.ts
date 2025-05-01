@@ -45,6 +45,8 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   bankOpening: any[] = [];
   selectedShareholders: any[] = [];
   selectedaddAdditionalFile: any[] = [];
+  uploadedFileNames: any[] = [];
+  combinedFiles: any[] = [];
   selectedDocumentType: string = ''; // Stores the selected document type
   uploadedFiles: {
     name: string;
@@ -119,7 +121,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     this.isLoading = true;
     this.documenttypeService.getMailManagements().subscribe(
       (data) => {
-        // console.log('Mail Managements:', data);
+        console.log('Mail Managements:', data);
         this.mailManagemnt = data.map((item: any) => item.documentType);
         // Do something with the data
         this.isLoading = false;
@@ -211,7 +213,8 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
         if (response && response.data) {
           this.records = response.data;
           this.filteredRecords = this.records;
-          this.totalPages = Math.ceil(
+          console.log("response", this.filteredRecords);
+        this.totalPages = Math.ceil(
             this.filteredRecords.length / this.itemsPerPage
           );
           this.setPage(1);
@@ -351,10 +354,13 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openShareholderModal(shareholders: any[], addAdditionalFile: any[]): void {
-    this.selectedShareholders = shareholders;
+  openShareholderModal(shareholders: any[], addAdditionalFile: any[], uploadedFileNames: any[]): void {
+    this.selectedShareholders = shareholders.map(shareholder => shareholder.files);
     this.selectedaddAdditionalFile = addAdditionalFile;
-    console.log(this.selectedShareholders);
+    this.uploadedFileNames = uploadedFileNames;
+    const shareholderFile = this.selectedShareholders.flat();
+    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(this.uploadedFileNames || []), ...(shareholderFile || [])];
+    console.log("shareholders-",shareholderFile);
     this.showModal = true;
   }
 

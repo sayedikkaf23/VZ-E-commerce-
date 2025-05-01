@@ -83,7 +83,8 @@ i: any;
       // Parse data from localStorage
       this.personalInfo = JSON.parse(mailform);
       this.companyInfo = JSON.parse(mailform2);
-      // this.tradeLicenseFile = JSON.parse(mailform3);
+      this.tradeLicenseFile = mailform3 ? JSON.parse(mailform3) : {};
+
   
   
       // Extract shareholders from mailform2 in case mailform3 is missing
@@ -102,7 +103,8 @@ i: any;
         ...this.personalInfo,
         ...this.companyInfo,
         companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-        shareholders: mergedShareholders
+        shareholders: mergedShareholders,
+        ...this.tradeLicenseFile
       };
   
       // Store merged data in localStorage for the final step

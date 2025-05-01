@@ -58,13 +58,13 @@
               </fieldset>
             </div>
             <div class="form-field" *ngIf="formData.working === 'Salaried'">
-              <label for="salary">Salary (AED)<span class="required">*</span></label>
+              <label for="salary">Enter your Monthly Salary (AED)<span class="required">*</span></label>
 
               <fieldset>
                 <select name="salary" id="salary" class="form-select"                 [(ngModel)]="formData.salary"
                 >
                   <option value="" disabled selected>
-                    Select Your Salary 
+                    Enter your Monthly Salary 
                   </option>
                   <option value="AED 0-3,000">AED 0-3,000</option>
                   <option value="AED 3,000-5,000">AED 3,000-5,000</option>
