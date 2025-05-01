@@ -1050,35 +1050,53 @@ console.log(response2,"response 2 data")
         to: userEmail, // Receiver email address (from the OnlinePayment document)
         subject: "Payment Received – Welcome to Virtuzone!",
         html: `
-<div> <p style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: #000;">
-                      Hi ${username},<br><br>
-                      Your payment has been successfully processed, and you’re officially part of Virtuzone! 🎉<br><br>
-                      Here are your service details:<br>
-                       <strong>Service Plan:</strong> ${planName}<br>
-                      <strong>Amount:</strong> ${Amount}<br>
-                    
-                      You can access your Customer Portal here:<br>
-                      <a href="https://ecommerce.yeepeey.com/login" style="color: #007bff; text-decoration: underline;">Customer Portal</a><br><br>
-                      Your Email: <strong>${userEmail}</strong><br>
-                      Your temporary password: <strong>${randomPassword}</strong> (You can change it once logged in).<br><br>
-                      Feel free to reach out if you have any questions.<br><br>
-                      Thanks for choosing Virtuzone!<br>
-                      <strong>The Virtuzone Team</strong>
-                    </p><table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
-      <tbody>
-        <tr>
-          <td>
-            <table class="row-content stack" align="left" border="0" cellpadding="0" cellspacing="0" role="presentation" style="color: #000000; width: 600px;" width="600">
-              <tbody>
-                <tr>
-                  <td class="column column-1" width="100%" style="text-align: left; padding: 30px 20px; vertical-align: top;">
-                    <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
-                      <tr>
-                        <td style="padding-bottom: 20px; text-align: center;">
-                          <img src="https://res.cloudinary.com/dvekmmxxx/image/upload/v1718347384/photo_2024-06-14_11-46-14-removebg-preview_bml8en.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
-                        </td>
-                      </tr>
-                    </table>
+<div>
+  <p style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: #000;">
+    Hi ${username},<br><br>
+
+    Your payment has been successfully processed, and you’re officially part of Virtuzone! 🎉<br><br>
+
+    <strong>Below are your service details:</strong><br>
+    <strong>Service Plan:</strong> ${planName}<br>
+    <strong>Amount:</strong> AED ${parseFloat(Amount).toLocaleString('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    })}<br><br>
+
+    You can access your Customer Portal Link here:<br>
+    <a href="https://ecommerce.yeepeey.com/login"
+       style="color: #007bff; text-decoration: underline;">
+      Customer Portal Link
+    </a><br><br>
+
+    Your Email: <strong>${userEmail}</strong><br>
+    Your temporary password: <strong>${randomPassword}</strong>.<br><br>
+
+    <em>Note: There’s currently no way to change your password in the portal. If you need a new one, just reply to this email.</em><br><br>
+
+    Feel free to reach out if you have any questions.<br><br>
+    Thanks for choosing Virtuzone!<br>
+    <strong>The Virtuzone Team</strong>
+  </p>
+
+  <table class="row row-2" align="center" width="100%" border="0" cellspacing="0" cellpadding="0" role="presentation">
+    <tbody>
+      <tr>
+        <td>
+          <table class="row-content stack" align="left" width="600" border="0" cellspacing="0" cellpadding="0" role="presentation">
+            <tbody>
+              <tr>
+                <td class="column column-1" width="100%" style="text-align:center; padding:30px 20px;">
+                  <table class="image_block" width="100%" border="0" cellspacing="0" cellpadding="0" role="presentation">
+                    <tr>
+                      <td style="padding-bottom:20px; text-align:center;">
+                        <!-- swap this src for your new logo -->
+                        <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png"
+                             alt="Virtuzone Logo"
+                             style="max-width:183px; width:100%; height:auto; border:0;">
+                      </td>
+                    </tr>
+                  </table>
                    
                     <table class="social_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
