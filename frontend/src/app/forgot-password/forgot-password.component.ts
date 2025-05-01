@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { UserService } from '../service/user.service';
 import { ToastrService } from 'ngx-toastr'; 
+import { Router } from '@angular/router';             // ← import Router
+
 @Component({
   selector: 'app-forgot-password',
   templateUrl: './forgot-password.component.html',
@@ -14,7 +16,8 @@ export class ForgotPasswordComponent {
   isLoading = false;
 
 
-  constructor(private fb: FormBuilder, private route: ActivatedRoute,   private toastr: ToastrService,
+  constructor(private fb: FormBuilder, private route: ActivatedRoute,   private toastr: ToastrService,    private router: Router,                         // ← inject it here
+
 
     private userService: UserService) {
     this.forgotPasswordForm = this.fb.group({
@@ -41,6 +44,8 @@ export class ForgotPasswordComponent {
         this.isLoading = false;
 
         this.toastr.success('A password reset link has been sent to your email.', 'Success');
+        this.router.navigate(['/login']);
+
       },
       (error) => {
         console.error("Error sending reset link:", error);
