@@ -1072,7 +1072,6 @@ console.log(response2,"response 2 data")
     Your Email: <strong>${userEmail}</strong><br>
     Your temporary password: <strong>${randomPassword}</strong>.<br><br>
 
-    <em>Note: There’s currently no way to change your password in the portal. If you need a new one, just reply to this email.</em><br><br>
 
     Feel free to reach out if you have any questions.<br><br>
     Thanks for choosing Virtuzone!<br>
