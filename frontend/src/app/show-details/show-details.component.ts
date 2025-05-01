@@ -205,7 +205,7 @@ export class ShowDetailsComponent implements AfterViewInit {
       subTypeId = 11;
     } else if (finalData.Bank === 'Digital Personal Bank Account Opening') {
       subTypeId = 12;
-    } else if (finalData.Bank === 'All the above Bank Account Opening') {
+    } else if (finalData.Bank === 'Any of the above Bank Account Opening') {
       subTypeId = 11;
     } else {
       throw new Error('Invalid Bank Type Selected ❌');
