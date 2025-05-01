@@ -204,6 +204,7 @@
                   <th scope="col">Sub Type</th>
 
                   <th scope="col">Customer Name</th>
+                  <th scope="col">QuotePayment ID</th>
                   <th scope="col">Tax Invoice Number</th>
                   <th scope="col">Tax Invoice Date</th>
                   <th>Invoice Amount</th>
@@ -224,6 +225,7 @@
                     {{ item.leadWithDetails.FirstName + ' ' + item.leadWithDetails.LastName }}
                   </td>
 
+                  <td data-title="Tax Invoice Number"> {{ item.quotePaymentWithDetails.QuotePaymentId || '—' }}
                   <td data-title="Tax Invoice Number"> {{ item.invoiceNumber || '—' }}
                   </td>
                   <td data-title="Tax Invoice Number"> {{ item.invoiceNumber || '—' }}
