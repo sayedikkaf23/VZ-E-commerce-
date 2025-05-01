@@ -1075,7 +1075,7 @@ console.log(response2,"response 2 data")
                     <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
                         <td style="padding-bottom: 20px; text-align: center;">
-                          <img src="https://res.cloudinary.com/dvekmmxxx/image/upload/v1718347384/photo_2024-06-14_11-46-14-removebg-preview_bml8en.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
+                          <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
                         </td>
                       </tr>
                     </table>
@@ -1141,21 +1141,22 @@ console.log(response2,"response 2 data")
       to: userEmail, // Receiver email address
       subject: "Welcome to Virtuzone – Let's Get Started!",
       html: `
-  <div>
-    <p style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: #000;">
-        Hi ${username},<br><br>
-       Welcome to Virtuzone!<br>
-       We noticed you've started filling out your details – that’s a great first step. Now, it’s time to complete your journey and access everything for your business to run seamlessly.<br><br>
-       With Virtuzone, you'll get:<br>
-        <ul>
-            <li><strong>Expert guidance every step of the way.</strong></li>
-            <li><strong>Fast and easy access to all our business services.</strong></li>
-            <li><strong>A dedicated team ready to help you succeed</strong></li>
-        </ul><br>
-        Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br><br>
-        Best regards,<br>
-        <strong>The Virtuzone Team</strong><br>
-     
+  <div style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: #000;">
+    <p>
+      Hi ${username},<br><br>
+      Welcome to Virtuzone!<br>
+      We noticed you've started filling out your details – that’s a great first step. Now, it’s time to complete your journey and access everything for your business to run seamlessly.<br><br>
+      With Virtuzone, you'll get:<br>
+    </p>
+    <ul style="padding-left: 20px; font-size: 16px;">
+      <li style="margin-bottom: 8px;">Expert guidance every step of the way.</li>
+      <li style="margin-bottom: 8px;">Fast and easy access to all our business services.</li>
+      <li style="margin-bottom: 8px;">A dedicated team ready to help you succeed</li>
+    </ul>
+    <p>
+      Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br><br>
+      Best regards,<br>
+      <strong>The Virtuzone Team</strong><br>
     </p>
     
     
@@ -1170,7 +1171,7 @@ console.log(response2,"response 2 data")
                     <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
                         <td style="padding-bottom: 20px; text-align: center;">
-                          <img src="https://res.cloudinary.com/dvekmmxxx/image/upload/v1718347384/photo_2024-06-14_11-46-14-removebg-preview_bml8en.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
+                          <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
                         </td>
                       </tr>
                     </table>
