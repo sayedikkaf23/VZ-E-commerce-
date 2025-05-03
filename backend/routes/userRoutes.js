@@ -26,7 +26,7 @@ router.post('/menu-items', userController.addMenuItems);
 router.post('/checkStatus', userController.checkStatus);
 router.post('/MatchScoreProductService', userController.MatchScoreProductService);
 router.post('/updateAdditionalUploadedFiles', userController.updateAdditionalUploadedFiles);
-router.get('/dashboard', userController.dashboard);
+router.get('/dashboards', userController.dashboard);
 router.post('/updateKycStatus', userController.updateKycStatus);
 router.post('/createOpportunity', userController.createOpportunity);
 module.exports = router;
