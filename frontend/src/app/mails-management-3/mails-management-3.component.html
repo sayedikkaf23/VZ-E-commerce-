@@ -20,12 +20,12 @@
           
             <!-- Company Trade License Text Input -->
             <div class="form-field">
-              <label for="companyTradeLicenseNumber">Enter Company Trade License <span class="required">*</span></label>
+              <label for="companyTradeLicenseNumber">Enter Company Trade License Number<span class="required">*</span></label>
               <input
                 class="form-control"
                 type="text"
                 id="companyTradeLicenseNumber"
-                placeholder="Enter Company Trade License"
+                placeholder="Enter Company Trade License Number"
                 formControlName="companyTradeLicenseNumber"
               />
               <div *ngIf="formData.get('companyTradeLicenseNumber')?.invalid && formData.get('companyTradeLicenseNumber')?.touched" class="error-message">
@@ -87,7 +87,7 @@
                 
                 <!-- Passport Number Field -->
                 <div class="form-field">
-                  <label for="passportNumber">ID's/Passport for Shareholder {{ i + 1 }}<span class="required">*</span></label>
+                  <label for="passportNumber">Enter ID or Passport Number for Shareholder {{ i + 1 }}<span class="required">*</span></label>
                   <input type="text" class="form-control" formControlName="passportNumber" placeholder="Enter Passport Number" />
                   <div *ngIf="shareholder.get('passportNumber')?.invalid && shareholder.get('passportNumber')?.touched" class="error-message">
                     Passport Number is required.
