@@ -220,3 +220,30 @@ color: rgba(0, 0, 0, 0.2) !important; /* Light grey for placeholder */
 .filled-input {
 color: rgba(0, 0, 0, 0.507) !important; /* Darker text for filled input */
 }
+select,
+input {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  white-space: normal;
+  word-wrap: break-word;
+  text-overflow: initial;
+}
+
+select option {
+  white-space: normal;
+}
+
+@media screen and (max-width: 480px) {
+  .form-field {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-field label {
+    font-size: 14px;
+    word-wrap: break-word;
+  }
+
+  
+}
