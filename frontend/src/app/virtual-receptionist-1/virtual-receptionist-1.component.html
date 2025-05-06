@@ -28,7 +28,7 @@
             </div>
             <div class="form-field">
               <div class="form-field">
-                <label for="CompanyIncorporated">Where is your Company Incorporated? <span class="required">*</span></label>
+                <label for="CompanyIncorporated">Where is your Company Incorporated?<span class="required">*</span></label>
 
                 <fieldset>
                   <select class="form-select" id="CompanyIncorporated" [(ngModel)]="formData.CompanyIncorporated" style="border-color: transparent;"
@@ -42,7 +42,7 @@
               </div>
             </div>
             <div class="form-field" *ngIf="formData.CompanyIncorporated == 'United Arab Emirates'">
-              <label for="resident">Where is your Company licensed? <span class="required">*</span></label>
+              <label for="resident">Where is your Company licensed?<span class="required">*</span></label>
 
               <fieldset>
                 <select name="Companylicensed" id="Companylicensed" class="form-select" [(ngModel)]="formData.Companylicensed">
@@ -56,7 +56,7 @@
             </div>
 
             <div class="form-field" >
-              <label for="tradelicense">What are the type of activities mentioned on your trade license?: <span class="required">*</span></label>
+              <label for="tradelicense">What are the type of activities mentioned on your trade license?<span class="required">*</span></label>
               <fieldset>
                 <select
                 name="tradelicense"
@@ -139,7 +139,7 @@
                 <div class="shareholder-inputs"> <!-- Flex container for alignment -->
                   <div class="form-field ">
 
-                    <label class="shareholder-label">Full Name <span class="required">*</span></label>
+                    <label class="shareholder-label">Full Name<span class="required">*</span></label>
                     <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required
                       placeholder="Full Name" style="padding: 25px;" data-ui-tooltip title="{{ shareholder.name }}" />
                     <!-- Tooltip showing the full value -->
@@ -153,31 +153,40 @@
                       style="padding: 25px" />
                   </div>
                   <div class="form-field">
-                    <label class="shareholder-label">Date of Birth <span class="required">*</span></label>
+                    <label class="shareholder-label">Date of Birth<span class="required">*</span></label>
                     <!-- Apply new class here -->
                     <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required
                       style="padding: 25px"  (keydown)="preventManualInput($event)"
                       (click)="openDatePicker($event)"  [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }" />
                   </div>
-                  <div class="form-field">
-                    <label class="shareholder-label">Nationality <span class="required">*</span></label>
+                  <div class="form-field nationality-wrapper">
+                    <label class="shareholder-label">Nationality<span class="required">*</span></label>
                     <!-- Apply new class here -->
+                    <div class="nationality-with-remove">
+
                     <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder" [ngModelOptions]="{ standalone: true }" (change)="onNationalityChange($event, shareholder)" style="border-color: transparent;">
                       <option value="" disabled [ngValue]="null">Select Nationality</option>
                       <option *ngFor="let nationality of nationalities" [value]="nationality.country">{{ nationality.country }}</option>
                     </select>
+                    <span (click)="deleteShareholder(i)" class="remove-icon">
+                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path d="M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                      </svg>
+                    </span>
+  </div>
                     
                   </div>
 
 
 
 
-                  <span (click)="deleteShareholder(i)" class="remove-icon">
+                  <!-- <span (click)="deleteShareholder(i)" class="remove-icon">
                     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                       <path d="M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                       <path d="M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                     </svg>
-                  </span>
+                  </span> -->
 
                   <!-- Remove button -->
                 </div>
