@@ -18,23 +18,38 @@ export class HelpCenterComponent {
       }
   }
   ngAfterViewInit() {
-     // Remove 'menu-hide' on component initialization
-     this.renderer.removeClass(document.body, 'menu-hide');
-
-     // Select the sidebar toggle button
-     this.sidebarIcon = this.el.nativeElement.querySelector('.sidebar_icon');
- 
-     if (this.sidebarIcon) {
-       // Use Renderer2 to add the event listener
-       this.listenerFn = this.renderer.listen(this.sidebarIcon, 'click', () => {
-         if (document.body.classList.contains('menu-hide')) {
-           this.renderer.removeClass(document.body, 'menu-hide');
-         } else {
-           this.renderer.addClass(document.body, 'menu-hide');
-         }
-       });
-     }
- }
+    // Remove 'menu-hide' on component initialization
+    this.renderer.removeClass(document.body, 'menu-hide');
+  
+    // Sidebar toggle for desktop
+    this.sidebarIcon = this.el.nativeElement.querySelector('.sidebar_icon');
+    if (this.sidebarIcon) {
+      this.renderer.listen(this.sidebarIcon, 'click', () => {
+        this.toggleSidebar();
+      });
+    }
+  
+    // Sidebar toggle for mobile (navbar-toggle)
+    const navbarToggle = this.el.nativeElement.querySelector('.navbar-toggle');
+    if (navbarToggle) {
+      this.renderer.listen(navbarToggle, 'click', () => {
+        if (navbarToggle.classList.contains('active')) {
+          this.renderer.removeClass(navbarToggle, 'active');
+        } else {
+          this.renderer.addClass(navbarToggle, 'active');
+        }
+      });
+    }
+  }
+  
+  // Helper method to toggle sidebar
+  toggleSidebar() {
+    if (document.body.classList.contains('menu-hide')) {
+      this.renderer.removeClass(document.body, 'menu-hide');
+    } else {
+      this.renderer.addClass(document.body, 'menu-hide');
+    }
+  }
 
   goToPastService(): void {
     this.router.navigate(['/user/pastservice']);
