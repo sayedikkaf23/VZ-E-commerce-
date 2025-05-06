@@ -60,7 +60,7 @@
               </div>
             
               <!-- Display file name and a "View File" link if the file array is not empty -->
-              <ul *ngIf="companyTradeLicenseFile?.length">
+              <ul class="view-file" *ngIf="companyTradeLicenseFile?.length">
                 <li *ngFor="let file of companyTradeLicenseFile">
                   {{ file.name }}
                   <a
@@ -120,7 +120,7 @@
                   </div>
                 
                   <!-- Display the uploaded file names and "View File" links -->
-                  <ul>
+                  <ul class="view-file">
                     <li *ngFor="let file of uploadedFileNames[i]">
                       {{ file.name }}
                       <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
