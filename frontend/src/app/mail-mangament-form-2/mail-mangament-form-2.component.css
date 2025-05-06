@@ -133,26 +133,26 @@
   opacity: 0.7; /* Slight opacity change on hover for effect */
 }
 @media (max-width: 768px) {
+  .form-field {
+    flex: 1 1 100% !important;  /* Full width per field */
+    margin-right: 0 !important; /* Remove spacing on smaller screens */
+    margin-bottom: 15px;
+  }
+
   .form-select {
-    white-space: normal !important;     /* Allow wrapping */
-    word-break: break-word;             /* Break long words */
-    font-size: 15px !important;         /* Slightly bigger for readability */
-    padding: 12px !important;           /* Spacious padding */
-    height: auto !important;            /* Let height adjust to content */
-    line-height: 1.4 !important;        /* Better line spacing */
+    width: 100% !important;     /* Force full width */
+    padding: 12px !important;
+    font-size: 16px;
+    white-space: normal !important;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .form-field label {
-    font-size: 15px !important;
-    line-height: 1.3;
-    word-wrap: break-word;
-  }
-
-  .form-select option {
+  select.form-select option {
     white-space: normal !important;
   }
 }
-
 @media (max-width: 768px) {
   .form-field {
     flex: 1 1 calc(50% - 16px); /* Approximately half width, with some spacing */
@@ -168,6 +168,9 @@
     flex: 1 1 100%;
   }
 }
+
+
+
 .select-padding {
   padding: 35px;
 }
