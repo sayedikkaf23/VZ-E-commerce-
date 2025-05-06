@@ -168,9 +168,9 @@ export class MailsManagement3Component implements OnInit {
       const filesArray: File[] = Array.from(event.target.files as FileList);
       this.uploadedFiles[index] = filesArray;
       this.uploadedFileNames[index] = [];
-
+  
       this.isLoading = true;
-
+  
       const uploadPromises = filesArray.map(file =>
         this.userService.getPresignedUrl(file).toPromise().then((response: any) => {
           const presignedUrl = response.url;
@@ -178,14 +178,18 @@ export class MailsManagement3Component implements OnInit {
             method: 'PUT',
             headers: { 'Content-Type': file.type },
             body: file,
+          }).then(() => {
+            this.uploadedFileNames[index].push({
+              name: file.name,
+              type: 'Shareholder docs',
+              url: presignedUrl
+            });
           });
-          this.uploadedFileNames[index].push({ name: file.name, type: 'Shareholder docs',  url: presignedUrl });
         })
       );
-
+  
       Promise.all(uploadPromises)
         .then(() => {
-          // console.log(`All files for Shareholder ${index + 1} uploaded successfully`);
           this.isLoading = false;
         })
         .catch(error => {
@@ -194,6 +198,7 @@ export class MailsManagement3Component implements OnInit {
         });
     }
   }
+  
 
   onSubmit(): void {
     // Mark the entire form and each shareholder as touched
