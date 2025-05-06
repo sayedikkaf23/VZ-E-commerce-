@@ -39,6 +39,7 @@ export class VirtualReceptionistDetailsComponent {
   personalInfo: any = {}; // To store personal information (Step 1 data)
   companyInfo: any = {}; // To store bank service information (Step 2 data)
   shareholders: any = [];
+  tradeLicenseFile: any = {};
   uploadedFiles: File[][] = []; // Initialize as an empty array
 
   i: any;
@@ -86,7 +87,7 @@ export class VirtualReceptionistDetailsComponent {
 
       // Extract shareholders from mailform2 in case mailform3 is missing
       let shareholdersFromMailform2 = this.companyInfo.shareholders || [];
-
+      this.tradeLicenseFile = mailform3 ? JSON.parse(mailform3) : {};
       // Parse mailform3 only if it exists
       const additionalShareholderInfo = mailform3
         ? JSON.parse(mailform3)

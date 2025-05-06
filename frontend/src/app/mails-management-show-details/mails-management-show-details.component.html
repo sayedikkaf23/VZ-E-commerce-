@@ -90,6 +90,34 @@
           <div *ngIf="companyInfo?.CompanyIncorporated === 'United Arab Emirates'" class="col-md-12 mb-4">
             <div class="box-light">
               <div class="d-flex align-items-center justify-content-between">
+                <h4>Trade License Document</h4>
+                <a [routerLink]="['/mails-management-3']" class="btn-edit">Edit</a>
+              </div>
+              <table class="w-100">
+                <thead>
+                  <tr><th>Trade License Number</th><th>File</th></tr>
+                </thead>
+                <tbody>
+                 
+                    <tr>
+                      <td>{{ tradeLicenseFile.companyTradeLicenseNumber }}</td>
+                      <td>
+                        <ul>
+                          <li *ngFor="let file of tradeLicenseFile.companyTradeLicenseFile">
+                            <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
+                          </li>
+                        </ul>
+                      </td>
+                    </tr>
+               
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div *ngIf="companyInfo?.CompanyIncorporated === 'United Arab Emirates'" class="col-md-12 mb-4">
+            <div class="box-light">
+              <div class="d-flex align-items-center justify-content-between">
                 <h4>Shareholders Documents</h4>
                 <a [routerLink]="['/mails-management-3']" class="btn-edit">Edit</a>
               </div>
@@ -117,6 +145,7 @@
               </table>
             </div>
           </div>
+          
           <button (click)="submitData()" style="width: 1200px;" class="btn primary-btn w-100">Confirm & Continue</button>
 
         </div>
