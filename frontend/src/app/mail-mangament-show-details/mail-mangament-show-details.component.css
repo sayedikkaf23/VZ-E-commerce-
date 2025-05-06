@@ -137,6 +137,21 @@ table td {
   }
 }
 
+@media screen and (max-width: 768px) {
+  .personal-info-table th,
+  .personal-info-table td {
+    display: table-cell;
+    white-space: nowrap;
+    vertical-align: top;
+    font-size: 15px;
+    padding: 8px 10px;
+  }
+
+  .personal-info-table {
+    table-layout: auto;
+    white-space: normal;
+  }
+}
 
 
 h4 {
