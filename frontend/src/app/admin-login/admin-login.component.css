@@ -2259,3 +2259,56 @@ input[type=file]::-webkit-file-upload-button { /* chromes and blink button */
     height: 20px;
   }
 
+  @media (max-width: 768px) {
+    .login-content {
+      width: 100%;
+      padding: 20px;
+    }
+  
+    .login-content input,
+    .login-content button {
+      /* width: 100% !important; */
+      max-width: 100% !important;
+    }
+  
+    .login-page {
+      padding: 20px;
+    }
+  
+    .eye-icon {
+      right: 12px;
+    }
+  }
+  .form-check.remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.2;
+    padding-left:0.5em
+  }
+  
+  @media (max-width: 768px) {
+    .form-check.remember-me {
+      justify-content: center;
+      flex-wrap: nowrap;
+      
+    }
+  
+    .form-check-input {
+     
+      margin: 0;
+    }
+  
+    .form-check-label {
+      white-space: nowrap;
+    }
+  }
+  /* @media (max-width: 767px) {
+    .login-page {
+        background: url(../../assets/images/login-bg.jpg) no-repeat left center;
+        background-size: cover;
+    }
+  } */
+  
+  
