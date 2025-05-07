@@ -75,6 +75,7 @@ import { HelpCenterComponent } from './help-center/help-center.component';
 import { CountryRiskManagementComponent } from './country-risk-management/country-risk-management.component';
 import { ProductRiskManagementComponent } from './product-risk-management/product-risk-management.component';
 import { RiskComponent } from './risk/risk.component';
+import { SearchableNationalityDropdownComponent } from './searchable-nationality-dropdown/searchable-nationality-dropdown.component';
 
 @NgModule({
   declarations: [
@@ -142,7 +143,8 @@ import { RiskComponent } from './risk/risk.component';
     HelpCenterComponent,
     CountryRiskManagementComponent,
     ProductRiskManagementComponent,
-    RiskComponent
+    RiskComponent,
+    SearchableNationalityDropdownComponent
     
   ],
   imports: [

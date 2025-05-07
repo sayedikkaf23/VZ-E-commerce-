@@ -63,14 +63,14 @@
             </div> -->
             <div class="form-field" *ngIf="nationalities.length > 0">
               <label for="nationality">Nationality<span class="required">*</span></label>
-              <select class="form-select" formControlName="nationality" (change)="onNationalityChange($event)">
-                <option value="" disabled selected>Select Nationality</option>
-                <option *ngFor="let nationality of nationalities" [value]="nationality.country">
-                  {{ nationality.country }}
-
-                </option>
-              </select>
+              <app-searchable-nationality-dropdown
+                [list]="nationalities"
+                [labelKey]="'country'"
+                [value]="personalDetailsForm.get('nationality')?.value"
+                (valueChange)="onNationalitySelect($event)">
+              </app-searchable-nationality-dropdown>
             </div>
+            
             
             
             

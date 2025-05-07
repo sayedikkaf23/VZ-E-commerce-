@@ -1,0 +1,16 @@
+
+<div class="search-dropdown" [ngClass]="{'open':shown && filteredList?.length !== 0}">
+    <div class="search-dropdown__btn" (click)="show()">
+      <span>{{value || placeholder}}</span>
+    </div>
+    <div class="search-dropdown__dropdown">
+      <input class="search-dropdown__dropdown__search" type="text" placeholder="Search" [(ngModel)]="keyword" (keyup)="search(keyword)" />
+      <div class="search-dropdown__dropdown__scroller">
+        <div class="search-dropdown__dropdown__item" *ngFor="let item of filteredList" (click)="select(item)">
+          {{item[labelKey]}}
+        </div>
+        <div class="search-dropdown__dropdown__msg" *ngIf="filteredList?.length == 0">No Result Found</div>
+      </div>
+    </div>
+  </div>
+  
