@@ -4,7 +4,7 @@
       <span>{{value || placeholder}}</span>
     </div>
     <div class="search-dropdown__dropdown">
-      <input class="search-dropdown__dropdown__search" type="text" placeholder="Search" [(ngModel)]="keyword" (keyup)="search(keyword)" />
+      <input class="search-dropdown__dropdown__search" type="text" placeholder="Search Country Name" [(ngModel)]="keyword" (keyup)="search(keyword)" />
       <div class="search-dropdown__dropdown__scroller">
         <div class="search-dropdown__dropdown__item" *ngFor="let item of filteredList" (click)="select(item)">
           {{item[labelKey]}}

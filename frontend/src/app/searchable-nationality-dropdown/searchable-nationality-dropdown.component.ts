@@ -8,7 +8,7 @@ import { Component, Input, Output, EventEmitter, HostListener , ElementRef } fro
 export class SearchableNationalityDropdownComponent {
   @Input() list: any[] = [];
   @Input() labelKey: string = 'country'; // or 'common'
-  @Input() placeholder: string = 'Select';
+  @Input() placeholder: string = 'Select Nationality';
   @Input() value: string = '';
   @Output() valueChange = new EventEmitter<string>();
 

@@ -66,3 +66,23 @@ input[readonly] {
   cursor: pointer;
   background-color: #f9f9f9;
 }
+@media(max-width: 756px){
+
+  .step_1_form .form-field app-searchable-nationality-dropdown {
+    height: 50px;
+    padding: 0 20px 0 26px !important;
+  }
+}
+
+.step_1_form .form-field app-searchable-nationality-dropdown {
+  background-color: rgba(217, 217, 217, 0.23);
+  border: 1px solid #CDC9C9;
+  border-radius: 61px;
+  padding: 0 20px 0 51px;
+  height: 54px;
+  display: inline-block;
+  font-weight: 500;
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.507);
+  width: 99%;
+}

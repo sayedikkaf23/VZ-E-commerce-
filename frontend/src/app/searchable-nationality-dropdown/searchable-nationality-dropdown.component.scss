@@ -121,6 +121,7 @@ min-width: 250px;
       &__btn {
         height: 50px;
         font-size: 17px;
+        line-height: 50px !important;
       }
       &__dropdown{
         left: -20px !important;
@@ -131,3 +132,5 @@ min-width: 250px;
     }
   }
   
+
+ 

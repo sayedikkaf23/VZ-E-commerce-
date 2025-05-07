@@ -91,8 +91,10 @@ export class VirtualReceptionistComponent {
     }
   }
 
-  onNationalityChange(event: Event): void {
-    const selectedCountry = (event.target as HTMLSelectElement).value;
+  onNationalitySelect(selectedCountry: string): void {
+    this.personalDetailsForm.patchValue({
+      nationality: selectedCountry
+    });
     const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
   
     if (selectedNationality) {
