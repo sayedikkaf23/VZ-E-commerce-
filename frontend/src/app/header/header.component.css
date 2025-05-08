@@ -41,3 +41,28 @@
     margin-right: 10px;
     color: var(--white);
   }
+
+  @media (max-width: 991px), (max-width: 756px) {
+    .navwrap,
+    .navwrap nav,
+    .navwrap nav ul,
+    .navwrap nav ul li {
+      display: block !important;
+      opacity: 1 !important;
+      transform: none !important;
+      visibility: visible !important;
+    }
+    header nav > ul > li + li {
+      margin-left: 0px;
+  }
+  }
+
+  @media (max-width: 991px) {
+    header nav > ul > li {
+        transform: none;
+        opacity: 1;
+    }
+
+}
+
+  

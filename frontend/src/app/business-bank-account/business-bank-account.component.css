@@ -451,3 +451,102 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+/* optional styling */
+.view-link {
+  color: #0d6efd;          /* bootstrap blue */
+  text-decoration: none;
+  cursor: pointer;
+}
+.view-link:hover {
+  text-decoration: none;
+}
+
+
+
+@media (max-width: 768px) {
+  .search-container,
+  .date-filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  .search-container input[type="text"],
+  .date-filter-container input,
+  .filter-button,
+  .search-button {
+    width: 100%;
+  }
+}
+@media (max-width: 768px) {
+  .sidebar-labels {
+    display: none;
+  }
+
+  .sidebar {
+    width: 60px;
+  }
+}
+@media (max-width: 768px) {
+  .page-heading .row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-heading h2 {
+    font-size: 1.5rem;
+  }
+}
+@media (max-width: 768px) {
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table.table-list-data {
+    min-width: 800px; /* Or higher if your table is wide */
+  }
+
+  .table-list-data th,
+  .table-list-data td {
+    white-space: nowrap; /* Prevent text from breaking */
+    font-size: 14px; /* Optional: shrink text slightly on smaller screens */
+  }
+
+  /* Optional: make action dropdown easier to tap */
+  .three-dot-menu {
+    padding: 6px 10px;
+  }
+
+  .dropdown-menu {
+    min-width: 120px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  .search-container input[type="text"] {
+    width: 100%;
+    border-radius: 30px; /* Fully rounded input */
+    padding: 10px 15px;
+    font-size: 16px;
+  }
+
+  .search-container .search-button {
+    width: 100%;
+    border-radius: 30px; /* Fully rounded button */
+    padding: 10px 15px;
+    font-size: 16px;
+    text-align: center;
+  }
+}
