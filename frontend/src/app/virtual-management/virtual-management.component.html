@@ -47,20 +47,20 @@
      
       <tbody>
         <tr *ngFor="let client of filteredClientList">
-          <td>{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
-          <td>{{ client.leadWithDetails.Email }}</td>
-          <td>{{ client.leadWithDetails.Phone }}</td>
-          <td>{{ client.quotePaymentWithDetails.QuotePaymentId }}</td>
+          <td class="wrap">{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
+          <td class="wrap">{{ client.leadWithDetails.Email }}</td>
+          <td class="wrap">{{ client.leadWithDetails.Phone }}</td>
+          <td class="wrap">{{ client.quotePaymentWithDetails.QuotePaymentId }}</td>
           <!-- <td>{{ client.userDetails?.EmploymentStatus || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.salary || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.bankType || 'N/A' }}</td> -->
-          <td>{{ client.screeningDetails?.matchScore !== null && client.screeningDetails?.matchScore !== undefined ? client.screeningDetails.matchScore : 'N/A' }}</td>
-          <td>{{ client.kycStatus || 'N/A' }}</td>
-          <td>
+          <td class="wrap">{{ client.screeningDetails?.matchScore !== null && client.screeningDetails?.matchScore !== undefined ? client.screeningDetails.matchScore : 'N/A' }}</td>
+          <td class="wrap">{{ client.kycStatus || 'N/A' }}</td>
+          <td class="wrap">
             <button class="green-button" (click)="openProductModal(client)">View Products</button>
            
           </td>
-          <td>
+          <td class="wrap">
             <button class="green-button" (click)="openDocumentModal(client)">View Documents</button>            
           </td>
           <td>
@@ -115,10 +115,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let product of selectedProducts">
-              <td>{{ product.productName }}</td>
-              <td>{{ product.productQuantity }}</td>
-              <td>{{ product.productUnitPrice }}</td>
-              <td>{{  product.total || (product.productUnitPrice * (product.productQuantity || product.productQunatity))   | number:'1.0-2' }}</td>
+              <td class="wrap">{{ product.productName }}</td>
+              <td class="wrap">{{ product.productQuantity }}</td>
+              <td class="wrap">{{ product.productUnitPrice }}</td>
+              <td class="wrap">{{  product.total || (product.productUnitPrice * (product.productQuantity || product.productQunatity))   | number:'1.0-2' }}</td>
             </tr>
           </tbody>
         </table>
@@ -179,11 +179,11 @@
         </thead>
         <tbody>
           <tr *ngFor="let detail of selectedClientDetails">
-            <td>{{ detail.name }}</td>
-            <td>{{ detail.shareholderPercentage }}%</td>
-            <td>{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
-            <td>{{ detail.nationalityshareholder }}</td>
-            <td>
+            <td class="wrap">{{ detail.name }}</td>
+            <td class="wrap">{{ detail.shareholderPercentage }}%</td>
+            <td class="wrap">{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
+            <td class="wrap">{{ detail.nationalityshareholder }}</td>
+            <td class="wrap">
               <div *ngIf="detail.files && detail.files.length > 0; else noFile">
                 <div *ngFor="let file of detail.files">
                   <a [href]="file.url" target="_blank" class="view-link">View file</a>

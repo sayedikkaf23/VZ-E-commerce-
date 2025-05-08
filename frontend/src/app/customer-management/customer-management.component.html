@@ -54,16 +54,16 @@
       <tbody>
         <tr *ngFor="let user of userList">
  
-          <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
-          <td>{{ user.leadWithDetails.Email }}</td>
-          <td>{{ user.leadWithDetails.Phone }}</td>
-          <td>{{ user.leadWithDetails.Nationality }}</td>
-          <td>{{ user.quotePaymentWithDetails.QuotePaymentId }}</td>
-          <td>{{ user.planname }}</td>
-          <td>{{ user.kycStatus}}</td>
+          <td class="wrap">{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
+          <td class="wrap">{{ user.leadWithDetails.Email }}</td>
+          <td class="wrap">{{ user.leadWithDetails.Phone }}</td>
+          <td class="wrap">{{ user.leadWithDetails.Nationality }}</td>
+          <td class="wrap">{{ user.quotePaymentWithDetails.QuotePaymentId }}</td>
+          <td class="wrap">{{ user.planname }}</td>
+          <td class="wrap">{{ user.kycStatus}}</td>
  
-          <td>{{ user.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
-          <td>{{ user.updatedAt | date:'yyyy-MM-dd HH:mm' }}</td>
+          <td class="wrap">{{ user.createdAt | date:'yyyy-MM-dd HH:mm' }}</td>
+          <td class="wrap">{{ user.updatedAt | date:'yyyy-MM-dd HH:mm' }}</td>
           <td style="position: relative;">
             <button class="three-dot-menu" (click)="openMenu($event, user)">
               &#x22EE;

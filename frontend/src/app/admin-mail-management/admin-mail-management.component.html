@@ -49,17 +49,17 @@
       <tbody>
         <!-- Render mails for current page -->
         <tr *ngFor="let mail of filteredMailList">
-          <td>{{ mail.leadWithDetails.FirstName }} {{ mail.leadWithDetails.LastName }}</td>
-          <td>{{ mail.leadWithDetails.Email }}</td>
-          <td>{{ mail.leadWithDetails.Phone }}</td>
-          <td>{{ mail.quotePaymentWithDetails.QuotePaymentId }}</td>
+          <td class="wrap">{{ mail.leadWithDetails.FirstName }} {{ mail.leadWithDetails.LastName }}</td>
+          <td class="wrap">{{ mail.leadWithDetails.Email }}</td>
+          <td class="wrap">{{ mail.leadWithDetails.Phone }}</td>
+          <td class="wrap">{{ mail.quotePaymentWithDetails.QuotePaymentId }}</td>
  
           <!-- <td>{{ client.userDetails?.EmploymentStatus || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.salary || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.bankType || 'N/A' }}</td> -->
-          <td>{{ mail.screeningDetails?.matchScore !== null && mail.screeningDetails?.matchScore !== undefined ? mail.screeningDetails.matchScore : 'N/A' }}</td>
-          <td>{{ mail.kycStatus || 'N/A' }}</td>
-          <td>
+          <td class="wrap">{{ mail.screeningDetails?.matchScore !== null && mail.screeningDetails?.matchScore !== undefined ? mail.screeningDetails.matchScore : 'N/A' }}</td>
+          <td class="wrap">{{ mail.kycStatus || 'N/A' }}</td>
+          <td class="wrap">
             <button class="green-button" (click)="openProductModal(mail)">View Products</button>
            
           </td>
@@ -196,11 +196,11 @@
       </thead>
       <tbody>
         <tr *ngFor="let detail of selectedMailDetails">
-          <td>{{ detail.name }}</td>
-          <td>{{ detail.shareholderPercentage }}%</td>
-          <td>{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
-          <td>{{ detail.nationalityshareholder }}</td>
-          <td>
+          <td class="wrap">{{ detail.name }}</td>
+          <td class="wrap">{{ detail.shareholderPercentage }}%</td>
+          <td class="wrap">{{ detail.dob | date: 'yyyy-MM-dd' }}</td>
+          <td class="wrap">{{ detail.nationalityshareholder }}</td>
+          <td class="wrap">
             <div *ngIf="detail.files?.length > 0; else noFile">
               <div *ngFor="let file of detail.files">
                 <a [href]="file.url" target="_blank" class="view-link">View file</a>
