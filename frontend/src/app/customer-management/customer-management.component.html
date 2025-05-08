@@ -16,8 +16,8 @@
             <button class="search-button" (click)="onSearch()">SEARCH</button>
          
             <div class="date-filter-container">
-              <input type="date" placeholder="From Date" [(ngModel)]="fromDate">
-              <input type="date" placeholder="To Date" [(ngModel)]="toDate">
+              <input type="date" id="fromDate"  [(ngModel)]="fromDate">
+              <input type="date" id="toDate" [(ngModel)]="toDate">
               <button class="filter-button" (click)="onDateFilter()">FILTER BY DATE</button>
             </div>
           </div>
