@@ -230,6 +230,13 @@
   transform: translate(-50%, -50%);
 }
 
+
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 90% !important;
+  }
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;

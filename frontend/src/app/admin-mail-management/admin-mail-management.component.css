@@ -91,7 +91,7 @@
 /* Add responsive file handling */
 @media screen and (max-width: 768px) {
   .modal-content {
-    width: 90%;
+    width: 90% !important;
   }
 
   .file-item {

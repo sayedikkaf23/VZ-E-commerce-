@@ -141,6 +141,12 @@
 
 
 
+@media screen and (max-width: 768px) {
+  .modal-content {
+    width: 90% !important;
+  }
+}
+
 
 /* Table styling inside modal */
 .modal-content .table {
