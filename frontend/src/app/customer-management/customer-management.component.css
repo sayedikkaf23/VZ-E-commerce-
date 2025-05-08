@@ -519,7 +519,7 @@ td {
   .date-filter-container input[type="date"] {
     width: 100%;
     font-size: 16px;
-    padding: 10px 12px;
+    /* padding: 10px 15px; */
     border-radius: 10px;
   }
 
