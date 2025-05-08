@@ -509,6 +509,26 @@ td {
     font-size: 13px;
   }
 }
+@media (max-width: 768px) {
+  .date-filter-container {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .date-filter-container input[type="date"] {
+    width: 100%;
+    font-size: 16px;
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+
+  .filter-button {
+    width: 100%;
+    font-size: 16px;
+    border-radius: 10px;
+  }
+}
 
 @media (max-width: 768px) {
   .search-container {
