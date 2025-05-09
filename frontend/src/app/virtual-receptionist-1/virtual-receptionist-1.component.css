@@ -246,3 +246,43 @@ select option {
   }
 
 }
+
+/* Remove any negative bottom margins */
+.shareholder-row {
+  margin-bottom: 0; /* or just delete this rule */
+}
+
+/* Each shareholder “card” */
+.shareholder-section {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 20px;    /* nice space between cards */
+  /* box-shadow: 0 1px 3px rgba(0,0,0,0.1); */
+}
+
+/* Label at top of each card */
+.shareholder-header {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 35px;
+  color: #333;
+}
+
+/* Flex layout for the inputs */
+.shareholder-inputs {
+  display: flex;
+  flex-wrap: wrap;       /* wrap on mobile */
+  gap: 12px;             /* consistent spacing */
+}
+
+
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .shareholder-inputs {
+    flex-direction: column;
+  }
+ 
+}
+

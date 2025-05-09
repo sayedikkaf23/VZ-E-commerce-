@@ -135,7 +135,10 @@
           
             <div class="shareholder-row shareholder-section" *ngIf="formData.CompanyIncorporated"> <!-- Apply new class here -->
               <h3 style="margin-bottom: 30px;">Shareholder List</h3>
-              <div class="form-group shareholder-details" *ngFor="let shareholder of shareholders; let i = index">
+              <div class="form-group shareholder-details" *ngFor="let shareholder of shareholders; let i = index" class="shareholder-section">
+                <div class="shareholder-header">
+                  Shareholder {{ i + 1 }}
+                </div>
                 <div class="shareholder-inputs"> <!-- Flex container for alignment -->
                   <div class="form-field ">
 

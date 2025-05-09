@@ -170,16 +170,24 @@
             </div>
             <div class="shareholder-row shareholder-section"> <!-- Apply new class here -->
               <h3 style="margin-bottom: 30px;">Shareholders List</h3>
-              <div class="form-group shareholder-details" *ngFor="let shareholder of shareholders; let i = index">
-                <div class="shareholder-inputs"> <!-- Flex container for alignment -->
-                  <div class="form-field ">
-
-                    <label class="shareholder-label">Full Name<span class="required">*</span></label>
-                    <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required
-                      placeholder="Full Name" style="padding: 25px;" data-ui-tooltip title="{{ shareholder.name }}" />
-                    <!-- Tooltip showing the full value -->
-
+              <div *ngFor="let shareholder of shareholders; let i = index" class="shareholder-section">
+                <div class="shareholder-header">
+                  Shareholder {{ i + 1 }}
+                </div>
+              
+                <div class="shareholder-inputs">
+                  <!-- Full Name -->
+                  <div class="form-field">
+                    <label>Full Name <span class="required">*</span></label>
+                    <input
+                      type="text"
+                      [(ngModel)]="shareholder.name"
+                      [ngModelOptions]="{ standalone: true }"
+                      placeholder="Full Name"
+                      required
+                    />
                   </div>
+              
                   <div class="form-field">
                     <label class="shareholder-label">Shareholder %<span class="required">*</span></label>
                     <!-- Apply new class here -->
@@ -196,18 +204,27 @@
                   </div>
                   <div class="form-field nationality-wrapper">
                     <label class="shareholder-label">Nationality<span class="required">*</span></label>
-                    <div class="nationality-with-remove">
-                      <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder" [ngModelOptions]="{ standalone: true }" (change)="onNationalityChange($event, shareholder)">
-                        <option value="" disabled [ngValue]="null">Select Nationality</option>
-                        <option *ngFor="let nationality of nationalities" [value]="nationality.country">{{ nationality.country }}</option>
-                      </select>
-                      <span (click)="deleteShareholder(i)" class="remove-icon">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                          <path d="M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        </svg>
-                      </span>
-                    </div>
+        <div class="nationality-with-remove">
+          <!-- SEARCHABLE DROPDOWN in place of plain <select> -->
+            <app-searchable-nationality-dropdown
+            [list]="nationalities"
+            [labelKey]="'country'"
+            [value]="shareholder.nationalityshareholder"
+            (valueChange)="onShareholderNationalitySelect($event, shareholder)"
+            placeholder="Search country…"
+          ></app-searchable-nationality-dropdown>
+          
+          <!-- remove icon -->
+          <span (click)="deleteShareholder(i)" class="remove-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                 xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 5L15 15" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round"/>
+              <path d="M15 5L5 15" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round"/>
+            </svg>
+          </span>
+        </div>
                   </div>
                   
 

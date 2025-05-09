@@ -210,6 +210,11 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     }
    
   }
+  onShareholderNationalitySelect(selectedCountry: string, shareholder: any) {
+    shareholder.nationalityshareholder = selectedCountry;
+    const found = this.nationalities.find(n => n.country === selectedCountry);
+    shareholder.countryRisk = found?.RiskRating ?? '';
+  }
   addShareholder() {
     // console.log('Add shareholder clicked');
     this.shareholders.push({ name: '', phone: '', dob: '', nationality: '' });

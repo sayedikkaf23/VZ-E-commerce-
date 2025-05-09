@@ -203,3 +203,119 @@
 .filled-input {
   color: rgba(0, 0, 0, 0.507) !important; /* Darker text for filled input */
 }
+.custom-select {
+  position: relative;
+  user-select: none;
+  cursor: pointer;
+}
+.selected-value {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.arrow {
+  position: absolute;
+  right: 0.75rem; top: 50%;
+  width: 0; height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #333;
+  transform: translateY(-50%);
+  transition: transform 0.2s;
+}
+.arrow.open {
+  transform: translateY(-50%) rotate(180deg);
+}
+.dropdown-panel {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0; right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  z-index: 10;
+}
+.search-input {
+  width: 100%;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+  box-sizing: border-box;
+}
+.options-list {
+  max-height: 200px;
+  overflow-y: auto;
+  list-style: none;
+  margin: 0; padding: 0;
+}
+.options-list li {
+  padding: 0.5rem;
+}
+.options-list li:hover {
+  background: #f0f0f0;
+}
+ 
+/* Search Country left alignment */
+::ng-deep #country-search-box {
+  padding-left: 18px !important;
+  
+}
+
+.step_1_form .form-field app-searchable-nationality-dropdown {
+  background-color: rgba(217, 217, 217, 0.23);
+  border: 1px solid #CDC9C9;
+  border-radius: 61px;
+  padding: 0 20px 0 51px;
+  height: 54px;
+  display: inline-block;
+  font-weight: 500;
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.507);
+  width: 99%;
+}
+
+
+@media(max-width: 756px){
+
+  .step_1_form .form-field app-searchable-nationality-dropdown {
+    height: 50px;
+    padding: 0 20px 0 26px;
+  }
+}
+/* Remove any negative bottom margins */
+.shareholder-row {
+  margin-bottom: 0; /* or just delete this rule */
+}
+
+/* Each shareholder “card” */
+.shareholder-section {
+  background-color: #f9f9f9;
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 20px;    /* nice space between cards */
+  /* box-shadow: 0 1px 3px rgba(0,0,0,0.1); */
+}
+
+/* Label at top of each card */
+.shareholder-header {
+  font-size: 1.1rem;
+  font-weight: bold;
+  margin-bottom: 35px;
+  color: #333;
+}
+
+/* Flex layout for the inputs */
+.shareholder-inputs {
+  display: flex;
+  flex-wrap: wrap;       /* wrap on mobile */
+  gap: 12px;             /* consistent spacing */
+}
+
+
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .shareholder-inputs {
+    flex-direction: column;
+  }
+ 
+}
