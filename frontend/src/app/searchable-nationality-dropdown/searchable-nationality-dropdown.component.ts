@@ -1,22 +1,34 @@
-import { Component, Input, Output, EventEmitter, HostListener , ElementRef } from '@angular/core';
+// ------------------------
+// COMPONENT TS (searchable-nationality-dropdown.component.ts)
+// ------------------------
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  HostListener,
+  ElementRef,
+  OnInit,
+} from '@angular/core';
 
 @Component({
   selector: 'app-searchable-nationality-dropdown',
   templateUrl: './searchable-nationality-dropdown.component.html',
-  styleUrl: './searchable-nationality-dropdown.component.scss'
+  styleUrls: ['./searchable-nationality-dropdown.component.scss']
 })
-export class SearchableNationalityDropdownComponent {
+export class SearchableNationalityDropdownComponent implements OnInit {
   @Input() list: any[] = [];
-  @Input() labelKey: string = 'country'; // or 'common'
+  @Input() labelKey: string = 'country';
   @Input() placeholder: string = 'Select Nationality';
+  @Input() searchPlaceholder: string = 'Search Country Name';
   @Input() value: string = '';
   @Output() valueChange = new EventEmitter<string>();
 
   shown = false;
   keyword = '';
   filteredList: any[] = [];
-  constructor(private eRef: ElementRef) {}
 
+  constructor(private eRef: ElementRef) {}
 
   ngOnInit() {
     this.filteredList = [...this.list];
@@ -30,7 +42,7 @@ export class SearchableNationalityDropdownComponent {
 
   search(keyword: string) {
     this.filteredList = this.list.filter(item =>
-      item[this.labelKey].toLowerCase().startsWith(keyword.toLowerCase())
+      item[this.labelKey]?.toLowerCase().includes(keyword.toLowerCase())
     );
   }
 
@@ -41,17 +53,16 @@ export class SearchableNationalityDropdownComponent {
   }
 
   @HostListener('document:click', ['$event'])
-onClickOutside(event: MouseEvent) {
-  if (!this.eRef.nativeElement.contains(event.target)) {
-    this.shown = false;
+  onClickOutside(event: MouseEvent) {
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      this.shown = false;
+    }
   }
-}
 
-// Optional: support mobile touches too
-@HostListener('document:touchstart', ['$event'])
-onTouchOutside(event: TouchEvent) {
-  if (!this.eRef.nativeElement.contains(event.target)) {
-    this.shown = false;
+  @HostListener('document:touchstart', ['$event'])
+  onTouchOutside(event: TouchEvent) {
+    if (!this.eRef.nativeElement.contains(event.target)) {
+      this.shown = false;
+    }
   }
-}
 }

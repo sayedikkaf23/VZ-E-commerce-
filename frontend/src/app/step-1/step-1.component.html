@@ -67,6 +67,8 @@
                 [list]="nationalities"
                 [labelKey]="'country'"
                 [value]="personalDetailsForm.get('nationality')?.value"
+                [searchPlaceholder]="'Search Country Name'"
+
                 (valueChange)="onNationalitySelect($event)">
               </app-searchable-nationality-dropdown>
             </div>

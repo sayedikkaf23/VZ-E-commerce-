@@ -141,7 +141,12 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       this.cdRef.detectChanges();
     }
   }
-
+  onTradeLicenseSelect(selectedActivity: string) {
+    this.formData.tradelicense = selectedActivity;
+    const selectedCategory = this.businessCategories.find(cat => cat.name === selectedActivity);
+    this.formData.BusinessActivityRisk = selectedCategory?.Score || null;
+  }
+  
   onCategoryChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const selectedCategoryName = selectElement.value;
@@ -155,6 +160,11 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
       this.formData.BusinessActivityRisk = null; // Optional fallback
     }
   }
+  onCategoryChangeManual(selected: string) {
+    const found = this.businessCategories.find(cat => cat.name === selected);
+    this.formData.BusinessActivityRisk = found?.Score ?? null;
+  }
+  
   onShareholderNationalitySelect(selectedCountry: string, shareholder: any) {
     shareholder.nationalityshareholder = selectedCountry;
     const found = this.nationalities.find(n => n.country === selectedCountry);

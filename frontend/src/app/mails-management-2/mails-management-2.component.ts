@@ -133,6 +133,13 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
 
   }
 
+  onTradeCategorySelect(selectedCategory: string) {
+    this.formData.tradelicense = selectedCategory;
+  
+    const selected = this.businessCategories.find(c => c.name === selectedCategory);
+    this.formData.BusinessActivityRisk = selected?.Score ?? '';
+  }
+  
   onCategoryChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const selectedCategoryName = selectElement.value;

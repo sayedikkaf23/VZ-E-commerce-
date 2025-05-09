@@ -58,20 +58,16 @@
             <div class="form-field">
               <label for="tradelicense">What are the type of activities mentioned on your trade license?<span class="required">*</span></label>
               <fieldset>
-                <select
-                name="tradelicense"
-                id="tradelicense"
-                class="form-select"
-                [(ngModel)]="formData.tradelicense"
-                (change)="onCategoryChange($event)"
-              >
-                <option value="" disabled>
-                  What are the type of activities mentioned on your trade license?
-                </option>
-                <option *ngFor="let category of businessCategories" [value]="category.name">
-                  {{ category.name }}
-                </option>
-              </select>
+                <app-searchable-nationality-dropdown
+                [list]="businessCategories"
+                [labelKey]="'name'"
+                [value]="formData.tradelicense"
+                (valueChange)="onTradeCategorySelect($event)"
+                placeholder="What are the type of activities mentioned on your trade license?"
+                [searchPlaceholder]="'Search trade license activity'"
+
+              ></app-searchable-nationality-dropdown>
+              
               </fieldset>
             </div>
             <div class="form-field" *ngIf="formData.CompanyIncorporated">

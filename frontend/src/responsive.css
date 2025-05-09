@@ -801,7 +801,7 @@
     .step_1_form .form-field label {
         font-size: 15px;
         margin-bottom: 6px;
-        padding-left: 13px;
+        padding-left: 9px;
     }
     .step_1_form .form-field input, .step_1_form .form-field select.form-select {
         padding: 0 20px 0 26px;
