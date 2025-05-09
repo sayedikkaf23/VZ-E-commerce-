@@ -3,4 +3,9 @@
         font-size: 9px;
         
     }
+    a img {
+        height: 27px !important;
+        margin-bottom: 2px;
+        margin-left: 2px;
+    }
 }
