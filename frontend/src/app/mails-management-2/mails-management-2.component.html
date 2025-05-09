@@ -168,10 +168,14 @@
                     <!-- Apply new class here -->
                     <div class="nationality-with-remove">
 
-                    <select class="form-select" [(ngModel)]="shareholder.nationalityshareholder" [ngModelOptions]="{ standalone: true }" (change)="onNationalityChange($event, shareholder)" style="border-color: transparent;">
-                      <option value="" disabled [ngValue]="null">Select Nationality</option>
-                      <option *ngFor="let nationality of nationalities" [value]="nationality.country">{{ nationality.country }}</option>
-                    </select>
+                      <app-searchable-nationality-dropdown
+                      [list]="nationalities"
+                      [labelKey]="'country'"
+                      [value]="shareholder.nationalityshareholder"
+                      (valueChange)="onShareholderNationalitySelect($event, shareholder)"
+                      placeholder="Search country"
+                    ></app-searchable-nationality-dropdown>
+                    
                     <span (click)="deleteShareholder(i)" class="remove-icon">
                       <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />

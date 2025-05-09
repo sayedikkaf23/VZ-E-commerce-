@@ -147,6 +147,12 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
       this.formData.BusinessActivityRisk = null; // Optional fallback
     }
   }
+  onShareholderNationalitySelect(selectedCountry: string, shareholder: any) {
+    shareholder.nationalityshareholder = selectedCountry;
+    const found = this.nationalities.find(n => n.country === selectedCountry);
+    shareholder.countryRisk = found?.RiskRating ?? '';
+  }
+  
 
   onNationalityChange(event: Event, shareholder: any): void {
     const selectedCountry = (event.target as HTMLSelectElement).value;

@@ -285,4 +285,37 @@ select option {
   }
  
 }
+ 
+/* Search Country left alignment */
+::ng-deep #country-search-box {
+  padding-left: 18px !important;
+  
+}
+.selected-value {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
+}
 
+
+.step_1_form .form-field app-searchable-nationality-dropdown {
+  background-color: rgba(217, 217, 217, 0.23);
+  border: 1px solid #CDC9C9;
+  border-radius: 61px;
+  padding: 0 20px 0 51px;
+  height: 54px;
+  display: inline-block;
+  font-weight: 500;
+  font-size: 20px;
+  color: rgba(0, 0, 0, 0.507);
+  width: 99%;
+}
+
+
+@media(max-width: 756px){
+
+  .step_1_form .form-field app-searchable-nationality-dropdown {
+    height: 50px;
+    padding: 0 20px 0 26px;
+  }
+}
