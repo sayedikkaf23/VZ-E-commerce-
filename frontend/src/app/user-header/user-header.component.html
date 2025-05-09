@@ -12,8 +12,8 @@
               <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" height="30" width="140" />
             </a>
           </div>
-          <nav class="header-navbar ms-auto">
-            <div class="navbar-toggle">
+          <nav class="header-navbar ms-auto" [class.mobile-open]="isMobileSidebarOpen">
+            <div>
               <span></span>
               <span></span>
               <span></span>
@@ -70,8 +70,8 @@
                 </ul>
               </li> -->
               
-              <li class="dropdown">
-                <a href="#">Services
+              <li class="dropdown"  [class.open]="isSubMenuOpen && isMobileSidebarOpen">
+                <a href="javascript:void(0)" (click)="onDropdownClick($event)">Services
                   <svg width="9" height="7" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <g clip-path="url(#clip0_23_6)">
                       <path d="M1 1.25L6 6.75L11 1.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
@@ -84,9 +84,9 @@
                     </defs>
                   </svg>
                 </a>
-                <span class="sub-menu-toggle"></span>
+                <span class="sub-menu-toggle" (click)="onDropdownClick($event)"></span>
                <!-- src/app/components/submenu/submenu.component.html -->
-                  <ul class="sub-menu">
+                  <ul class="sub-menu" [class.show]="isSubMenuOpen">
                     <li *ngFor="let item of menuItems">
                       <a [routerLink]="item.link">{{ item.name }}</a>
                     </li>
@@ -118,13 +118,13 @@
             </a>
           </div> -->
           <a href="https://calculator.virtuzone.com/" class="btn d-lg-block d-none" target="_blank">Cost Calculator</a>
-          <div class="navbar-toggle">
+          <div class="navbar-toggle" (click)="toggleMobileSidebar()">
             <span></span>
             <span></span>
             <span></span>
           </div>
         </div>
       </div>
-      <div class="overlay"></div>
+      <!-- <div class="overlay"></div> -->
     </div>
   </header>
