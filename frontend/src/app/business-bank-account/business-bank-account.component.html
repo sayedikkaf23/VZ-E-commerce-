@@ -12,13 +12,19 @@
             <h2>Bussiness Bank Account</h2>
           </div>
           <div class="search-container mt-3">
+            <div class="search-container-wrapper">
             <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
-            <button class="search-button" (click)="onSearch()"><i class="fas fa-search"></i> SEARCH</button>
+            <button class="search-button" (click)="onSearch()"><i class="fas fa-search"></i>  <span class="search-text">SEARCH</span></button>
+          </div>
+            <div class="date-filter-wrapper">
             <div class="date-filter-container">
+              <div class=" date-input-wrapper">
               <input type="date" placeholder="From Date" [(ngModel)]="fromDate">
               <input type="date" placeholder="To Date" [(ngModel)]="toDate">
+            </div>
               <button class="filter-button" (click)="onDateFilter()">FILTER BY DATE</button>
             </div>
+          </div>
           </div>
         </div>
       </div>

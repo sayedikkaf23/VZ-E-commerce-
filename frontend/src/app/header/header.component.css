@@ -47,20 +47,27 @@
     .navwrap nav,
     .navwrap nav ul,
     .navwrap nav ul li {
-      display: block !important;
+      
       opacity: 1 !important;
       transform: none !important;
       visibility: visible !important;
     }
     header nav > ul > li + li {
+      padding-right: 9px;
+      margin-top: 0px;
       margin-left: 0px;
   }
+  }
+
+  .header-back-link {
+    padding-right: px;
   }
 
   @media (max-width: 991px) {
     header nav > ul > li {
         transform: none;
         opacity: 1;
+        margin-right: 9px;
     }
 
 }
