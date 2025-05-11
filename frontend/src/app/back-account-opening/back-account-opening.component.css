@@ -499,7 +499,7 @@
 @media (max-width: 768px) {
   .page-heading .row {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: flex-start !important;
   }
 
   .page-heading h2 {
@@ -535,26 +535,64 @@
 
 @media (max-width: 768px) {
   .search-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+   
+    gap: 8px;
     margin: 10px 0;
   }
 
   .search-container input[type="text"] {
-    width: 100%;
-    border-radius: 30px; /* Fully rounded input */
+    flex: 1 1 auto;
+
+    border-radius: 30px;
     padding: 10px 15px;
     font-size: 16px;
   }
 
+  .search-container-wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
   .search-container .search-button {
-    width: 100%;
-    border-radius: 30px; /* Fully rounded button */
+    flex-shrink: 0;
+    width: auto !important;
     padding: 10px 15px;
-    font-size: 16px;
-    text-align: center;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .search-container .search-button .search-text {
+    display: none !important;
+  }
+
+  .search-container .search-button i {
+    font-size: 1.2rem;
+    margin-right: 0;
   }
 }
+
+@media (max-width: 767px) {
+  .date-input-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .date-input-wrapper input[type="date"] {
+    flex: 1 1 0;
+    min-width: 0;
+    width: 100%;
+  }
+
+  .date-input-wrapper input[type="date"]:first-child {
+    margin-right: 10px;
+  }
+}
+
 
 
