@@ -293,6 +293,55 @@ select option {
   
 }
 
+
+/* === Styles for the specific dropdown in the shareholder nationality section === */
+
+/* 1. Adjust padding on the HOST element */
+.shareholder-section .nationality-wrapper app-searchable-nationality-dropdown {
+  padding: 0 25px !important; /* Your desired host L/R padding */
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure the direct wrapper also doesn't clip and participates in stacking */
+.shareholder-section .nationality-wrapper {
+  position: relative;
+  z-index: 1;
+  overflow: visible !important;
+}
+
+/* 2. Target the clickable button div INSIDE the specific dropdown instance */
+.shareholder-section
+  .nationality-wrapper
+  app-searchable-nationality-dropdown
+  ::ng-deep
+  .search-dropdown__btn {
+  overflow: visible !important;
+  position: relative !important; /* Ensure it's a positioning context for the ::before arrow */
+  /* Add right padding to make space for the arrow, e.g., 25px or 30px */
+  /* This padding will push the span to the left, away from the arrow area */
+  padding-right: 30px !important;
+}
+
+/* 3. Target the SPAN (which holds "Search cou...") INSIDE that button div */
+.shareholder-section
+  .nationality-wrapper
+  app-searchable-nationality-dropdown
+  ::ng-deep
+  .search-dropdown__btn
+  span {
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  display: block !important; /* Revert to block to take available width minus parent's padding */
+  width: 100% !important; /* Take full width of parent after parent's padding is applied */
+  /* max-width: none !important; /* Usually not needed if width: 100% and parent has padding */
+}
+
+/* The ::before pseudo-element (arrow) is positioned right: 10px by default. */
+/* If the 30px padding-right on .search-dropdown__btn isn't enough, adjust it or the arrow's right position. */
+
+/* === End of styles for specific dropdown === */
 .step_1_form .form-field app-searchable-nationality-dropdown {
   background-color: rgba(217, 217, 217, 0.23);
   border: 1px solid #CDC9C9;
