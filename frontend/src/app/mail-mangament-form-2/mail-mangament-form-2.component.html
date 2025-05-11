@@ -166,7 +166,7 @@
                 </select>
               </fieldset>
             </div>
-            <div class="shareholder-row shareholder-section"> <!-- Apply new class here -->
+            <div class="shareholder-row shareholder-section" *ngIf="formData.shareholdercount"> <!-- Apply new class here -->
               <h3 style="margin-bottom: 30px;">Shareholders List</h3>
               <div *ngFor="let shareholder of shareholders; let i = index" class="shareholder-section">
                 <div class="shareholder-header">

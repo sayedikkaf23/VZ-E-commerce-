@@ -245,22 +245,21 @@ deleteShareholder(index: number) {
   }
  
   updateShareholders() {
-    const count = parseInt(this.formData.shareholdercount, 10) || 0;
- 
-    while (this.shareholders.length < count) {
-      this.shareholders.push({
-        name: '',
-        shareholderPercentage: '',
-        dob: '',
-        nationalityshareholder: '',
-        countryRisk: ''
-      });
-    }
- 
-    while (this.shareholders.length > count) {
-      this.shareholders.pop();
+    const count = parseInt(this.formData.shareholdercount, 10);
+    this.shareholders = [];
+  
+    if (!isNaN(count)) {
+      for (let i = 0; i < count; i++) {
+        this.shareholders.push({
+          name: '',
+          dob: '',
+          nationalityshareholder: '',
+          shareholderPercentage: null,
+        });
+      }
     }
   }
+  
  
   // updateShareholders() {
   //   const count = parseInt(this.formData.shareholdercount, 10); // Convert count to number

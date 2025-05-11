@@ -129,15 +129,15 @@
                 
             </div>
           
-            <div class="shareholder-row shareholder-section" *ngIf="formData.CompanyIncorporated"> <!-- Apply new class here -->
+            <div *ngIf="formData.shareholdercount && shareholders.length">
               <h3 style="margin-bottom: 30px;">Shareholders List</h3>
-              <div class="form-group shareholder-details" *ngFor="let shareholder of shareholders; let i = index"  class="shareholder-section">
+              <div *ngFor="let shareholder of shareholders; let i = index; trackBy: trackByShareholder">
                 <div class="shareholder-header">
                   Shareholder {{ i + 1 }}
                 </div>
                 <div class="shareholder-inputs"> <!-- Flex container for alignment -->
 
-                  <div class="form-field ">
+                  <div class="form-field">
 
                     <label class="shareholder-label">Full Name<span class="required">*</span></label>
                     <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required

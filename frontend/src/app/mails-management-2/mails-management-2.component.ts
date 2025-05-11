@@ -235,17 +235,21 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
 
   updateShareholders() {
     const count = parseInt(this.formData.shareholdercount, 10);
-
-    // Add shareholders if needed
+  
+    if (!count || isNaN(count)) {
+      this.shareholders = [];
+      return;
+    }
+  
     while (this.shareholders.length < count) {
       this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' });
     }
-
-    // Remove extra shareholders if needed
+  
     while (this.shareholders.length > count) {
       this.shareholders.pop();
     }
   }
+  
 
   isFormInvalid(): boolean {
     const shareholderCount = Number(this.formData.shareholdercount);

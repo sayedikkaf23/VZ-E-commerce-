@@ -291,7 +291,7 @@
   background-color: #f9f9f9;
   border-radius: 6px;
   padding: 16px;
-  margin-bottom: 20px;    /* nice space between cards */
+  margin-bottom: -37px;    /* nice space between cards */
   /* box-shadow: 0 1px 3px rgba(0,0,0,0.1); */
 }
 
