@@ -167,7 +167,7 @@
               </fieldset>
             </div>
             <div class="shareholder-row shareholder-section" *ngIf="formData.shareholdercount"> <!-- Apply new class here -->
-              <h3 style="margin-bottom: 30px;">Shareholders List</h3>
+              <h3 style="margin-bottom: 20px;">Shareholders List</h3>
               <div *ngFor="let shareholder of shareholders; let i = index" class="shareholder-section">
                 <div class="shareholder-header">
                   Shareholder {{ i + 1 }}
@@ -191,7 +191,7 @@
                     <!-- Apply new class here -->
                     <input type="number" [(ngModel)]="shareholder.shareholderPercentage"
                       [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100"
-                      style="padding: 25px" />
+                      style="padding: 20px" />
                   </div>
                   <div class="form-field">
                     <label class="shareholder-label">Date of Birth<span class="required">*</span></label>

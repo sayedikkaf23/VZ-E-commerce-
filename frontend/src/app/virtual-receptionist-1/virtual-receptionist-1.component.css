@@ -300,13 +300,13 @@ select option {
 .shareholder-section .nationality-wrapper app-searchable-nationality-dropdown {
   padding: 0 25px !important; /* Your desired host L/R padding */
   position: relative;
-  z-index: 1;
+  /* z-index: 1; */
 }
 
 /* Ensure the direct wrapper also doesn't clip and participates in stacking */
 .shareholder-section .nationality-wrapper {
   position: relative;
-  z-index: 1;
+  /* z-index: 1; */
   overflow: visible !important;
 }
 
@@ -344,7 +344,7 @@ select option {
 /* === End of styles for specific dropdown === */
 .step_1_form .form-field app-searchable-nationality-dropdown {
   background-color: rgba(217, 217, 217, 0.23);
-  border: 1px solid #CDC9C9;
+  /* border: 1px solid #CDC9C9; */
   border-radius: 61px;
   padding: 0 20px 0 51px;
   height: 54px;
