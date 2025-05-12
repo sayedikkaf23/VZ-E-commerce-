@@ -203,3 +203,13 @@ color: rgba(0, 0, 0, 0.2) !important; /* Light grey for placeholder */
 .filled-input {
 color: rgba(0, 0, 0, 0.507) !important; /* Darker text for filled input */
 }
+
+.main-container { /* Or body */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the container takes at least the full viewport height */
+}
+
+section { /* Or the class of your content section */
+  flex-grow: 1; /* Allow the content section to grow and take up available space */
+}
