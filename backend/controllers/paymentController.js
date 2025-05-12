@@ -706,7 +706,7 @@ async function payNowByStripe(req, res) {
     console.error("Error message:", "OnlinePayment Failed");
     console.error(
       "Error creating checkout session:",
-      error.response?.data?.error
+      error.response.data.error
     );
     res.status(500).send("Error creating checkout session");
   }

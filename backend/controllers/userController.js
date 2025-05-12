@@ -1231,7 +1231,7 @@ exports.updateService = async (req, res) => {
   } catch (error) {
     console.error(
       "Error creating checkout session:",
-      error.response?.data?.error
+      error.response.data.error
     );
     res.status(500).send("Error creating checkout session");
   }
