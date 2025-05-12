@@ -221,3 +221,38 @@
     display: none !important;
   }
 }
+
+.mobile-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #000;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+@media (max-width: 991px) {
+  header nav > ul {
+    margin-top: 50px;
+  }
+}
+
+.sidebar-calculator {
+  display: block;
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: var(--primary);
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.sidebar-calculator:hover {
+  background-color: var(--dark);
+  color: #fff;
+}

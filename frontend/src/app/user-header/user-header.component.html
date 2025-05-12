@@ -13,6 +13,9 @@
             </a>
           </div>
           <nav class="header-navbar ms-auto" [class.mobile-open]="isMobileSidebarOpen">
+            <button class="mobile-close-btn d-lg-none" (click)="toggleMobileSidebar()">
+              ✕
+            </button>
             <div>
               <span></span>
               <span></span>
@@ -100,6 +103,11 @@
                 <a href="#">Contact us</a>
               </li>
             </ul>
+              <!-- Mobile Cost Calculator button -->
+  <a href="https://calculator.virtuzone.com/" class="btn sidebar-calculator d-lg-none" target="_blank">
+    Cost Calculator
+  </a>
+
           </nav>
           <!-- <div class="search_icon">
             <a href="#" data-bs-toggle="modal" data-bs-target="#searchmodal">
