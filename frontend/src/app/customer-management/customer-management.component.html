@@ -11,15 +11,20 @@
           <div class="col-auto mb-2">
             <h2>Customer Management</h2>
           </div>
-          <div class="search-container">
+          <div class="search-container mt-3">
+            <div class="search-container-wrapper">
             <input type="text" placeholder="Search..." [(ngModel)]="searchTerm">
-            <button class="search-button" (click)="onSearch()">SEARCH</button>
-         
+            <button class="search-button" (click)="onSearch()"><i class="fas fa-search"></i>  <span class="search-text">SEARCH</span></button>
+          </div>
+            <div class="date-filter-wrapper">
             <div class="date-filter-container">
-              <input type="date" id="fromDate"  [(ngModel)]="fromDate">
-              <input type="date" id="toDate" [(ngModel)]="toDate">
+              <div class=" date-input-wrapper">
+              <input type="date" placeholder="From Date" [(ngModel)]="fromDate">
+              <input type="date" placeholder="To Date" [(ngModel)]="toDate">
+            </div>
               <button class="filter-button" (click)="onDateFilter()">FILTER BY DATE</button>
             </div>
+          </div>
           </div>
         </div>
       </div>
