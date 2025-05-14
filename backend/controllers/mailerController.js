@@ -31,7 +31,7 @@ const sendEmail = (email, quoteId,username) => {
          We’ve saved your details, and you’re just one step away from activating your professional services with Virtuzone.<br><br>
 
           <strong>
-            <a href="http://ecommerce.virtuzone.com/onlinepayment/${quoteId}" target="_blank" style="color: #0000EE; text-decoration: underline;">
+            <a href="https://ecommerce.virtuzone.com/onlinepayment/${quoteId}" target="_blank" style="color: #0000EE; text-decoration: underline;">
               Complete Your Payment
             </a>
           </strong><br><br>

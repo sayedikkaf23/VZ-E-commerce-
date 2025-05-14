@@ -694,7 +694,7 @@ exports.callSalesforceQuoteService = async (req, res) => {
       currencyCode: "AED",
       quotePaymentId: document.quotePaymentWithDetails.QuotePaymentId,
       account_id: document.quotePaymentWithDetails.AccountId,
-      payment_url: `http://ecommerce.virtuzone.com/onlinepayment/${document.quotePaymentWithDetails.QuotePaymentId}`
+      payment_url: `https://ecommerce.virtuzone.com/onlinepayment/${document.quotePaymentWithDetails.QuotePaymentId}`
     };
     // console.log("Request to Salesforce:", requestBody);
 
@@ -1208,8 +1208,8 @@ exports.updateService = async (req, res) => {
         },
       ],
       mode: "payment",
-      success_url: `http://ecommerce.virtuzone.com/home`,
-      cancel_url: `http://ecommerce.virtuzone.com/home`,
+      success_url: `https://ecommerce.virtuzone.com/home`,
+      cancel_url: `https://ecommerce.virtuzone.com/home`,
     });
 
     const stripeResponseData = stripeResponse;
