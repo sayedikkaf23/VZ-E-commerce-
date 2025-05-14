@@ -342,7 +342,7 @@ select option {
 /* === End of styles for specific dropdown === */
 .step_1_form .form-field app-searchable-nationality-dropdown {
   background-color: rgba(217, 217, 217, 0.23);
-  /* border: 1px solid #CDC9C9; */
+  border: 1px solid #CDC9C9;
   border-radius: 61px;
   padding: 0 20px 0 51px;
   height: 54px;
