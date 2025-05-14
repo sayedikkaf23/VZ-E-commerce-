@@ -308,7 +308,7 @@ switch (appliedRiskData.appliedRisk) {
         //       currencyCode: response.data.quotePaymentWithDetails.Currency, // Update as needed
         //       quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has this field
         //       account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has this field
-        //       payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
+        //       payment_url: `http://ecommerce.virtuzone.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
         //     };
         //     // Call the second API
         //     return this.userService.callSalesforceQuoteService(quotePayload).pipe(

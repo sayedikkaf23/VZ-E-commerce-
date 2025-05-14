@@ -34,8 +34,8 @@ connectDB();
 const allowedOrigins = [
   "http://localhost:4200",
   "http://localhost:3000",
-  "https://ecommerce.yeepeey.com",
-  "http://ecommerce.yeepeey.com"
+  "https://ecommerce.virtuzone.com",
+  "http://ecommerce.virtuzone.com"
 ];
 
 app.use(

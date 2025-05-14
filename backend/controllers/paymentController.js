@@ -533,8 +533,8 @@ async function payNow(req, res) {
       zip: "00000",
       phone: "+971090450954",
     },
-    cancel_url: `https://ecommerce.yeepeey.com/failure/${order_number}`,
-    success_url: `https://ecommerce.yeepeey.com/successful/${order_number}`,
+    cancel_url: `http://ecommerce.virtuzone.com/failure/${order_number}`,
+    success_url: `http://ecommerce.virtuzone.com/successful/${order_number}`,
     customer: {
       // name: acountname,
       email: acountemail,
@@ -666,8 +666,8 @@ async function payNowByStripe(req, res) {
         },
       ],
       mode: "payment",
-      success_url: `https://ecommerce.yeepeey.com/successful/${data.quotePaymentId}`,
-      cancel_url: `https://ecommerce.yeepeey.com/failure/${data.quotePaymentId}`,
+      success_url: `http://ecommerce.virtuzone.com/successful/${data.quotePaymentId}`,
+      cancel_url: `http://ecommerce.virtuzone.com/failure/${data.quotePaymentId}`,
     });
 
     const stripeResponseData = stripeResponse;
@@ -771,9 +771,9 @@ async function payNowByTelr(req, res) {
           description: order_description, // Order description
         },
         return: {
-          authorised: `https://ecommerce.yeepeey.com/successful/${order_number}`,
-          declined: `https://ecommerce.yeepeey.com/failure/${order_number}`,
-          cancelled: `https://ecommerce.yeepeey.com/cancelled/${order_number}`,
+          authorised: `http://ecommerce.virtuzone.com/successful/${order_number}`,
+          declined: `http://ecommerce.virtuzone.com/failure/${order_number}`,
+          cancelled: `http://ecommerce.virtuzone.com/cancelled/${order_number}`,
         },
         customer: {
           ref: order_number, // Unique customer reference
@@ -1064,7 +1064,7 @@ console.log(response2,"response 2 data")
     })}<br><br>
 
     You can access your Customer Portal Link here:<br>
-    <a href="https://ecommerce.yeepeey.com/login"
+    <a href="http://ecommerce.virtuzone.com/login"
        style="color: #007bff; text-decoration: underline;">
       Customer Portal Link
     </a><br><br>
