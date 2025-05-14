@@ -98,13 +98,21 @@ exports.forgotPassword = async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour from now
     await user.save();
     // before you build mailOptions
-    const emailLocalPart = user.email.split("@")[0];
-    const nameFromEmail = emailLocalPart
-      .split(/[._]/) // split on dot or underscore
-      .map((w) => w.charAt(0).toUpperCase() + w.slice(1)) // capitalize each
-      .join(" ");
+   // before you build mailOptions
+let emailLocalPart = user.email.split("@")[0];
 
-    const displayName = user.firstName || nameFromEmail;
+// drop any numbers at the end (e.g. "john123" → "john")
+emailLocalPart = emailLocalPart.replace(/\d+$/, "");
+
+// now split on dot/underscore, capitalize and join
+const nameFromEmail = emailLocalPart
+  .split(/[._]/)
+  .filter(w => w)                   // drop any empty strings
+  .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+  .join(" ");
+
+// if you have a firstName on the user, use that, otherwise fallback
+const displayName = user.firstName || nameFromEmail || "there";
 
     // Send reset link via email
     const resetUrl = `https://ecommerce.yeepeey.com/reset-password?token=${resetToken}`;
@@ -127,31 +135,31 @@ exports.forgotPassword = async (req, res) => {
         <p style="font-size: 16px; color: #000;">
           Hi ${displayName},</br>
 
-           <p style="font-size:16px; color:#000;">
+           <p style="font-size:16px; font-family: Arial, sans-serif; color:#000;">
         We received a request to reset your password for the Virtuzone Customer Portal.
       </p>
 
-            <p style="font-size:16px; color:#000;">
+            <p style="font-size:16px; font-family: Arial, sans-serif; color:#000;">
         To set a new password, please click the button below:
       </p>
         <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">
          👉 Reset Password
         </a>
-          <p style="font-size:14px; color:#555;">
+          <p style="font-size:16px; color:#555; font-family: Arial, sans-serif;">
         (If the button doesn’t work, copy &amp; paste this link into your browser:<br>
         <a href="${resetUrl}" style="color:#007bff; word-break:break-all;">${resetUrl}</a>)
       </p>
 
-       <p style="font-size:16px; color:#000;">
+       <p style="font-size:16px; color:#000; font-family: Arial, sans-serif;">
         If you did not request a password reset, please ignore this email or contact our support team immediately.
       </p>
 
- <p style="font-size:16px; color:#000;">
+ <p style="font-size:16px; color:#000; font-family: Arial, sans-serif;">
         For any help, feel free to reach out to us.
       </p>
     
           
-         <p style="font-size:16px; color:#000;">
+         <p style="font-size:16px; color:#000; ">
         Thank you,<br>
         Virtuzone Team
       </p>
