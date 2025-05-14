@@ -98,21 +98,21 @@ exports.forgotPassword = async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 hour from now
     await user.save();
     // before you build mailOptions
-   // before you build mailOptions
-let emailLocalPart = user.email.split("@")[0];
+    // before you build mailOptions
+    let emailLocalPart = user.email.split("@")[0];
 
-// drop any numbers at the end (e.g. "john123" → "john")
-emailLocalPart = emailLocalPart.replace(/\d+$/, "");
+    // drop any numbers at the end (e.g. "john123" → "john")
+    emailLocalPart = emailLocalPart.replace(/\d+$/, "");
 
-// now split on dot/underscore, capitalize and join
-const nameFromEmail = emailLocalPart
-  .split(/[._]/)
-  .filter(w => w)                   // drop any empty strings
-  .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-  .join(" ");
+    // now split on dot/underscore, capitalize and join
+    const nameFromEmail = emailLocalPart
+      .split(/[._]/)
+      .filter((w) => w) // drop any empty strings
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
 
-// if you have a firstName on the user, use that, otherwise fallback
-const displayName = user.firstName || nameFromEmail || "there";
+    // if you have a firstName on the user, use that, otherwise fallback
+    const displayName = user.firstName || nameFromEmail || "there";
 
     // Send reset link via email
     const resetUrl = `https://ecommerce.yeepeey.com/reset-password?token=${resetToken}`;
@@ -129,7 +129,8 @@ const displayName = user.firstName || nameFromEmail || "there";
       from: "mishalnunu@gmail.com",
       to: user.email,
       subject: "Reset Your Virtuzone Customer Portal Password",
-      html: `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
      
  <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <p style="font-size: 16px; color: #000;">
