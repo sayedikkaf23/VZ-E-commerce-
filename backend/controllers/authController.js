@@ -4,130 +4,157 @@ const crypto = require("crypto");
 const nodemailer = require("nodemailer");
 
 exports.signup = async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password } = req.body;
 
-    try {
-        // Validate input
-        if (!email || !password) {
-            return res.status(400).json({ message: "Email and password are required" });
-        }
-
-        // Check if user already exists
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: "User already exists" });
-        }
-
-        // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Create new user
-        const newUser = await User.create({ email, password: hashedPassword });
-
-        res.status(201).json({ message: "Signup successful", user: newUser });
-    } catch (error) {
-        console.error("Signup Error:", error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+  try {
+    // Validate input
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "User already exists" });
+    }
+
+    // Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create new user
+    const newUser = await User.create({ email, password: hashedPassword });
+
+    res.status(201).json({ message: "Signup successful", user: newUser });
+  } catch (error) {
+    console.error("Signup Error:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
 };
 
-
 exports.login = async (req, res) => {
-    let { email, password } = req.body;
-  
-    try {
-      // Validate input
-      if (!email || !password) {
-        return res.status(400).json({ message: "Email and password are required" });
-      }
-  
-      // Convert email to lowercase
-      email = email.toLowerCase();
-  
-      // Find user by email
-      const user = await User.findOne({ email });
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
-      }
-  
-      // Validate password
-      const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-        return res.status(400).json({ message: "Invalid credentials" });
-      }
-  
-      // Send email and message as response
-      res.status(200).json({
-        message: "Login successful",
-        email: user.email, // Include email in the response
-      });
-    } catch (error) {
-      console.error("Login Error:", error);
-      res.status(500).json({ message: "Internal server error", error: error.message });
-    }
-  };
-  
+  let { email, password } = req.body;
 
+  try {
+    // Validate input
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
+    }
+
+    // Convert email to lowercase
+    email = email.toLowerCase();
+
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Send email and message as response
+    res.status(200).json({
+      message: "Login successful",
+      email: user.email, // Include email in the response
+    });
+  } catch (error) {
+    console.error("Login Error:", error);
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
 
 exports.forgotPassword = async (req, res) => {
-    const { email } = req.body;
-  
-    try {
-      if (!email) {
-        return res.status(400).json({ message: "Email is required" });
-      }
-  
-      const user = await User.findOne({ email: email.toLowerCase() });
-      if (!user) {
-        return res
-          .status(404)
-          .json({ message: "No user found with that email address" });
-      }
-  
-      // Generate a random token
-      const resetToken = crypto.randomBytes(20).toString("hex");
-  
-      // Set token and expiration (e.g., 1 hour)
-      user.resetPasswordToken = resetToken;
-      user.resetPasswordExpires = Date.now() + 3600000; // 1 hour from now
-      await user.save();
-  
-      // Send reset link via email
-      const resetUrl = `https://ecommerce.yeepeey.com/reset-password?token=${resetToken}`;
-  
-      const transporter = nodemailer.createTransport({
-        service: "Gmail",
-        auth: {
-          user: "mishalnunu@gmail.com",
-          pass: "qgwlzriynfzukuwy",
-        },
-      });
-  
-      const mailOptions = {
-        from: "mishalnunu@gmail.com",
-        to: user.email,
-        subject: "Password Reset",
-        html: 
-        `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+  const { email } = req.body;
+
+  try {
+    if (!email) {
+      return res.status(400).json({ message: "Email is required" });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    console.log(user);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "No user found with that email address" });
+    }
+
+    // Generate a random token
+    const resetToken = crypto.randomBytes(20).toString("hex");
+
+    // Set token and expiration (e.g., 1 hour)
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour from now
+    await user.save();
+    // before you build mailOptions
+    const emailLocalPart = user.email.split("@")[0];
+    const nameFromEmail = emailLocalPart
+      .split(/[._]/) // split on dot or underscore
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1)) // capitalize each
+      .join(" ");
+
+    const displayName = user.firstName || nameFromEmail;
+
+    // Send reset link via email
+    const resetUrl = `https://ecommerce.yeepeey.com/reset-password?token=${resetToken}`;
+
+    const transporter = nodemailer.createTransport({
+      service: "Gmail",
+      auth: {
+        user: "mishalnunu@gmail.com",
+        pass: "qgwlzriynfzukuwy",
+      },
+    });
+
+    const mailOptions = {
+      from: "mishalnunu@gmail.com",
+      to: user.email,
+      subject: "Reset Your Virtuzone Customer Portal Password",
+      html: `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
      
-   
-      
-      
  <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <p style="font-size: 16px; color: #000;">
-          Hi,<br><br>
+          Hi ${displayName},</br>
 
-          <p>You requested a password reset. Please click the button below to set a new password:</p>
+           <p style="font-size:16px; color:#000;">
+        We received a request to reset your password for the Virtuzone Customer Portal.
+      </p>
+
+            <p style="font-size:16px; color:#000;">
+        To set a new password, please click the button below:
+      </p>
         <a href="${resetUrl}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">
-          Reset Password
-        </a><br>
-       If you did not request a password reset, please ignore this email.<br><br>
+         👉 Reset Password
+        </a>
+          <p style="font-size:14px; color:#555;">
+        (If the button doesn’t work, copy &amp; paste this link into your browser:<br>
+        <a href="${resetUrl}" style="color:#007bff; word-break:break-all;">${resetUrl}</a>)
+      </p>
 
-          Need assistance? We’re happy to help!<br><br>
+       <p style="font-size:16px; color:#000;">
+        If you did not request a password reset, please ignore this email or contact our support team immediately.
+      </p>
+
+ <p style="font-size:16px; color:#000;">
+        For any help, feel free to reach out to us.
+      </p>
+    
           
-          Cheers,<br>
-          The Virtuzone Team
-        </p>
+         <p style="font-size:16px; color:#000;">
+        Thank you,<br>
+        Virtuzone Team
+      </p>
       </div>
     
     
@@ -188,63 +215,61 @@ exports.forgotPassword = async (req, res) => {
 
 </div>
       </div>`,
-      };
-  
-      await transporter.sendMail(mailOptions);
-  
+    };
+
+    await transporter.sendMail(mailOptions);
+
+    return res
+      .status(200)
+      .json({ message: "Password reset link sent to your email" });
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
+
+exports.resetPassword = async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    if (!token || !newPassword) {
       return res
-        .status(200)
-        .json({ message: "Password reset link sent to your email" });
-    } catch (error) {
-      console.error("Forgot Password Error:", error);
-      return res
-        .status(500)
-        .json({ message: "Internal server error", error: error.message });
+        .status(400)
+        .json({ message: "Token and new password are required" });
     }
-  };
 
+    // Find user by resetPasswordToken and check expiration
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }, // $gt = greater than
+    });
 
-
-  exports.resetPassword = async (req, res) => {
-    const { token, newPassword } = req.body;
-  
-    try {
-      if (!token || !newPassword) {
-        return res
-          .status(400)
-          .json({ message: "Token and new password are required" });
-      }
-  
-      // Find user by resetPasswordToken and check expiration
-      const user = await User.findOne({
-        resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() }, // $gt = greater than
+    if (!user) {
+      return res.status(400).json({
+        message: "Invalid or expired reset token",
       });
-  
-      if (!user) {
-        return res.status(400).json({
-          message: "Invalid or expired reset token",
-        });
-      }
-  
-      // Token is valid, hash the new password
-      const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(newPassword, salt);
-  
-      // Update user's password
-      user.password = hashedPassword;
-      // Clear reset token fields
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save();
-  
-      return res.status(200).json({
-        message: "Password has been reset successfully",
-      });
-    } catch (error) {
-      console.error("Reset Password Error:", error);
-      return res
-        .status(500)
-        .json({ message: "Internal server error", error: error.message });
     }
-  };
+
+    // Token is valid, hash the new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update user's password
+    user.password = hashedPassword;
+    // Clear reset token fields
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    return res.status(200).json({
+      message: "Password has been reset successfully",
+    });
+  } catch (error) {
+    console.error("Reset Password Error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};
