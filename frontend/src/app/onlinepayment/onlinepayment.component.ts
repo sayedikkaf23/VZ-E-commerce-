@@ -45,7 +45,7 @@ export class OnlinepaymentComponent implements OnInit {
 
     // Remove top padding from the body
     this.renderer.setStyle(document.body, 'padding-top', '0px');
-    this.renderer.setStyle(document.body, 'overflow', 'hidden');
+    // this.renderer.setStyle(document.body, 'overflow', 'hidden');
 
 
     this.type = (this.route.snapshot.data as any).type;

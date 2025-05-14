@@ -102,7 +102,7 @@ html header .btn {
     font-size: 16px;
     font-weight: 500;
     transition: all 0.4s;
-    margin-top: 10px;
+    margin-top: -10px;
     margin-right: 50px;
 }
 html header .btn {

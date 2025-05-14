@@ -23,60 +23,44 @@
               <div class="form-field">
                 <label for="resident">Is your company located in UAE?<span class="required">*</span></label>
                 <fieldset>
-                  <select
-                    name="resident"
-                    id="resident"
-                    class="form-select"
-                    [(ngModel)]="formData.companylocation"
-                    
-                  >
+                  <select name="resident" id="resident" class="form-select" [(ngModel)]="formData.companylocation">
                     <option value="" disabled selected>Is your company located in UAE?</option>
                     <option value="Yes">Yes</option>
                     <option value="No">No</option>
                   </select>
                 </fieldset>
               </div>
-              
-
-<!-- Additional Dropdowns shown when the company is located in UAE -->
-<div class="form-field" *ngIf="formData.companylocation === 'Yes'">
-  <label for="Companylicensed">Where is your Company licensed? <span class="required">*</span></label>
-  <fieldset>
-    <select
-      name="Companylicensed"
-      id="Companylicensed"
-      class="form-select"
-      [(ngModel)]="formData.Companylicensed"
-    >
-      <option value="" disabled>
-        Where is your Company licensed?
-      </option>
-      <option value="Mainland">Mainland</option>
-      <option value="Freezone">Freezone</option>
-    </select>
-  </fieldset>
-</div>
 
 
-<div class="form-field">
-  <label for="tradelicense">
-    What are the type of activities mentioned on your trade license?<span class="required">*</span>
-  </label>
-  <fieldset>
-    <app-searchable-nationality-dropdown
-    [list]="businessCategories"
-    [labelKey]="'name'"
-    [value]="formData.tradelicense"
-    (valueChange)="onCategorySearchSelect($event)"
-    placeholder="What are the type of activities mentioned on your trade license?"
-    [searchPlaceholder]="'Search trade license activity'"
+              <!-- Additional Dropdowns shown when the company is located in UAE -->
+              <div class="form-field" *ngIf="formData.companylocation === 'Yes'">
+                <label for="Companylicensed">Where is your Company licensed?<span class="required">*</span></label>
+                <fieldset>
+                  <select name="Companylicensed" id="Companylicensed" class="form-select"
+                    [(ngModel)]="formData.Companylicensed">
+                    <option value="" disabled>
+                      Where is your Company licensed?
+                    </option>
+                    <option value="Mainland">Mainland</option>
+                    <option value="Freezone">Freezone</option>
+                  </select>
+                </fieldset>
+              </div>
 
-    
-    >
-  </app-searchable-nationality-dropdown>
-  
-  </fieldset>
-</div>
+
+              <div class="form-field">
+                <label for="tradelicense">
+                  What are the type of activities mentioned on your trade license?<span class="required">*</span>
+                </label>
+                <fieldset>
+                  <app-searchable-nationality-dropdown [list]="businessCategories" [labelKey]="'name'"
+                    [value]="formData.tradelicense" (valueChange)="onCategorySearchSelect($event)"
+                    placeholder="What are the type of activities mentioned on your trade license?"
+                    [searchPlaceholder]="'Search trade license activity'">
+                  </app-searchable-nationality-dropdown>
+
+                </fieldset>
+              </div>
 
             </div>
             <!-- <div class="form-field">
@@ -146,46 +130,37 @@
               <label for="Bank">Do you wish to apply for?<span class="required">*</span></label>
 
               <fieldset>
-                <select
-                  name="Bank"
-                  id="Bank"
-                  class="form-select"
-                  [(ngModel)]="formData.Bank"
-                >
+                <select name="Bank" id="Bank" class="form-select" [(ngModel)]="formData.Bank">
                   <option value="" disabled selected>
                     Do you wish to apply for?
                   </option>
-                  <option value="Traditional Corporate Bank Account Opening">Traditional Corporate Bank Account Opening 
+                  <option value="Traditional Corporate Bank Account Opening">Traditional Corporate Bank Account Opening
                   </option>
-                  <option value="Digital Corporate Bank Account Opening">Digital Corporate Bank Account Opening 
+                  <option value="Digital Corporate Bank Account Opening">Digital Corporate Bank Account Opening
                   </option>
                   <option value="Any of the above">Any of the above
-                </option>
+                  </option>
                   <!-- <option value="All the above Bank Account Opening">All the above Bank Account Opening</option> -->
 
                 </select>
               </fieldset>
             </div>
-            <div class="shareholder-row shareholder-section" *ngIf="formData.shareholdercount"> <!-- Apply new class here -->
+            <div class="shareholder-row shareholder-section" *ngIf="formData.shareholdercount">
+              <!-- Apply new class here -->
               <h3 style="margin-bottom: 20px;">Shareholders List</h3>
               <div *ngFor="let shareholder of shareholders; let i = index" class="shareholder-section">
                 <div class="shareholder-header">
                   Shareholder {{ i + 1 }}
                 </div>
-              
+
                 <div class="shareholder-inputs">
                   <!-- Full Name -->
                   <div class="form-field">
                     <label>Full Name <span class="required">*</span></label>
-                    <input
-                      type="text"
-                      [(ngModel)]="shareholder.name"
-                      [ngModelOptions]="{ standalone: true }"
-                      placeholder="Full Name"
-                      required
-                    />
+                    <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }"
+                      placeholder="Full Name" required />
                   </div>
-              
+
                   <div class="form-field">
                     <label class="shareholder-label">Shareholder %<span class="required">*</span></label>
                     <!-- Apply new class here -->
@@ -197,34 +172,28 @@
                     <label class="shareholder-label">Date of Birth<span class="required">*</span></label>
                     <!-- Apply new class here -->
                     <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required
-                      style="padding: 25px"  (keydown)="preventManualInput($event)"
-                      (click)="openDatePicker($event)" [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }"/>
+                      style="padding: 25px" (keydown)="preventManualInput($event)" (click)="openDatePicker($event)"
+                      [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }" />
                   </div>
                   <div class="form-field nationality-wrapper">
                     <label class="shareholder-label">Nationality<span class="required">*</span></label>
-        <div class="nationality-with-remove">
-          <!-- SEARCHABLE DROPDOWN in place of plain <select> -->
-            <app-searchable-nationality-dropdown
-            [list]="nationalities"
-            [labelKey]="'country'"
-            [value]="shareholder.nationalityshareholder"
-            (valueChange)="onShareholderNationalitySelect($event, shareholder)"
-            placeholder="Search country"
-          ></app-searchable-nationality-dropdown>
-          
-          <!-- remove icon -->
-          <span (click)="deleteShareholder(i)" class="remove-icon">
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
-                 xmlns="http://www.w3.org/2000/svg">
-              <path d="M5 5L15 15" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round"/>
-              <path d="M15 5L5 15" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round"/>
-            </svg>
-          </span>
-        </div>
+                    <div class="nationality-with-remove">
+                      <!-- SEARCHABLE DROPDOWN in place of plain <select> -->
+                      <app-searchable-nationality-dropdown [list]="nationalities" [labelKey]="'country'"
+                        [value]="shareholder.nationalityshareholder"
+                        (valueChange)="onShareholderNationalitySelect($event, shareholder)"
+                        placeholder="Search country"></app-searchable-nationality-dropdown>
+
+                      <!-- remove icon -->
+                      <span (click)="deleteShareholder(i)" class="remove-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                          <path d="M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                      </span>
+                    </div>
                   </div>
-                  
+
 
                   <!-- Remove button -->
                 </div>
