@@ -83,6 +83,10 @@ export class UserService {  // Changed the service name to UserService
     return this.http.post(`${this.url}/user/updateAdditionalUploadedFiles`, { payload });
   }
 
+  updateUserFiles(payload: any): Observable<any> {
+    return this.http.post(`${this.url}/user/updateUserFiles`, { payload });
+  }
+
    forgotPassword(email: string): Observable<any> {
     return this.http.post(`${this.url}/auth/forgot-password`, { email });
   }

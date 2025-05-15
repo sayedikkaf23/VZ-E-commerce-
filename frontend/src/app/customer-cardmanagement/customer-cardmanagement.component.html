@@ -253,7 +253,7 @@
                   </td>
                   <td>
                     <a href="#additionalfile" data-bs-toggle="modal" class="detail_btn"
-                      (click)="openShareholderModal(item.shareholders, item.additionalUploadedFiles, item.uploadedFileNames); $event.preventDefault()">
+                      (click)="openShareholderModal(item.shareholders, item.additionalUploadedFiles, item.uploadedFileNames,item); $event.preventDefault()">
                       <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                           d="M14.8169 5.31786C15.0341 5.62236 15.1426 5.77464 15.1426 6C15.1426 6.22536 15.0341 6.37764 14.8169 6.68214C13.8411 8.05043 11.3492 11 7.99979 11C4.65035 11 2.15843 8.05043 1.18268 6.68214C0.965512 6.37764 0.856934 6.22536 0.856934 6C0.856934 5.77464 0.965512 5.62236 1.18268 5.31786C2.15843 3.9496 4.65035 1 7.99979 1C11.3492 1 13.8411 3.9496 14.8169 5.31786Z"
@@ -637,7 +637,7 @@
                       <p>{{ file.name }}</p>
                     </div>
                   </div>
-                  <div class="col d-flex justify-content-center mt-2 mt-md-0">
+                  <div class="col d-flex flex-column align-items-end gap-2 mt-2 mt-md-0 icons-column">
                     <a [href]="file.url" target="_blank" class="btn-icon">
                       <svg width="16" height="13" viewBox="0 0 16 13" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
@@ -647,6 +647,20 @@
                           d="M10.1431 6.5C10.1431 5.3165 9.18378 4.35715 8.00028 4.35715C6.81678 4.35715 5.85742 5.3165 5.85742 6.5C5.85742 7.6835 6.81678 8.64286 8.00028 8.64286C9.18378 8.64286 10.1431 7.6835 10.1431 6.5Z"
                           stroke="currentColor" stroke-width="1.3" />
                       </svg>
+                    </a>
+                    
+                    <a href="#" onclick="return false;" (click)="deleteFile(file)" class="btn-icon">
+                      <svg width="16" height="17" viewBox="0 0 16 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                          d="M13.3745 3.84271L12.9305 11.0257C12.817 12.8609 12.7603 13.7785 12.3003 14.4383C12.0728 14.7644 11.78 15.0397 11.4404 15.2465C10.7536 15.665 9.83424 15.665 7.99548 15.665C6.15437 15.665 5.2338 15.665 4.5465 15.2458C4.20669 15.0385 3.91379 14.7628 3.68643 14.436C3.22658 13.7753 3.1711 12.8564 3.06016 11.0186L2.62695 3.84271"
+                          stroke="white" stroke-width="1.3" stroke-linecap="round" />
+                        <path
+                          d="M1.55176 3.84275H14.4488M10.9062 3.84275L10.4171 2.83372C10.0922 2.16345 9.92966 1.82832 9.64944 1.61931C9.58732 1.57294 9.52147 1.5317 9.45262 1.49599C9.1423 1.33499 8.76986 1.33499 8.02499 1.33499C7.26141 1.33499 6.87966 1.33499 6.56417 1.50274C6.49425 1.53992 6.42753 1.58283 6.3647 1.63103C6.08122 1.84851 5.92287 2.1959 5.60616 2.8907L5.17218 3.84275"
+                          stroke="white" stroke-width="1.3" stroke-linecap="round" />
+                        <path d="M6.20898 11.7242V7.42523" stroke="white" stroke-width="1.3" stroke-linecap="round" />
+                        <path d="M9.79199 11.7242V7.42523" stroke="white" stroke-width="1.3" stroke-linecap="round" />
+                      </svg>
+                      
                     </a>
                   </div>
                 </div>
