@@ -53,3 +53,12 @@
     border-top-color: #FF5A5F;
   }
 }
+
+@media (max-width: 576px) {
+  .icons-column {
+    flex-direction: row !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    gap: 0.75rem; /* Adjust spacing between icons */
+  }
+}

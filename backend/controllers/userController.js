@@ -1442,6 +1442,38 @@ exports.updateAdditionalUploadedFiles = async (req, res) => {
   }
 };
 
+exports.updateUserFiles = async (req, res) => {
+  try {
+    const { payload } = req.body;
+
+    if (!payload || !payload.someId) {
+      return res.status(400).json({ error: "someId is required" });
+    }
+
+    const { someId, additionalUploadedFiles, uploadedFileNames, shareholders } = payload;
+
+
+    const record = await Pidata.findById(someId);
+
+    if (!record) {
+      return res.status(404).json({ error: "Record not found" });
+    }
+
+    // Update the respective fields with filtered arrays
+    record.additionalUploadedFiles = additionalUploadedFiles || [];
+    record.uploadedFileNames = uploadedFileNames || [];
+    record.shareholders = shareholders || [];
+
+    await record.save();
+
+    return res.status(200).json({ message: "Files updated successfully", record });
+  } catch (error) {
+    console.error("Error updating files:", error);
+    return res.status(500).json({ error: "Internal Server Error", details: error.message });
+  }
+};
+
+
 exports.dashboard = async (req, res) => {
   try {
     // Retrieve counts in parallel

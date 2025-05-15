@@ -1097,6 +1097,7 @@ span.ui-selectmenu-button:focus {
 }
 .step_2_form .form-field input {
     border-color: transparent;
+    border: 1px solid #CDC9C9;
 }
 .step_2_form .form-field  label {
     font-weight: 500;
