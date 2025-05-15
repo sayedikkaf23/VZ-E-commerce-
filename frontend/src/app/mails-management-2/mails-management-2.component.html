@@ -31,7 +31,7 @@
                 <label for="CompanyIncorporated">Where is your Company Incorporated?<span class="required">*</span></label>
 
                 <fieldset>
-                  <select class="form-select" id="CompanyIncorporated" [(ngModel)]="formData.CompanyIncorporated" style="border-color: transparent;"
+                  <select class="form-select" id="CompanyIncorporated" [(ngModel)]="formData.CompanyIncorporated"
                       [ngModelOptions]="{ standalone: true }">
                       <option value="" disabled>Select Country</option>
                       <option *ngFor="let nationality of nationalities" [value]="nationality.country">
@@ -109,7 +109,7 @@
             <div class="form-field" *ngIf="formData.CompanyIncorporated">
               <label for="resident">How many shareholders does your company have?<span class="required">*</span></label>
                 <fieldset>
-                  <select name="shareholdercount" id="shareholdercount" class="form-select" style="border-color: transparent;"
+                  <select name="shareholdercount" id="shareholdercount" class="form-select"
                     [(ngModel)]="formData.shareholdercount" (ngModelChange)="updateShareholders()">
                     <option value="" disabled selected>
                       How many shareholders does your company have?
