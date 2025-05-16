@@ -40,6 +40,9 @@ export class DocumenttypeService {
   updateBusinessBank(data: any): Observable<any> {
     return this.http.put(`${this.url}/documentype/business-bank`, data);
   }
+  deleteBusinessBank(docId: string): Observable<any> {
+    return this.http.delete(`${this.url}/documentype/business-bank/${docId}`);
+  }
  
   // Virtual Reception
   getVirtualReceptions(): Observable<any> {

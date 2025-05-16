@@ -209,6 +209,68 @@ exports.createBusinessBank = async (req, res) => {
     }
 };
  
+
+exports.deleteBusinessBank = async (req, res) => {
+    const { docId } = req.params; // 'docId' is the parameter in the route: /personal-banks/:docId
+ 
+    try {
+      // Find the Personal Bank document by ID and remove it
+      const deletedDoc = await BusinessBank.findByIdAndDelete(docId);
+ 
+      // If no document was found and deleted
+      if (!deletedDoc) {
+        return res.status(404).json({ message: 'Personal Bank document not found' });
+      }
+ 
+      // If successfully deleted
+      res.status(200).json({
+        message: 'Personal Bank document deleted successfully',
+        document: deletedDoc
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: 'Error deleting Personal Bank document',
+        details: error.message
+      });
+    }
+  };
+ 
+
+  exports.updateBusinessBank = async (req, res) => {
+    try {
+        const updates = req.body; // Expecting an array of objects with id and updates
+ 
+        if (!Array.isArray(updates)) {
+            return res.status(400).json({ message: "Request body should be an array of updates." });
+        }
+ 
+        const updatedPersonalBanks = [];
+        for (const update of updates) {
+            const { id, documentType, isActive } = update;
+ 
+            if (!id || !documentType) {
+                return res.status(400).json({ message: "Each update must include an id and documentType." });
+            }
+ 
+            const updatedPersonalBank = await BusinessBank.findByIdAndUpdate(
+                id,
+                { documentType, isActive: isActive ?? true },
+                { new: true }
+            );
+ 
+            if (!updatedPersonalBank) {
+                return res.status(404).json({ message: `PersonalBank with id ${id} not found.` });
+            }
+ 
+            updatedPersonalBanks.push(updatedPersonalBank);
+        }
+ 
+        res.status(200).json(updatedPersonalBanks); // Return all updated documents
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+ 
  
 // GET method to retrieve all Business Bank documents
 exports.getBusinessBanks = async (req, res) => {

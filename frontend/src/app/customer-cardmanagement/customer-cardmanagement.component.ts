@@ -43,6 +43,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   mailManagemnt: any[] = [];
   virtualReceptionist: any[] = [];
   bankOpening: any[] = [];
+  businessBanks: any[] = [];
   selectedShareholders: any[] = [];
   shareholders:any[] = [];
   selectedaddAdditionalFile: any[] = [];
@@ -139,7 +140,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     this.documenttypeService.getBusinessBanks().subscribe(
       (data) => {
         // console.log('Business Banks:', data);
-        // this.businessBanks = data; // Store the response
+        this.businessBanks = data.map((item: any) => item.documentType); // Store the response
         this.isLoading = false;
       },
       (error) => {
@@ -360,7 +361,10 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     } else if (planname === 'Mail Management') {
       return this.mailManagemnt.length ? this.mailManagemnt : ['Loading...'];
     } else if (planname === 'Bank Account Opening') {
+      if(subcategory === 'personal')
       return this.bankOpening.length ? this.bankOpening : ['Loading...'];
+    else
+    return this.businessBanks.length ? this.businessBanks : ['Loading...'];
     } else {
       return ['General Document', 'Other'];
     }
