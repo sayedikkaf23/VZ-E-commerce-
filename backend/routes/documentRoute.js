@@ -11,6 +11,10 @@ router.delete('/personal-banks/:docId', personalBankController.deletePersonalBan
 // Business Bank routes
 router.post('/business-bank', personalBankController.createBusinessBank);
 router.get('/business-bank', personalBankController.getBusinessBanks);
+router.delete('/business-bank/:docId', personalBankController.deleteBusinessBank);
+router.put('/business-bank', personalBankController.updateBusinessBank); // Update route
+
+
 // router.put('/business-bank', personalBankController.updateBusinessBank); // Update route
  
 // Virtual Reception routes

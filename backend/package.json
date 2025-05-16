@@ -6,6 +6,7 @@
     "start": "nodemon app.js"
   },
   "dependencies": {
+    "asap": "^2.0.6",
     "aws-sdk": "^2.1692.0",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
