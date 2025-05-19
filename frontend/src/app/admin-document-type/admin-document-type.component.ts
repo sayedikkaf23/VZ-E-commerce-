@@ -48,7 +48,15 @@ export class AdminDocumentTypeComponent {
         this.serviceList = data.filter(
           (service: { isActive: any }) => service.isActive
         ); // Only include active services
-        // Sort by the order field in ascending order
+        this.serviceList = this.serviceList.flatMap(service => {
+          if (service.serviceName === 'Bank Account Opening') {
+            return [
+              { ...service, serviceName: 'Personal Bank Account' },
+              { ...service, serviceName: 'Business Bank Account' }
+            ];
+          }
+          return service;
+        });
       },
       (error) => {
         console.error('Error fetching user details:', error);
@@ -82,7 +90,7 @@ export class AdminDocumentTypeComponent {
  
     // Fetch document types based on the service name
     switch (serviceName) {
-      case 'Bank Account Opening':
+      case 'Personal Bank Account':
         this.documenttypeService.getPersonalBanks().subscribe(
           (response: any[]) => {
             this.docRecords = response; // Store the full objects
@@ -96,6 +104,21 @@ export class AdminDocumentTypeComponent {
           }
         );
         break;
+
+        case 'Business Bank Account':
+          this.documenttypeService.getBusinessBanks().subscribe(
+            (response: any[]) => {
+              this.docRecords = response; // Store the full objects
+              this.docTypes = response.map((item) => item.documentType); // Extract the documentType field
+              this.selectedCount = this.docTypes.length;
+            },
+            (error) => {
+              console.error('Error fetching Business Banks:', error);
+              this.docRecords = []; // Fallback in case of an error
+              this.docTypes = []; // Fallback in case of an error
+            }
+          );
+          break;
  
       // case 'Business Bank':
       //   this.documenttypeService.getBusinessBanks().subscribe(
@@ -220,8 +243,11 @@ export class AdminDocumentTypeComponent {
  
         let deleteObservable: Observable<any>;
         switch (this.selectedServiceName) {
-          case 'Bank Account Opening':
+          case 'Personal Bank Account':
             deleteObservable = this.documenttypeService.deletePersonalBank(doc._id);
+            break;
+            case 'Business Bank Account':
+            deleteObservable = this.documenttypeService.deleteBusinessBank(doc._id);
             break;
           case 'Mail Management':
             deleteObservable = this.documenttypeService.deleteMailManagements(doc._id);
@@ -281,9 +307,12 @@ export class AdminDocumentTypeComponent {
     let deleteObservable: Observable<any>;
  
     switch (this.selectedServiceName) {
-      case 'Bank Account Opening':
+      case 'Personal Bank Account':
         deleteObservable = this.documenttypeService.deletePersonalBank(docToDelete._id);
         break;
+        case 'Business Bank Account':
+          deleteObservable = this.documenttypeService.deleteBusinessBank(docToDelete._id);
+          break;
       case 'Mail Management':
         deleteObservable = this.documenttypeService.deleteMailManagements(docToDelete._id);
         break;
@@ -332,10 +361,10 @@ export class AdminDocumentTypeComponent {
  
       // Call the corresponding API based on the selected service name
       switch (this.selectedServiceName) {
-        case 'Bank Account Opening':
+        case 'Personal Bank Account':
           this.documenttypeService.createPersonalBank(this.docTypes).subscribe(
             (response) => {
-              console.log('Bank Account Opening API Response:', response);
+              console.log('Personal Bank Account Opening API Response:', response);
               this.toastr.success('Documents submitted successfully!', 'Success'); 
 
             },
@@ -347,6 +376,22 @@ export class AdminDocumentTypeComponent {
             }
           );
           break;
+
+          case 'Business Bank Account':
+            this.documenttypeService.createBusinessBank(this.docTypes).subscribe(
+              (response) => {
+                console.log('Business Bank Account Opening API Response:', response);
+                this.toastr.success('Documents submitted successfully!', 'Success'); 
+  
+              },
+              (error) => {
+                console.error('Error:', error);
+                this.toastr.error('Error updating bank documents.', 'Error');
+  
+  
+              }
+            );
+            break;
  
         // case 'Accounting & VAT':
         //   this.documenttypeService.createBusinessBank(this.docTypes).subscribe(
@@ -434,7 +479,7 @@ export class AdminDocumentTypeComponent {
  
     // Call the appropriate update API based on the selected service name
     switch (this.selectedServiceName) {
-      case 'Bank Account Opening':
+      case 'Personal Bank Account':
         this.documenttypeService.updatePersonalBank(updatedData).subscribe(
           (response) => {
             console.log('Personal Bank updated successfully:', response);
@@ -446,6 +491,19 @@ export class AdminDocumentTypeComponent {
           }
         );
         break;
+
+        case 'Business Bank Account':
+          this.documenttypeService.updateBusinessBank(updatedData).subscribe(
+            (response) => {
+              console.log('Business Bank updated successfully:', response);
+              this.toastr.success('Business Bank updated successfully!', 'Success'); 
+  
+                        },
+            (error) => {
+              console.error('Error updating Personal Bank:', error);
+            }
+          );
+          break;
  
       case 'Virtual Receptionist':
         this.documenttypeService.updateVirtualReception(updatedData).subscribe(

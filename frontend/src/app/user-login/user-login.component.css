@@ -1,6 +1,7 @@
 @media (max-width: 767px) {
     section.login_section .image {
         z-index: 0;
-        height: 31rem;
+        height: 64.3vh;
+        margin-top: 0px;
     }
 }

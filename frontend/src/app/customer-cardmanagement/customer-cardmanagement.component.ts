@@ -43,7 +43,9 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   mailManagemnt: any[] = [];
   virtualReceptionist: any[] = [];
   bankOpening: any[] = [];
+  businessBanks: any[] = [];
   selectedShareholders: any[] = [];
+  shareholders:any[] = [];
   selectedaddAdditionalFile: any[] = [];
   uploadedFileNames: any[] = [];
   combinedFiles: any[] = [];
@@ -138,7 +140,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     this.documenttypeService.getBusinessBanks().subscribe(
       (data) => {
         // console.log('Business Banks:', data);
-        // this.businessBanks = data; // Store the response
+        this.businessBanks = data.map((item: any) => item.documentType); // Store the response
         this.isLoading = false;
       },
       (error) => {
@@ -359,7 +361,10 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     } else if (planname === 'Mail Management') {
       return this.mailManagemnt.length ? this.mailManagemnt : ['Loading...'];
     } else if (planname === 'Bank Account Opening') {
+      if(subcategory === 'personal')
       return this.bankOpening.length ? this.bankOpening : ['Loading...'];
+    else
+    return this.businessBanks.length ? this.businessBanks : ['Loading...'];
     } else {
       return ['General Document', 'Other'];
     }
@@ -371,7 +376,9 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openShareholderModal(shareholders: any[], addAdditionalFile: any[], uploadedFileNames: any[]): void {
+  openShareholderModal(shareholders: any[], addAdditionalFile: any[], uploadedFileNames: any[], record: any): void {
+    this.selectedRecord = record; 
+    this.shareholders = shareholders;
     this.selectedShareholders = shareholders.map(shareholder => shareholder.files);
     this.selectedaddAdditionalFile = addAdditionalFile;
     this.uploadedFileNames = uploadedFileNames;
@@ -453,6 +460,62 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
       (file) => file.url !== fileToRemove.url
     );
   }
+
+  deleteFile(fileToRemove: any): void {
+    // Remove from additionalUploadedFiles
+    this.selectedaddAdditionalFile = this.selectedaddAdditionalFile.filter(
+      (file) => file.url !== fileToRemove.url
+    );
+  
+    // Remove from uploadedFileNames
+    this.uploadedFileNames = this.uploadedFileNames.filter(
+      (file) => file.url !== fileToRemove.url
+    );
+  
+    // Remove from shareholders.files
+    this.selectedShareholders = this.selectedShareholders.map((filesArray: any[]) =>
+      filesArray.filter((file) => file.url !== fileToRemove.url)
+    );
+  
+    // Re-combine files for UI
+    const shareholderFile = this.selectedShareholders.flat();
+    this.combinedFiles = [
+      ...(this.selectedaddAdditionalFile || []),
+      ...(this.uploadedFileNames || []),
+      ...(shareholderFile || []),
+    ];
+  
+    // Call API to update backend after deletion
+    this.updateUserFilesOnBackend();
+  }
+  
+  updateUserFilesOnBackend(): void {
+    if (!this.selectedRecord || !this.selectedRecord._id) {
+      console.error("selectedRecord is null or missing _id");
+      return;
+    }
+    const payload = {
+      someId: this.selectedRecord._id, // <-- Pass the correct user record ID here
+      additionalUploadedFiles: this.selectedaddAdditionalFile,
+      uploadedFileNames: this.uploadedFileNames,
+      shareholders: this.selectedShareholders.map((files, index) => ({
+        ...this.shareholders[index], // Keep other shareholder data intact
+        files: files, // Update files array
+      })),
+    };
+  
+    this.userService.updateUserFiles(payload).subscribe(
+      (response) => {
+        console.log("Files updated successfully", response);
+        const email = localStorage.getItem('userEmail') ?? '';
+        this.fetchUserServices(email);
+      },
+      (error) => {
+        console.error("Error updating files", error);
+      }
+    );
+  }
+  
 
   submitDocuments(): void {
     // Example payload
