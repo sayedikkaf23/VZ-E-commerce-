@@ -365,12 +365,12 @@
               </div>
             </div>
             <div class="col-6" *ngFor="let method of availablePaymentMethods">
-              <div class="btn-radio-field">
+              <div class="btn-radio-field" *ngIf="method.cardMachine">
                 <input type="radio" name="preferred-pm" id="pm-2" />
                 <label for="pm-2">
                   <div
                     class="row align-items-center"
-                    *ngIf="method.cardMachine"
+                    
                     (click)="submitForm()"
                   >
                     <div class="col-auto">
@@ -434,12 +434,12 @@
                 </label>
               </div>
             </div>
-            <div class="col-6">
+            <div class="col-6"  *ngIf="method.cashDeposit">
               <div class="btn-radio-field">
                 <input type="radio" name="preferred-pm" id="pm-3" />
                 <label for="pm-3">
                   <div
-                  *ngIf="method.cashDeposit"
+                 
                   class="row align-items-center"
                   (click)="onNavigate()"
                 >
@@ -459,13 +459,13 @@
                 </label>
               </div>
             </div>
-            <div class="col-6">
+            <div class="col-6"     *ngIf="method.chequeDeposit">
               <div class="btn-radio-field">
                 <input type="radio" name="preferred-pm" id="pm-4" />
                 <label for="pm-4">
                   <div
                     class="row align-items-center"
-                    *ngIf="method.chequeDeposit"
+                
                     [routerLink]="'/chequedeposit/' +  piData.quotePaymentWithDetails.QuotePaymentId"
                     [queryParams]="{type: type}"
                   >
@@ -530,13 +530,13 @@
                 </label>
               </div>
             </div>
-            <div class="col-6">
+            <div class="col-6"   *ngIf="method.cashOverCounter">
               <div class="btn-radio-field">
                 <input type="radio" name="preferred-pm" id="pm-5" />
                 <label for="pm-5">
                   <div
                     class="row align-items-center"
-                    *ngIf="method.cashOverCounter"
+                  
                     (click)="
                       handleCashOverCounterClick(
                         piData.quotePaymentWithDetails.QuotePaymentId,
@@ -569,7 +569,7 @@
                 </label>
               </div>
             </div>
-            <div class="col-6">
+            <div class="col-6"  *ngIf="method.bankTransfer">
               <div class="btn-radio-field">
                 <input type="radio" name="preferred-pm" id="pm-6" />
                 <label for="pm-6">
@@ -577,7 +577,7 @@
                     class="row align-items-center"
                     [routerLink]="'/banktransfer/' +  piData.quotePaymentWithDetails.QuotePaymentId"
                     [queryParams]="{type: type}"
-                    *ngIf="method.bankTransfer"
+                   
                   >
                     <div class="col-auto">
                       <div class="icon">
@@ -604,8 +604,8 @@
                 </label>
               </div>
             </div>
-            <div class="col-6">
-              <div class="btn-radio-field" *ngIf="method.pcdCheque">
+            <div class="col-6" *ngIf="method.pcdCheque">
+              <div class="btn-radio-field" >
                 <input type="radio" name="preferred-pm" id="pm-7" />
                 <label for="pm-7">
                   <div class="row align-items-center" routerLink="/" 
