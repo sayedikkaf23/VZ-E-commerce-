@@ -427,29 +427,34 @@ const AddCashMachin = async (req, res) => {
 
 async function payNow(req, res) {
   const { quoteId } = req.params;
-
+  let order_number,
+    acountname,
+    acountemail,
+    order_amount,
+    type = "Online";
+ 
   const data = await PiData.findOne({
     $or: [
       { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
       { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
     ],
   });
-
+ 
   console.log("Data received in createTotalpaySession:", data);
   // Static data
-
+ 
   order_number = data.quotePaymentWithDetails.QuotePaymentId;
-  acountname = data.quoteWithProductDetails.AccountName;
+  acountname = data.leadWithDetails.FirstName;
   acountemail = data.quoteWithProductDetails.quoteEmail;
   order_amount = Number(
-    data.salesforceResponseMatchScreening.total_including_Vat
+    data.quoteWithProductDetails.totalIncludingVAT
   ).toFixed(2);
   // const order_number = "order-1234";
   // const order_amount = "0.19";
   const order_currency = "AED";
   const order_description = "gift";
   const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
-
+ 
   // Create hash
   const stringToHash =
     order_number + order_amount + order_currency + order_description + password;
@@ -459,58 +464,58 @@ async function payNow(req, res) {
     .update(stringToHash.toUpperCase())
     .digest("hex");
   console.log(md5hash);
-
+ 
   const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
   console.log("SHA-1 Hash:", sha1Hash);
-
+ 
   // const accountDetailsResult = await AccountDetail.find();
   // if (!accountDetailsResult || accountDetailsResult.length === 0) {
   //   return res.status(400).json({ message: "Account details not found" });
   // }
-
-  const TokenResponse = await axios.post(
-    `https://test.salesforce.com/services/oauth2/token`,
-    null,
-    {
-      params: {
-        client_id: process.env.SALESFORCE_CLIENT_ID,
-        client_secret: process.env.SALESFORCE_CLIENT_SECRET,
-        grant_type: "password",
-        username: process.env.SALESFORCE_USERNAME,
-        password: process.env.SALESFORCE_PASSWORD,
-      },
-    }
-  );
-  const accessToken = TokenResponse.data.access_token;
-
+ 
+  // const TokenResponse = await axios.post(
+  //   `https://test.salesforce.com/services/oauth2/token`,
+  //   null,
+  //   {
+  //     params: {
+  //       client_id: process.env.SALESFORCE_CLIENT_ID,
+  //       client_secret: process.env.SALESFORCE_CLIENT_SECRET,
+  //       grant_type: "password",
+  //       username: process.env.SALESFORCE_USERNAME,
+  //       password: process.env.SALESFORCE_PASSWORD,
+  //     },
+  //   }
+  // );
+  // const accessToken = TokenResponse.data.access_token;
+ 
   // console.log("Access Token:", accessToken);
-
+ 
   // Create a new PaymentForm instance
   const newOnlinePayForm = new OnlinePayment({
     transactionDetails: {
-      amount: data.salesforceResponseMatchScreening.total_including_Vat,
-      quotePaymentId: order_number,
+      amount:  data.quoteWithProductDetails.totalIncludingVAT,
+        quotePaymentId: order_number,
       //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
-
+ 
       // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
       // toCurrency: currency_convertingto,
-      proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
-      currencyPaid: "AED",
+        proformaInvoiceNumber: data.leadWithDetails.LeadId,
+        currencyPaid: "AED",
       // amountPaid:existingUser.totalIncludingVAT,
     },
     customerDetails: {
-      name: data.quoteWithProductDetails.AccountName,
-      id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
+        name: data.leadWithDetails.FirstName,
+        id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
     },
-
+ 
     paymentType: "Online",
     status: "Paid",
     quoteId: data.quoteWithProductDetails.oppurtunityId,
     // Default status
   });
-
+ 
   await newOnlinePayForm.save();
-
+ 
   // Create request body
   const requestBody = {
     merchant_key: "38e1fdfc-5b72-11ee-a23d-de864d357ae1",
@@ -533,8 +538,8 @@ async function payNow(req, res) {
       zip: "00000",
       phone: "+971090450954",
     },
-    cancel_url: `https://ecommerce.yeepeey.com/failure/${order_number}`,
-    success_url: `https://ecommerce.yeepeey.com/successful/${order_number}`,
+    cancel_url: `https://ecommerce.virtuzone.com/failure/${order_number}`,
+    success_url: `https://ecommerce.virtuzone.com/successful/${order_number}`,
     customer: {
       // name: acountname,
       email: acountemail,
@@ -542,9 +547,9 @@ async function payNow(req, res) {
     recurring_init: "true",
     hash: sha1Hash,
   };
-
+ 
   console.log(sha1Hash, "sha1Hash");
-
+ 
   try {
     // Send request to Totalpay
     console.log("second");
@@ -552,36 +557,36 @@ async function payNow(req, res) {
       "https://checkout.totalpay.global/api/v1/session",
       requestBody
     );
-
+ 
     const totalpayResponseData = totalpayResponse.data;
-
+ 
     const combinedResponse = {
-      message: "Online Payment",
-      GL_code: "1352 - Payment Gateway",
-      bank_name: "Payment Gateway",
-      Bankstatus: newOnlinePayForm.status,
-      Name: newOnlinePayForm.customerDetails.name,
-      proformaInvoiceNumber:
-        newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
-      // receiptfile: newOnlinePayForm.fileUpload,
-      currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
+      // message: "Online Payment",
+      // GL_code: "1352 - Payment Gateway",
+      // bank_name: "Payment Gateway",
+      // Bankstatus: newOnlinePayForm.status,
+      // Name: newOnlinePayForm.customerDetails.name,
+      // proformaInvoiceNumber:
+      //   newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
+      // // receiptfile: newOnlinePayForm.fileUpload,
+      // currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
       totalpayData: totalpayResponseData, // Include data from the first response here
     };
-
+ 
     // console.log(combinedResponse);
-
+ 
     res.status(200).json(combinedResponse);
   } catch (error) {
     console.error("Error message:", error.message);
-
+ 
     // Log the server's response provided by Axios in the error object
     if (error.response) {
       console.error("Error response data:", error.response.data);
     }
-
+ 
     // Log the full error stack for debugging purposes
     console.error("Error stack:", error.stack);
-
+ 
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
