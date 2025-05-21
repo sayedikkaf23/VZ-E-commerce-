@@ -1,11 +1,11 @@
 <div class="loader-container" *ngIf="isLoading">
   <div class="loader"></div>
 </div>
-
+ 
 <div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
-
+ 
   <app-user-header></app-user-header>
-  
+ 
   <section class="apply_service_section">
       <div class="container">
         <!-- <div class="head_text" >
@@ -16,8 +16,8 @@
             Virtuzone offers a range of services to further enhance your business
             well-being.
           </p>
-  
-          
+ 
+         
         </div> -->
         <div class="row gy-lg-5 gx-3 gy-4" >
           <!-- First two larger boxes -->
@@ -37,10 +37,10 @@
                 <div class="row justify-content-between align-items-end">
                   <div class="col">
                     <p>{{ service.description }}</p>
-                    <h4><a href="#">{{ service.serviceName }}</a></h4>
+                    <h4><a >{{ service.serviceName }}</a></h4>
                   </div>
                   <div class="col-auto">
-                    
+                   
                     <button class="btn" (click)="startNow(service.serviceName)" >Start Now
                       <div class="icon">
                         <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -55,7 +55,7 @@
               </div>
             </div>
           </div>
-        
+       
           <!-- Smaller boxes start from the third service -->
           <div class="col-md-6 col-12" *ngFor="let service of services.slice(2); let i = index">
             <div class="box" >
@@ -73,10 +73,10 @@
                 <div class="row justify-content-between align-items-end">
                   <div class="col">
                     <p>{{ service.description }}</p>
-                    <h4><a href="#">{{ service.serviceName }}</a></h4>
+                    <h4><a >{{ service.serviceName }}</a></h4>
                   </div>
                   <div class="col-auto">
-                      
+                     
                     <button class="btn" (click)="startNow(service.serviceName)" >Start Now
                       <div class="icon">
                         <svg width="17" height="29" viewBox="0 0 17 29" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -87,22 +87,22 @@
                       </div>
                     </button>
                   </div>
-                
+               
                </div>
               </div>
             </div>
           </div>
         </div>
-        
-        
-        
-        
-        
+       
+       
+       
+       
+       
       </div>
     </section>
-  
+ 
     <app-footer></app-footer>
-  
+ 
     <div class="modal fade searchbox" id="searchmodal" tabindex="-1" aria-labelledby="exampleModalLabel"
       aria-hidden="true">
       <div class="modal-dialog modal-xl modal-dialog-centered">
@@ -131,9 +131,11 @@
       </div>
     </div>
   </div>
-  
-  
+ 
+ 
   <ng-template #noServices>
     <p>No services available. Please try again later.</p>
   </ng-template>
-
+ 
+ 
+ 
