@@ -453,7 +453,7 @@ async function payNow(req, res) {
   // const order_amount = "0.19";
   const order_currency = "AED";
   const order_description = "gift";
-  const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
+  const password = "050936a2e5f2bbb873dd97cbe42e57f1"; // Replace with your password
  
   // Create hash
   const stringToHash =
@@ -518,7 +518,7 @@ async function payNow(req, res) {
  
   // Create request body
   const requestBody = {
-    merchant_key: "38e1fdfc-5b72-11ee-a23d-de864d357ae1",
+    merchant_key: "8695c034-2a41-11f0-a0cc-2af5069be677",
     operation: "purchase",
     methods: ["card"],
     order: {
@@ -541,7 +541,7 @@ async function payNow(req, res) {
     cancel_url: `https://ecommerce.virtuzone.com/failure/${order_number}`,
     success_url: `https://ecommerce.virtuzone.com/successful/${order_number}`,
     customer: {
-      // name: acountname,
+      // name: data.leadWithDetails.FirstName,
       email: acountemail,
     },
     recurring_init: "true",
