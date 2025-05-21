@@ -538,8 +538,8 @@ async function payNow(req, res) {
       zip: "00000",
       phone: "+971090450954",
     },
-    cancel_url: `https://ecommerce.virtuzone.com/failure/${order_number}`,
-    success_url: `https://ecommerce.virtuzone.com/successful/${order_number}`,
+    cancel_url: `https://ecommerce.yeepeey.com/failure/${order_number}`,
+    success_url: `https://ecommerce.yeepeey.com/successful/${order_number}`,
     customer: {
       // name: data.leadWithDetails.FirstName,
       email: acountemail,
