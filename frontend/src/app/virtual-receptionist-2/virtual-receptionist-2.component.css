@@ -172,7 +172,7 @@ ul li::before {
     font-size: 20px !important;
     color: rgba(0, 0, 0, 0.507) !important;
     width: 99% !important;
-    border-color: transparent !important;
+    
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out !important;
     appearance: none !important; 
     margin: 0 !important;
@@ -204,3 +204,33 @@ ul li::before {
 section { /* Or the class of your content section */
   flex-grow: 1; /* Allow the content section to grow and take up available space */
 }
+
+
+ .step_2_form .form-field .alignment{
+    margin-bottom: 38px;
+  }
+
+  @media (max-width:524px){
+  .step_2_form .form-field .alignment{
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width:767px)  and (min-width: 524px){
+  .step_2_form .form-field .alignment{
+    margin-bottom: 23px;
+  }
+}
+
+@media (max-width: 586px) and (min-width: 540px){
+  .step_2_form .form-field .alignment{
+    margin-bottom: 6px;
+  }
+}
+
+@media (max-width: 991px) and (min-width: 768px)  {
+    .step_1_form .form-field .alignment {
+        margin-bottom: 31px;
+    }
+}
+
