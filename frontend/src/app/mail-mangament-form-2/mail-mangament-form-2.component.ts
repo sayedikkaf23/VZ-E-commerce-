@@ -179,7 +179,23 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       shareholder.countryRisk = '';
     }
   }
- 
+ onShareholderInput(event: any, index: number) {
+  let val = event.target.value;
+
+  // If empty, don't change
+  if (val === '') return;
+
+  // Clamp value to 100 max
+  if (+val > 100) {
+    this.shareholders[index].shareholderPercentage = 100;
+    event.target.value = 100;
+  } else if (+val < 0) {
+    this.shareholders[index].shareholderPercentage = 0;
+    event.target.value = 0;
+  } else {
+    this.shareholders[index].shareholderPercentage = +val;
+  }
+}
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard
   }
