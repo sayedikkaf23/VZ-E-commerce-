@@ -1376,7 +1376,6 @@ exports.checkStatus = async (req, res) => {
   }
 };
 
-
 exports.getallUserSerive = async (req, res) => {
   try {
     const { email } = req.body;
@@ -1493,18 +1492,18 @@ exports.getallUserSerive = async (req, res) => {
         console.log("No quotePaymentWithDetails found on this user record.");
       }
     }
+const updatedUserData = await Pidata.find({ "leadWithDetails.Email": email });
  
     // After all done, send success response
     res.status(200).json({
       message: "User data fetched and updated successfully",
-      data: userData,
+      data: updatedUserData,
     });
   } catch (error) {
     console.error("Error fetching/updating user data:", error);
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
- 
 
 exports.updateAdditionalUploadedFiles = async (req, res) => {
   try {
