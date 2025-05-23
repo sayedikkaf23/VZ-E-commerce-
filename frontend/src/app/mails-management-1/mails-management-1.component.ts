@@ -69,7 +69,13 @@ export class MailsManagement1Component {
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
 
-   
+     // Automatically convert email to lowercase
+  this.personalDetailsForm.get('email')?.valueChanges.subscribe(value => {
+    const lowercaseEmail = value?.toLowerCase();
+    if (value !== lowercaseEmail) {
+      this.personalDetailsForm.get('email')?.setValue(lowercaseEmail, { emitEvent: false });
+    }
+  });
    
  
     // this.getnationalityService.getCountries().subscribe((data) => {

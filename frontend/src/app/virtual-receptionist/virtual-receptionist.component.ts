@@ -66,7 +66,14 @@ export class VirtualReceptionistComponent {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-    
+    // Automatically convert email to lowercase
+  this.personalDetailsForm.get('email')?.valueChanges.subscribe(value => {
+    const lowercaseEmail = value?.toLowerCase();
+    if (value !== lowercaseEmail) {
+      this.personalDetailsForm.get('email')?.setValue(lowercaseEmail, { emitEvent: false });
+    }
+  });
+  
     const today = new Date();
     const year = today.getFullYear() - 18;
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
