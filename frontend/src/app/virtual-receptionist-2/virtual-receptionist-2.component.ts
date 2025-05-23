@@ -162,7 +162,11 @@ export class VirtualReceptionist2Component implements OnInit {
   onFileChangeTrade(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
       const file: File = event.target.files[0];
-
+ // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
+    if (file.size > 2097152) {
+      this.toastr.error('File size should be below 2 MB', 'File Too Large');
+      return; // Skip uploading this file
+    }
       this.isLoading = true;
       this.userService.getPresignedUrl(file).subscribe(
         (response: any) => {
@@ -212,7 +216,11 @@ export class VirtualReceptionist2Component implements OnInit {
 
       this.uploadedFiles[index] = filesArray;
       this.uploadedFileNames[index] = [];
-
+ // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
+    if (filesArray[index].size > 2097152) {
+      this.toastr.error('File size should be below 2 MB', 'File Too Large');
+      return; // Skip uploading this file
+    }
       this.isLoading = true;
 
       // Upload each file with presigned URL

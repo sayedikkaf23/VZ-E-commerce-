@@ -127,6 +127,11 @@ export class MailsManagement3Component implements OnInit {
     if (event.target.files && event.target.files.length > 0) {
       const file: File = event.target.files[0];
 
+        // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
+    if (file.size > 2097152) {
+      this.toastr.error('File size should be below 2 MB', 'File Too Large');
+      return; // Skip uploading this file
+    }
       this.isLoading = true;
       this.userService.getPresignedUrl(file).subscribe(
         (response: any) => {
@@ -168,7 +173,11 @@ export class MailsManagement3Component implements OnInit {
       const filesArray: File[] = Array.from(event.target.files as FileList);
       this.uploadedFiles[index] = filesArray;
       this.uploadedFileNames[index] = [];
-  
+    // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
+    if (filesArray[index].size > 2097152) {
+      this.toastr.error('File size should be below 2 MB', 'File Too Large');
+      return; // Skip uploading this file
+    }
       this.isLoading = true;
   
       const uploadPromises = filesArray.map(file =>
