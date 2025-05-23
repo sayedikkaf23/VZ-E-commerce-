@@ -53,7 +53,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   nationalitiesData: string[] = []; // Initialize as an empty array
   businessCategories: any[] = [];
   personalInfo: any;
- 
+ maxDate: string | undefined;
  
   constructor(
     private formDataService: FormDataService,
@@ -73,7 +73,11 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
  
   ngOnInit(): void {
    
- 
+    const today = new Date();
+    const year = today.getFullYear() - 18;
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    this.maxDate = `${year}-${month}-${day}`;
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects
     //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);

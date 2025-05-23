@@ -31,7 +31,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
   };
 
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' }];
-
+ maxDate: string | undefined;
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {};
@@ -57,6 +57,12 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
+     const today = new Date();
+    const year = today.getFullYear() - 18;
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    this.maxDate = `${year}-${month}-${day}`;
+
     // Load nationality data
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Map and trim whitespace, sort case-insensitively

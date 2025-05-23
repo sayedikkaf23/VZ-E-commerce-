@@ -38,7 +38,7 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
     Companylicensed: '',
     BusinessActivityRisk: ''
   };
-
+maxDate: string | undefined;
   shareholders: any[] = [
     {
       name: '',
@@ -74,6 +74,11 @@ export class VirtualReceptionist1Component implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
 
+       const today = new Date();
+    const year = today.getFullYear() - 18;
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    this.maxDate = `${year}-${month}-${day}`;
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
