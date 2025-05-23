@@ -12,6 +12,7 @@ const VirtualDetails = require('../models/virtualReceptionist'); // Import the m
 const MailDetails = require('../models/mailManagement'); // Import the model
 require('dotenv').config(); 
 
+const OnlinePayment = require("../models/OnlinePaymentModel");
 
 
  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
