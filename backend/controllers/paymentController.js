@@ -928,7 +928,13 @@ async function payNowSaleforce(req, res) {
       // Throw an error if the document is not found
       throw new Error("Document not found");
     }
-
+    
+        if (PiDataCheck) {
+      await PiData.updateOne(
+        { _id: PiDataCheck._id },
+        { $set: { isPayment: true } }
+      );
+      
     const requestBodySalesforce = {
       qp: {
         paymentmethod: "Pay Now",
@@ -1010,11 +1016,7 @@ console.log(response2,"response 2 data")
     }
 
     // 12. Mark isPayment = true on PiData if it exists
-    if (PiDataCheck) {
-      await PiData.updateOne(
-        { _id: PiDataCheck._id },
-        { $set: { isPayment: true } }
-      );
+
       console.log("isPayment updated to true for:", PiDataCheck._id);
     } else {
       console.log("No document found for the given quoteId.");
