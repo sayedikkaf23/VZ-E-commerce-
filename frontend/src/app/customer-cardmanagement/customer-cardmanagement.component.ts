@@ -103,64 +103,64 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   }
 
   fetchVirtualReceptions(): void {
-    this.isLoading = true;
+    // this.isLoading = true;
     this.documenttypeService.getVirtualReceptions().subscribe(
       (data) => {
         console.log('Virtual Receptions:', data);
         this.virtualReceptionist = data.map((item: any) => item.documentType);
         console.log('Virtual Receptions doctypes:', this.virtualReceptionist);
         // Do something with the data
-        this.isLoading = false;
+        // this.isLoading = false;
       },
       (error) => {
         console.error('Error fetching virtual receptions:', error);
-        this.isLoading = false;
+        // this.isLoading = false;
       }
     );
   }
 
   fetchMailManagements(): void {
-    this.isLoading = true;
+    // this.isLoading = true;
     this.documenttypeService.getMailManagements().subscribe(
       (data) => {
         console.log('Mail Managements:', data);
         this.mailManagemnt = data.map((item: any) => item.documentType);
         // Do something with the data
-        this.isLoading = false;
+        // this.isLoading = false;
       },
       (error) => {
         console.error('Error fetching mail managements:', error);
-        this.isLoading = false;
+        // this.isLoading = false;
       }
     );
   }
 
   fetchBusinessBanks(): void {
-    this.isLoading = true;
+    // this.isLoading = true;
     this.documenttypeService.getBusinessBanks().subscribe(
       (data) => {
         // console.log('Business Banks:', data);
         this.businessBanks = data.map((item: any) => item.documentType); // Store the response
-        this.isLoading = false;
+        // this.isLoading = false;
       },
       (error) => {
         console.error('Error fetching business banks:', error);
-        this.isLoading = false;
+        // this.isLoading = false;
       }
     );
   }
 
   fetchPersonalBanks(): void {
-    this.isLoading = true;
+    // this.isLoading = true;
     this.documenttypeService.getPersonalBanks().subscribe(
       (data) => {
         // console.log('Personal Banks:', data);
         this.bankOpening = data.map((item: any) => item.documentType); // Store the response
-        this.isLoading = false;
+        // this.isLoading = false;
       },
       (error) => {
         console.error('Error fetching personal banks:', error);
-        this.isLoading = false;
+        // this.isLoading = false;
       }
     );
   }
@@ -270,6 +270,8 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     const startIndex = (page - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedRecords = this.filteredRecords.slice(startIndex, endIndex);
+              this.isLoading = false;
+
   }
 
   // Change items per page and reset to the first page
