@@ -474,7 +474,7 @@ async function payNow(req, res) {
   // }
  
   // const TokenResponse = await axios.post(
-  //   `https://test.salesforce.com/services/oauth2/token`,
+  //   https://test.salesforce.com/services/oauth2/token,
   //   null,
   //   {
   //     params: {
@@ -543,6 +543,7 @@ async function payNow(req, res) {
     customer: {
       // name: data.leadWithDetails.FirstName,
       email: acountemail,
+        birth_date:data.leadWithDetails.dob,
     },
     recurring_init: "true",
     hash: sha1Hash,
