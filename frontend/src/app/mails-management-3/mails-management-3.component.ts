@@ -130,6 +130,7 @@ export class MailsManagement3Component implements OnInit {
         // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
     if (file.size > 2097152) {
       this.toastr.error('File size should be below 2 MB', 'File Too Large');
+      event.target.value = null;
       return; // Skip uploading this file
     }
       this.isLoading = true;
@@ -176,6 +177,7 @@ export class MailsManagement3Component implements OnInit {
     // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
     if (filesArray[index].size > 2097152) {
       this.toastr.error('File size should be below 2 MB', 'File Too Large');
+      event.target.value = null;
       return; // Skip uploading this file
     }
       this.isLoading = true;
