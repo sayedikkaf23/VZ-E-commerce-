@@ -269,3 +269,72 @@ console.log("salesforceResponse",salesforceResponse.data)
   }
 };
  
+
+
+exports.insertDocumentsFromShareholders = async (req, res) => {
+  try {
+    const { quotePaymentId, serviceName, shareholders } = req.body;
+
+    if (!quotePaymentId || !serviceName || !Array.isArray(shareholders)) {
+      return res.status(400).json({ message: "Missing or invalid data" });
+    }
+
+    const payload = {
+      quotePaymentId,
+      serviceName,
+      shareholders: shareholders.map(s => ({
+        name: s.name,
+        shareholderPercentage: s.shareholderPercentage,
+        dob: s.dob,
+        nationalityshareholder: s.nationalityshareholder,
+        files: s.files.map(f => ({
+          name: f.name,
+          url: f.url,
+          type: f.type,
+          oopId: f.oopId
+        }))
+      }))
+    };
+
+    // 1. Get Salesforce token
+    const tokenResp = await axios.post(
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
+      null,
+      {
+        params: {
+          client_id: '3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip',
+          client_secret: '0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1',
+          grant_type: 'password',
+          username: 'vzpaymentapi@vz.ae.vzfullcopy',
+          password: 'VZ@12345678',
+        },
+      }
+    );
+
+    const salesforceUrl = tokenResp.data.instance_url;
+
+    // 2. Send request to Salesforce Apex endpoint
+    const response = await axios.post(
+      `${salesforceUrl}/services/apexrest/insertDocumentsFromShareholders`,
+      JSON.stringify(payload),
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${tokenResp.data.access_token}`,
+        },
+      }
+    );
+
+    return res.status(200).json({
+      message: "Documents successfully pushed to Salesforce",
+      data: response.data
+    });
+
+  } catch (err) {
+    console.error("insertDocumentsFromShareholders error:", err);
+    return res.status(500).json({
+      message: "Failed to insert documents",
+      error: err.response?.data || err.toString(),
+    });
+  }
+};
