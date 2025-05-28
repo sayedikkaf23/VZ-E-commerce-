@@ -56,6 +56,9 @@ import { HelpCenterComponent } from './help-center/help-center.component';
 import { CountryRiskManagementComponent } from './country-risk-management/country-risk-management.component';
 import { ProductRiskManagementComponent } from './product-risk-management/product-risk-management.component';
 import { RiskComponent } from './risk/risk.component';
+import { PaymentFailureComponent } from './payment-failure/payment-failure.component';
+
+
 const routes: Routes = [
 
   {
@@ -78,6 +81,7 @@ const routes: Routes = [
   },
   // { path: 'successful/:id', component: SuccessComponent },
   { path: 'failure/:id', component: FailerComponent },
+  { path: 'paymentfailure/:id', component: PaymentFailureComponent },
   // new
   { path: 'successful/:id', component: SuccessComponent },
   { path: 'success/:id', component: BankTransferSuccessComponent },

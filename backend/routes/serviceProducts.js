@@ -4,6 +4,7 @@ const serviceProductsController = require('../controllers/serviceProductsControl
 
 // Define the routes
 router.post('/service-products', serviceProductsController.getServiceProducts);
+router.post('/insertDocumentsFromShareholders', serviceProductsController.insertDocumentsFromShareholders);
 router.post('/create-opportunity', serviceProductsController.createPaymentOpportunity);
 
 module.exports = router;

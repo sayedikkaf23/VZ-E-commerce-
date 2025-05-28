@@ -449,7 +449,7 @@ async function payNow(req, res) {
   // const order_number = "order-1234";
   // const order_amount = "0.19";
   const order_currency = "AED";
-  const order_description = "gift";
+  const order_description = "purchase";
   const password = "050936a2e5f2bbb873dd97cbe42e57f1"; // Replace with your password
 
   // Create hash
@@ -535,7 +535,7 @@ async function payNow(req, res) {
       zip: "00000",
       phone: "+971090450954",
     },
-    cancel_url: `https://ecommerce.yeepeey.com/failure/${order_number}`,
+    cancel_url: `https://ecommerce.yeepeey.com/paymentfailure/${order_number}`,
     success_url: `https://ecommerce.yeepeey.com/successful/${order_number}`,
     customer: {
       // name: data.leadWithDetails.FirstName,
@@ -670,7 +670,7 @@ async function payNowByStripe(req, res) {
       ],
       mode: "payment",
       success_url: `https://ecommerce.yeepeey.com/successful/${data.quotePaymentId}`,
-      cancel_url: `https://ecommerce.yeepeey.com/failure/${data.quotePaymentId}`,
+      cancel_url: `https://ecommerce.yeepeey.com/paymentfailure/${data.quotePaymentId}`,
     });
 
     const stripeResponseData = stripeResponse;
@@ -775,7 +775,7 @@ async function payNowByTelr(req, res) {
         },
         return: {
           authorised: `https://ecommerce.yeepeey.com/successful/${order_number}`,
-          declined: `https://ecommerce.yeepeey.com/failure/${order_number}`,
+          declined: `https://ecommerce.yeepeey.com/paymentfailure/${order_number}`,
           cancelled: `https://ecommerce.yeepeey.com/cancelled/${order_number}`,
         },
         customer: {

@@ -9,7 +9,7 @@ import AOS from 'aos';
 import { switchMap, of, map, tap, MonoTypeOperatorFunction, retryWhen, delay, take } from 'rxjs';
 import Swal from 'sweetalert2';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
- 
+ import { OnlinePaymentService } from '../service/online-payment.service';
  
 declare var $: any;
  
@@ -33,6 +33,7 @@ export class ShowDetails2Component implements AfterViewInit {
   constructor(
     private http: HttpClient,
     private toastr: ToastrService,
+      private onlinePaymentService: OnlinePaymentService,
     private router: Router,
     private dataStorageService: DataStorageService,
     private matchScoreStorageService: MatchScoreStorageService,
@@ -263,7 +264,8 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
         return this.userService.checkStatus(checkStatusData).pipe(
           tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
             if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-              this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+              // this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+               this.callActivePaymentMethod(quotePaymentId);
             } else {
               window.alert(
                 'Your request has been submitted successfully. You will receive an email when your application is approved.'
@@ -325,7 +327,45 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
  
   
  
- 
+ callActivePaymentMethod(quotePaymentId: string): void {
+  this.onlinePaymentService.getPaymentModesHome().subscribe(
+    (response: any) => {
+      const activeMethod = response.paymentMethods.find((method: any) => method.isActive);
+      if (!activeMethod) {
+        Swal.fire('Error', 'No active payment method found', 'error');
+        return;
+      }
+
+      switch (activeMethod.name.toLowerCase()) {
+        case 'stripe':
+          this.onlinePaymentService.payNowByStripe(quotePaymentId).subscribe(
+            (res: any) => window.location.href = res.stripeData.url,
+            () => Swal.fire('Error', 'Failed to redirect to Stripe', 'error')
+          );
+          break;
+
+        case 'telr':
+          this.onlinePaymentService.PayViaTelr(quotePaymentId).subscribe(
+            (res: any) => window.location.href = res.telrData.order.url,
+            () => Swal.fire('Error', 'Failed to redirect to Telr', 'error')
+          );
+          break;
+
+        case 'total pay':
+          this.onlinePaymentService.getPayNowDataById(quotePaymentId).subscribe(
+            (res: any) => window.location.href = res.totalpayData.redirect_url,
+            () => Swal.fire('Error', 'Failed to redirect to TotalPay', 'error')
+          );
+          break;
+
+        default:
+          Swal.fire('Error', 'Unsupported payment method', 'error');
+      }
+    },
+    () => Swal.fire('Error', 'Unable to fetch payment methods', 'error')
+  );
+}
+
  
  
  
