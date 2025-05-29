@@ -248,26 +248,64 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
         if (!leadId) {
           throw new Error('Missing LeadId from screening response');
         }
- 
-        const checkStatusData = {
-          CustomerId: leadId,
-          CompanyName: 'Virtuzone'
+
+        const documentPayload = {
+          quotePaymentId: quotePaymentId,
+          serviceName: 'Virtual Receptionist',
+          shareholders: shareholdersData.map((s: {
+            name: string;
+            shareholderPercentage: number;
+            dob: string;
+            nationalityshareholder: string;
+            files?: {
+              name: string;
+              url: string;
+              type: string;
+              oopId: string;
+            }[];
+          }) => ({
+            name: s.name,
+            shareholderPercentage: s.shareholderPercentage,
+            dob: s.dob,
+            nationalityshareholder: s.nationalityshareholder,
+            files: s.files?.map((f: any) => ({
+              name: f.name,
+              url: f.url,
+              type: f.type,
+              oopId: f.oopId
+            })) ?? []
+          }))
         };
- 
-        return this.userService.checkStatus(checkStatusData).pipe(
-          tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
-            if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-            this.callActivePaymentMethod(quotePaymentId);
-            } else {
-              window.alert(
-                'Your request has been submitted successfully. You will receive an email when your application is approved.'
-              );
-              localStorage.removeItem('virtualdata');
+
+
+        return this.userService.insertShareholderDocuments(
+          documentPayload.quotePaymentId,
+          documentPayload.serviceName,
+          documentPayload.shareholders
+        ).pipe(
+          switchMap(() => {
+            const checkStatusData = {
+              CustomerId: leadId,
+              CompanyName: 'Virtuzone'
+            };
+
+            return this.userService.checkStatus(checkStatusData).pipe(
+              tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
+                if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+                      this.callActivePaymentMethod(quotePaymentId);
+                } else {
+                  window.alert(
+                    'Your request has been submitted successfully. You will receive an email when your application is approved.'
+                  );
+                   localStorage.removeItem('virtualdata');
               localStorage.removeItem('virtualdata1');
               localStorage.removeItem('virtualdata2');
               localStorage.removeItem('finalDataVirtual');
-              this.router.navigate([`/failure/${quotePaymentId}`]);
-            }
+                  this.router.navigate([`/failure/${quotePaymentId}`]);
+                }
+
+              })
+            );
           })
         );
       })

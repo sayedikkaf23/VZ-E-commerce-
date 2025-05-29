@@ -119,5 +119,16 @@ export class UserService {  // Changed the service name to UserService
     return this.http.post(`${this.url}/service/create-opportunity`, payload); 
   }
 
+
+  insertShareholderDocuments(quotePaymentId: any, serviceName: any, shareholders: any): Observable<any> {
+  const body = {
+    quotePaymentId,
+    serviceName,
+    shareholders
+  };
+
+  return this.http.post(`${this.url}/service/insertDocumentsFromShareholders`, body);
+}
+
   
 }
