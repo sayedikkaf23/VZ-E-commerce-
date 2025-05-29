@@ -128,4 +128,11 @@ footer {
     border-top-color: #FF5A5F;
   }
 }
+
+.apply_service_section .box .text h4 a {
+cursor: pointer;
+}
   
+.apply_service_section .box .text h4 a:hover {
+color: var(--white);
+}
