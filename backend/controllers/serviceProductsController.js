@@ -166,7 +166,6 @@ exports.createPaymentOpportunity = async (req, res) => {
       prodcutNameList: prodcutNameList,
     };
  
-    console.log(requestBody)
  
     const config = {
       method: 'post',
@@ -228,7 +227,7 @@ console.log("salesforceResponse",salesforceResponse.data)
       quoteWithProductDetails: {
         quoteEmail: email,
         quoteName: firstName + ' ' + lastName,
-        QuotePaymentName: salesforceResponse.data?.QuotePaymentName,
+        // QuotePaymentName: salesforceResponse.data?.QuotePaymentName,
         quotePaymentId: salesforceResponse.data?.QuotePaymentId,
         totalIncludingVAT:totalPrice,
         subTotal:subTotal,

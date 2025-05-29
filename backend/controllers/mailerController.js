@@ -107,18 +107,19 @@ const sendEmail = (email, quoteId,username) => {
 };
 
 // 3) Payment Cron (runs every 30s)
-cron.schedule("*/50 * * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
   // console.log("Payment Cron: Checking for records to send Payment email...");
 
   try {
     // Example: only pick records older than 1 minute
-    const oneHourLater = new Date(Date.now() + 60 * 60 * 1000);
+const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
     // Find all records that STILL need payment email
     const unpaidRecords = await PiData.find({
       isPayment: false,
       isPaymentEmailSent: false,
-      createdAt: { $lte: oneHourLater }, // optional age filter
+       createdAt: { $lte: oneHourAgo },  // only records created 1 hour ago or earlier
+
     });
 
     if (!unpaidRecords.length) {
@@ -253,7 +254,7 @@ Don’t worry – we’ve saved all your details so you can pick up right where 
 };
 
 // Cron Job to Check incomplete registrations (isProfile: false)
-cron.schedule("*/30 * * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
   // console.log("Running Profile Cron to check profile completion status...");
 
   try {
@@ -268,7 +269,8 @@ const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         { isProfile: false },
         {  isPayment: false, },
         { isProfileEmailSent: false },
-        { createdAt: { $lte: oneDayAgo } },
+             { createdAt: { $lte: oneDayAgo } }, // older than 1 day
+
       ],
     });
 
