@@ -92,7 +92,7 @@
                 <ul class="sub-menu" [class.show]="isSubMenuOpen">
   <li *ngFor="let item of menuItems">
     <!-- Call startNow with item.name on click, prevent default routerLink navigation -->
-    <a href="#" (click)="startNow(item.name); $event.preventDefault()">
+    <a  (click)="startNow(item.name)">
       {{ item.name }}
     </a>
   </li>

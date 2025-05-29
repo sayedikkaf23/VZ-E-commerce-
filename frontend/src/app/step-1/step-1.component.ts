@@ -64,10 +64,27 @@ export class Step1Component implements OnInit {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
- if (this.isBrowser) {
-    if (!sessionStorage.getItem('pageReloaded')) {
-      sessionStorage.setItem('pageReloaded', 'true');
+  console.log('ngOnInit called');
+ if (typeof window !== 'undefined') {
+    const isMobile = window.innerWidth <= 768;  // adjust breakpoint as needed
+    if (!isMobile) {
+      console.log('Not mobile screen, no reload');
+      return;
+    }
+
+    let reloadCount = Number(sessionStorage.getItem('pageReloadCount')) || 0;
+
+    console.log('Reload count:', reloadCount);
+
+    if (reloadCount <= 1) {
+      reloadCount++;
+      sessionStorage.setItem('pageReloadCount', reloadCount.toString());
+      console.log(`Reloading page now on mobile. Reload count is ${reloadCount}`);
       window.location.reload();
+      return;
+    } else {
+      console.log('Page reloaded twice already on mobile. No more reloads.');
+      sessionStorage.removeItem('pageReloadCount'); // optional reset
     }
   }
 
