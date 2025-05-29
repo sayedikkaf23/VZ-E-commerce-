@@ -89,11 +89,15 @@
                 </a>
                 <span class="sub-menu-toggle" (click)="onDropdownClick($event)"></span>
                <!-- src/app/components/submenu/submenu.component.html -->
-                  <ul class="sub-menu" [class.show]="isSubMenuOpen">
-                    <li *ngFor="let item of menuItems">
-                      <a [routerLink]="item.link">{{ item.name }}</a>
-                    </li>
-                  </ul>
+                <ul class="sub-menu" [class.show]="isSubMenuOpen">
+  <li *ngFor="let item of menuItems">
+    <!-- Call startNow with item.name on click, prevent default routerLink navigation -->
+    <a href="#" (click)="startNow(item.name); $event.preventDefault()">
+      {{ item.name }}
+    </a>
+  </li>
+</ul>
+
 
               </li>
               <li>

@@ -88,6 +88,7 @@ const pidataSchema = new mongoose.Schema(
       quoteEmail: String,
       quoteId: String,
       quoteName: String,
+      QuotePaymentName: String,
       quotePaymentId: String,
       quotePdf: {
         ContentType: String,

@@ -64,7 +64,12 @@ export class Step1Component implements OnInit {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
-
+ if (this.isBrowser) {
+    if (!sessionStorage.getItem('pageReloaded')) {
+      sessionStorage.setItem('pageReloaded', 'true');
+      window.location.reload();
+    }
+  }
 
     const today = new Date();
     const year = today.getFullYear() - 18;
@@ -91,6 +96,7 @@ export class Step1Component implements OnInit {
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
       const storedData = localStorage.getItem('step1Data');
+    
       if (storedData) {
         const formData = JSON.parse(storedData);
         this.personalDetailsForm.patchValue(formData);
@@ -102,8 +108,10 @@ export class Step1Component implements OnInit {
        
       
       this.cdRef.detectChanges(); // Trigger change detection to update the view
+       
     });
   }
+
 
   onNationalitySelect(selectedCountry: string): void {
     this.personalDetailsForm.patchValue({

@@ -62,7 +62,14 @@ export class VirtualReceptionistComponent {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
-
+ if (this.isBrowser) {
+    if (!sessionStorage.getItem('pageReloaded')) {
+      sessionStorage.setItem('pageReloaded', 'true');
+      setTimeout(() => {
+        window.location.href = window.location.href;
+      }, 100);
+    }
+  }
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }

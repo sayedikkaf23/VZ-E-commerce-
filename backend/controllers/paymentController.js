@@ -1010,6 +1010,7 @@ async function payNowSaleforce(req, res) {
               invoiceDate,
               invoiceNumber,
               payment_status: "Paid",
+             
             },
           }
         );

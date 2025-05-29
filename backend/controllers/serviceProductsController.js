@@ -228,6 +228,7 @@ console.log("salesforceResponse",salesforceResponse.data)
       quoteWithProductDetails: {
         quoteEmail: email,
         quoteName: firstName + ' ' + lastName,
+        QuotePaymentName: salesforceResponse.data?.QuotePaymentName,
         quotePaymentId: salesforceResponse.data?.QuotePaymentId,
         totalIncludingVAT:totalPrice,
         subTotal:subTotal,

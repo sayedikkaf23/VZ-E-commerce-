@@ -112,12 +112,13 @@ cron.schedule("*/50 * * * * *", async () => {
 
   try {
     // Example: only pick records older than 1 minute
-    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+    const oneHourLater = new Date(Date.now() + 60 * 60 * 1000);
+
     // Find all records that STILL need payment email
     const unpaidRecords = await PiData.find({
       isPayment: false,
       isPaymentEmailSent: false,
-      createdAt: { $lte: twoMinutesAgo }, // optional age filter
+      createdAt: { $lte: oneHourLater }, // optional age filter
     });
 
     if (!unpaidRecords.length) {
@@ -257,15 +258,17 @@ cron.schedule("*/30 * * * * *", async () => {
 
   try {
     // Only process records older than 1 minute (optional time filter)
-    const oneMinuteAgo = new Date(Date.now() - 1 * 60 * 1000);
+const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
 
     // Find all incomplete profiles that haven't had the profile email sent yet
     // and are older than 1 minute (optional).
     const incompleteProfiles = await PiData.find({
       $and: [
         { isProfile: false },
+        {  isPayment: false, },
         { isProfileEmailSent: false },
-        { createdAt: { $lte: oneMinuteAgo } },
+        { createdAt: { $lte: oneDayAgo } },
       ],
     });
 

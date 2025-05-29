@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AdminAuthService } from '../service/admin-auth.service';
+import { Router } from '@angular/router';
 
 interface MenuItem {
   name: string;
@@ -17,7 +18,7 @@ export class UserHeaderComponent {
 
   isSubMenuOpen = false;
   isLoading = false;
-  constructor(private menuService: AdminAuthService) {}
+  constructor(private menuService: AdminAuthService,private router: Router,) {}
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -44,6 +45,23 @@ export class UserHeaderComponent {
     }
   }
 
+startNow(check: any): void {
+
+  console.log(check)
+  if (check === 'Bank Account Opening') {
+    this.router.navigate(['/step-1']);
+  } else if (check === 'Accounting & VAT') {
+    this.router.navigate(['/service-b']);
+  } else if (check === 'Mail Management') {
+    this.router.navigate(['/mails-management']);
+  } else if (check === 'Virtual Receptionist') {
+    this.router.navigate(['/virtual-receptionist']);
+  } else if (check === 'Mail Management') {
+    this.router.navigate(['/mailform']);
+  } else {
+    this.router.navigate(['/default']);
+  }
+}
 
   toggleSubMenu() {
     this.isSubMenuOpen = !this.isSubMenuOpen;
