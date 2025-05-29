@@ -119,6 +119,7 @@ const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
       isPayment: false,
       isPaymentEmailSent: false,
        createdAt: { $lte: oneHourAgo },  // only records created 1 hour ago or earlier
+       kycStatus: { $ne: "Pending" }  // exclude kycStatus = "Pending"
 
     });
 
@@ -270,6 +271,8 @@ const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
         {  isPayment: false, },
         { isProfileEmailSent: false },
              { createdAt: { $lte: oneDayAgo } }, // older than 1 day
+                 { kycStatus: { $ne: "Pending" } }  // exclude pending KYC
+
 
       ],
     });
