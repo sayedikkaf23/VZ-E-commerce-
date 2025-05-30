@@ -62,6 +62,44 @@ export class VirtualReceptionistComponent {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
+ this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
+            this.cdRef.detectChanges(); // Trigger change detection to update the view
+    });
+  const today = new Date();
+    const year = today.getFullYear() - 18;
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    this.maxDate = `${year}-${month}-${day}`;
+
+
+     if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
+    // Automatically convert email to lowercase
+  this.personalDetailsForm.get('email')?.valueChanges.subscribe(value => {
+    const lowercaseEmail = value?.toLowerCase();
+    if (value !== lowercaseEmail) {
+      this.personalDetailsForm.get('email')?.setValue(lowercaseEmail, { emitEvent: false });
+    }
+  });
+  
+  
+   
+    // this.getnationalityService.getCountries().subscribe((data) => {
+    //   // Assuming data is an array of country objects
+    //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
+    //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
+    // });
+    // Check if we are in the browser before accessing localStorage
+    if (this.isBrowser) {
+      const storedData = localStorage.getItem('virtualdata');
+      if (storedData) {
+        const formData = JSON.parse(storedData);
+        this.personalDetailsForm.patchValue(formData);
+      }
+    }
+
   if (typeof window !== 'undefined') {
     const isMobile = window.innerWidth <= 768;  // adjust breakpoint as needed
     if (!isMobile) {
@@ -84,40 +122,8 @@ export class VirtualReceptionistComponent {
       sessionStorage.removeItem('pageReloadCount'); // optional reset
     }
   }
-  
-    if (isPlatformBrowser(this.platformId)) {
-      window.scrollTo(0, 0);
-    }
-    // Automatically convert email to lowercase
-  this.personalDetailsForm.get('email')?.valueChanges.subscribe(value => {
-    const lowercaseEmail = value?.toLowerCase();
-    if (value !== lowercaseEmail) {
-      this.personalDetailsForm.get('email')?.setValue(lowercaseEmail, { emitEvent: false });
-    }
-  });
-  
-    const today = new Date();
-    const year = today.getFullYear() - 18;
-    const month = (today.getMonth() + 1).toString().padStart(2, '0');
-    const day = today.getDate().toString().padStart(2, '0');
-    this.maxDate = `${year}-${month}-${day}`;
-    this.adminAuthService.getCountryRisks().subscribe((data) => {
-      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
-            this.cdRef.detectChanges(); // Trigger change detection to update the view
-    });
-    // this.getnationalityService.getCountries().subscribe((data) => {
-    //   // Assuming data is an array of country objects
-    //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
-    //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
-    // });
-    // Check if we are in the browser before accessing localStorage
-    if (this.isBrowser) {
-      const storedData = localStorage.getItem('virtualdata');
-      if (storedData) {
-        const formData = JSON.parse(storedData);
-        this.personalDetailsForm.patchValue(formData);
-      }
-    }
+
+   
   }
 
   onNationalitySelect(selectedCountry: string): void {

@@ -217,6 +217,7 @@ export class MailsManagementSummaryComponent {
       email: this.personalInfo.email,
       nationality: this.personalInfo.nationality,
       phone: this.personalInfo.mobileNumber.number,
+         countryCode:this.personalInfo.mobileNumber.dialCode,
       dob: this.personalInfo.birthday,
       type: "Mail Management",
       CustomerType: "C",
@@ -341,7 +342,7 @@ export class MailsManagementSummaryComponent {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: err.message || 'An error occurred',
+          text: err?.error?.[0]?.message || 'An error occurred',
           showCancelButton: true,
           confirmButtonText: 'Retry',
           cancelButtonText: 'Cancel',

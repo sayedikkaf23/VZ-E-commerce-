@@ -202,13 +202,14 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
       this.isLoading = false; // Hide loader when no products are available
       return;
     }
- 
+console.log(this.personalInfo.mobileNumber,"this.personalInfo.mobileNumber.number")
     // Prepare the payload for the API request
     const paymentPayload = {
       firstName: this.personalInfo.firstName,
       lastName: this.personalInfo.lastName,
       email: this.personalInfo.email,
       nationality: this.personalInfo.nationality,
+      countryCode:this.personalInfo.mobileNumber.dialCode,
       phone: this.personalInfo.mobileNumber.number,
       dob: this.personalInfo.birthday,
       type: "Bank Account Opening",

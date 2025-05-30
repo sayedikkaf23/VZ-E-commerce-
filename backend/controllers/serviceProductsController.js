@@ -120,10 +120,10 @@ exports.getServiceProducts = async (req, res) => {
  
 exports.createPaymentOpportunity = async (req, res) => {
   try {
-    const { firstName, lastName, email, phone, dob, prodcutNameList,nationality,type,CustomerType, subcategory, uploadedFileNames = [],  shareholders = []  } = req.body;
+    const { firstName, lastName, email, phone,countryCode,dob, prodcutNameList,nationality,type,CustomerType, subcategory, uploadedFileNames = [],  shareholders = []  } = req.body;
 // console.log(req.body)
     // Log the RiskCode to ensure it's what you expect
-    // console.log("Received RiskCode:", RiskCode);
+    // console.log("Received RiskCode:", RiskCode);   countryCode:this.personalInfo.mobileNumber.dialCode,
     const cleanedPhone = phone.replace(/\s+/g, '');  // Removes all spaces
  
     // 1) Fetch nationality based on RiskCode (country)
@@ -161,11 +161,12 @@ exports.createPaymentOpportunity = async (req, res) => {
       lastName: lastName,
       email: email,
       nationality: nationalitys,  // Add nationality data fetched from Nationality model
+      countryCode:countryCode,
       phone: cleanedPhone,
       dob: dob,
       prodcutNameList: prodcutNameList,
     };
- 
+ console.log(requestBody,"requestBody")
  
     const config = {
       method: 'post',
@@ -216,6 +217,7 @@ console.log("salesforceResponse",salesforceResponse.data)
         Email: email,
         Nationality: nationality,
         Phone: cleanedPhone,
+         countryCode:countryCode,
         Origin__c: 'Website',     // or whatever source you want
         Status: 'Created',
         dob: dob,

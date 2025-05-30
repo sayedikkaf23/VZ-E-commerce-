@@ -64,33 +64,16 @@ export class Step1Component implements OnInit {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
-  console.log('ngOnInit called');
- if (typeof window !== 'undefined') {
- 
-    const isMobile = window.innerWidth <= 768;  // adjust breakpoint as needed
-    if (!isMobile) {
-      console.log('Not mobile screen, no reload');
-      return;
-    }
 
-    let reloadCount = Number(sessionStorage.getItem('pageReloadCount')) || 0;
 
-    console.log('Reload count:', reloadCount);
- this.isLoading = true;
+       this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
+       
+      
+      this.cdRef.detectChanges(); // Trigger change detection to update the view
+       
+    });
 
-    if (reloadCount <= 1) {
-      reloadCount++;
-      sessionStorage.setItem('pageReloadCount', reloadCount.toString());
-      console.log(`Reloading page now on mobile. Reload count is ${reloadCount}`);
-      window.location.reload();
-       this.isLoading = false;
-      return;
-    } else {
-      console.log('Page reloaded twice already on mobile. No more reloads.');
-      this.isLoading = false;
-      sessionStorage.removeItem('pageReloadCount'); // optional reset
-    }
-  }
 
     const today = new Date();
     const year = today.getFullYear() - 18;
@@ -123,14 +106,34 @@ export class Step1Component implements OnInit {
         this.personalDetailsForm.patchValue(formData);
       }
     }
+  console.log('ngOnInit called');
+ if (typeof window !== 'undefined') {
+ 
+    const isMobile = window.innerWidth <= 768;  // adjust breakpoint as needed
+    if (!isMobile) {
+      console.log('Not mobile screen, no reload');
+      return;
+    }
 
-    this.adminAuthService.getCountryRisks().subscribe((data) => {
-      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
-       
-      
-      this.cdRef.detectChanges(); // Trigger change detection to update the view
-       
-    });
+    let reloadCount = Number(sessionStorage.getItem('pageReloadCount')) || 0;
+
+    console.log('Reload count:', reloadCount);
+ this.isLoading = true;
+
+    if (reloadCount <= 1) {
+      reloadCount++;
+      sessionStorage.setItem('pageReloadCount', reloadCount.toString());
+      console.log(`Reloading page now on mobile. Reload count is ${reloadCount}`);
+      window.location.reload();
+       this.isLoading = false;
+      return;
+    } else {
+      console.log('Page reloaded twice already on mobile. No more reloads.');
+      this.isLoading = false;
+      sessionStorage.removeItem('pageReloadCount'); // optional reset
+    }
+  }
+ 
   }
 
 
