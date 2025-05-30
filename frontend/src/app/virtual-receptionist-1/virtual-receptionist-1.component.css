@@ -373,3 +373,8 @@ select option {
 section { /* Or the class of your content section */
   flex-grow: 1; /* Allow the content section to grow and take up available space */
 }
+
+
+.step_1_section {
+    padding: 20px 0 120px !important;
+} 
