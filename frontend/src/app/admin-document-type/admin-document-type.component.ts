@@ -326,6 +326,10 @@ export class AdminDocumentTypeComponent {
  
   submitDocuments(): void {
     if (this.selectedServiceName) {
+        if (!this.docTypes || this.docTypes.length === 0 || this.docTypes.some(doc => !doc || doc.trim() === '')) {
+          this.toastr.error('Please fill in all document types before submitting.', 'Missing Document Types');
+          return;
+        }
       // Check if there are existing docTypes for the selected service
       if (!this.docTypesMap[this.selectedServiceName]) {
         // If not, initialize an empty array
@@ -343,6 +347,10 @@ export class AdminDocumentTypeComponent {
       // Call the corresponding API based on the selected service name
       switch (this.selectedServiceName) {
         case 'Bank Account':
+           if (!this.docTypes || this.docTypes.length === 0) {
+              this.toastr.error('Please fill the required document types before submitting.', 'Missing Document Types');
+              return;
+            }
           this.documenttypeService.createPersonalBank(this.docTypes).subscribe(
             (response) => {
               console.log('Bank Account Opening API Response:', response);
