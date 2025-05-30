@@ -16,7 +16,8 @@ export class _HomeComponent {
   services: any[] = [];
   isBrowser: boolean;
   isLoading = false;
- 
+ isMobile: boolean = false;
+
   constructor(private router: Router, private userService: UserService, private cdRef: ChangeDetectorRef, private zone: NgZone, @Inject(PLATFORM_ID) private platformId: Object) {
     // Check if the platform is browser
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -28,7 +29,8 @@ export class _HomeComponent {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
- 
+     this.checkScreenSize();
+
     // Remove specific items from localStorage
     const keysToRemove = [
       'step2Data',
@@ -55,7 +57,15 @@ export class _HomeComponent {
     });
   }
  
- 
+  @HostListener('window:resize', [])
+  onResize() {
+    this.checkScreenSize();
+  }
+
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+  
   loadServices(): void {
     this.isLoading = true;
     this.userService.getServices().subscribe(
