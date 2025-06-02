@@ -266,7 +266,7 @@ submitData() {
   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
   const uploadedFileNames = this.uploadedFiles || [];
   const shareholdersData = this.shareholders || [];
-
+console.log("object",mergedData)
   Swal.fire({
     title: 'Confirm Your Data',
     text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
@@ -337,14 +337,15 @@ submitData() {
             ProductDiscount: 0,
             vat: product.vat,
           })),
-          shareholders: shareholdersData.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; countryRisk: any; files: any; }) => ({
-            name: s.name,
-            shareholderPercentage: s.shareholderPercentage,
-            dob: s.dob,
-            nationalityshareholder: s.nationalityshareholder,
-            countryRisk: s.countryRisk,
-            files: s.files || []
-          }))
+        shareholders: (mergedData.shareholders || []).map((s: any) => ({
+  name: s.name,
+  shareholderPercentage: s.shareholderPercentage,
+  dob: s.dob,
+  nationalityshareholder: s.nationalityshareholder,
+  countryRisk: s.countryRisk,
+  files: s.files || []
+}))
+
         };
 
         return this.userService.createPaymentOpportunity(paymentPayload);
@@ -370,18 +371,20 @@ submitData() {
         const documentPayload = {
           quotePaymentId,
           serviceName: 'Mail Management',
-          shareholders: shareholdersData.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; files: { name: any; url: any; type: any; oopId: any; }[]; }) => ({
-            name: s.name,
-            shareholderPercentage: s.shareholderPercentage,
-            dob: s.dob,
-            nationalityshareholder: s.nationalityshareholder,
-            files: s.files?.map((f: { name: any; url: any; type: any; oopId: any; }) => ({
-              name: f.name,
-              url: f.url,
-              type: f.type,
-              oopId: f.oopId
-            })) || []
-          }))
+        shareholders: (mergedData.shareholders || []).map((s: any) => ({
+  name: s.name,
+  shareholderPercentage: s.shareholderPercentage,
+  dob: s.dob,
+  nationalityshareholder: s.nationalityshareholder,
+  files: (s.files || []).map((f: any) => ({
+    name: f.name,
+    url: f.url,
+    type: f.type,
+    oopId: f.oopId
+  })) || []
+}))
+
+        
         };
 
         return this.userService.insertShareholderDocuments(
