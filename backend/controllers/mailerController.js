@@ -2,6 +2,18 @@ const cron = require("node-cron");
 const nodemailer = require("nodemailer");
 const PiData = require("../models/pidata");
 
+const {
+  getStripeRedirectUrl,
+  getTelrRedirectUrl,
+  getTotalPayRedirectUrl,
+  
+} = require('../controllers/paymentController');
+
+const {
+  getPaymentmodes
+  
+} = require('../controllers/onlinePaymentController');
+
 // Email Configuration
 const transporter = nodemailer.createTransport({
 
@@ -13,7 +25,38 @@ const transporter = nodemailer.createTransport({
 });
 
 // Function to send emails
-const sendEmail = (email, quoteId,username) => {
+const sendEmail = async (email, quoteId,username) => {
+
+   try {
+    const paymentData = await getPaymentmodes();
+    const activeMethod = paymentData.find(method => method.isActive);
+
+    if (!activeMethod) {
+      console.error("No active payment method found.");
+      return;
+    }
+
+    let redirectUrl = '';
+    const methodName = activeMethod.name.toLowerCase();
+    console.log("active payment method:" , methodName);
+
+    switch (methodName) {
+      case 'stripe':
+        redirectUrl = await getStripeRedirectUrl(quoteId);
+        break;
+
+      case 'telr':
+        redirectUrl = await getTelrRedirectUrl(quoteId);
+        break;
+
+      case 'total pay':
+        redirectUrl = await getTotalPayRedirectUrl(quoteId);
+        break;
+
+      default:
+        console.error("Unsupported payment method.");
+        return;
+    }
   const mailOptions = {
     from: "mishalnunu@gmail.com",
     to: email,
@@ -31,7 +74,7 @@ const sendEmail = (email, quoteId,username) => {
          We’ve saved your details, and you’re just one step away from activating your professional services with Virtuzone.<br><br>
 
           <strong>
-            <a href="https://ecommerce.yeepeey.com/onlinepayment/${quoteId}" target="_blank" style="color: #0000EE; text-decoration: underline;">
+            <a href="${redirectUrl}" target="_blank" style="color: #0000EE; text-decoration: underline;">
               Complete Your Payment
             </a>
           </strong><br><br>
@@ -104,6 +147,9 @@ const sendEmail = (email, quoteId,username) => {
   };
 
   return transporter.sendMail(mailOptions);
+   } catch (error) {
+    console.error("Error in sendEmail:", error);
+  }
 };
 
 // 3) Payment Cron (runs every 30s)
