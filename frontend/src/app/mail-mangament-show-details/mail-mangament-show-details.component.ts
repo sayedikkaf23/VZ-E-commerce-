@@ -389,6 +389,7 @@ export class MailMangamentShowDetailsComponent {
             ProductCurrencyName: product.Currency_Code,
             ProductUnitprice: product.price,
             ProductQuantity: 1,
+            vat: product.VAT,
             ProductDiscount: 0
           })),
           shareholders: this.shareholders.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; countryRisk: any; }) => ({

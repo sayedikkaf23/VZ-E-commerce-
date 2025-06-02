@@ -125,7 +125,8 @@ exports.createPaymentOpportunity = async (req, res) => {
     // Log the RiskCode to ensure it's what you expect
     // console.log("Received RiskCode:", RiskCode);   countryCode:this.personalInfo.mobileNumber.dialCode,
     const cleanedPhone = phone.replace(/\s+/g, '');  // Removes all spaces
- 
+ const cleanedProductList = prodcutNameList.map(({ vat, ...rest }) => rest);
+
     // 1) Fetch nationality based on RiskCode (country)
     const nationalityData = await Nationality.findOne({ Country:nationality });
  
@@ -164,7 +165,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       countryCode:countryCode,
       phone: cleanedPhone,
       dob: dob,
-      prodcutNameList: prodcutNameList,
+      prodcutNameList: cleanedProductList,
     };
  console.log(requestBody,"requestBody")
  
@@ -197,14 +198,19 @@ console.log("salesforceResponse",salesforceResponse.data)
     let subTotal = 0;
     let totalPrice = 0;
    
-    for (const product of prodcutNameList) {
-      const unitPrice = product.ProductUnitprice || 0;
-      const quantity = product.ProductQuantity || 1;
-      const discount = product.ProductDiscount || 0;
-   
-      const productTotal = (unitPrice * quantity) - discount;
-      subTotal += productTotal;
-    }
+for (const product of prodcutNameList) {
+  const unitPrice = product.ProductUnitprice || 0;
+  const quantity = product.ProductQuantity || 1;
+  const discount = product.ProductDiscount || 0;
+  const vat = product.vat || 0;
+
+  const productTotal = (unitPrice * quantity) - discount;
+  
+  // Add VAT if vat > 0, else ignore
+  const vatAmount = vat > 0 ? (productTotal * vat) / 100 : 0;
+
+  subTotal += productTotal + vatAmount;
+}
    
     // Here, totalPrice = subTotal, or you can add tax/extra if needed
     totalPrice = subTotal;
