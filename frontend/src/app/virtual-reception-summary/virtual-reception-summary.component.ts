@@ -179,165 +179,180 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
     });
   }
  
-  submitData() {
-    this.isLoading = true;
-    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+  // submitData() {
+  //   this.isLoading = true;
+  //   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
    
-    console.log(mergedData, "mergedData");
+  //   console.log(mergedData, "mergedData");
  
-    // Ensure LeadId is present
+  //   // Ensure LeadId is present
  
-    // Check if mergedData contains shareholders
-    const shareholdersData = mergedData?.shareholders || [];
+  //   // Check if mergedData contains shareholders
+  //   const shareholdersData = mergedData?.shareholders || [];
  
-    // Create payment opportunity payload
-    const paymentPayload = {
-      firstName: this.personalInfo.firstName,
-      lastName: this.personalInfo.lastName,
-      email: this.personalInfo.email,
-      nationality: this.personalInfo.nationality,
-      phone: this.personalInfo.mobileNumber.number,
-         countryCode:this.personalInfo.mobileNumber.dialCode,
-      dob: this.personalInfo.birthday,
-      type: "Virtual Receptionist",
-      CustomerType: "C",
-      uploadedFileNames: this.tradeLicense.uploadedFileNames,
-      prodcutNameList: this.serviceProducts.map(product => ({
-        ProductName: product.Product_Name,
-        ProductFamily: "Virtual Receptionist",
-        ProductDescription: "Service for UAE Resident",
-        ProductCurrencyName: product.Currency_Code,
-        ProductUnitprice: product.price,
-        ProductQuantity: 1,  // Assuming quantity is 1
-        ProductDiscount: 0 // Assuming no discount
-      })),
-      shareholders: shareholdersData.map((shareholder: {
-        name: any;
-        shareholderPercentage: any;
-        dob: any;
-        nationalityshareholder: any;
-        countryRisk: any;
-        files: any[];
-      }) => ({
-        name: shareholder.name,
-        shareholderPercentage: shareholder.shareholderPercentage,
-        dob: shareholder.dob,
-        nationalityshareholder: shareholder.nationalityshareholder,
-        countryRisk: shareholder.countryRisk,
-        files: shareholder.files || []  // Default to empty array if files are undefined
-      }))
-    };
+  //   // Create payment opportunity payload
+  //   const paymentPayload = {
+  //     firstName: this.personalInfo.firstName,
+  //     lastName: this.personalInfo.lastName,
+  //     email: this.personalInfo.email,
+  //     nationality: this.personalInfo.nationality,
+  //     phone: this.personalInfo.mobileNumber.number,
+  //        countryCode:this.personalInfo.mobileNumber.dialCode,
+  //     dob: this.personalInfo.birthday,
+  //     type: "Virtual Receptionist",
+  //     CustomerType: "C",
+  //     uploadedFileNames: this.tradeLicense.uploadedFileNames,
+  //     prodcutNameList: this.serviceProducts.map(product => ({
+  //       ProductName: product.Product_Name,
+  //       ProductFamily: "Virtual Receptionist",
+  //       ProductDescription: "Service for UAE Resident",
+  //       ProductCurrencyName: product.Currency_Code,
+  //       ProductUnitprice: product.price,
+  //       ProductQuantity: 1,  // Assuming quantity is 1
+  //       ProductDiscount: 0 // Assuming no discount
+  //     })),
+  //     shareholders: shareholdersData.map((shareholder: {
+  //       name: any;
+  //       shareholderPercentage: any;
+  //       dob: any;
+  //       nationalityshareholder: any;
+  //       countryRisk: any;
+  //       files: any[];
+  //     }) => ({
+  //       name: shareholder.name,
+  //       shareholderPercentage: shareholder.shareholderPercentage,
+  //       dob: shareholder.dob,
+  //       nationalityshareholder: shareholder.nationalityshareholder,
+  //       countryRisk: shareholder.countryRisk,
+  //       files: shareholder.files || []  // Default to empty array if files are undefined
+  //     }))
+  //   };
  
-    // Call createPaymentOpportunity API
-    this.userService.createPaymentOpportunity(paymentPayload).pipe(
-      switchMap((paymentOpportunityResponse) => {
-        // After creating payment opportunity, call digicomplice API
-        const payload = {
-          CustomerId: paymentOpportunityResponse.QuotePaymentId,
-          CompanyName: 'Virtuzone'
-        };
+  //   // Call createPaymentOpportunity API
+  //   this.userService.createPaymentOpportunity(paymentPayload).pipe(
+  //     switchMap((paymentOpportunityResponse) => {
+  //       // After creating payment opportunity, call digicomplice API
+  //       const payload = {
+  //         CustomerId: paymentOpportunityResponse.QuotePaymentId,
+  //         CompanyName: 'Virtuzone'
+  //       };
  
-        return this.userService.digicomplice(payload).pipe(
-          map(secondResponse => ({
-            quotePaymentId: paymentOpportunityResponse.QuotePaymentId,
-            leadId: secondResponse?.screeningmatchScore?.customerId || null
-          }))
-        );
-      })
-    ).pipe(
-      switchMap(({ quotePaymentId, leadId }) => {
-        if (!leadId) {
-          throw new Error('Missing LeadId from screening response');
-        }
+  //       return this.userService.digicomplice(payload).pipe(
+  //         map(secondResponse => ({
+  //           quotePaymentId: paymentOpportunityResponse.QuotePaymentId,
+  //           leadId: secondResponse?.screeningmatchScore?.customerId || null
+  //         }))
+  //       );
+  //     })
+  //   ).pipe(
+  //     switchMap(({ quotePaymentId, leadId }) => {
+  //       if (!leadId) {
+  //         throw new Error('Missing LeadId from screening response');
+  //       }
 
-        const documentPayload = {
-          quotePaymentId: quotePaymentId,
-          serviceName: 'Virtual Receptionist',
-          shareholders: shareholdersData.map((s: {
-            name: string;
-            shareholderPercentage: number;
-            dob: string;
-            nationalityshareholder: string;
-            files?: {
-              name: string;
-              url: string;
-              type: string;
-              oopId: string;
-            }[];
-          }) => ({
-            name: s.name,
-            shareholderPercentage: s.shareholderPercentage,
-            dob: s.dob,
-            nationalityshareholder: s.nationalityshareholder,
-            files: s.files?.map((f: any) => ({
-              name: f.name,
-              url: f.url,
-              type: f.type,
-              oopId: f.oopId
-            })) ?? []
-          }))
-        };
+  //       const documentPayload = {
+  //         quotePaymentId: quotePaymentId,
+  //         serviceName: 'Virtual Receptionist',
+  //         shareholders: shareholdersData.map((s: {
+  //           name: string;
+  //           shareholderPercentage: number;
+  //           dob: string;
+  //           nationalityshareholder: string;
+  //           files?: {
+  //             name: string;
+  //             url: string;
+  //             type: string;
+  //             oopId: string;
+  //           }[];
+  //         }) => ({
+  //           name: s.name,
+  //           shareholderPercentage: s.shareholderPercentage,
+  //           dob: s.dob,
+  //           nationalityshareholder: s.nationalityshareholder,
+  //           files: s.files?.map((f: any) => ({
+  //             name: f.name,
+  //             url: f.url,
+  //             type: f.type,
+  //             oopId: f.oopId
+  //           })) ?? []
+  //         }))
+  //       };
 
 
-        return this.userService.insertShareholderDocuments(
-          documentPayload.quotePaymentId,
-          documentPayload.serviceName,
-          documentPayload.shareholders
-        ).pipe(
-          switchMap(() => {
-            const checkStatusData = {
-              CustomerId: leadId,
-              CompanyName: 'Virtuzone'
-            };
+  //       return this.userService.insertShareholderDocuments(
+  //         documentPayload.quotePaymentId,
+  //         documentPayload.serviceName,
+  //         documentPayload.shareholders
+  //       ).pipe(
+  //         switchMap(() => {
+  //           const checkStatusData = {
+  //             CustomerId: leadId,
+  //             CompanyName: 'Virtuzone'
+  //           };
 
-            return this.userService.checkStatus(checkStatusData).pipe(
-              tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
-                if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-                      this.callActivePaymentMethod(quotePaymentId);
-                } else {
-                  window.alert(
-                    'Your request has been submitted successfully. You will receive an email when your application is approved.'
-                  );
-                   localStorage.removeItem('virtualdata');
+  //           return this.userService.checkStatus(checkStatusData).pipe(
+  //             tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
+  //               if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+  //                     this.callActivePaymentMethod(quotePaymentId);
+  //               } else {
+  //                 window.alert(
+  //                   'Your request has been submitted successfully. You will receive an email when your application is approved.'
+  //                 );
+  //                  localStorage.removeItem('virtualdata');
+  //             localStorage.removeItem('virtualdata1');
+  //             localStorage.removeItem('virtualdata2');
+  //             localStorage.removeItem('finalDataVirtual');
+  //                 this.router.navigate([`/failure/${quotePaymentId}`]);
+  //               }
+
+  //             })
+  //           );
+  //         })
+  //       );
+  //     })
+  //   ).subscribe({
+  //     next: () => {
+  //       this.isLoading = false;
+  //     },
+  //     error: (err) => {
+  //       this.isLoading = false;
+       
+  //       // Show SweetAlert with retry option
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'Error',
+  //         text: err?.error?.[0]?.message || 'An error occurred',
+  //         showCancelButton: true,
+  //         confirmButtonText: 'Retry',
+  //         cancelButtonText: 'Cancel',
+  //       }).then((result) => {
+  //         if (result.isConfirmed) {
+  //           this.submitData(); // Retry the API call
+  //         }
+  //       });
+ 
+  //       this.toastr.error(err.message || 'An error occurred', 'Error');
+  //       console.error(err);
+  //     }
+  //   });
+  // }
+ 
+ submitData() {
+  this.isLoading = true;
+
+  const quotePaymentId = localStorage.getItem("quotePaymentId");
+
+  if (quotePaymentId) {
+    this.callActivePaymentMethod(quotePaymentId);
+  } else {
+    this.toastr.error('Missing Quote Payment ID.', 'Error');
+  }
+              localStorage.removeItem('virtualdata');
               localStorage.removeItem('virtualdata1');
               localStorage.removeItem('virtualdata2');
               localStorage.removeItem('finalDataVirtual');
-                  this.router.navigate([`/failure/${quotePaymentId}`]);
-                }
-
-              })
-            );
-          })
-        );
-      })
-    ).subscribe({
-      next: () => {
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.isLoading = false;
-       
-        // Show SweetAlert with retry option
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: err?.error?.[0]?.message || 'An error occurred',
-          showCancelButton: true,
-          confirmButtonText: 'Retry',
-          cancelButtonText: 'Cancel',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            this.submitData(); // Retry the API call
-          }
-        });
- 
-        this.toastr.error(err.message || 'An error occurred', 'Error');
-        console.error(err);
-      }
-    });
-  }
- 
- 
+  this.isLoading = false;
+}
  
  
   getTotalAmountIncludingVAT(): number {
