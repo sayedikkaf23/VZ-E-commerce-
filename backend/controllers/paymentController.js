@@ -1077,7 +1077,7 @@ async function payNowSaleforce(req, res) {
     </a><br><br>
 
     Your Email: <strong>${userEmail}</strong><br>
-    Your temporary password: <strong>${randomPassword}</strong>.<br><br>
+    Your temporary password: <strong>${randomPassword}</strong><br><br>
 
 
     Feel free to reach out if you have any questions.<br><br>
