@@ -141,7 +141,8 @@
 
                     <label class="shareholder-label">Full Name<span class="required">*</span></label>
                     <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required
-                      placeholder="Full Name" style="padding: 25px;" data-ui-tooltip title="{{ shareholder.name }}" />
+                      placeholder="Full Name" style="padding: 25px;" data-ui-tooltip title="{{ shareholder.name }}"   (keypress)="allowOnlyAlphabets($event)"
+ />
                     <!-- Tooltip showing the full value -->
 
                   </div>

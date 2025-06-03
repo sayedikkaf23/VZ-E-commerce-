@@ -254,6 +254,15 @@ onShareholderInput(event: any, index: number) {
       this.files.salaryStatements = Array.from(event.target.files);
     }
   }
+  allowOnlyAlphabets(event: KeyboardEvent): void {
+  const charCode = event.key.charCodeAt(0);
+  // Allow A-Z, a-z, space, and backspace keys
+  const regex = /^[a-zA-Z\s]$/;
+  if (!regex.test(event.key)) {
+    event.preventDefault();
+  }
+}
+
 
   updateShareholders() {
     const count = parseInt(this.formData.shareholdercount, 10);

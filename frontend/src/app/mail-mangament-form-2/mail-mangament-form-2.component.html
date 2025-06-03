@@ -158,7 +158,8 @@
                   <div class="form-field">
                     <label class="shareholder-label">Full Name <span class="required">*</span></label>
                     <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }"
-                      placeholder="Full Name" required   style="padding: 25px"/>
+                      placeholder="Full Name" required   style="padding: 25px"   (keypress)="allowOnlyAlphabets($event)"
+/>
                   </div>
 
                   <div class="form-field">

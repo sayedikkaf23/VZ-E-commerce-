@@ -143,6 +143,15 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
  
    
   }
+  allowOnlyAlphabets(event: KeyboardEvent): void {
+  const charCode = event.key.charCodeAt(0);
+  // Allow A-Z, a-z, space, and backspace keys
+  const regex = /^[a-zA-Z\s]$/;
+  if (!regex.test(event.key)) {
+    event.preventDefault();
+  }
+}
+
   onCategorySearchSelect(selected: string) {
     this.formData.tradelicense = selected;
   

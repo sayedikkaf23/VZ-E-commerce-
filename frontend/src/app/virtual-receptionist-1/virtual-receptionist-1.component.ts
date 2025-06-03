@@ -71,6 +71,15 @@ maxDate: string | undefined;
     this.step1Data = this.formDataService.getvirtualdata();
     // console.log('Step 1 data:', this.step1Data);
   }
+  allowOnlyAlphabets(event: KeyboardEvent): void {
+  const charCode = event.key.charCodeAt(0);
+  // Allow A-Z, a-z, space, and backspace keys
+  const regex = /^[a-zA-Z\s]$/;
+  if (!regex.test(event.key)) {
+    event.preventDefault();
+  }
+}
+
 
   ngOnInit(): void {
 
