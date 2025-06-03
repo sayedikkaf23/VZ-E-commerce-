@@ -10,7 +10,7 @@ const {
 } = require('../controllers/paymentController');
 
 const {
-  getPaymentmodes
+  getPaymentModesService
   
 } = require('../controllers/onlinePaymentController');
 
@@ -25,38 +25,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Function to send emails
-const sendEmail = async (email, quoteId,username) => {
-
-   try {
-    const paymentData = await getPaymentmodes();
-    const activeMethod = paymentData.find(method => method.isActive);
-
-    if (!activeMethod) {
-      console.error("No active payment method found.");
-      return;
-    }
-
-    let redirectUrl = '';
-    const methodName = activeMethod.name.toLowerCase();
-    console.log("active payment method:" , methodName);
-
-    switch (methodName) {
-      case 'stripe':
-        redirectUrl = await getStripeRedirectUrl(quoteId);
-        break;
-
-      case 'telr':
-        redirectUrl = await getTelrRedirectUrl(quoteId);
-        break;
-
-      case 'total pay':
-        redirectUrl = await getTotalPayRedirectUrl(quoteId);
-        break;
-
-      default:
-        console.error("Unsupported payment method.");
-        return;
-    }
+const sendEmail = (email,username, redirectUrl) => {
   const mailOptions = {
     from: "mishalnunu@gmail.com",
     to: email,
@@ -147,10 +116,9 @@ const sendEmail = async (email, quoteId,username) => {
   };
 
   return transporter.sendMail(mailOptions);
-   } catch (error) {
-    console.error("Error in sendEmail:", error);
-  }
 };
+
+
 
 // 3) Payment Cron (runs every 30s)
 cron.schedule("*/10 * * * *", async () => {
@@ -204,9 +172,39 @@ const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
         continue;
       }
 
+      const paymentData = await getPaymentModesService();
+      const activeMethod = paymentData.find(method => method.isActive);
+
+      if (!activeMethod) {
+        // console.error("No active payment method found.");
+        return;
+      }
+
+      let redirectUrl = '';
+      const methodName = activeMethod.name.toLowerCase();
+      // console.log("active payment method:", methodName);
+
+      switch (methodName) {
+        case 'stripe':
+          redirectUrl = await getStripeRedirectUrl(quoteId);
+          break;
+        case 'telr':
+          redirectUrl = await getTelrRedirectUrl(quoteId);
+          break;
+        case 'total pay':
+          redirectUrl = await getTotalPayRedirectUrl(quoteId);
+          break;
+        default:
+          console.error("Unsupported payment method.");
+          return;
+      }
+
+
+
+
       // If we get here, we have exclusive "right" to send the email.
-      await sendEmail(email, quoteId, username);
-      console.log(`Payment Email sent to ${email} for record ${record._id}`);
+      await sendEmail(email, username, redirectUrl);
+      console.log(`Payment Email sent to ${email} for record ${record._id} and url is ${redirectUrl}`);
 
       // (Optional) you might also set 'isPayment' = true if you never want to send again,
       // but that depends on your business logic. For repeated reminders, keep isPayment = false.
