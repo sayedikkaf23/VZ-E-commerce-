@@ -120,10 +120,11 @@ export class UserService {  // Changed the service name to UserService
   }
 
 
-  insertShareholderDocuments(quotePaymentId: any, serviceName: any, shareholders: any): Observable<any> {
+  insertShareholderDocuments(quotePaymentId: any, serviceName: any,tradelicense:any, shareholders: any): Observable<any> {
   const body = {
     quotePaymentId,
     serviceName,
+    tradelicense,
     shareholders
   };
 

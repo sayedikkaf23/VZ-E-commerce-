@@ -266,7 +266,9 @@ submitData() {
   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
   const uploadedFileNames = this.uploadedFiles || [];
   const shareholdersData = this.shareholders || [];
-console.log("object",mergedData)
+
+  
+console.log("object",mergedData,   this.tradeLicenseFile)
   Swal.fire({
     title: 'Confirm Your Data',
     text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
@@ -367,10 +369,19 @@ console.log("object",mergedData)
       }),
       switchMap(({ quotePaymentId, leadId }) => {
         if (!leadId) throw new Error('Missing LeadId from digicomplice');
+const uploadedFilesArray = Array.isArray(this.tradeLicenseFile.uploadedFileNames)
+  ? this.tradeLicenseFile.uploadedFileNames
+  : Object.values(this.tradeLicenseFile.uploadedFileNames || {}).flat();
 
         const documentPayload = {
           quotePaymentId,
           serviceName: 'Mail Management',
+  tradelicense: [
+    {
+      License_no: this.tradeLicenseFile.companyTradeLicenseNumber || '',
+      url: uploadedFilesArray.length > 0 ? uploadedFilesArray[0].url : ''
+    }
+  ],
         shareholders: (mergedData.shareholders || []).map((s: any) => ({
   name: s.name,
   shareholderPercentage: s.shareholderPercentage,
@@ -390,6 +401,7 @@ console.log("object",mergedData)
         return this.userService.insertShareholderDocuments(
           documentPayload.quotePaymentId,
           documentPayload.serviceName,
+          documentPayload.tradelicense,
           documentPayload.shareholders
         ).pipe(
           switchMap(() => {

@@ -376,7 +376,7 @@ submitData() {
   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
   const uploadedFileNames = this.tradeLicenseFile?.uploadedFileNames || [];
   const shareholdersData = mergedData?.shareholders || [];
-
+console.log(mergedData,"mergedData",this.tradeLicenseFile)
   Swal.fire({
     title: 'Confirm Your Data',
     text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
@@ -481,6 +481,14 @@ submitData() {
         const documentPayload = {
           quotePaymentId,
           serviceName: 'Virtual Receptionist',
+       tradelicense: [
+    {
+      License_no: this.tradeLicenseFile.companyTradeLicense,
+      url: this.tradeLicenseFile.uploadedFileNames.length > 0
+        ? this.tradeLicenseFile.uploadedFileNames[0].url
+        : ''
+    }
+  ],
           shareholders: shareholdersData.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; files: { name: any; url: any; type: any; oopId: any; }[]; }) => ({
             name: s.name,
             shareholderPercentage: s.shareholderPercentage,
@@ -498,6 +506,7 @@ submitData() {
         return this.userService.insertShareholderDocuments(
           documentPayload.quotePaymentId,
           documentPayload.serviceName,
+          documentPayload.tradelicense,
           documentPayload.shareholders
         ).pipe(
           switchMap(() => {
