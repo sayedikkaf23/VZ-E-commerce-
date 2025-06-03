@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr'; // For toast notifications
 import { Router } from '@angular/router';
 import AOS from 'aos';
-import { catchError, switchMap } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
 import { of } from 'rxjs';
@@ -16,6 +16,14 @@ import { UserService } from '../service/user.service';
 interface Nationality {
   common: string;
   country: string;
+}
+
+interface Shareholder {
+  name: string;
+  shareholderPercentage: number;
+  dob: string;
+  nationalityshareholder: string;
+  countryRisk: string;
 }
 
 
@@ -34,6 +42,9 @@ export class ShowDetailsComponent implements AfterViewInit {
   bankInfo: any = {}; // To store bank service information (Step 2 data)
   salesforceResponse: any;
   quoteWithProductDetails: any;
+  serviceProducts: any;
+shareholders: Shareholder[] = [];
+
   constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
@@ -183,62 +194,203 @@ export class ShowDetailsComponent implements AfterViewInit {
   // }
 
 
-  submitData() {
-    Swal.fire({
-      title: 'Confirm Your Data',
-      text: "Once you move forward, you won't be able to edit your information.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Yes, I confirm',
-      cancelButtonText: 'Review Data'
-    }).then(result => {
-      if (!result.isConfirmed) return;
+  // submitData() {
+  //   Swal.fire({
+  //     title: 'Confirm Your Data',
+  //     text: "Once you move forward, you won't be able to edit your information.",
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonText: 'Yes, I confirm',
+  //     cancelButtonText: 'Review Data'
+  //   }).then(result => {
+  //     if (!result.isConfirmed) return;
 
 
-    const finalData = {
-      ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.bankInfo // Merge bank information (Step 2 data)
-    };
-    let subTypeId = null;
+  //   const finalData = {
+  //     ...this.personalInfo, // Merge personal information (Step 1 data)
+  //     ...this.bankInfo // Merge bank information (Step 2 data)
+  //   };
+  //   let subTypeId = null;
 
-    if (finalData.Bank === 'Traditional Personal bank Account Opening') {
-      subTypeId = 11;
-    } else if (finalData.Bank === 'Digital Personal Bank Account Opening') {
-      subTypeId = 12;
-    } else if (finalData.Bank === 'Any of the above Bank Account Opening') {
-      subTypeId = 11;
-    } else {
-      throw new Error('Invalid Bank Type Selected ❌');
-    }
+  //   if (finalData.Bank === 'Traditional Personal bank Account Opening') {
+  //     subTypeId = 11;
+  //   } else if (finalData.Bank === 'Digital Personal Bank Account Opening') {
+  //     subTypeId = 12;
+  //   } else if (finalData.Bank === 'Any of the above Bank Account Opening') {
+  //     subTypeId = 11;
+  //   } else {
+  //     throw new Error('Invalid Bank Type Selected ❌');
+  //   }
 
-      const payload = {
-        ServiceNameCode: 1,
-        SubTypeCode:subTypeId,
-        RiskCode:finalData.nationality
-      };
+  //     const payload = {
+  //       ServiceNameCode: 1,
+  //       SubTypeCode:subTypeId,
+  //       RiskCode:finalData.nationality
+  //     };
       
-      this.isLoading = true;
-      this.userService.getServiceProducts(payload)
-        .pipe(
-          catchError(err => {
-            console.error(err);
-            this.isLoading = false;
-            this.toastr.error('Couldn’t load service products.', 'Error');
-            return of(null);
+  //     this.isLoading = true;
+  //     this.userService.getServiceProducts(payload)
+  //       .pipe(
+  //         catchError(err => {
+  //           console.error(err);
+  //           this.isLoading = false;
+  //           this.toastr.error('Couldn’t load service products.', 'Error');
+  //           return of(null);
+  //         })
+  //       )
+  //       .subscribe(resp => {
+  //         this.isLoading = false;
+  //         if (!resp) return;
+  //         // localStorage.removeItem('step1Data');
+  //         // localStorage.removeItem('step2Data');
+  //         // Store or pass along resp as needed…
+  //         localStorage.setItem('serviceProducts', JSON.stringify(resp));
+  //         // then navigate:
+  //         this.router.navigate(['/ShowDetails-2']);
+  //       });
+  //   });
+  // }
+  
+submitData() {
+  Swal.fire({
+    title: 'Confirm Your Data',
+    text: "Once you move forward, you won't be able to edit your information.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Yes, I confirm',
+    cancelButtonText: 'Review Data'
+  }).then(result => {
+    if (!result.isConfirmed) return;
+
+    const finalData = { ...this.personalInfo, ...this.bankInfo };
+    let subTypeId: number | null = null;
+
+    if (finalData.Bank === 'Traditional Personal bank Account Opening') subTypeId = 11;
+    else if (finalData.Bank === 'Digital Personal Bank Account Opening') subTypeId = 12;
+    else if (finalData.Bank === 'Any of the above Bank Account Opening') subTypeId = 11;
+    else throw new Error('Invalid Bank Type Selected ❌');
+
+    const servicePayload = {
+      ServiceNameCode: 1,
+      SubTypeCode: subTypeId,
+      RiskCode: finalData.nationality
+    };
+
+    this.isLoading = true;
+
+    this.userService.getServiceProducts(servicePayload).pipe(
+      catchError(err => {
+        console.error(err);
+        this.isLoading = false;
+        this.toastr.error('Couldn’t load service products.', 'Error');
+        return of(null);
+      }),
+      switchMap(resp => {
+        if (!resp) return of(null);
+
+        const serviceProducts = Array.isArray(resp) ? resp : [resp];
+        // localStorage.setItem('serviceProducts', JSON.stringify(serviceProducts));
+ localStorage.setItem('serviceProducts', JSON.stringify(resp));
+  //         // then navigate:
+  //         this.router.navigate(['/ShowDetails-2']);
+        const paymentPayload = {
+          firstName: this.personalInfo.firstName,
+          lastName: this.personalInfo.lastName,
+          email: this.personalInfo.email,
+          nationality: this.personalInfo.nationality,
+          phone: this.personalInfo.mobileNumber.number,
+          countryCode: this.personalInfo.mobileNumber.dialCode,
+          dob: this.personalInfo.birthday,
+          type: "Bank Account Opening",
+          CustomerType: "C",
+          subcategory: "business",
+          prodcutNameList: serviceProducts.map(product => ({
+            ProductName: product.Product_Name,
+            ProductFamily: "Traditional Services",
+            ProductDescription: "Service for UAE Resident",
+            ProductCurrencyName: product.Currency_Code,
+            ProductUnitprice: product.price,
+            ProductQuantity: 1,
+            ProductDiscount: 0,
+              vat: product.vat,
+          })),
+          shareholders: this.shareholders.map((shareholder: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; countryRisk: any; }) => ({
+            name: shareholder.name,
+            shareholderPercentage: shareholder.shareholderPercentage,
+            dob: shareholder.dob,
+            nationalityshareholder: shareholder.nationalityshareholder,
+            countryRisk: shareholder.countryRisk
+          }))
+        };
+
+        this.serviceProducts = serviceProducts;
+        return this.userService.createPaymentOpportunity(paymentPayload);
+      }),
+      switchMap(response => {
+        if (!response?.QuotePaymentId) throw new Error('Missing QuotePaymentId from Salesforce');
+
+        const quotePaymentId = response.QuotePaymentId;
+        const digiPayload = {
+          CustomerId: quotePaymentId,
+          CompanyName: 'Virtuzone'
+        };
+
+        return this.userService.digicomplice(digiPayload).pipe(
+          map(digiRes => ({
+            quotePaymentId,
+            leadId: digiRes?.screeningmatchScore?.customerId || null
+          }))
+        );
+      }),
+      switchMap(({ quotePaymentId, leadId }) => {
+        if (!leadId) throw new Error('Missing LeadId from screening response');
+
+        const checkStatusData = {
+          CustomerId: leadId,
+          CompanyName: 'Virtuzone'
+        };
+
+        return this.userService.checkStatus(checkStatusData).pipe(
+          tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
+            if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+              localStorage.setItem(  "quotePaymentId",quotePaymentId)
+               this.router.navigate(['/ShowDetails-2']);
+            } else {
+              window.alert('Your request has been submitted successfully. You will receive an email when your application is approved.');
+              this.router.navigate([`/failure/${quotePaymentId}`]);
+            }
+
+            // localStorage.removeItem('step1Data');
+            // localStorage.removeItem('step2Data');
+            // localStorage.removeItem('finalDatabussiness');
+            // localStorage.removeItem('mailform');
+            // localStorage.removeItem('mailform2');
+            // localStorage.removeItem('finalData');
           })
-        )
-        .subscribe(resp => {
-          this.isLoading = false;
-          if (!resp) return;
-          // localStorage.removeItem('step1Data');
-          // localStorage.removeItem('step2Data');
-          // Store or pass along resp as needed…
-          localStorage.setItem('serviceProducts', JSON.stringify(resp));
-          // then navigate:
-          this.router.navigate(['/ShowDetails-2']);
+        );
+      })
+    ).subscribe({
+      next: () => this.isLoading = false,
+      error: err => {
+        this.isLoading = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err?.error?.[0]?.message || 'An error occurred',
+          showCancelButton: true,
+          confirmButtonText: 'Retry',
+          cancelButtonText: 'Cancel',
+        }).then(result => {
+          if (result.isConfirmed) {
+            this.submitData(); // Retry
+          }
         });
+
+        this.toastr.error(err.message || 'An error occurred', 'Error');
+        console.error(err);
+      }
     });
-  }
-  
-  
+  });
+}
+
 }

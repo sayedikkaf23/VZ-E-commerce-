@@ -5,7 +5,7 @@ import { ToastrService } from 'ngx-toastr'; // For toast notifications
 import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
-import { switchMap, catchError, of } from 'rxjs';
+import { switchMap, catchError, of, map, tap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
@@ -31,6 +31,7 @@ export class MailMangamentShowDetailsComponent {
   personalInfo: any = {}; // To store personal information (Step 1 data)
   companyInfo: any = {}; // To store bank service information (Step 2 data)
   shareholders :any= [];
+  serviceProducts: any[] | undefined;
  
   constructor(
     private http: HttpClient,
@@ -183,189 +184,275 @@ export class MailMangamentShowDetailsComponent {
   // }
  
  
-  submitData() {
-    // Combine personalInfo and companyInfo into finalData
-    const finalData = {
-      ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.companyInfo   // Merge company information (Step 2 data)
-    };
-  console.log(finalData,"finalData")
-    // Show a SweetAlert confirmation dialog
-    Swal.fire({
-      title: 'Confirm Your Data',
-      text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#FA2E52',
-      confirmButtonText: 'Yes, I confirm',
-      cancelButtonText: 'Review Data'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const birthday = new Date(finalData.birthday);
-        const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
+//   submitData() {
+//     // Combine personalInfo and companyInfo into finalData
+//     const finalData = {
+//       ...this.personalInfo, // Merge personal information (Step 1 data)
+//       ...this.companyInfo   // Merge company information (Step 2 data)
+//     };
+//   console.log(finalData,"finalData")
+//     // Show a SweetAlert confirmation dialog
+//     Swal.fire({
+//       title: 'Confirm Your Data',
+//       text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
+//       icon: 'warning',
+//       showCancelButton: true,
+//       confirmButtonColor: '#FA2E52',
+//       confirmButtonText: 'Yes, I confirm',
+//       cancelButtonText: 'Review Data'
+//     }).then((result) => {
+//       if (result.isConfirmed) {
+//         const birthday = new Date(finalData.birthday);
+//         const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
        
-        // const payload = {
-        //   firstName: finalData.firstName,
-        //   lastName: finalData.lastName,
-        //   email: finalData.email,
-        //   nationality: finalData.nationality,
-        //   phone: finalData.mobileNumber, // Ensure to map this correctly
-        //   dob: formattedBirthday,
-        //   service: "Bank_opening",
-        //   CustomerType: finalData.CustomerType,
-        //   shareholders: this.shareholders,
-        //   planname: "Bank Account Opening",
-        //   isProfile: false,
-        // };
+//         // const payload = {
+//         //   firstName: finalData.firstName,
+//         //   lastName: finalData.lastName,
+//         //   email: finalData.email,
+//         //   nationality: finalData.nationality,
+//         //   phone: finalData.mobileNumber, // Ensure to map this correctly
+//         //   dob: formattedBirthday,
+//         //   service: "Bank_opening",
+//         //   CustomerType: finalData.CustomerType,
+//         //   shareholders: this.shareholders,
+//         //   planname: "Bank Account Opening",
+//         //   isProfile: false,
+//         // };
  
  
-        const nationality = finalData.nationality;
+//         const nationality = finalData.nationality;
  
-// Attempt to find a match for the user’s main nationality
-const mainMatch = this.nationalities.find(
-  (item) => item.common.toLowerCase() === nationality.toLowerCase()
-);
+// // Attempt to find a match for the user’s main nationality
+// const mainMatch = this.nationalities.find(
+//   (item) => item.common.toLowerCase() === nationality.toLowerCase()
+// );
  
-// Fallback to the raw nationality if no match is found
-// 1. Main nationality straight from the form
-const mainNationality = finalData.nationality;   // e.g. "Indian"
+// // Fallback to the raw nationality if no match is found
+// // 1. Main nationality straight from the form
+// const mainNationality = finalData.nationality;   // e.g. "Indian"
  
-// 2. Grab every shareholder’s nationality (skip blanks)
-const shareholderNationalities = (finalData.shareholders ?? [])
-  .map((sh: { nationalityshareholder: any; }) => sh.nationalityshareholder)
-  .filter(Boolean);                              // keeps only truthy strings
+// // 2. Grab every shareholder’s nationality (skip blanks)
+// const shareholderNationalities = (finalData.shareholders ?? [])
+//   .map((sh: { nationalityshareholder: any; }) => sh.nationalityshareholder)
+//   .filter(Boolean);                              // keeps only truthy strings
  
-// 3. Merge (no deduping)
-const nationalities = [mainNationality, ...shareholderNationalities];
-const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
+// // 3. Merge (no deduping)
+// const nationalities = [mainNationality, ...shareholderNationalities];
+// const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
  
 
 
-let subTypeId = null;
+// let subTypeId = null;
 
-    if (finalData.Bank === 'Traditional Corporate Bank Account Opening') {
-      subTypeId = 13;
-    } else if (finalData.Bank === 'Digital Corporate Bank Account Opening') {
-      subTypeId = 14;
-    } else if (finalData.Bank === 'Any of the above') {
-      subTypeId = 13;
-    } else {
-      throw new Error('Invalid Bank Type Selected ❌');
-    }
+//     if (finalData.Bank === 'Traditional Corporate Bank Account Opening') {
+//       subTypeId = 13;
+//     } else if (finalData.Bank === 'Digital Corporate Bank Account Opening') {
+//       subTypeId = 14;
+//     } else if (finalData.Bank === 'Any of the above') {
+//       subTypeId = 13;
+//     } else {
+//       throw new Error('Invalid Bank Type Selected ❌');
+//     }
 
-// 4. Final payload
-let riskCode;
-switch (appliedRiskData.appliedRisk) {
-  case 'Low':
-    riskCode = 1;
-    break;
-  case 'Medium':
-    riskCode = 2;
-    break;
-  case 'High':
-    riskCode = 3;
-    break;
-  default:
-    riskCode = 0; // Default to 0 if no match
-    break;
-}
+// // 4. Final payload
+// let riskCode;
+// switch (appliedRiskData.appliedRisk) {
+//   case 'Low':
+//     riskCode = 1;
+//     break;
+//   case 'Medium':
+//     riskCode = 2;
+//     break;
+//   case 'High':
+//     riskCode = 3;
+//     break;
+//   default:
+//     riskCode = 0; // Default to 0 if no match
+//     break;
+// }
  
  
-  const payload = {
-    ServiceNameCode: 1,
-    SubTypeCode:subTypeId,
-    RiskCode:riskCode,
+//   const payload = {
+//     ServiceNameCode: 1,
+//     SubTypeCode:subTypeId,
+//     RiskCode:riskCode,
  
-  };
-        this.isLoading = true; // Show loading indicator if necessary
+//   };
+//         this.isLoading = true; // Show loading indicator if necessary
  
-        // First API call to callSalesforceEndpoint
-         this.userService.getServiceProducts(payload).pipe(
-                  catchError((error) => {
-                    console.error(error);
-                    this.isLoading = false;
-                    Swal.fire({
-                      title: 'Error',
-                      text: 'Something went wrong. Would you like to retry?',
-                      icon: 'error',
-                      showCancelButton: true,
-                      confirmButtonText: 'Retry',
-                      cancelButtonText: 'Cancel'
-                    }).then((retryResult) => {
-                      if (retryResult.isConfirmed) {
-                        this.submitData();
-                      }
-                    });
-                    return of(null); // gracefully complete the observable chain
-                  })
-        // this.userService.callSalesforceEndpoint(payload).pipe(
-        //   switchMap((response: any) => {
-        //     // Save Salesforce response if needed
-        //     this.dataStorageService.setSalesforceResponse(response);
-        //     // Prepare payload for the second API call
-        //     const quotePayload = {
-        //       lead_source: response.data.leadWithDetails.LeadSource,
-        //       currencyCode: response.data.quotePaymentWithDetails.Currency, // Update as needed
-        //       quotePaymentId: response.data.quotePaymentWithDetails.QuotePaymentId, // Assuming the response has this field
-        //       account_id: response.data.quotePaymentWithDetails.AccountId, // Assuming the response has this field
-        //       payment_url: `https://ecommerce.yeepeey.com/onlinepayment/${response.data.quotePaymentWithDetails.QuotePaymentId}`
-        //     };
-        //     // Call the second API
-        //     return this.userService.callSalesforceQuoteService(quotePayload).pipe(
-        //       switchMap((quoteResponse: any) => {
-        //         // Prepare payload for MatchScoreProductService
-        //         const matchScorePayload = {
-        //           quotePaymentId: quotePayload.quotePaymentId,
-        //           accountId: quotePayload.account_id,
-        //           leadId: response.data.leadWithDetails.LeadId, // Assuming leadId is part of the response
-        //           matchScore: response.screeningmatchScore.matchScore, // Adjust based on response structure
-        //         };
+//         // First API call to callSalesforceEndpoint
+//          this.userService.getServiceProducts(payload).pipe(
+//                   catchError((error) => {
+//                     console.error(error);
+//                     this.isLoading = false;
+//                     Swal.fire({
+//                       title: 'Error',
+//                       text: 'Something went wrong. Would you like to retry?',
+//                       icon: 'error',
+//                       showCancelButton: true,
+//                       confirmButtonText: 'Retry',
+//                       cancelButtonText: 'Cancel'
+//                     }).then((retryResult) => {
+//                       if (retryResult.isConfirmed) {
+//                         this.submitData();
+//                       }
+//                     });
+//                     return of(null); // gracefully complete the observable chain
+//                   })
+      
+//         ).subscribe(
+//           (quoteResponse: any) => {
+//             this.isLoading = false; // Hide loader
  
-        //         // Call the third API
-        //         return this.userService.MatchScoreProductService(matchScorePayload);
-        //       })
-        //     );
-        //   })
-        ).subscribe(
-          (quoteResponse: any) => {
-            this.isLoading = false; // Hide loader
+//             // Save finalData in localStorage if needed
+//             localStorage.setItem('BussinessServiceProducts', JSON.stringify(quoteResponse));
+//             localStorage.setItem('finalDatabussiness', JSON.stringify(finalData));
+//             this.matchScoreStorageService.setMatchScoreResponse(quoteResponse);
  
-            // Save finalData in localStorage if needed
-            localStorage.setItem('BussinessServiceProducts', JSON.stringify(quoteResponse));
-            localStorage.setItem('finalDatabussiness', JSON.stringify(finalData));
-            this.matchScoreStorageService.setMatchScoreResponse(quoteResponse);
+//             // Navigate to the next step
+//             this.router.navigate(['/bussiness-show-details']); // Replace with your actual route
+//           }
+       
+//         );
+//       }
+//       // If the user clicks "Review Data", do nothing so they can make corrections.
+//     });
+//   }
  
-            // Navigate to the next step
-            this.router.navigate(['/bussiness-show-details']); // Replace with your actual route
-          }
-          // (error) => {
-          //   this.isLoading = false; // Hide loader in case of error
-          //   console.error("Error during Salesforce API calls:", error);
-           
-          //   // Show an error SweetAlert with a Retry option
-          //   Swal.fire({
-          //     title: 'Error',
-          //     text: 'Something went wrong. Would you like to retry?',
-          //     icon: 'error',
-          //     showCancelButton: true,
-          //     confirmButtonText: 'Retry',
-          //     cancelButtonText: 'Cancel'
-          //   }).then((result) => {
-          //     if (result.isConfirmed) {
-          //       // Call submitData() again to retry the process
-          //       this.submitData();
-          //     } else {
-          //       // Optionally handle the cancel action, e.g., remain on the page or perform other actions
-          //     }
-          //   });
-          // }
+ submitData() {
+  const finalData = { ...this.personalInfo, ...this.companyInfo };
+  console.log(finalData, "finalData");
+
+  Swal.fire({
+    title: 'Confirm Your Data',
+    text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#FA2E52',
+    confirmButtonText: 'Yes, I confirm',
+    cancelButtonText: 'Review Data'
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    const birthday = new Date(finalData.birthday);
+    const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
+
+    const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
+    let subTypeId = finalData.Bank === 'Traditional Corporate Bank Account Opening' ? 13 : 
+                    finalData.Bank === 'Digital Corporate Bank Account Opening' ? 14 : 
+                    finalData.Bank === 'Any of the above' ? 13 : null;
+
+    if (!subTypeId) throw new Error('Invalid Bank Type Selected ❌');
+
+    const riskCode = appliedRiskData.appliedRisk === 'Low' ? 1 :
+                     appliedRiskData.appliedRisk === 'Medium' ? 2 :
+                     appliedRiskData.appliedRisk === 'High' ? 3 : 0;
+
+    const servicePayload = {
+      ServiceNameCode: 1,
+      SubTypeCode: subTypeId,
+      RiskCode: riskCode
+    };
+
+    this.isLoading = true;
+
+    this.userService.getServiceProducts(servicePayload).pipe(
+      catchError(err => {
+        console.error(err);
+        this.isLoading = false;
+        this.toastr.error('Couldn’t load service products.', 'Error');
+        return of(null);
+      }),
+      switchMap(resp => {
+        if (!resp) return of(null);
+        const serviceProducts = Array.isArray(resp) ? resp : [resp];
+        localStorage.setItem('serviceProducts', JSON.stringify(resp));
+        localStorage.setItem('BussinessServiceProducts', JSON.stringify(resp));
+        localStorage.setItem('finalDatabussiness', JSON.stringify(finalData));
+        this.matchScoreStorageService.setMatchScoreResponse(resp);
+
+        const paymentPayload = {
+          firstName: this.personalInfo.firstName,
+          lastName: this.personalInfo.lastName,
+          email: this.personalInfo.email,
+          nationality: this.personalInfo.nationality,
+          phone: this.personalInfo.mobileNumber.number,
+          countryCode: this.personalInfo.mobileNumber.dialCode,
+          dob: this.personalInfo.birthday,
+          type: "Bank Account Opening",
+          CustomerType: "C",
+          subcategory: "business",
+          prodcutNameList: serviceProducts.map(product => ({
+            ProductName: product.Product_Name,
+            ProductFamily: "Traditional Services",
+            ProductDescription: "Service for UAE Resident",
+            ProductCurrencyName: product.Currency_Code,
+            ProductUnitprice: product.price,
+            ProductQuantity: 1,
+            vat: product.VAT,
+            ProductDiscount: 0
+          })),
+          shareholders: this.shareholders.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; countryRisk: any; }) => ({
+            name: s.name,
+            shareholderPercentage: s.shareholderPercentage,
+            dob: s.dob,
+            nationalityshareholder: s.nationalityshareholder,
+            countryRisk: s.countryRisk
+          }))
+        };
+
+        this.serviceProducts = serviceProducts;
+        return this.userService.createPaymentOpportunity(paymentPayload);
+      }),
+      switchMap(response => {
+        if (!response?.QuotePaymentId) throw new Error('Missing QuotePaymentId');
+        const quotePaymentId = response.QuotePaymentId;
+        const digiPayload = { CustomerId: quotePaymentId, CompanyName: 'Virtuzone' };
+        return this.userService.digicomplice(digiPayload).pipe(
+          map(digiRes => ({
+            quotePaymentId,
+            leadId: digiRes?.screeningmatchScore?.customerId || null
+          }))
         );
+      }),
+      switchMap(({ quotePaymentId, leadId }) => {
+        if (!leadId) throw new Error('Missing LeadId');
+        const checkStatusData = { CustomerId: leadId, CompanyName: 'Virtuzone' };
+        return this.userService.checkStatus(checkStatusData).pipe(
+          tap(res => {
+            if (res?.data?.CustomerStatus === 'Auto Approved') {
+              localStorage.setItem("quotePaymentId", quotePaymentId);
+              this.router.navigate(['/bussiness-show-details']);
+            } else {
+              alert('Your request has been submitted successfully. You will receive an email when your application is approved.');
+              this.router.navigate([`/failure/${quotePaymentId}`]);
+            }
+          })
+        );
+      })
+    ).subscribe({
+      next: () => this.isLoading = false,
+      error: err => {
+        this.isLoading = false;
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err?.error?.[0]?.message || 'An error occurred',
+          showCancelButton: true,
+          confirmButtonText: 'Retry',
+          cancelButtonText: 'Cancel',
+        }).then(result => {
+          if (result.isConfirmed) {
+            this.submitData(); // Retry
+          }
+        });
+        this.toastr.error(err.message || 'An error occurred', 'Error');
+        console.error(err);
       }
-      // If the user clicks "Review Data", do nothing so they can make corrections.
     });
-  }
- 
- 
+  });
+}
+
  
   toggleView() {
     this.showAll = !this.showAll;

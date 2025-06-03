@@ -12,7 +12,7 @@ import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
 import { FileStorageService } from '../service/files.service';
-import { switchMap } from 'rxjs';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { VirtualManagementService } from '../service/virtual-management.service';
@@ -44,6 +44,7 @@ export class VirtualReceptionistDetailsComponent {
 
   i: any;
   tradeLicenseFileurl: any;
+  serviceProducts: any[] | undefined;
   constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
@@ -254,121 +255,290 @@ export class VirtualReceptionistDetailsComponent {
 
   // VirtualReceptionist2Component.ts
 
-  submitData() {
-    // Combine personalInfo and bankInfo into finalData
-    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+  // submitData() {
+  //   // Combine personalInfo and bankInfo into finalData
+  //   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
  
-    // Show a SweetAlert confirmation dialog
-    Swal.fire({
-      title: 'Confirm Your Data',
-      text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#FA2E52',
-      confirmButtonText: 'Yes, I confirm',
-      cancelButtonText: 'Review Data',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const birthday = new Date(mergedData.birthday);
-        const formattedBirthday = `${(birthday.getMonth() + 1)
-          .toString()
-          .padStart(2, '0')}/${birthday
-          .getDate()
-          .toString()
-          .padStart(2, '0')}/${birthday.getFullYear()}`;
+  //   // Show a SweetAlert confirmation dialog
+  //   Swal.fire({
+  //     title: 'Confirm Your Data',
+  //     text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#FA2E52',
+  //     confirmButtonText: 'Yes, I confirm',
+  //     cancelButtonText: 'Review Data',
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       const birthday = new Date(mergedData.birthday);
+  //       const formattedBirthday = `${(birthday.getMonth() + 1)
+  //         .toString()
+  //         .padStart(2, '0')}/${birthday
+  //         .getDate()
+  //         .toString()
+  //         .padStart(2, '0')}/${birthday.getFullYear()}`;
  
-        // const payload = {
-        //   firstName: mergedData.firstName,
-        //   lastName: mergedData.lastName,
-        //   email: mergedData.email,
-        //   nationality: mergedData.nationality,
-        //   phone: mergedData.mobileNumber, // Ensure to map this correctly
-        //   dob: formattedBirthday,
-        //   service: 'virtual_reception',
-        //   CustomerType: 'C',
-        //   shareholders: this.displayShareholders,
-        //   planname: 'Virtual Receptionist',
-        //   isProfile: false,
-        //   tradeLicenseFileUrl: this.tradeLicenseFileurl,
-        // };
+  //       // const payload = {
+  //       //   firstName: mergedData.firstName,
+  //       //   lastName: mergedData.lastName,
+  //       //   email: mergedData.email,
+  //       //   nationality: mergedData.nationality,
+  //       //   phone: mergedData.mobileNumber, // Ensure to map this correctly
+  //       //   dob: formattedBirthday,
+  //       //   service: 'virtual_reception',
+  //       //   CustomerType: 'C',
+  //       //   shareholders: this.displayShareholders,
+  //       //   planname: 'Virtual Receptionist',
+  //       //   isProfile: false,
+  //       //   tradeLicenseFileUrl: this.tradeLicenseFileurl,
+  //       // };
  
-        // const payload = {
-        //   country: mergedData.nationality,
-        // };
-        const nationality = mergedData.nationality;
-      const match = this.nationalities.find(
-        (item) => item.common.toLowerCase() === nationality.toLowerCase()
-      );
+  //       // const payload = {
+  //       //   country: mergedData.nationality,
+  //       // };
+  //       const nationality = mergedData.nationality;
+  //     const match = this.nationalities.find(
+  //       (item) => item.common.toLowerCase() === nationality.toLowerCase()
+  //     );
  
    
-      const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
+  //     const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
  
-      // 4. Final payload
-      let riskCode;
-      switch (appliedRiskData.appliedRisk) {
-        case 'Low':
-          riskCode = 1;
-          break;
-        case 'Medium':
-          riskCode = 2;
-          break;
-        case 'High':
-          riskCode = 3;
-          break;
-        default:
-          riskCode = 0; // Default to 0 if no match
-          break;
-      }
+  //     // 4. Final payload
+  //     let riskCode;
+  //     switch (appliedRiskData.appliedRisk) {
+  //       case 'Low':
+  //         riskCode = 1;
+  //         break;
+  //       case 'Medium':
+  //         riskCode = 2;
+  //         break;
+  //       case 'High':
+  //         riskCode = 3;
+  //         break;
+  //       default:
+  //         riskCode = 0; // Default to 0 if no match
+  //         break;
+  //     }
        
        
-        const payload = {
-          ServiceNameCode: 3,
-          SubTypeCode:15,
-          RiskCode:riskCode,
+  //       const payload = {
+  //         ServiceNameCode: 3,
+  //         SubTypeCode:15,
+  //         RiskCode:riskCode,
        
+  //       };
+  //       this.isLoading = true; // Show loading indicator if necessary
+ 
+   
+ 
+  //       this.virtualManagementService.getServiceProducts(payload).subscribe(
+  //         (response: any) => {
+  //           this.isLoading = false;
+ 
+  //           // Store final merged data
+  //           localStorage.setItem('finalDataVirtual', JSON.stringify(mergedData));
+ 
+  //           // Save product data
+  //           localStorage.setItem('VirtualServiceProducts', JSON.stringify(response));
+  //           console.log(response.data,"s")
+  //           this.matchScoreStorageService.setMatchScoreResponse(response);
+ 
+  //           // Navigate to summary page
+  //           this.router.navigate(['/virtual-summary']);
+  //         },
+  //           (error) => {
+  //             // On error: hide loader and show a SweetAlert with Retry and Cancel options
+  //             this.isLoading = false;
+  //             console.error(error);
+  //             Swal.fire({
+  //               title: 'Error',
+  //               text: 'Something went wrong. Would you like to retry?',
+  //               icon: 'error',
+  //               showCancelButton: true,
+  //               confirmButtonText: 'Retry',
+  //               cancelButtonText: 'Cancel',
+  //             }).then((retryResult) => {
+  //               if (retryResult.isConfirmed) {
+  //                 // If the user clicks Retry, re-call submitData() to reattempt the submission
+  //                 this.submitData();
+  //               }
+  //             });
+  //           }
+  //         );
+  //     }
+  //     // No action needed if the user cancels the confirmation (they can review their data)
+  //   });
+  // }
+
+
+submitData() {
+  const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+  const uploadedFileNames = this.tradeLicenseFile?.uploadedFileNames || [];
+  const shareholdersData = mergedData?.shareholders || [];
+
+  Swal.fire({
+    title: 'Confirm Your Data',
+    text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#FA2E52',
+    confirmButtonText: 'Yes, I confirm',
+    cancelButtonText: 'Review Data'
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    this.isLoading = true;
+
+    const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
+    const riskCode = appliedRiskData.appliedRisk === 'Low' ? 1 :
+                     appliedRiskData.appliedRisk === 'Medium' ? 2 :
+                     appliedRiskData.appliedRisk === 'High' ? 3 : 0;
+
+    const productRequestPayload = {
+      ServiceNameCode: 3,
+      SubTypeCode: 15,
+      RiskCode: riskCode
+    };
+
+    this.virtualManagementService.getServiceProducts(productRequestPayload).pipe(
+      catchError(error => {
+        this.isLoading = false;
+        console.error(error);
+        Swal.fire({
+          title: 'Error',
+          text: 'Something went wrong. Would you like to retry?',
+          icon: 'error',
+          showCancelButton: true,
+          confirmButtonText: 'Retry',
+          cancelButtonText: 'Cancel'
+        }).then((retryResult) => {
+          if (retryResult.isConfirmed) this.submitData();
+        });
+        return of(null);
+      }),
+      switchMap((serviceResponse: any) => {
+        if (!serviceResponse) return of(null);
+
+        localStorage.setItem('finalDataVirtual', JSON.stringify(mergedData));
+        localStorage.setItem('VirtualServiceProducts', JSON.stringify(serviceResponse));
+        this.matchScoreStorageService.setMatchScoreResponse(serviceResponse);
+
+        const serviceProducts = Array.isArray(serviceResponse) ? serviceResponse : [serviceResponse];
+        this.serviceProducts = serviceProducts;
+
+        const paymentPayload = {
+          firstName: this.personalInfo.firstName,
+          lastName: this.personalInfo.lastName,
+          email: this.personalInfo.email,
+          nationality: this.personalInfo.nationality,
+          phone: this.personalInfo.mobileNumber.number,
+          countryCode: this.personalInfo.mobileNumber.dialCode,
+          dob: this.personalInfo.birthday,
+          type: "Virtual Receptionist",
+          CustomerType: "C",
+          uploadedFileNames,
+          prodcutNameList: serviceProducts.map(product => ({
+            ProductName: product.Product_Name,
+            ProductFamily: "Virtual Receptionist",
+            ProductDescription: "Service for UAE Resident",
+            ProductCurrencyName: product.Currency_Code,
+            ProductUnitprice: product.price,
+            ProductQuantity: 1,
+            ProductDiscount: 0,
+              vat: product.vat,
+          })),
+          shareholders: shareholdersData.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; countryRisk: any; files: any; }) => ({
+            name: s.name,
+            shareholderPercentage: s.shareholderPercentage,
+            dob: s.dob,
+            nationalityshareholder: s.nationalityshareholder,
+            countryRisk: s.countryRisk,
+            files: s.files || []
+          }))
         };
-        this.isLoading = true; // Show loading indicator if necessary
- 
-   
- 
-        this.virtualManagementService.getServiceProducts(payload).subscribe(
-          (response: any) => {
-            this.isLoading = false;
- 
-            // Store final merged data
-            localStorage.setItem('finalDataVirtual', JSON.stringify(mergedData));
- 
-            // Save product data
-            localStorage.setItem('VirtualServiceProducts', JSON.stringify(response));
-            console.log(response.data,"s")
-            this.matchScoreStorageService.setMatchScoreResponse(response);
- 
-            // Navigate to summary page
-            this.router.navigate(['/virtual-summary']);
-          },
-            (error) => {
-              // On error: hide loader and show a SweetAlert with Retry and Cancel options
-              this.isLoading = false;
-              console.error(error);
-              Swal.fire({
-                title: 'Error',
-                text: 'Something went wrong. Would you like to retry?',
-                icon: 'error',
-                showCancelButton: true,
-                confirmButtonText: 'Retry',
-                cancelButtonText: 'Cancel',
-              }).then((retryResult) => {
-                if (retryResult.isConfirmed) {
-                  // If the user clicks Retry, re-call submitData() to reattempt the submission
-                  this.submitData();
+
+        return this.userService.createPaymentOpportunity(paymentPayload);
+      }),
+      switchMap((paymentOpportunityResponse: any) => {
+        if (!paymentOpportunityResponse?.QuotePaymentId) throw new Error('Missing QuotePaymentId');
+
+        const quotePaymentId = paymentOpportunityResponse.QuotePaymentId;
+
+        return this.userService.digicomplice({
+          CustomerId: quotePaymentId,
+          CompanyName: 'Virtuzone'
+        }).pipe(
+          map(digiRes => ({
+            quotePaymentId,
+            leadId: digiRes?.screeningmatchScore?.customerId || null
+          }))
+        );
+      }),
+      switchMap(({ quotePaymentId, leadId }) => {
+        if (!leadId) throw new Error('Missing LeadId from digicomplice');
+
+        const documentPayload = {
+          quotePaymentId,
+          serviceName: 'Virtual Receptionist',
+          shareholders: shareholdersData.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; files: { name: any; url: any; type: any; oopId: any; }[]; }) => ({
+            name: s.name,
+            shareholderPercentage: s.shareholderPercentage,
+            dob: s.dob,
+            nationalityshareholder: s.nationalityshareholder,
+            files: s.files?.map((f: { name: any; url: any; type: any; oopId: any; }) => ({
+              name: f.name,
+              url: f.url,
+              type: f.type,
+              oopId: f.oopId
+            })) || []
+          }))
+        };
+
+        return this.userService.insertShareholderDocuments(
+          documentPayload.quotePaymentId,
+          documentPayload.serviceName,
+          documentPayload.shareholders
+        ).pipe(
+          switchMap(() => {
+            return this.userService.checkStatus({
+              CustomerId: leadId,
+              CompanyName: 'Virtuzone'
+            }).pipe(
+              tap(statusRes => {
+                this.isLoading = false;
+                if (statusRes?.data?.CustomerStatus === 'Auto Approved') {
+                  localStorage.setItem('quotePaymentId', documentPayload.quotePaymentId);
+                  this.router.navigate(['/virtual-summary']);
+                } else {
+                  alert('Your request has been submitted successfully. You will receive an email when your application is approved.');
+                  this.router.navigate([`/failure/${documentPayload.quotePaymentId}`]);
                 }
-              });
-            }
-          );
+              })
+            );
+          })
+        );
+      })
+    ).subscribe({
+      error: err => {
+        this.isLoading = false;
+        console.error(err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err?.message || 'An error occurred',
+          showCancelButton: true,
+          confirmButtonText: 'Retry',
+          cancelButtonText: 'Cancel',
+        }).then(result => {
+          if (result.isConfirmed) this.submitData();
+        });
       }
-      // No action needed if the user cancels the confirmation (they can review their data)
     });
-  }
+  });
+}
+
+
 
   isImageFile(url: string): boolean {
     return url.match(/\.(jpeg|jpg|gif|png)$/) !== null;

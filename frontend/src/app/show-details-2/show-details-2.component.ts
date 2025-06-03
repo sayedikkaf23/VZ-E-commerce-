@@ -192,139 +192,26 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
     }, 0);
   }
  
-  submitPaymentOpportunity() {
-    // Set loading to true at the start
-    this.isLoading = true;
- 
-    // Check if serviceProducts is properly populated
-    if (!this.serviceProducts || this.serviceProducts.length === 0) {
-      this.toastr.error('No products available to submit.', 'Error');
-      this.isLoading = false; // Hide loader when no products are available
-      return;
-    }
-console.log(this.personalInfo.mobileNumber,"this.personalInfo.mobileNumber.number")
-    // Prepare the payload for the API request
-    const paymentPayload = {
-      firstName: this.personalInfo.firstName,
-      lastName: this.personalInfo.lastName,
-      email: this.personalInfo.email,
-      nationality: this.personalInfo.nationality,
-      countryCode:this.personalInfo.mobileNumber.dialCode,
-      phone: this.personalInfo.mobileNumber.number,
-      dob: this.personalInfo.birthday,
-      type: "Bank Account Opening",
-      subcategory: "personal",
-      CustomerType: "I",
-      prodcutNameList: this.serviceProducts.map(product => ({
-        ProductName: product.Product_Name,
-        ProductFamily: "Traditional Services", // Example placeholder
-        ProductDescription: "Service for UAE Resident", // Example placeholder
-        ProductCurrencyName: product.Currency_Code,
-        ProductUnitprice: product.price,
-        ProductQuantity: 1,  // Assuming quantity is 1
-        ProductDiscount: 0 // Assuming no discount
-      }))
-    };
-    console.log("Sending Payment Opportunity Payload:", paymentPayload);
- 
-    // Call the first API to create the payment opportunity
-    this.userService.createPaymentOpportunity(paymentPayload).pipe(
-      switchMap((response) => {
-        console.log('Payment opportunity created:', response);
- 
-        // Extract the QuotePaymentId from the response
-        const quotePaymentId = response.QuotePaymentId;
-        console.log(quotePaymentId);
- 
-        // Prepare payload for the second API call
-        const payload = {
-          CustomerId: quotePaymentId,
-          CompanyName: 'Virtuzone'
-        };
- 
-        // Call the second API (digicomplice) after the first one is successful
-        return this.userService.digicomplice(payload).pipe(
-          map(secondResponse => ({
-            quotePaymentId,
-            leadId: secondResponse?.screeningmatchScore?.customerId || null
-          }))
-        );
-      }),
-      switchMap(({ quotePaymentId, leadId }) => {
-        if (!leadId) {
-          throw new Error('Missing LeadId from screening response');
-        }
- 
-        // Prepare the data for the third API call
-        const checkStatusData = {
-          CustomerId: leadId,
-          CompanyName: 'Virtuzone'
-        };
- 
-        // Call the third API (checkStatus)
-        return this.userService.checkStatus(checkStatusData).pipe(
-          tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
-            if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-              // this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
-               this.callActivePaymentMethod(quotePaymentId);
-            } else {
-              window.alert(
-                'Your request has been submitted successfully. You will receive an email when your application is approved.'
-              );
+submitPaymentOpportunity() {
+  this.isLoading = true;
 
-                     localStorage.removeItem('step1Data');
-        localStorage.removeItem('step2Data');
-    
-              this.router.navigate([`/failure/${quotePaymentId}`]);
-            }
- 
-            // Clear local storage if needed
-            // localStorage.clear();
-          })
-        );
-      })
-    ).pipe(
-      retryWhen(errors =>
-        errors.pipe(
-          // Hide loader before showing SweetAlert dialog
-          switchMap(() => {
-            this.isLoading = false; // Hide loader when SweetAlert is shown
-            return Swal.fire({
-              title: 'API Error',
-              text: 'Do you want to retry the request?',
-              icon: 'error',
-              showCancelButton: true,
-              confirmButtonText: 'Retry',
-              cancelButtonText: 'Cancel'
-            }).then(result => {
-              if (result.isConfirmed) {
-                this.isLoading = true; // Show loader when retrying
-                return of(null); // Proceed with retrying if the user confirms
-              } else {
-                this.isLoading = false; // Stop loader if the user cancels
-                throw new Error('User canceled the retry'); // Stop retrying if canceled
-              }
-            });
-          })
-        )
-      )
-    ).subscribe({
-      next: () => {
-        // Stop loading once the request is successfully completed
-        this.isLoading = false;
-      },
-      error: (err) => {
-        // Handle errors, stop loading
-        this.isLoading = false;
-        if (err.message.includes("DUPLICATE_VALUE")) {
-          this.toastr.error('This price definition already exists in the price book.', 'API Error');
-        } else {
-          this.toastr.error(err.message || 'An error occurred', 'Error');
-        }
-        console.error(err);
-      }
-    });
+  const quotePaymentId = localStorage.getItem("quotePaymentId");
+
+  if (quotePaymentId) {
+    this.callActivePaymentMethod(quotePaymentId);
+  } else {
+    this.toastr.error('Missing Quote Payment ID.', 'Error');
   }
+            localStorage.removeItem('step1Data');
+            localStorage.removeItem('step2Data');
+            localStorage.removeItem('finalDatabussiness');
+            localStorage.removeItem('mailform');
+            localStorage.removeItem('mailform2');
+            localStorage.removeItem('finalData');
+            localStorage.removeItem('quotePaymentId');
+  this.isLoading = false;
+}
+
  
   
  
