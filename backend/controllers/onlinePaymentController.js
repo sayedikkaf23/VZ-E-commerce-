@@ -8,6 +8,23 @@ const PaymentMethod = require("../models/paymentMethodModel");
 const mongoose = require("mongoose");
 // const { logger } = require("../logger");
 
+
+const getPaymentModesService = async () => {
+  try {
+    const adminObjectId = new mongoose.Types.ObjectId("653f5041f94b9319a2bb17bd");
+    const paymentMethods = await PaymentMode.find();
+
+    if (!paymentMethods || paymentMethods.length === 0) {
+      return []; // Return empty array or null — don’t throw
+    }
+
+    return paymentMethods;
+  } catch (error) {
+    console.error("Error getting payment methods:", error);
+    throw error;
+  }
+};
+
 const getPaymentModesHome = async (req, res) => {
     try {
       const adminObjectId = new mongoose.Types.ObjectId(
@@ -1507,3 +1524,4 @@ async function payNowByStripe(req, res) {
   exports.getPaymentMethodData = getPaymentMethodData;
   exports.activatePaymentMethod = activatePaymentMethod;
   exports.getPaymentMethods = getPaymentMethods;
+  exports.getPaymentModesService = getPaymentModesService;

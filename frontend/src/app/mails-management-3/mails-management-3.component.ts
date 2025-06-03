@@ -197,7 +197,7 @@ export class MailsManagement3Component implements OnInit {
 
       this.isLoading = true;
   
-      const uploadPromises = filesArray.map(file =>
+      const uploadPromises = filesToUpload.map(file =>
         this.userService.getPresignedUrl(file).toPromise().then((response: any) => {
           const presignedUrl = response.url;
           return fetch(presignedUrl, {
