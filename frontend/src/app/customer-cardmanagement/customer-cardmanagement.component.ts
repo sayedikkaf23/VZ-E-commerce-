@@ -394,14 +394,21 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
       return;
     }
 
-    // For each selected file, get its presigned URL and upload
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-       // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
-    if (file.size > 2097152) {
-      this.toastr.error('File size should be below 2 MB', 'File Too Large');
-      continue; // Skip uploading this file
+   const maxSize = 2097152; // 2MB
+
+  //  Only work with validated files
+  const validFiles = Array.from(files).filter(file => {
+    if (file.size === 0) {
+      this.toastr.error(`File "${file.name}" is empty`, 'Empty File');
+      return false;
     }
+    if (file.size > maxSize) {
+      this.toastr.error(`File "${file.name}" should be below 2 MB`, 'File Too Large');
+      return false;
+    }
+    return true;
+  });
+   for (const file of validFiles) {
       this.isLoading = true;
 
       // Request a presigned URL from your backend
