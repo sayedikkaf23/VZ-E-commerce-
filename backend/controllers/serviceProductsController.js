@@ -346,3 +346,65 @@ exports.insertDocumentsFromShareholders = async (req, res) => {
     });
   }
 };
+
+
+
+
+exports.createLeadOnly = async (req, res) => {
+  try {
+    const { firstName, lastName, email, nationality, phone, dob } = req.body;
+
+    if (!firstName || !lastName || !email || !nationality || !phone || !dob) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    // Step 1: Get Salesforce token
+    const tokenResp = await axios.post(
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
+      null,
+      {
+        params: {
+          client_id: '3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip',
+          client_secret: '0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1',
+          grant_type: 'password',
+          username: 'vzpaymentapi@vz.ae.vzfullcopy',
+          password: 'VZ@12345678',
+        },
+      }
+    );
+
+    const accessToken = tokenResp.data.access_token;
+    const salesforceUrl = tokenResp.data.instance_url;
+
+    // Step 2: Call the CreateLeadOnly API
+    const leadResp = await axios.post(
+      `${salesforceUrl}/services/apexrest/VZAR_CreateLeadOnly/`,
+      {
+        firstName,
+        lastName,
+        email,
+        nationality,
+        phone,
+        dob,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    return res.status(200).json({
+      message: "Lead created successfully",
+      data: leadResp.data,
+    });
+
+  } catch (err) {
+    console.error("createLeadOnly error:", err);
+    return res.status(500).json({
+      message: "Failed to create lead",
+      error: err.response?.data || err.toString(),
+    });
+  }
+};
