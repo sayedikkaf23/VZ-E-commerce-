@@ -291,15 +291,22 @@ submitData() {
         const serviceProducts = Array.isArray(resp) ? resp : [resp];
         // localStorage.setItem('serviceProducts', JSON.stringify(serviceProducts));
  localStorage.setItem('serviceProducts', JSON.stringify(resp));
+ const leadResponseRaw = localStorage.getItem('leadResponse');
+  const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+
   //         // then navigate:
   //         this.router.navigate(['/ShowDetails-2']);
         const paymentPayload = {
+          countryCode:this.personalInfo.mobileNumber.dialCode,
+          LeadId: leadResponse.LeadId || '',
+    AccountId: leadResponse.AccountId || '',
+    ContactId: leadResponse.ContactId || '',
           firstName: this.personalInfo.firstName,
           lastName: this.personalInfo.lastName,
           email: this.personalInfo.email,
           nationality: this.personalInfo.nationality,
           phone: this.personalInfo.mobileNumber.number,
-          countryCode: this.personalInfo.mobileNumber.dialCode,
+          // countryCode: this.personalInfo.mobileNumber.dialCode,
           dob: this.personalInfo.birthday,
           type: "Bank Account Opening",
           CustomerType: "C",

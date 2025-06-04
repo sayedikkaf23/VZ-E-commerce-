@@ -238,6 +238,9 @@ onSubmit() {
         }
         // this.toastr.success('Lead created successfully!');
 
+  if (this.isBrowser && res?.data) {
+    localStorage.setItem('leadResponse', JSON.stringify(res.data));
+  }
         // now replicate your original navigation logic
         if (this.isBrowser) {
           if (localStorage.getItem('step2Data')) {
