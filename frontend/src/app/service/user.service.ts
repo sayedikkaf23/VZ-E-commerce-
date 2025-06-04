@@ -101,8 +101,12 @@ export class UserService {  // Changed the service name to UserService
   checkStatus(data: { CustomerId: string; CompanyName: string }): Observable<any> {
     return this.http.post(`${this.url}/user/checkStatus`, data); // POST request to check status
   }
-  createOpportunity(payload: any): Observable<any> {
-    return this.http.post(`${this.url}/user/createOpportunity`, payload); 
+ createOpportunity(payload: any): Observable<any> {
+    return this.http.post(
+      `${this.url}/user/createOpportunity`,
+      payload,
+      { headers: { 'Content-Type': 'application/json' } }
+    );
   }
   getServiceProducts(payload: {
     ServiceNameCode: any;
@@ -131,5 +135,23 @@ export class UserService {  // Changed the service name to UserService
   return this.http.post(`${this.url}/service/insertDocumentsFromShareholders`, body);
 }
 
-  
+// at the bottom of the class
+createLeadOnly(payload: {
+  firstName: string;
+  lastName: string;
+  email: string;
+  nationality: string;
+  phone: string;
+  dob: string;
+}): Observable<any> {
+  // This will hit http://localhost:3000/service/createLeadOnly
+  return this.http.post(
+    `${this.url}/service/createLeadOnly`,
+    payload,
+    { headers: { 'Content-Type': 'application/json' } }
+  );
+}
+
+
+
 }

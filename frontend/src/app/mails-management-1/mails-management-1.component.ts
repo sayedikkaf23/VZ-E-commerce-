@@ -119,67 +119,154 @@ export class MailsManagement1Component {
     });
   }
 }
+onSubmit() {
+  // if both mailform and mailform1 are in localStorage, just update and navigate (no API call here)
+  if (this.isBrowser) {
+    const mailform = localStorage.getItem('mailform');
+    const mailform1 = localStorage.getItem('mailform1');
+    const currentFormValue = this.personalDetailsForm.value;
 
-  onSubmit() {
-    // Check if 'mailform', 'mailform1', and 'mailform2' exist in localStorage
-    if (this.isBrowser) {
-      const mailform = localStorage.getItem('mailform');
+    if (mailform && mailform1) {
+      const previousData = JSON.parse(mailform);
+      // merge new values into mailform
+      const updatedMailForm = {
+        ...previousData,
+        ...currentFormValue
+      };
+      localStorage.setItem('mailform', JSON.stringify(updatedMailForm));
 
-      const mailform1 = localStorage.getItem('mailform1');
-      const currentFormValue = this.personalDetailsForm.value;
+      // compare countries
+      const previousCountry = (previousData?.nationality || '').trim();
+      const currentCountry = (currentFormValue?.nationality || '').trim();
 
-      if (mailform && mailform1) {
-        const previousData = JSON.parse(mailform);
-        // Update 'mailform' with current form values
-        const updatedMailForm = {
-          ...JSON.parse(mailform),
-          ...this.personalDetailsForm.value,
-        };
-
-        localStorage.setItem('mailform', JSON.stringify(updatedMailForm)); // Save updated 'mailform'
-
-        // Compare selected country with previously stored country
-        const previousCountry = (previousData?.nationality || '').trim();
-        const currentCountry = (currentFormValue?.nationality || '').trim();
-
-        if (previousCountry !== currentCountry) {
-        // Country has changed 
+      if (previousCountry !== currentCountry) {
         this.router.navigate(['/mails-management-2']);
       } else {
-        // Country is same 
         this.router.navigate(['/mails-management-details']);
       }
-        return; // Exit early to avoid further execution
-      }
-    }
-
-    if (this.personalDetailsForm.valid) {
-      const formData = this.personalDetailsForm.value;
-
-      if (this.isBrowser) {
-        if (localStorage.getItem('mailform2')) {
-          this.router.navigate(['/mails-management-details']);
-        } else if (localStorage.getItem('mailform')) {
-          this.router.navigate(['/mails-management-2']);
-        } else {
-          this.router.navigate(['/mails-management-2']);
-        }
-        localStorage.setItem('mailform', JSON.stringify(formData));
-      }
-    } else {
-      const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
-      if (mobileNumberControl?.errors?.['validatePhoneNumber']) {
-        // Correct key here
-        this.toastr.error(
-          'Enter a valid mobile number for the selected country.',
-          'Validation Error'
-        );
-      }
-
-      // Use the updated showSingleValidationError method for better feedback
-      this.showSingleValidationError(this.personalDetailsForm);
+      return; // exit early (no API call in this branch)
     }
   }
+
+  // at this point, we either have no mailform in storage or form is “fresh”
+  if (this.personalDetailsForm.valid) {
+    const values = this.personalDetailsForm.value;
+    // extract just the phone string (API wants a simple string, not the full intl-tel object)
+    const phoneString = values.mobileNumber?.e164Number || '';
+
+    // build payload exactly to match your Salesforce endpoint:
+    const payload = {
+      firstName:   values.firstName,
+      lastName:    values.lastName,
+      email:       values.email,
+      nationality: values.nationality,
+      phone:       phoneString,
+      dob:         values.birthday  // assuming yyyy-mm-dd is fine
+    };
+
+    this.isLoading = true;
+    this.userService.createLeadOnly(payload).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        // Save the formData into localStorage (so next step can read it)
+        if (this.isBrowser) {
+          localStorage.setItem('mailform', JSON.stringify(values));
+        }
+
+        // this.toastr.success('Lead created successfully!');
+
+        // now replicate your original routing logic:
+        if (this.isBrowser) {
+          if (localStorage.getItem('mailform2')) {
+            this.router.navigate(['/mails-management-details']);
+          } else if (localStorage.getItem('mailform')) {
+            this.router.navigate(['/mails-management-2']);
+          } else {
+            this.router.navigate(['/mails-management-2']);
+          }
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        // show whatever Salesforce returned, or a generic message
+        const msg = err.error?.message || 'Failed to create lead';
+        this.toastr.error(msg, 'Error');
+      }
+    });
+  } else {
+    // form is invalid: show validation toast(s)
+    const mobileControl = this.personalDetailsForm.get('mobileNumber');
+    if (mobileControl?.errors?.['validatePhoneNumber']) {
+      this.toastr.error(
+        'Enter a valid mobile number for the selected country.',
+        'Validation Error'
+      );
+    }
+    this.showSingleValidationError(this.personalDetailsForm);
+  }
+}
+
+
+  // onSubmit() {
+  //   // Check if 'mailform', 'mailform1', and 'mailform2' exist in localStorage
+  //   if (this.isBrowser) {
+  //     const mailform = localStorage.getItem('mailform');
+
+  //     const mailform1 = localStorage.getItem('mailform1');
+  //     const currentFormValue = this.personalDetailsForm.value;
+
+  //     if (mailform && mailform1) {
+  //       const previousData = JSON.parse(mailform);
+  //       // Update 'mailform' with current form values
+  //       const updatedMailForm = {
+  //         ...JSON.parse(mailform),
+  //         ...this.personalDetailsForm.value,
+  //       };
+
+  //       localStorage.setItem('mailform', JSON.stringify(updatedMailForm)); // Save updated 'mailform'
+
+  //       // Compare selected country with previously stored country
+  //       const previousCountry = (previousData?.nationality || '').trim();
+  //       const currentCountry = (currentFormValue?.nationality || '').trim();
+
+  //       if (previousCountry !== currentCountry) {
+  //       // Country has changed 
+  //       this.router.navigate(['/mails-management-2']);
+  //     } else {
+  //       // Country is same 
+  //       this.router.navigate(['/mails-management-details']);
+  //     }
+  //       return; // Exit early to avoid further execution
+  //     }
+  //   }
+
+  //   if (this.personalDetailsForm.valid) {
+  //     const formData = this.personalDetailsForm.value;
+
+  //     if (this.isBrowser) {
+  //       if (localStorage.getItem('mailform2')) {
+  //         this.router.navigate(['/mails-management-details']);
+  //       } else if (localStorage.getItem('mailform')) {
+  //         this.router.navigate(['/mails-management-2']);
+  //       } else {
+  //         this.router.navigate(['/mails-management-2']);
+  //       }
+  //       localStorage.setItem('mailform', JSON.stringify(formData));
+  //     }
+  //   } else {
+  //     const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
+  //     if (mobileNumberControl?.errors?.['validatePhoneNumber']) {
+  //       // Correct key here
+  //       this.toastr.error(
+  //         'Enter a valid mobile number for the selected country.',
+  //         'Validation Error'
+  //       );
+  //     }
+
+  //     // Use the updated showSingleValidationError method for better feedback
+  //     this.showSingleValidationError(this.personalDetailsForm);
+  //   }
+  // }
 
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard
