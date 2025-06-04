@@ -334,7 +334,7 @@ submitData() {
         return this.userService.createPaymentOpportunity(paymentPayload);
       }),
       switchMap(response => {
-        if (!response?.QuotePaymentId) throw new Error('Missing QuotePaymentId from Salesforce');
+        if (!response?.QuotePaymentId) throw new Error(response.error ||'Missing QuotePaymentId from Salesforce');
 
         const quotePaymentId = response.QuotePaymentId;
         const digiPayload = {
@@ -383,7 +383,7 @@ submitData() {
         Swal.fire({
           icon: 'error',
           title: 'Error',
-          text: err?.error?.[0]?.message || 'An error occurred',
+          text: err?.error?.[0]?.message || err?.error?.error || 'An error occurred',
           showCancelButton: true,
           confirmButtonText: 'Retry',
           cancelButtonText: 'Cancel',

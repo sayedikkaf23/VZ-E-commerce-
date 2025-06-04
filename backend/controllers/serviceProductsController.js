@@ -203,19 +203,17 @@ exports.createPaymentOpportunity = async (req, res) => {
     };
 
     const salesforceResponse = await axios.request(config);
-    console.log(salesforceResponse);
+   // ✅ Extract and guard data early
+const salesforceData = salesforceResponse?.data || {};
+const errorText = salesforceData?.error || "";
 
-    const errorText =
-      salesforceResponse.data && salesforceResponse.data.error
-        ? salesforceResponse.data.error
-        : "";
+const isDuplicate = errorText.includes("DUPLICATE_VALUE");
+const isConvertedLead = errorText.includes("CANNOT_UPDATE_CONVERTED_LEAD");
 
-    // Check if error text contains "DUPLICATE_VALUE"
-    if (errorText.includes("DUPLICATE_VALUE")) {
-      return res.status(400).json({
-        error: errorText,
-      });
-    }
+if (errorText && !isDuplicate && !isConvertedLead) {
+  return res.status(400).json({ error: errorText });
+}
+
 
     console.log("salesforceResponse", salesforceResponse.data);
     let subTotal = 0;
@@ -237,6 +235,7 @@ exports.createPaymentOpportunity = async (req, res) => {
 
     // Here, totalPrice = subTotal, or you can add tax/extra if needed
     totalPrice = subTotal;
+const salesPersonDetails = salesforceData?.salesPersonDetails || {};
 
     const pidataDoc = await Pidata.create({
       leadWithDetails: {
@@ -264,14 +263,11 @@ exports.createPaymentOpportunity = async (req, res) => {
         totalPrice: totalPrice,
         product: req.body.prodcutNameList, // store the whole array
       },
-      salesPersonDetails: {
-        salesPersonName:
-          salesforceResponse.data?.salesPersonDetails.salesPersonName,
-        salesPersonEmail:
-          salesforceResponse.data?.salesPersonDetails.salesPersonEmail,
-        salesPersonMobile:
-          salesforceResponse.data?.salesPersonDetails.salesPersonMobile,
-      },
+     salesPersonDetails: {
+    salesPersonName: salesPersonDetails.salesPersonName || null,
+    salesPersonEmail: salesPersonDetails.salesPersonEmail || null,
+    salesPersonMobile: salesPersonDetails.salesPersonMobile || null,
+  },
       // salesforceResponseMatchScreening: {
 
       //   leadId:         sfResp.data?.LeadId         ?? null,
