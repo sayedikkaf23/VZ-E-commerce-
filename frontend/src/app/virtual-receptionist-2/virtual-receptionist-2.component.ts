@@ -213,20 +213,34 @@ export class VirtualReceptionist2Component implements OnInit {
   onFileChange(event: any, index: number): void {
     if (event.target.files && event.target.files.length > 0) {
       // Convert to an Array
-      const filesArray: File[] = Array.from(event.target.files as FileList);
-
-      this.uploadedFiles[index] = filesArray;
+    const filesArray: File[] = Array.from(event.target.files as FileList);
+      this.uploadedFiles[index] = [];
       this.uploadedFileNames[index] = [];
- // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
-    if (filesArray[index].size > 2097152) {
-      this.toastr.error('File size should be below 2 MB', 'File Too Large');
-      event.target.value = null;
-      return; // Skip uploading this file
+// Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
+     let filesToUpload: File[] = [];
+
+   
+    for (const file of filesArray) { // Iterate through each file selected in this event
+      if (file.size > 2097152) { // Check the size of the current 'file' in the loop
+        this.toastr.error(`File "${file.name}" size should be below 2 MB`, 'File Too Large');
+        // Do not add this file to filesToUpload, but allow others
+      } else {
+        filesToUpload.push(file);
+      }
     }
+   
+
+    if (filesToUpload.length === 0) {
+      event.target.value = null; // Clear the file input if all were too large
+      return;
+    }
+
+    this.uploadedFiles[index] = filesToUpload; // Store only the valid files
+
       this.isLoading = true;
 
       // Upload each file with presigned URL
-      const uploadPromises = filesArray.map(file =>
+      const uploadPromises = filesToUpload.map(file =>
         this.userService.getPresignedUrl(file).toPromise().then((response: any) => {
           const presignedUrl = response.url;
           return fetch(presignedUrl, {
@@ -294,7 +308,7 @@ export class VirtualReceptionist2Component implements OnInit {
           // Overwrite 'files' with the actual S3 URLs
           files: this.uploadedFileNames[idx] || []
         })),
-        uploadedFileNames: this.companyTradeLicenseFile
+        uploadedFileNames: this.uploadedFileNames
 
       };
 
@@ -321,8 +335,7 @@ export class VirtualReceptionist2Component implements OnInit {
    * For each shareholder's "Browse" button
    */
   triggerFileUpload2(index: number): void {
-    const fileInputArray = this.fileInputs.toArray();
-    const fileInput = fileInputArray[index];
+     const fileInput = this.fileInputs.toArray()[index];
     if (fileInput) {
       fileInput.nativeElement.click();
     } else {

@@ -177,7 +177,7 @@ export class MailsManagement3Component implements OnInit {
     // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
      let filesToUpload: File[] = [];
 
-    // --- THIS IS THE CRITICAL FIX ---
+   
     for (const file of filesArray) { // Iterate through each file selected in this event
       if (file.size > 2097152) { // Check the size of the current 'file' in the loop
         this.toastr.error(`File "${file.name}" size should be below 2 MB`, 'File Too Large');
@@ -186,7 +186,7 @@ export class MailsManagement3Component implements OnInit {
         filesToUpload.push(file);
       }
     }
-    // --- END CRITICAL FIX ---
+   
 
     if (filesToUpload.length === 0) {
       event.target.value = null; // Clear the file input if all were too large
