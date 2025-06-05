@@ -120,22 +120,23 @@ export class MailsManagement1Component {
   }
 }
 onSubmit() {
-  // if both mailform and mailform1 are in localStorage, just update and navigate (no API call here)
-  if (this.isBrowser) {
-    const mailform = localStorage.getItem('mailform');
-    const mailform1 = localStorage.getItem('mailform1');
-    const currentFormValue = this.personalDetailsForm.value;
+  const currentFormValue = this.personalDetailsForm.value;
 
-    if (mailform && mailform1) {
-      const previousData = JSON.parse(mailform);
-      // merge new values into mailform
+  // Always update localStorage with the current form values
+  if (this.isBrowser) {
+    const previousMailform = localStorage.getItem('mailform');
+    const mailform1 = localStorage.getItem('mailform1');
+
+    if (previousMailform && mailform1) {
+      const previousData = JSON.parse(previousMailform);
+
       const updatedMailForm = {
         ...previousData,
         ...currentFormValue
       };
       localStorage.setItem('mailform', JSON.stringify(updatedMailForm));
 
-      // compare countries
+      // Compare nationalities
       const previousCountry = (previousData?.nationality || '').trim();
       const currentCountry = (currentFormValue?.nationality || '').trim();
 
@@ -144,44 +145,38 @@ onSubmit() {
       } else {
         this.router.navigate(['/mails-management-details']);
       }
-      return; // exit early (no API call in this branch)
+      return; // Exit early — no need to call API again
     }
   }
 
-  // at this point, we either have no mailform in storage or form is “fresh”
+  // Proceed with API call if no existing localStorage entry or it's the first submission
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
-    // extract just the phone string (API wants a simple string, not the full intl-tel object)
     const phoneString = values.mobileNumber?.e164Number || '';
 
-    // build payload exactly to match your Salesforce endpoint:
     const payload = {
       firstName:   values.firstName,
       lastName:    values.lastName,
       email:       values.email,
       nationality: values.nationality,
       phone:       phoneString,
-      dob:         values.birthday  // assuming yyyy-mm-dd is fine
+      dob:         values.birthday, // yyyy-mm-dd format
     };
 
     this.isLoading = true;
     this.userService.createLeadOnly(payload).subscribe({
       next: (res) => {
         this.isLoading = false;
-        // Save the formData into localStorage (so next step can read it)
+
         if (this.isBrowser) {
-          localStorage.setItem('mailform', JSON.stringify(values));  
-        localStorage.setItem('leadResponse', JSON.stringify(res.data));
+          localStorage.setItem('mailform', JSON.stringify(values));
+          localStorage.setItem('leadResponse', JSON.stringify(res.data));
         }
 
-        // this.toastr.success('Lead created successfully!');
-
-        // now replicate your original routing logic:
+        // Navigate based on localStorage state
         if (this.isBrowser) {
           if (localStorage.getItem('mailform2')) {
             this.router.navigate(['/mails-management-details']);
-          } else if (localStorage.getItem('mailform')) {
-            this.router.navigate(['/mails-management-2']);
           } else {
             this.router.navigate(['/mails-management-2']);
           }
@@ -189,13 +184,12 @@ onSubmit() {
       },
       error: (err) => {
         this.isLoading = false;
-        // show whatever Salesforce returned, or a generic message
         const msg = err.error?.message || 'Failed to create lead';
         this.toastr.error(msg, 'Error');
       }
     });
   } else {
-    // form is invalid: show validation toast(s)
+    // Handle invalid form
     const mobileControl = this.personalDetailsForm.get('mobileNumber');
     if (mobileControl?.errors?.['validatePhoneNumber']) {
       this.toastr.error(
@@ -206,6 +200,7 @@ onSubmit() {
     this.showSingleValidationError(this.personalDetailsForm);
   }
 }
+
 
 
   // onSubmit() {
