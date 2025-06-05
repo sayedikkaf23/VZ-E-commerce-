@@ -426,8 +426,12 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
 
         const serviceProducts = Array.isArray(serviceResponse) ? serviceResponse : [serviceResponse];
         this.serviceProducts = serviceProducts;
-
+ const leadResponseRaw = localStorage.getItem('leadResponse');
+  const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
         const paymentPayload = {
+               LeadId: leadResponse.LeadId || '',
+    AccountId: leadResponse.AccountId || '',
+    ContactId: leadResponse.ContactId || '',
           firstName: this.personalInfo.firstName,
           lastName: this.personalInfo.lastName,
           email: this.personalInfo.email,
@@ -461,7 +465,7 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
         return this.userService.createPaymentOpportunity(paymentPayload);
       }),
       switchMap((paymentOpportunityResponse: any) => {
-        if (!paymentOpportunityResponse?.QuotePaymentId) throw new Error('Missing QuotePaymentId');
+        if (!paymentOpportunityResponse?.QuotePaymentId) throw new Error(paymentOpportunityResponse.error ||'Missing QuotePaymentId from Salesforce');
 
         const quotePaymentId = paymentOpportunityResponse.QuotePaymentId;
 
@@ -477,9 +481,11 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
       }),
       switchMap(({ quotePaymentId, leadId }) => {
         if (!leadId) throw new Error('Missing LeadId from digicomplice');
-        const accountId = localStorage.getItem('accountId');
+       const leadResponseRaw = localStorage.getItem('leadResponse');
+  const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
         const documentPayload = {
           quotePaymentId,
+             AccountId: leadResponse.AccountId || '',
           serviceName: 'Virtual Receptionist',
           tradelicense: [
             {
@@ -487,7 +493,7 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
               url: this.tradeLicenseFile.uploadedFileNames.length > 0
                 ? this.tradeLicenseFile.uploadedFileNames[0].url
                 : '',
-              accountId: accountId
+             AccountId: leadResponse.AccountId || '',
             }
           ],
           shareholders: shareholdersData.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; files: { name: any; url: any; type: any; oopId: any; }[]; }) => ({
@@ -506,6 +512,7 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
 
         return this.userService.insertShareholderDocuments(
           documentPayload.quotePaymentId,
+          documentPayload.AccountId,
           documentPayload.serviceName,
           documentPayload.tradelicense,
           documentPayload.shareholders

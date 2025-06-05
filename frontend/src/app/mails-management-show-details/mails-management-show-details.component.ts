@@ -373,15 +373,17 @@ console.log("object",mergedData,   this.tradeLicenseFile)
           ? this.tradeLicenseFile.uploadedFileNames
           : Object.values(this.tradeLicenseFile.uploadedFileNames || {}).flat();
           const accountId = localStorage.getItem('accountId');
-
+ const leadResponseRaw = localStorage.getItem('leadResponse');
+  const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
         const documentPayload = {
           quotePaymentId,
+             AccountId: leadResponse.AccountId || '',
           serviceName: 'Mail Management',
           tradelicense: [
             {
               License_no: this.tradeLicenseFile.companyTradeLicenseNumber || '',
               url: uploadedFilesArray.length > 0 ? uploadedFilesArray[0].url : '',
-              accountId: accountId
+                AccountId: leadResponse.AccountId || '',
             }
           ],
           shareholders: (mergedData.shareholders || []).map((s: any) => ({
@@ -402,6 +404,7 @@ console.log("object",mergedData,   this.tradeLicenseFile)
 
         return this.userService.insertShareholderDocuments(
           documentPayload.quotePaymentId,
+          documentPayload.AccountId,
           documentPayload.serviceName,
           documentPayload.tradelicense,
           documentPayload.shareholders

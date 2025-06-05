@@ -203,9 +203,12 @@ onSubmit() {
         // save form data to localStorage for next step
         if (this.isBrowser) {
           localStorage.setItem('virtualdata', JSON.stringify(values));
-            localStorage.setItem('accountId', JSON.stringify(res.data.AccountId));
+          
         }
 
+          if (this.isBrowser && res?.data) {
+    localStorage.setItem('leadResponse', JSON.stringify(res.data));
+  }
         // this.toastr.success('Lead created successfully!');
 
         // now replicate your original routing logic:
