@@ -339,14 +339,14 @@ console.log("object",mergedData,   this.tradeLicenseFile)
             ProductDiscount: 0,
             vat: product.vat,
           })),
-        shareholders: (mergedData.shareholders || []).map((s: any) => ({
-  name: s.name,
-  shareholderPercentage: s.shareholderPercentage,
-  dob: s.dob,
-  nationalityshareholder: s.nationalityshareholder,
-  countryRisk: s.countryRisk,
-  files: s.files || []
-}))
+          shareholders: (mergedData.shareholders || []).map((s: any) => ({
+            name: s.name,
+            shareholderPercentage: s.shareholderPercentage,
+            dob: s.dob,
+            nationalityshareholder: s.nationalityshareholder,
+            countryRisk: s.countryRisk,
+            files: s.files || []
+          }))
 
         };
 
@@ -369,31 +369,33 @@ console.log("object",mergedData,   this.tradeLicenseFile)
       }),
       switchMap(({ quotePaymentId, leadId }) => {
         if (!leadId) throw new Error('Missing LeadId from digicomplice');
-const uploadedFilesArray = Array.isArray(this.tradeLicenseFile.uploadedFileNames)
-  ? this.tradeLicenseFile.uploadedFileNames
-  : Object.values(this.tradeLicenseFile.uploadedFileNames || {}).flat();
+        const uploadedFilesArray = Array.isArray(this.tradeLicenseFile.uploadedFileNames)
+          ? this.tradeLicenseFile.uploadedFileNames
+          : Object.values(this.tradeLicenseFile.uploadedFileNames || {}).flat();
+          const accountId = localStorage.getItem('accountId');
 
         const documentPayload = {
           quotePaymentId,
           serviceName: 'Mail Management',
-  tradelicense: [
-    {
-      License_no: this.tradeLicenseFile.companyTradeLicenseNumber || '',
-      url: uploadedFilesArray.length > 0 ? uploadedFilesArray[0].url : ''
-    }
-  ],
-        shareholders: (mergedData.shareholders || []).map((s: any) => ({
-  name: s.name,
-  shareholderPercentage: s.shareholderPercentage,
-  dob: s.dob,
-  nationalityshareholder: s.nationalityshareholder,
-  files: (s.files || []).map((f: any) => ({
-    name: f.name,
-    url: f.url,
-    type: f.type,
-    oopId: f.oopId
-  })) || []
-}))
+          tradelicense: [
+            {
+              License_no: this.tradeLicenseFile.companyTradeLicenseNumber || '',
+              url: uploadedFilesArray.length > 0 ? uploadedFilesArray[0].url : '',
+              accountId: accountId
+            }
+          ],
+          shareholders: (mergedData.shareholders || []).map((s: any) => ({
+            name: s.name,
+            shareholderPercentage: s.shareholderPercentage,
+            dob: s.dob,
+            nationalityshareholder: s.nationalityshareholder,
+            files: (s.files || []).map((f: any) => ({
+              name: f.name,
+              url: f.url,
+              type: f.type,
+              oopId: f.oopId
+            })) || []
+          }))
 
         
         };

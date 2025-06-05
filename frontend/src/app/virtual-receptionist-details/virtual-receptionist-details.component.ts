@@ -477,18 +477,19 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
       }),
       switchMap(({ quotePaymentId, leadId }) => {
         if (!leadId) throw new Error('Missing LeadId from digicomplice');
-
+        const accountId = localStorage.getItem('accountId');
         const documentPayload = {
           quotePaymentId,
           serviceName: 'Virtual Receptionist',
-       tradelicense: [
-    {
-      License_no: this.tradeLicenseFile.companyTradeLicense,
-      url: this.tradeLicenseFile.uploadedFileNames.length > 0
-        ? this.tradeLicenseFile.uploadedFileNames[0].url
-        : ''
-    }
-  ],
+          tradelicense: [
+            {
+              License_no: this.tradeLicenseFile.companyTradeLicense,
+              url: this.tradeLicenseFile.uploadedFileNames.length > 0
+                ? this.tradeLicenseFile.uploadedFileNames[0].url
+                : '',
+              accountId: accountId
+            }
+          ],
           shareholders: shareholdersData.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; files: { name: any; url: any; type: any; oopId: any; }[]; }) => ({
             name: s.name,
             shareholderPercentage: s.shareholderPercentage,

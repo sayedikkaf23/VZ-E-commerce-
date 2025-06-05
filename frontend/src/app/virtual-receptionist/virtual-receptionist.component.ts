@@ -203,6 +203,7 @@ onSubmit() {
         // save form data to localStorage for next step
         if (this.isBrowser) {
           localStorage.setItem('virtualdata', JSON.stringify(values));
+            localStorage.setItem('accountId', JSON.stringify(res.data.AccountId));
         }
 
         // this.toastr.success('Lead created successfully!');
