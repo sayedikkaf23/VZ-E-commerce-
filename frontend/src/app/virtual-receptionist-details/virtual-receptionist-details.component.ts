@@ -430,7 +430,8 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
   const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
         const paymentPayload = {
                LeadId: leadResponse.LeadId || '',
-    AccountId: leadResponse.AccountId || '',
+                   AccountId: leadResponse.AccountId || '',
+
     ContactId: leadResponse.ContactId || '',
           firstName: this.personalInfo.firstName,
           lastName: this.personalInfo.lastName,
