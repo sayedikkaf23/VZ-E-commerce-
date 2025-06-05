@@ -106,6 +106,7 @@ export class VirtualReceptionistDetailsComponent {
         ...this.companyInfo,
         companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
         shareholders: mergedShareholders,
+        ...this.tradeLicenseFile
       };
 
       // Store merged data in localStorage for the final step
