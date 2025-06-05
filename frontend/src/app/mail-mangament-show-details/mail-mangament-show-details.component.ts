@@ -370,8 +370,13 @@ export class MailMangamentShowDetailsComponent {
         localStorage.setItem('BussinessServiceProducts', JSON.stringify(resp));
         localStorage.setItem('finalDatabussiness', JSON.stringify(finalData));
         this.matchScoreStorageService.setMatchScoreResponse(resp);
+ const leadResponseRaw = localStorage.getItem('leadResponse');
+  const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
         const paymentPayload = {
+                   LeadId: leadResponse.LeadId || '',
+    AccountId: leadResponse.AccountId || '',
+    ContactId: leadResponse.ContactId || '',
           firstName: this.personalInfo.firstName,
           lastName: this.personalInfo.lastName,
           email: this.personalInfo.email,
