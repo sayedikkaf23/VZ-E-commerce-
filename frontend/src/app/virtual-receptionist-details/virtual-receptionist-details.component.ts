@@ -490,9 +490,10 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
           tradelicense: [
             {
               License_no: this.tradeLicenseFile.companyTradeLicense,
-              url: this.tradeLicenseFile.uploadedFileNames.length > 0
-                ? this.tradeLicenseFile.uploadedFileNames[0].url
-                : '',
+            url: Array.isArray(this.tradeLicenseFile?.uploadedFileNames) && this.tradeLicenseFile.uploadedFileNames.length > 0
+  ? this.tradeLicenseFile.uploadedFileNames[0].url
+  : '',
+
              AccountId: leadResponse.AccountId || '',
             }
           ],
