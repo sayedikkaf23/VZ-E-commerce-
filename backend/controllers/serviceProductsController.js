@@ -271,8 +271,9 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
       // salesforceResponseMatchScreening: {
 
       //   leadId:         sfResp.data?.LeadId         ?? null,
-      //   // accountId:      sfResp.data?.AccountId      ?? null,
-      //   opportunityId:  sfResp.data?.OpportunityId  ?? null,
+        accountId:      salesforceResponse.data?.AccountId      ?? null,
+        // opportunityId:  salesforceResponse.data?.OpportunityId  ?? null,
+        ContactId:  salesforceResponse.data?.ContactId  ?? null,
       //   quoteId:        sfResp.data?.QuoteId        ?? null,
       //   quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
       //   message:        sfResp.data?.Message        ?? ''

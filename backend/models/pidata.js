@@ -47,7 +47,8 @@ const responseSchema = new mongoose.Schema({
   totalAmount: { type: Number },
   matchScore: { type: Number },
   leadId: { type: String },
-  accountId: { type: String },
+    ContactId: { type: String },
+  // accountId: { type: String },
   quotePayementId: { type: String }
 });
  
@@ -120,6 +121,8 @@ const pidataSchema = new mongoose.Schema(
       default: false,
     },
     planname: { type: String },
+    accountId: { type: String },
+    ContactId: { type: String },
     customerType: { type: String },
     subcategory: { type: String },
     tradeLicenseFileUrl: { type: String },
