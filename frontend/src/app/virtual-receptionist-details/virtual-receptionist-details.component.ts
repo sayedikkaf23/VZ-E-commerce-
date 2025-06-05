@@ -485,7 +485,8 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
   const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
         const documentPayload = {
           quotePaymentId,
-             AccountId: leadResponse.AccountId || '',
+                       AccountId: leadResponse.AccountId || '',
+
           serviceName: 'Virtual Receptionist',
           tradelicense: [
             {
@@ -493,7 +494,8 @@ console.log(mergedData,"mergedData",this.tradeLicenseFile)
               url: this.tradeLicenseFile.uploadedFileNames.length > 0
                 ? this.tradeLicenseFile.uploadedFileNames[0].url
                 : '',
-             AccountId: leadResponse.AccountId || '',
+                  AccountId: leadResponse.AccountId || '',
+
             }
           ],
           shareholders: shareholdersData.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; files: { name: any; url: any; type: any; oopId: any; }[]; }) => ({
