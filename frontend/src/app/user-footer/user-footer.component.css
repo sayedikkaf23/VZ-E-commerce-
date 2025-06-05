@@ -9,3 +9,35 @@
         margin-left: 2px;
     }
 }
+/* Always center the “Need Assistance?” block’s contents */
+.mobile-help {
+  text-align: center; 
+  margin-bottom: 15px; /* just for spacing */
+}
+
+/* Style the heading */
+.assist-title {
+  margin: 0;
+  font-size: 1.2rem;
+  color: #000;
+}
+
+/* Make the link an inline‐block so it can be centered under the heading */
+.contact-link {
+  display: inline-block;
+  margin-top: 7px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #555;
+  text-decoration: none;
+}
+
+/* Optional: adjust both sizes on smaller phones */
+@media (max-width: 399px) {
+  .assist-title {
+    font-size: 1rem;
+  }
+  .contact-link {
+    font-size: 0.9rem;
+  }
+}
