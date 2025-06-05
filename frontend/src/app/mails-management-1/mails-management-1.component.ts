@@ -170,8 +170,8 @@ onSubmit() {
         this.isLoading = false;
         // Save the formData into localStorage (so next step can read it)
         if (this.isBrowser) {
-          localStorage.setItem('mailform', JSON.stringify(values));
-          localStorage.setItem('accountId', JSON.stringify(res.data.AccountId));
+          localStorage.setItem('mailform', JSON.stringify(values));  
+        localStorage.setItem('leadResponse', JSON.stringify(res.data));
         }
 
         // this.toastr.success('Lead created successfully!');
