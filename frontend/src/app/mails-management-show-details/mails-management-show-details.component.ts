@@ -342,6 +342,8 @@ console.log("object",mergedData,   this.tradeLicenseFile)
             ProductQuantity: 1,
             ProductDiscount: 0,
             vat: product.vat,
+            ProductId: product.Product_Id,  
+
           })),
           shareholders: (mergedData.shareholders || []).map((s: any) => ({
             name: s.name,
