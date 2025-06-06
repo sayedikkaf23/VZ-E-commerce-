@@ -123,6 +123,7 @@ const pidataSchema = new mongoose.Schema(
     planname: { type: String },
     accountId: { type: String },
     ContactId: { type: String },
+    ProductId: { type: String },
     customerType: { type: String },
     subcategory: { type: String },
     tradeLicenseFileUrl: { type: String },
