@@ -336,9 +336,9 @@ submitData() {
         return this.userService.createPaymentOpportunity(paymentPayload);
       }),
       switchMap(response => {
-        if (!response?.QuotePaymentId) throw new Error(response.error ||'Missing QuotePaymentId from Salesforce');
+        if (!response?.salesforceResponse.QuotePaymentId) throw new Error(response.error ||'Missing QuotePaymentId from Salesforce');
 
-        const quotePaymentId = response.QuotePaymentId;
+        const quotePaymentId = response.salesforceResponse.QuotePaymentId;
         const digiPayload = {
           CustomerId: quotePaymentId,
           CompanyName: 'Virtuzone'

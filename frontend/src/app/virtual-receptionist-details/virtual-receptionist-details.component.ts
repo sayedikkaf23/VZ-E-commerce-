@@ -488,14 +488,28 @@ export class VirtualReceptionistDetailsComponent {
             return this.userService.createPaymentOpportunity(paymentPayload);
           }),
           switchMap((paymentOpportunityResponse: any) => {
-            if (!paymentOpportunityResponse?.QuotePaymentId)
+            if (!paymentOpportunityResponse.salesforceResponse?.QuotePaymentId)
               throw new Error(
                 paymentOpportunityResponse.error ||
                   'Missing QuotePaymentId from Salesforce'
               );
 
-            const quotePaymentId = paymentOpportunityResponse.QuotePaymentId;
+            const quotePaymentId = paymentOpportunityResponse.salesforceResponse.QuotePaymentId;
 
+  const shareholders = (paymentOpportunityResponse.pidata.shareholders || []).map(
+    (s: any) => ({
+      name: s.name,
+      shareholderPercentage: s.shareholderPercentage,
+      dob: s.dob,
+      nationalityshareholder: s.nationalityshareholder,
+      files: (s.files || []).map((f: any) => ({
+        name: f.name,
+        url: f.url,
+        type: f.type,
+        oopId: s._id || null   
+      })),
+    })
+  );
             return this.userService
               .digicomplice({
                 CustomerId: quotePaymentId,
@@ -505,10 +519,11 @@ export class VirtualReceptionistDetailsComponent {
                 map((digiRes) => ({
                   quotePaymentId,
                   leadId: digiRes?.screeningmatchScore?.customerId || null,
+                  shareholders 
                 }))
               );
           }),
-          switchMap(({ quotePaymentId, leadId }) => {
+          switchMap(({ quotePaymentId, leadId ,shareholders}) => {
             if (!leadId) throw new Error('Missing LeadId from digicomplice');
             const leadResponseRaw = localStorage.getItem('leadResponse');
             const leadResponse = leadResponseRaw
@@ -521,38 +536,15 @@ export class VirtualReceptionistDetailsComponent {
               tradelicense: [
                 {
                   License_no: this.tradeLicenseFile.companyTradeLicense,
-                  url:
-                    Array.isArray(this.tradeLicenseFile?.uploadedFileNames) &&
-                    this.tradeLicenseFile.uploadedFileNames.length > 0
-                      ? this.tradeLicenseFile.uploadedFileNames[0].url
-                      : '',
-
+                url:
+  Array.isArray(this.tradeLicenseFile?.companyTradeLicenseFile) &&
+  this.tradeLicenseFile.companyTradeLicenseFile.length > 0
+    ? this.tradeLicenseFile.companyTradeLicenseFile[0].url
+    : '',
                   AccountId: leadResponse.AccountId || '',
                 },
               ],
-              shareholders: shareholdersData.map(
-                (s: {
-                  name: any;
-                  shareholderPercentage: any;
-                  dob: any;
-                  nationalityshareholder: any;
-                  files: { name: any; url: any; type: any; oopId: any }[];
-                }) => ({
-                  name: s.name,
-                  shareholderPercentage: s.shareholderPercentage,
-                  dob: s.dob,
-                  nationalityshareholder: s.nationalityshareholder,
-                  files:
-                    s.files?.map(
-                      (f: { name: any; url: any; type: any; oopId: any }) => ({
-                        name: f.name,
-                        url: f.url,
-                        type: f.type,
-                        oopId: f.oopId,
-                      })
-                    ) || [],
-                })
-              ),
+             shareholders,
             };
 
             return this.userService

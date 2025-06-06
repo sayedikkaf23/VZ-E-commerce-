@@ -410,8 +410,8 @@ export class MailMangamentShowDetailsComponent {
         return this.userService.createPaymentOpportunity(paymentPayload);
       }),
       switchMap(response => {
-        if (!response?.QuotePaymentId) throw new Error('Missing QuotePaymentId');
-        const quotePaymentId = response.QuotePaymentId;
+        if (!response?.salesforceResponse.QuotePaymentId) throw new Error('Missing QuotePaymentId');
+        const quotePaymentId = response.salesforceResponse.QuotePaymentId;
         const digiPayload = { CustomerId: quotePaymentId, CompanyName: 'Virtuzone' };
         return this.userService.digicomplice(digiPayload).pipe(
           map(digiRes => ({
