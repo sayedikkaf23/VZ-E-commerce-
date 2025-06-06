@@ -1593,7 +1593,9 @@ async function payNowSaleforce(req, res) {
       <li style="margin-bottom: 8px;">A dedicated team ready to help you succeed</li>
     </ul>
     <p>
-      Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br><a href="https://ecommerce.yeepeey.com" style="text-decoration: none;" target="_blank">https://ecommerce.yeepeey.com</a>
+      Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.
+      <br>
+      <a href="https://ecommerce.yeepeey.com" style="text-decoration: none;" target="_blank">https://ecommerce.yeepeey.com</a>
       <br>
       </br>
       </br>
