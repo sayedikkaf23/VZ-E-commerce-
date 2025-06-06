@@ -373,7 +373,7 @@ console.log("object",mergedData,   this.tradeLicenseFile)
         name: f.name,
         url: f.url,
         type: f.type,
-        oopId: s._id || null   
+        oopId:  paymentOpportunityResponse.salesforceResponse.OpportunityId || null   
       })),
     })
   );
