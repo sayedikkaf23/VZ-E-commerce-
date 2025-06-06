@@ -1,0 +1,7 @@
+.btn:focus{
+    background-color: var(--white);
+}
+
+.btn:hover{
+    background-color: var(--dark);
+}
