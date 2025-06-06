@@ -1593,16 +1593,17 @@ async function payNowSaleforce(req, res) {
       <li style="margin-bottom: 8px;">A dedicated team ready to help you succeed</li>
     </ul>
     <p>
-      Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.
-      <br>
-      <a href="https://ecommerce.yeepeey.com" style="text-decoration: none;" target="_blank">https://ecommerce.yeepeey.com</a>
-      <br>
-      </br>
-      </br>
-    
-      Best regards,<br>
-      <strong>The Virtuzone Team</strong><br>
-    </p>
+  Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br>
+  <a href="https://ecommerce.yeepeey.com" target="_blank" style="text-decoration: none; display: inline-block; margin-bottom: 20px;">
+    https://ecommerce.yeepeey.com
+  </a>
+</p>
+
+<p style="margin-top: 0;">
+  Best regards,<br>
+  <strong>The Virtuzone Team</strong><br>
+</p>
+
     
     
 <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
