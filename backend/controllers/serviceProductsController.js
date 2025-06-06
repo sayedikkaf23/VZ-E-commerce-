@@ -135,6 +135,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       LeadId,
       AccountId,
       ContactId,
+      ProductId,
       uploadedFileNames = [],
       shareholders = [],
     } = req.body;
@@ -278,6 +279,7 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
       //   quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
       //   message:        sfResp.data?.Message        ?? ''
       // },
+      ProductId: ProductId,
       shareholders,
       uploadedFileNames,
       planname: type,
