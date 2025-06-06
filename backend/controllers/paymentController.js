@@ -1594,7 +1594,7 @@ async function payNowSaleforce(req, res) {
     </ul>
     <p>
   Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br>
-  <a href="https://ecommerce.yeepeey.com" target="_blank" style="text-decoration: none; display: inline-block; margin-bottom: 20px;">
+  <a href="https://ecommerce.yeepeey.com" target="_blank" style="text-decoration: none; display: inline-block; margin-bottom: 15px;">
     https://ecommerce.yeepeey.com
   </a>
 </p>
