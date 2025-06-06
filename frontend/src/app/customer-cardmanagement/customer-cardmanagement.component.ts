@@ -389,12 +389,18 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
 
   // Handles file selection
   onFilesSelected(event: any): void {
+
+    if (!this.selectedDocumentType) {
+      this.toastr.error('Please select Document type', 'Validation Error');
+      return;
+    }
+
     const files: FileList = event.target.files;
     if (!files || files.length === 0) {
       return;
     }
 
-   const maxSize = 2097152; // 2MB
+   const maxSize = 1048576; // 1MB
 
   //  Only work with validated files
   const validFiles = Array.from(files).filter(file => {
@@ -403,7 +409,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
       return false;
     }
     if (file.size > maxSize) {
-      this.toastr.error(`File "${file.name}" should be below 2 MB`, 'File Too Large');
+      this.toastr.error(`File "${file.name}" should be below 1 MB`, 'File Too Large');
       return false;
     }
     return true;
@@ -530,7 +536,11 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   
 
   submitDocuments(): void {
-    // Example payload
+
+    if (!this.uploadedFiles || this.uploadedFiles.length === 0) {
+      this.toastr.error('Please upload at least one document before submitting.', 'Validation Error');
+      return;
+    }
     const payload = {
       someId: this.selectedRecord._id,
       files: this.uploadedFiles,
