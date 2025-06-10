@@ -359,21 +359,36 @@ console.log("object",mergedData,   this.tradeLicenseFile)
         return this.userService.createPaymentOpportunity(paymentPayload);
       }),
       switchMap((paymentOpportunityResponse: any) => {
-        if (!paymentOpportunityResponse?.QuotePaymentId) throw new Error('Missing QuotePaymentId');
+        if (!paymentOpportunityResponse.salesforceResponse?.QuotePaymentId) throw new Error('Missing QuotePaymentId');
 
-        const quotePaymentId = paymentOpportunityResponse.QuotePaymentId;
+        const quotePaymentId = paymentOpportunityResponse.salesforceResponse.QuotePaymentId;
 
+  const shareholders = (paymentOpportunityResponse.pidata.shareholders || []).map(
+    (s: any) => ({
+      name: s.name,
+      shareholderPercentage: s.shareholderPercentage,
+      dob: s.dob,
+      nationalityshareholder: s.nationalityshareholder,
+      files: (s.files || []).map((f: any) => ({
+        name: f.name,
+        url: f.url,
+        type: f.type,
+        oopId:  paymentOpportunityResponse.salesforceResponse.OpportunityId || null   
+      })),
+    })
+  );
         return this.userService.digicomplice({
           CustomerId: quotePaymentId,
           CompanyName: 'Virtuzone'
         }).pipe(
           map(secondRes => ({
             quotePaymentId,
-            leadId: secondRes?.screeningmatchScore?.customerId || null
+            leadId: secondRes?.screeningmatchScore?.customerId || null,
+            shareholders
           }))
         );
       }),
-      switchMap(({ quotePaymentId, leadId }) => {
+      switchMap(({ quotePaymentId, leadId,shareholders }) => {
         if (!leadId) throw new Error('Missing LeadId from digicomplice');
         const uploadedFilesArray = Array.isArray(this.tradeLicenseFile.uploadedFileNames)
           ? this.tradeLicenseFile.uploadedFileNames
@@ -392,18 +407,7 @@ console.log("object",mergedData,   this.tradeLicenseFile)
                 AccountId: leadResponse.AccountId || '',
             }
           ],
-          shareholders: (mergedData.shareholders || []).map((s: any) => ({
-            name: s.name,
-            shareholderPercentage: s.shareholderPercentage,
-            dob: s.dob,
-            nationalityshareholder: s.nationalityshareholder,
-            files: (s.files || []).map((f: any) => ({
-              name: f.name,
-              url: f.url,
-              type: f.type,
-              oopId: f.oopId
-            })) || []
-          }))
+        shareholders,
 
         
         };

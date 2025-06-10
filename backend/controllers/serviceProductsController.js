@@ -287,7 +287,11 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
       customerType: CustomerType,
     });
 
-    return res.status(200).json(salesforceResponse.data);
+return res.status(200).json({
+  salesforceResponse: salesforceResponse.data,
+  pidata: pidataDoc
+});
+
   } catch (err) {
     console.error("createOpportunity error:", err);
     return res.status(500).json({
