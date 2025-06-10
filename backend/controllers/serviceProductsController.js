@@ -136,6 +136,8 @@ exports.createPaymentOpportunity = async (req, res) => {
       AccountId,
       ContactId,
       ProductId,
+      tradeLicenseNo,
+      tradeLicenseFileUrl,
       uploadedFileNames = [],
       shareholders = [],
     } = req.body;
@@ -249,6 +251,8 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
         Origin__c: "Website", // or whatever source you want
         Status: "Created",
         dob: dob,
+      tradeLicenseNo,
+      tradeLicenseFileUrl,
         LeadId: salesforceResponse.data?.LeadId,
       },
       quotePaymentWithDetails: {

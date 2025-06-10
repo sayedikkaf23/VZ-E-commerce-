@@ -330,6 +330,12 @@ console.log("object",mergedData,   this.tradeLicenseFile)
           phone: this.personalInfo.mobileNumber.number,
           countryCode: this.personalInfo.mobileNumber.dialCode,
           dob: this.personalInfo.birthday,
+                   tradeLicenseNo: this.tradeLicenseFile.companyTradeLicense,
+                 tradeLicenseFileUrl:
+  Array.isArray(this.tradeLicenseFile?.companyTradeLicenseFile) &&
+  this.tradeLicenseFile.companyTradeLicenseFile.length > 0
+    ? this.tradeLicenseFile.companyTradeLicenseFile[0].url
+    : '',
           type: "Mail Management",
           CustomerType: "C",
           uploadedFileNames,
