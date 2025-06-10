@@ -256,7 +256,7 @@ openProductModal(row: any): void {
  
 openDocumentModal(user: any): void {
   console.log('Document Modal Opened', user); // Debug
-  this.selectedDocuments = user.additionalUploadedFiles || [];
+  this.selectedDocuments =[...( user.additionalUploadedFiles || []), ...(user.tradeLicenseFile || [])];
   console.log('Documents:', this.selectedDocuments); // Debug
   this.showDocumentModal = true;
 }

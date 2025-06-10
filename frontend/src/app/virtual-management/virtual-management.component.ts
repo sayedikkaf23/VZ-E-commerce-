@@ -256,7 +256,7 @@ export class VirtualManagementComponent implements OnInit {
   }
  
   openDocumentModal(user: any): void {
-    this.selectedDocuments = user.additionalUploadedFiles || [];
+     this.selectedDocuments =[...( user.additionalUploadedFiles || []), ...(user.tradeLicenseFile || [])];
     this.showDocumentModal = true;
   }
  
