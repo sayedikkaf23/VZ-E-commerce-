@@ -448,8 +448,11 @@ export class VirtualReceptionistDetailsComponent {
               firstName: this.personalInfo.firstName,
               lastName: this.personalInfo.lastName,
               email: this.personalInfo.email,
-              //  tradeLicenseFile: this.tradeLicenseFile.companyTradeLicenseFile[0],
-                 tradeLicenseNo: this.tradeLicenseFile.companyTradeLicense,
+         tradeLicenseFile: this.tradeLicenseFile
+  ?.companyTradeLicenseFile
+  ?. [0] ?? null,
+
+                 tradeLicenseNo: this.tradeLicenseFile.companyTradeLicense || '',
                  tradeLicenseFileUrl:
   Array.isArray(this.tradeLicenseFile?.companyTradeLicenseFile) &&
   this.tradeLicenseFile.companyTradeLicenseFile.length > 0

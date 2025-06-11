@@ -330,7 +330,9 @@ console.log("object",mergedData,   this.tradeLicenseFile)
           phone: this.personalInfo.mobileNumber.number,
           countryCode: this.personalInfo.mobileNumber.dialCode,
           dob: this.personalInfo.birthday,
-          // tradeLicenseFile: this.tradeLicenseFile.companyTradeLicenseFile[0],
+                   tradeLicenseFile: this.tradeLicenseFile
+  ?.companyTradeLicenseFile
+  ?. [0] ?? null,
 tradeLicenseNo: this.tradeLicenseFile?.companyTradeLicenseNumber || '',
 tradeLicenseFileUrl: this.tradeLicenseFile?.companyTradeLicenseFile?.[0]?.url ?? '',
 
