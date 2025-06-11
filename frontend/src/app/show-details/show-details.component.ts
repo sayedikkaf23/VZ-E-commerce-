@@ -309,8 +309,8 @@ submitData() {
           // countryCode: this.personalInfo.mobileNumber.dialCode,
           dob: this.personalInfo.birthday,
           type: "Bank Account Opening",
-          CustomerType: "C",
-          subcategory: "business",
+          CustomerType: "I",
+          subcategory: "personal",
           prodcutNameList: serviceProducts.map(product => ({
             ProductName: product.Product_Name,
             ProductFamily: "Traditional Services",
