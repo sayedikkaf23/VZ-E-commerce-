@@ -285,13 +285,11 @@ onDateFilter(): void {
 showShareholderModal: boolean = false;
 selectedShareholders: any[] = [];
  
-openShareholderModal(user: any): void {
-  if (user?.userDetails?.shareholders && user.userDetails.shareholders.length > 0) {
-    this.selectedShareholders = user.userDetails.shareholders;
+openShareholderModal(shareholders: any[]): void {
+
+    this.selectedShareholders = shareholders;
     this.showShareholderModal = true;
-  } else {
-    console.log('No Shareholders Found');
-  }
+ 
 }
  
 closeShareholderModal(): void {

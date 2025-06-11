@@ -43,7 +43,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   mailManagemnt: any[] = [];
   virtualReceptionist: any[] = [];
   bankOpening: any[] = [];
-  // businessBanks: any[] = [];
+  businessBanks: any[] = [];
   selectedShareholders: any[] = [];
   shareholders:any[] = [];
   selectedaddAdditionalFile: any[] = [];
@@ -140,7 +140,8 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     this.documenttypeService.getBusinessBanks().subscribe(
       (data) => {
         // console.log('Business Banks:', data);
-        // this.businessBanks = data.map((item: any) => item.documentType); // Store the response
+      
+        this.businessBanks = data.map((item: any) => item.documentType); // Store the response
         // this.isLoading = false;
       },
       (error) => {
@@ -363,7 +364,10 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     } else if (planname === 'Mail Management') {
       return this.mailManagemnt.length ? this.mailManagemnt : ['Loading...'];
     } else if (planname === 'Bank Account Opening') {
+      if(subcategory === 'personal')
       return this.bankOpening.length ? this.bankOpening : ['Loading...'];
+    else
+    return this.businessBanks.length ? this.businessBanks : ['Loading...'];
     } else {
       return ['General Document', 'Other'];
     }
@@ -375,14 +379,14 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openShareholderModal(shareholders: any[], addAdditionalFile: any[], uploadedFileNames: any[], record: any): void {
+  openShareholderModal(shareholders: any[], addAdditionalFile: any[], uploadedFileNames: any[], record: any, tradeLicenseFile: any[]): void {
     this.selectedRecord = record; 
     this.shareholders = shareholders;
     this.selectedShareholders = shareholders.map(shareholder => shareholder.files);
     this.selectedaddAdditionalFile = addAdditionalFile;
     this.uploadedFileNames = uploadedFileNames;
     const shareholderFile = this.selectedShareholders.flat();
-    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(this.uploadedFileNames || []), ...(shareholderFile || [])];
+    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(this.uploadedFileNames || []), ...(shareholderFile || []), ...(tradeLicenseFile || [])];
     console.log("shareholders-",shareholderFile);
     this.showModal = true;
   }

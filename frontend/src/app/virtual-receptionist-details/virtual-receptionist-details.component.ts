@@ -448,6 +448,13 @@ export class VirtualReceptionistDetailsComponent {
               firstName: this.personalInfo.firstName,
               lastName: this.personalInfo.lastName,
               email: this.personalInfo.email,
+               tradeLicenseFile: this.tradeLicenseFile.companyTradeLicenseFile[0],
+                 tradeLicenseNo: this.tradeLicenseFile.companyTradeLicense,
+                 tradeLicenseFileUrl:
+  Array.isArray(this.tradeLicenseFile?.companyTradeLicenseFile) &&
+  this.tradeLicenseFile.companyTradeLicenseFile.length > 0
+    ? this.tradeLicenseFile.companyTradeLicenseFile[0].url
+    : '',
               nationality: this.personalInfo.nationality,
               phone: this.personalInfo.mobileNumber.number,
               countryCode: this.personalInfo.mobileNumber.dialCode,

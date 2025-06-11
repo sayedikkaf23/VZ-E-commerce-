@@ -226,10 +226,10 @@
                     {{ item.leadWithDetails.FirstName + ' ' + item.leadWithDetails.LastName }}
                   </td>
 
-                  <td data-title="Tax Invoice Number"> {{ item.quotePaymentWithDetails.QuotePaymentId || '—' }}
+                  <td data-title="QuotePaymentId"> {{ item.quotePaymentWithDetails.QuotePaymentId || '—' }}
                   <td data-title="Tax Invoice Number"> {{ item.invoiceNumber || '—' }}
                   </td>
-                  <td data-title="Tax Invoice Number"> {{ item.invoiceNumber || '—' }}
+                  <td data-title="Tax Invoice Date"> {{ item.invoicedate || '—' }}
                   </td>
                   
                   <td data-title="Invoice Amount"> {{ item.quoteWithProductDetails?.totalIncludingVAT |
@@ -254,7 +254,7 @@
                   </td>
                   <td>
                     <a href="#additionalfile" data-bs-toggle="modal" class="detail_btn"
-                      (click)="openShareholderModal(item.shareholders, item.additionalUploadedFiles, item.uploadedFileNames,item); $event.preventDefault()">
+                      (click)="openShareholderModal(item.shareholders, item.additionalUploadedFiles, item.uploadedFileNames,item, item.tradeLicenseFile); $event.preventDefault()">
                       <svg width="16" height="12" viewBox="0 0 16 12" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path
                           d="M14.8169 5.31786C15.0341 5.62236 15.1426 5.77464 15.1426 6C15.1426 6.22536 15.0341 6.37764 14.8169 6.68214C13.8411 8.05043 11.3492 11 7.99979 11C4.65035 11 2.15843 8.05043 1.18268 6.68214C0.965512 6.37764 0.856934 6.22536 0.856934 6C0.856934 5.77464 0.965512 5.62236 1.18268 5.31786C2.15843 3.9496 4.65035 1 7.99979 1C11.3492 1 13.8411 3.9496 14.8169 5.31786Z"
