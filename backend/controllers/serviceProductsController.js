@@ -379,7 +379,7 @@ exports.insertDocumentsFromShareholders = async (req, res) => {
 
 exports.createLeadOnly = async (req, res) => {
   try {
-    const { firstName, lastName, email, nationality, phone, dob } = req.body;
+    const { firstName, lastName, email, nationality, phone, dob , service_name} = req.body;
 
     if (!firstName || !lastName || !email || !nationality || !phone || !dob) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -425,6 +425,7 @@ exports.createLeadOnly = async (req, res) => {
         nationality: nationalitys,
         phone,
         dob,
+        service_name
       },
       {
         headers: {

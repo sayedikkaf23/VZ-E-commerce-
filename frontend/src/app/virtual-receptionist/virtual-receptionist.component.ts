@@ -192,7 +192,8 @@ onSubmit() {
       email:       values.email,
       nationality: values.nationality,
       phone:       phoneString,
-      dob:         values.birthday
+      dob:         values.birthday,
+      service_name: 'Virtual Receptionist',
     };
 
     this.isLoading = true;
