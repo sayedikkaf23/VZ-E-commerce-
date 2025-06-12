@@ -81,25 +81,25 @@ if (!process.env.SALESFORCE_USERNAME || !process.env.SALESFORCE_PASSWORD) {
   setTimeout(() => process.exit(1), 5000);
 }
 
-const conn = new jsforce.Connection({
-  loginUrl: 'https://test.salesforce.com/',
+// const conn = new jsforce.Connection({
+//   loginUrl: 'https://test.salesforce.com/',
 
-});
+// });
 
-conn.login(process.env.SALESFORCE_USERNAME, process.env.SALESFORCE_PASSWORD, function (err, res) {
-  if (err) {
-    console.error("Salesforce login failed:", err.message);
-    return;
-  }
-  console.log("Salesforce login successful!");
-  conn.identity((err, res) => {
-    if (err) {
-      console.error("Identity fetch failed:", err);
-    } else {
-      console.log("Salesforce identity response:", res);
-    }
-  });
-});
+// conn.login(process.env.SALESFORCE_USERNAME, process.env.SALESFORCE_PASSWORD, function (err, res) {
+//   if (err) {
+//     console.error("Salesforce login failed:", err.message);
+//     return;
+//   }
+//   console.log("Salesforce login successful!");
+//   conn.identity((err, res) => {
+//     if (err) {
+//       console.error("Identity fetch failed:", err);
+//     } else {
+//       console.log("Salesforce identity response:", res);
+//     }
+//   });
+// });
 app.use(express.static(path.join(__dirname, '../frontend/dist/frontend/browser')));
 
 app.get('*', (req, res) => {
