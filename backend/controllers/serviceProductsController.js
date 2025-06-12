@@ -30,7 +30,7 @@ exports.getServiceProducts = async (req, res) => {
               "0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1",
             grant_type: "password",
             username: "vzpaymentapi@vz.ae.vzfullcopy",
-            password: "VirtuApiuat@123",
+            password: "Virtuzone@1234",
           },
         }
       );
@@ -86,7 +86,7 @@ exports.getServiceProducts = async (req, res) => {
             "0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1",
           grant_type: "password",
           username: "vzpaymentapi@vz.ae.vzfullcopy",
-          password: "VirtuApiuat@123",
+          password: "Virtuzone@1234",
         },
       }
     );
@@ -173,7 +173,7 @@ exports.createPaymentOpportunity = async (req, res) => {
             "0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1",
           grant_type: "password",
           username: "vzpaymentapi@vz.ae.vzfullcopy",
-          password: "VirtuApiuat@123",
+          password: "Virtuzone@1234",
         },
       }
     );
@@ -345,7 +345,7 @@ exports.insertDocumentsFromShareholders = async (req, res) => {
             "0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1",
           grant_type: "password",
           username: "vzpaymentapi@vz.ae.vzfullcopy",
-          password: "VirtuApiuat@123",
+          password: "Virtuzone@1234",
         },
       }
     );
@@ -407,7 +407,7 @@ exports.createLeadOnly = async (req, res) => {
             "0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1",
           grant_type: "password",
           username: "vzpaymentapi@vz.ae.vzfullcopy",
-          password: "VirtuApiuat@123",
+          password: "Virtuzone@1234",
         },
       }
     );
