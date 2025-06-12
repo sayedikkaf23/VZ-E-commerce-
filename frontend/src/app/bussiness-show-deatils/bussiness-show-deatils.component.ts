@@ -9,7 +9,8 @@ import AOS from 'aos';
 import { switchMap, of, tap, map } from 'rxjs';
 import Swal from 'sweetalert2';
 import { MatchScoreStorageService } from '../service/matchscore-storage.service';
- 
+ import { OnlinePaymentService } from '../service/online-payment.service';
+
 declare var $: any;
  // Define a Shareholder interface
 interface Shareholder {
@@ -47,6 +48,7 @@ serviceProducts: any[] = [];
     private http: HttpClient,
     private toastr: ToastrService,
     private router: Router,
+    private onlinePaymentService: OnlinePaymentService,
     private dataStorageService: DataStorageService,
     private userService: UserService,
     private matchScoreStorageService: MatchScoreStorageService,
@@ -224,126 +226,190 @@ serviceProducts: any[] = [];
   // }
  
  
-  submitData() {
-    this.isLoading = true;
-    const finalData = {
-      ...this.personalInfo, // Merge personal information (Step 1 data)
-      ...this.companyInfo,  // Merge company information (Step 2 data)
-      prodcutNameList: this.matchScoreResponse?.products
-    };
+  // submitData() {
+  //   this.isLoading = true;
+  //   const finalData = {
+  //     ...this.personalInfo, // Merge personal information (Step 1 data)
+  //     ...this.companyInfo,  // Merge company information (Step 2 data)
+  //     prodcutNameList: this.matchScoreResponse?.products
+  //   };
   
-    // Prepare the paymentPayload and include shareholders' information
-    const paymentPayload = {
-      firstName: this.personalInfo.firstName,
-      lastName: this.personalInfo.lastName,
-      email: this.personalInfo.email,
-      nationality: this.personalInfo.nationality,
-      phone: this.personalInfo.mobileNumber.number,
-      dob: this.personalInfo.birthday,
-      type: "Bank Account Opening",
-      CustomerType: "C",
-      subcategory: "business",
-      prodcutNameList: this.serviceProducts.map(product => ({
-        ProductName: product.Product_Name,
-        ProductFamily: "Traditional Services", // Example placeholder
-        ProductDescription: "Service for UAE Resident", // Example placeholder
-        ProductCurrencyName: product.Currency_Code,
-        ProductUnitprice: product.price,
-        ProductQuantity: 1,  // Assuming quantity is 1
-        ProductDiscount: 0 // Assuming no discount
-      })),
-      shareholders: this.shareholders.map(shareholder => ({
-        name: shareholder.name,
-        shareholderPercentage: shareholder.shareholderPercentage,
-        dob: shareholder.dob,
-        nationalityshareholder: shareholder.nationalityshareholder,
-        countryRisk: shareholder.countryRisk
-      }))
-    };
+  //   // Prepare the paymentPayload and include shareholders' information
+  //   const paymentPayload = {
+  //     firstName: this.personalInfo.firstName,
+  //     lastName: this.personalInfo.lastName,
+  //     email: this.personalInfo.email,
+  //     nationality: this.personalInfo.nationality,
+  //     phone: this.personalInfo.mobileNumber.number,
+  //     countryCode:this.personalInfo.mobileNumber.dialCode,
+  //     dob: this.personalInfo.birthday,
+  //     type: "Bank Account Opening",
+  //     CustomerType: "C",
+  //     subcategory: "business",
+  //     prodcutNameList: this.serviceProducts.map(product => ({
+  //       ProductName: product.Product_Name,
+  //       ProductFamily: "Traditional Services", // Example placeholder
+  //       ProductDescription: "Service for UAE Resident", // Example placeholder
+  //       ProductCurrencyName: product.Currency_Code,
+  //       ProductUnitprice: product.price,
+  //       ProductQuantity: 1,  // Assuming quantity is 1
+  //       ProductDiscount: 0 // Assuming no discount
+  //     })),
+  //     shareholders: this.shareholders.map(shareholder => ({
+  //       name: shareholder.name,
+  //       shareholderPercentage: shareholder.shareholderPercentage,
+  //       dob: shareholder.dob,
+  //       nationalityshareholder: shareholder.nationalityshareholder,
+  //       countryRisk: shareholder.countryRisk
+  //     }))
+  //   };
   
-    console.log("paymentPayload", paymentPayload);
+  //   console.log("paymentPayload", paymentPayload);
   
-    // Call the API to create payment opportunity
-    this.userService.createPaymentOpportunity(paymentPayload).pipe(
-      switchMap(response => {
-        if (!response?.QuotePaymentId) {
-          throw new Error('Missing QuotePaymentId from Salesforce');
-        }
+  //   // Call the API to create payment opportunity
+  //   this.userService.createPaymentOpportunity(paymentPayload).pipe(
+  //     switchMap(response => {
+  //       if (!response?.QuotePaymentId) {
+  //         throw new Error('Missing QuotePaymentId from Salesforce');
+  //       }
   
-        const quotePaymentId = response.QuotePaymentId;
+  //       const quotePaymentId = response.QuotePaymentId;
   
-        const payload = {
-          CustomerId: quotePaymentId,
-          CompanyName: 'Virtuzone'
-        };
+  //       const payload = {
+  //         CustomerId: quotePaymentId,
+  //         CompanyName: 'Virtuzone'
+  //       };
   
-        return this.userService.digicomplice(payload).pipe(
-          map(secondResponse => ({
-            quotePaymentId,
-            leadId: secondResponse?.screeningmatchScore?.customerId || null
-          }))
-        );
-      }),
+  //       return this.userService.digicomplice(payload).pipe(
+  //         map(secondResponse => ({
+  //           quotePaymentId,
+  //           leadId: secondResponse?.screeningmatchScore?.customerId || null
+  //         }))
+  //       );
+  //     }),
   
-      switchMap(({ quotePaymentId, leadId }) => {
-        if (!leadId) {
-          throw new Error('Missing LeadId from screening response');
-        }
+  //     switchMap(({ quotePaymentId, leadId }) => {
+  //       if (!leadId) {
+  //         throw new Error('Missing LeadId from screening response');
+  //       }
   
-        const checkStatusData = {
-          CustomerId: leadId,
-          CompanyName: 'Virtuzone'
-        };
+  //       const checkStatusData = {
+  //         CustomerId: leadId,
+  //         CompanyName: 'Virtuzone'
+  //       };
   
-        return this.userService.checkStatus(checkStatusData).pipe(
-          tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
-            if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-              this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
-            } else {
-              window.alert(
-                'Your request has been submitted successfully. You will receive an email when your application is approved.'
-              );
-              this.router.navigate([`/failure/${quotePaymentId}`]);
-            }
+  //       return this.userService.checkStatus(checkStatusData).pipe(
+  //         tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
+  //           if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
+  //             // this.router.navigate([`/onlinepayment/${quotePaymentId}`]);
+  //               this.callActivePaymentMethod(quotePaymentId);
+
+  //           } else {
+  //             window.alert(
+  //               'Your request has been submitted successfully. You will receive an email when your application is approved.'
+  //             );
+  //             this.router.navigate([`/failure/${quotePaymentId}`]);
+  //           }
   
-            // Clear local storage
-            localStorage.removeItem('step1Data');
+  //           // Clear local storage
+  //           localStorage.removeItem('step1Data');
+  //           localStorage.removeItem('finalDatabussiness');
+  //           localStorage.removeItem('mailform');
+  //           localStorage.removeItem('step2Data');
+  //           localStorage.removeItem('mailform2');
+  //           localStorage.removeItem('finalData');
+  //         })
+  //       );
+  //     })
+  //   ).subscribe({
+  //     next: () => {
+  //       this.isLoading = false; 
+  //     },
+  //     error: err => {
+  //       this.isLoading = false; 
+  
+  //       // Show SweetAlert with retry option
+  //       Swal.fire({
+  //         icon: 'error',
+  //         title: 'Error',
+  //         text: err?.error?.[0]?.message || 'An error occurred',
+  //         showCancelButton: true,
+  //         confirmButtonText: 'Retry',
+  //         cancelButtonText: 'Cancel',
+  //       }).then((result) => {
+  //         if (result.isConfirmed) {
+  //           this.submitData(); // Retry the API call
+  //         }
+  //       });
+  
+  //       this.toastr.error(err.message || 'An error occurred', 'Error');
+  //       console.error(err);
+  //     }
+  //   });
+  // }
+  
+submitData() {
+  this.isLoading = true;
+
+  const quotePaymentId = localStorage.getItem("quotePaymentId");
+
+  if (quotePaymentId) {
+    this.callActivePaymentMethod(quotePaymentId);
+  } else {
+    this.toastr.error('Missing Quote Payment ID.', 'Error');
+  }
+    localStorage.removeItem('step1Data');
             localStorage.removeItem('finalDatabussiness');
             localStorage.removeItem('mailform');
             localStorage.removeItem('step2Data');
             localStorage.removeItem('mailform2');
             localStorage.removeItem('finalData');
-          })
-        );
-      })
-    ).subscribe({
-      next: () => {
-        this.isLoading = false; 
-      },
-      error: err => {
-        this.isLoading = false; 
-  
-        // Show SweetAlert with retry option
-        Swal.fire({
-          icon: 'error',
-          title: 'Error',
-          text: err.message || 'An error occurred',
-          showCancelButton: true,
-          confirmButtonText: 'Retry',
-          cancelButtonText: 'Cancel',
-        }).then((result) => {
-          if (result.isConfirmed) {
-            this.submitData(); // Retry the API call
-          }
-        });
-  
-        this.toastr.error(err.message || 'An error occurred', 'Error');
-        console.error(err);
+            localStorage.removeItem('quotePaymentId');
+
+  this.isLoading = false;
+}
+
+
+
+  callActivePaymentMethod(quotePaymentId: string): void {
+  this.onlinePaymentService.getPaymentModesHome().subscribe(
+    (response: any) => {
+      const activeMethod = response.paymentMethods.find((method: any) => method.isActive);
+      if (!activeMethod) {
+        Swal.fire('Error', 'No active payment method found', 'error');
+        return;
       }
-    });
-  }
-  
-  
+
+      switch (activeMethod.name.toLowerCase()) {
+        case 'stripe':
+          this.onlinePaymentService.payNowByStripe(quotePaymentId).subscribe(
+            (res: any) => window.location.href = res.stripeData.url,
+            () => Swal.fire('Error', 'Failed to redirect to Stripe', 'error')
+          );
+          break;
+
+        case 'telr':
+          this.onlinePaymentService.PayViaTelr(quotePaymentId).subscribe(
+            (res: any) => window.location.href = res.telrData.order.url,
+            () => Swal.fire('Error', 'Failed to redirect to Telr', 'error')
+          );
+          break;
+
+        case 'total pay':
+          this.onlinePaymentService.getPayNowDataById(quotePaymentId).subscribe(
+            (res: any) => window.location.href = res.totalpayData.redirect_url,
+            () => Swal.fire('Error', 'Failed to redirect to TotalPay', 'error')
+          );
+          break;
+
+        default:
+          Swal.fire('Error', 'Unsupported payment method', 'error');
+      }
+    },
+    () => Swal.fire('Error', 'Unable to fetch payment methods', 'error')
+  );
+}
+
  
   showError(errorMessage: string): void {
     this.toastr.error(errorMessage || 'Error submitting data', 'Error', {

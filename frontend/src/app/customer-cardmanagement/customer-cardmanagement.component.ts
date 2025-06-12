@@ -103,64 +103,65 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   }
 
   fetchVirtualReceptions(): void {
-    this.isLoading = true;
+    // this.isLoading = true;
     this.documenttypeService.getVirtualReceptions().subscribe(
       (data) => {
         console.log('Virtual Receptions:', data);
         this.virtualReceptionist = data.map((item: any) => item.documentType);
         console.log('Virtual Receptions doctypes:', this.virtualReceptionist);
         // Do something with the data
-        this.isLoading = false;
+        // this.isLoading = false;
       },
       (error) => {
         console.error('Error fetching virtual receptions:', error);
-        this.isLoading = false;
+        // this.isLoading = false;
       }
     );
   }
 
   fetchMailManagements(): void {
-    this.isLoading = true;
+    // this.isLoading = true;
     this.documenttypeService.getMailManagements().subscribe(
       (data) => {
         console.log('Mail Managements:', data);
         this.mailManagemnt = data.map((item: any) => item.documentType);
         // Do something with the data
-        this.isLoading = false;
+        // this.isLoading = false;
       },
       (error) => {
         console.error('Error fetching mail managements:', error);
-        this.isLoading = false;
+        // this.isLoading = false;
       }
     );
   }
 
   fetchBusinessBanks(): void {
-    this.isLoading = true;
+    // this.isLoading = true;
     this.documenttypeService.getBusinessBanks().subscribe(
       (data) => {
         // console.log('Business Banks:', data);
+      
         this.businessBanks = data.map((item: any) => item.documentType); // Store the response
-        this.isLoading = false;
+        // this.isLoading = false;
       },
       (error) => {
         console.error('Error fetching business banks:', error);
-        this.isLoading = false;
+        // this.isLoading = false;
       }
     );
   }
 
   fetchPersonalBanks(): void {
-    this.isLoading = true;
+    // this.isLoading = true;
     this.documenttypeService.getPersonalBanks().subscribe(
       (data) => {
         // console.log('Personal Banks:', data);
         this.bankOpening = data.map((item: any) => item.documentType); // Store the response
-        this.isLoading = false;
+        // this.isLoading = false;
       },
       (error) => {
         console.error('Error fetching personal banks:', error);
-        this.isLoading = false;
+        // this.isLoading = false;
       }
     );
   }
@@ -270,6 +271,8 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     const startIndex = (page - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.paginatedRecords = this.filteredRecords.slice(startIndex, endIndex);
+              this.isLoading = false;
+
   }
 
   // Change items per page and reset to the first page
@@ -376,28 +379,46 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     }
   }
 
-  openShareholderModal(shareholders: any[], addAdditionalFile: any[], uploadedFileNames: any[], record: any): void {
+  openShareholderModal(shareholders: any[], addAdditionalFile: any[], uploadedFileNames: any[], record: any, tradeLicenseFile: any[]): void {
     this.selectedRecord = record; 
     this.shareholders = shareholders;
     this.selectedShareholders = shareholders.map(shareholder => shareholder.files);
     this.selectedaddAdditionalFile = addAdditionalFile;
     this.uploadedFileNames = uploadedFileNames;
     const shareholderFile = this.selectedShareholders.flat();
-    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(this.uploadedFileNames || []), ...(shareholderFile || [])];
+    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(this.uploadedFileNames || []), ...(shareholderFile || []), ...(tradeLicenseFile || [])];
     console.log("shareholders-",shareholderFile);
     this.showModal = true;
   }
 
   // Handles file selection
   onFilesSelected(event: any): void {
+
+    if (!this.selectedDocumentType) {
+      this.toastr.error('Please select Document type', 'Validation Error');
+      return;
+    }
+
     const files: FileList = event.target.files;
     if (!files || files.length === 0) {
       return;
     }
 
-    // For each selected file, get its presigned URL and upload
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+   const maxSize = 1048576; // 1MB
+
+  //  Only work with validated files
+  const validFiles = Array.from(files).filter(file => {
+    if (file.size === 0) {
+      this.toastr.error(`File "${file.name}" is empty`, 'Empty File');
+      return false;
+    }
+    if (file.size > maxSize) {
+      this.toastr.error(`File "${file.name}" should be below 1 MB`, 'File Too Large');
+      return false;
+    }
+    return true;
+  });
+   for (const file of validFiles) {
       this.isLoading = true;
 
       // Request a presigned URL from your backend
@@ -447,6 +468,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
         }
       );
     }
+    event.target.value = '';
   }
 
   // Placeholder for file viewing logic
@@ -518,7 +540,11 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   
 
   submitDocuments(): void {
-    // Example payload
+
+    if (!this.uploadedFiles || this.uploadedFiles.length === 0) {
+      this.toastr.error('Please upload at least one document before submitting.', 'Validation Error');
+      return;
+    }
     const payload = {
       someId: this.selectedRecord._id,
       files: this.uploadedFiles,

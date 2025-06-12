@@ -47,7 +47,8 @@ const responseSchema = new mongoose.Schema({
   totalAmount: { type: Number },
   matchScore: { type: Number },
   leadId: { type: String },
-  accountId: { type: String },
+    ContactId: { type: String },
+  // accountId: { type: String },
   quotePayementId: { type: String }
 });
  
@@ -57,6 +58,7 @@ const pidataSchema = new mongoose.Schema(
     leadWithDetails: {
       Nationality: String,
       Phone: String,
+      countryCode: String,
       dob: String,
       Origin__c: String,
       Email: String,
@@ -88,6 +90,7 @@ const pidataSchema = new mongoose.Schema(
       quoteEmail: String,
       quoteId: String,
       quoteName: String,
+      // QuotePaymentName: String,
       quotePaymentId: String,
       quotePdf: {
         ContentType: String,
@@ -118,8 +121,19 @@ const pidataSchema = new mongoose.Schema(
       default: false,
     },
     planname: { type: String },
+    accountId: { type: String },
+    ContactId: { type: String },
+    ProductId: { type: String },
     customerType: { type: String },
     subcategory: { type: String },
+     tradeLicenseFile: [
+      {
+        name: { type: String },
+        url: { type: String },
+        type: { type: String },
+      }
+    ],
+    tradeLicenseNo: { type: String },
     tradeLicenseFileUrl: { type: String },
     salesforceResponseMatchScreening: responseSchema,
     invoiceDate: { type: String },

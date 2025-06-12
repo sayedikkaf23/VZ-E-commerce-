@@ -1,4 +1,4 @@
-<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0" class="main-container">
   <app-user-header></app-user-header>
 
   <div class="gradient_color">
@@ -141,7 +141,8 @@
 
                     <label class="shareholder-label">Full Name<span class="required">*</span></label>
                     <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required
-                      placeholder="Full Name" style="padding: 25px;" data-ui-tooltip title="{{ shareholder.name }}" />
+                      placeholder="Full Name" style="padding: 25px;" data-ui-tooltip title="{{ shareholder.name }}"   (keypress)="allowOnlyAlphabets($event)"
+ />
                     <!-- Tooltip showing the full value -->
 
                   </div>
@@ -150,14 +151,14 @@
                     <!-- Apply new class here -->
                     <input type="number" [(ngModel)]="shareholder.shareholderPercentage"
                       [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100"
-                      style="padding: 20px" />
+                      style="padding: 20px" (input)="onShareholderInput($event, 0)" />
                   </div>
                   <div class="form-field">
                     <label class="shareholder-label">Date of Birth<span class="required">*</span></label>
                     <!-- Apply new class here -->
                     <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required
                       style="padding: 25px"  (keydown)="preventManualInput($event)"
-                      (click)="openDatePicker($event)"  [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }" />
+                      (click)="openDatePicker($event)"  [max]="maxDate"  [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }" />
                   </div>
                   <div class="form-field nationality-wrapper">
                     <label class="shareholder-label">Nationality<span class="required">*</span></label>

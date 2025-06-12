@@ -49,7 +49,7 @@ export class AdminDocumentTypeComponent {
           (service: { isActive: any }) => service.isActive
         ); // Only include active services
         this.serviceList = this.serviceList.flatMap(service => {
-          if (service.serviceName === 'Bank Account Opening') {
+          if (service.serviceName === 'Bank Account') {
             return [
               { ...service, serviceName: 'Personal Bank Account' },
               { ...service, serviceName: 'Business Bank Account' }
@@ -119,34 +119,6 @@ export class AdminDocumentTypeComponent {
             }
           );
           break;
- 
-      // case 'Business Bank':
-      //   this.documenttypeService.getBusinessBanks().subscribe(
-      //     (response: any[]) => {
-      //       this.docTypes = response.map((item) => item.documentType);
-      //     },
-      //     (error) => {
-      //       console.error('Error fetching Business Banks:', error);
-      //       this.docTypes = [];
-      //     }
-      //   );
-      //   break;
- 
-      case 'Virtual Receptionist':
-        this.documenttypeService.getVirtualReceptions().subscribe(
-          (response: any[]) => {
-            this.docRecords = response; // Store the full objects
-            this.docTypes = response.map((item) => item.documentType);
-            this.selectedCount = this.docTypes.length;
- 
-          },
-          (error) => {
-            console.error('Error fetching Virtual Receptions:', error);
-            this.docTypes = [];
-            this.docRecords = []; // Fallback in case of an error
-          }
-        );
-        break;
  
       case 'Mail Management':
         this.documenttypeService.getMailManagements().subscribe(
@@ -307,12 +279,13 @@ export class AdminDocumentTypeComponent {
     let deleteObservable: Observable<any>;
  
     switch (this.selectedServiceName) {
-      case 'Personal Bank Account':
+       case 'Personal Bank Account':
         deleteObservable = this.documenttypeService.deletePersonalBank(docToDelete._id);
         break;
         case 'Business Bank Account':
           deleteObservable = this.documenttypeService.deleteBusinessBank(docToDelete._id);
           break;
+       
       case 'Mail Management':
         deleteObservable = this.documenttypeService.deleteMailManagements(docToDelete._id);
         break;
@@ -345,6 +318,10 @@ export class AdminDocumentTypeComponent {
  
   submitDocuments(): void {
     if (this.selectedServiceName) {
+        if (!this.docTypes || this.docTypes.length === 0 || this.docTypes.some(doc => !doc || doc.trim() === '')) {
+          this.toastr.error('Please fill in all document types before submitting.', 'Missing Document Types');
+          return;
+        }
       // Check if there are existing docTypes for the selected service
       if (!this.docTypesMap[this.selectedServiceName]) {
         // If not, initialize an empty array
@@ -361,7 +338,7 @@ export class AdminDocumentTypeComponent {
  
       // Call the corresponding API based on the selected service name
       switch (this.selectedServiceName) {
-        case 'Personal Bank Account':
+          case 'Personal Bank Account':
           this.documenttypeService.createPersonalBank(this.docTypes).subscribe(
             (response) => {
               console.log('Personal Bank Account Opening API Response:', response);
@@ -392,7 +369,8 @@ export class AdminDocumentTypeComponent {
               }
             );
             break;
- 
+
+         
         // case 'Accounting & VAT':
         //   this.documenttypeService.createBusinessBank(this.docTypes).subscribe(
         //     (response) => {
@@ -504,6 +482,8 @@ export class AdminDocumentTypeComponent {
             }
           );
           break;
+
+       
  
       case 'Virtual Receptionist':
         this.documenttypeService.updateVirtualReception(updatedData).subscribe(

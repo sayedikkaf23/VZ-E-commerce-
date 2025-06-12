@@ -76,6 +76,7 @@ import { CountryRiskManagementComponent } from './country-risk-management/countr
 import { ProductRiskManagementComponent } from './product-risk-management/product-risk-management.component';
 import { RiskComponent } from './risk/risk.component';
 import { SearchableNationalityDropdownComponent } from './searchable-nationality-dropdown/searchable-nationality-dropdown.component';
+import { PaymentFailureComponent } from './payment-failure/payment-failure.component';
 
 @NgModule({
   declarations: [
@@ -144,7 +145,8 @@ import { SearchableNationalityDropdownComponent } from './searchable-nationality
     CountryRiskManagementComponent,
     ProductRiskManagementComponent,
     RiskComponent,
-    SearchableNationalityDropdownComponent
+    SearchableNationalityDropdownComponent,
+    PaymentFailureComponent
     
   ],
   imports: [

@@ -2,6 +2,18 @@ const cron = require("node-cron");
 const nodemailer = require("nodemailer");
 const PiData = require("../models/pidata");
 
+const {
+  getStripeRedirectUrl,
+  getTelrRedirectUrl,
+  getTotalPayRedirectUrl,
+  
+} = require('../controllers/paymentController');
+
+const {
+  getPaymentModesService
+  
+} = require('../controllers/onlinePaymentController');
+
 // Email Configuration
 const transporter = nodemailer.createTransport({
 
@@ -13,7 +25,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Function to send emails
-const sendEmail = (email, quoteId,username) => {
+const sendEmail = (email,username, redirectUrl) => {
   const mailOptions = {
     from: "mishalnunu@gmail.com",
     to: email,
@@ -31,7 +43,7 @@ const sendEmail = (email, quoteId,username) => {
          We’ve saved your details, and you’re just one step away from activating your professional services with Virtuzone.<br><br>
 
           <strong>
-            <a href="https://ecommerce.virtuzone.com/onlinepayment/${quoteId}" target="_blank" style="color: #0000EE; text-decoration: underline;">
+            <a href="${redirectUrl}" target="_blank" style="color: #0000EE; text-decoration: underline;">
               Complete Your Payment
             </a>
           </strong><br><br>
@@ -106,18 +118,23 @@ const sendEmail = (email, quoteId,username) => {
   return transporter.sendMail(mailOptions);
 };
 
+
+
 // 3) Payment Cron (runs every 30s)
-cron.schedule("*/50 * * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
   // console.log("Payment Cron: Checking for records to send Payment email...");
 
   try {
     // Example: only pick records older than 1 minute
-    const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000);
+const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
     // Find all records that STILL need payment email
     const unpaidRecords = await PiData.find({
       isPayment: false,
       isPaymentEmailSent: false,
-      createdAt: { $lte: twoMinutesAgo }, // optional age filter
+       createdAt: { $lte: oneHourAgo },  // only records created 1 hour ago or earlier
+       kycStatus: { $ne: "Pending" }  // exclude kycStatus = "Pending"
+
     });
 
     if (!unpaidRecords.length) {
@@ -155,9 +172,39 @@ cron.schedule("*/50 * * * * *", async () => {
         continue;
       }
 
+      const paymentData = await getPaymentModesService();
+      const activeMethod = paymentData.find(method => method.isActive);
+
+      if (!activeMethod) {
+        // console.error("No active payment method found.");
+        return;
+      }
+
+      let redirectUrl = '';
+      const methodName = activeMethod.name.toLowerCase();
+      // console.log("active payment method:", methodName);
+
+      switch (methodName) {
+        case 'stripe':
+          redirectUrl = await getStripeRedirectUrl(quoteId);
+          break;
+        case 'telr':
+          redirectUrl = await getTelrRedirectUrl(quoteId);
+          break;
+        case 'total pay':
+          redirectUrl = await getTotalPayRedirectUrl(quoteId);
+          break;
+        default:
+          console.error("Unsupported payment method.");
+          return;
+      }
+
+
+
+
       // If we get here, we have exclusive "right" to send the email.
-      await sendEmail(email, quoteId, username);
-      console.log(`Payment Email sent to ${email} for record ${record._id}`);
+      await sendEmail(email, username, redirectUrl);
+      console.log(`Payment Email sent to ${email} for record ${record._id} and url is ${redirectUrl}`);
 
       // (Optional) you might also set 'isPayment' = true if you never want to send again,
       // but that depends on your business logic. For repeated reminders, keep isPayment = false.
@@ -252,20 +299,25 @@ Don’t worry – we’ve saved all your details so you can pick up right where 
 };
 
 // Cron Job to Check incomplete registrations (isProfile: false)
-cron.schedule("*/30 * * * * *", async () => {
+cron.schedule("*/10 * * * *", async () => {
   // console.log("Running Profile Cron to check profile completion status...");
 
   try {
     // Only process records older than 1 minute (optional time filter)
-    const oneMinuteAgo = new Date(Date.now() - 1 * 60 * 1000);
+const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+
 
     // Find all incomplete profiles that haven't had the profile email sent yet
     // and are older than 1 minute (optional).
     const incompleteProfiles = await PiData.find({
       $and: [
         { isProfile: false },
+        {  isPayment: false, },
         { isProfileEmailSent: false },
-        { createdAt: { $lte: oneMinuteAgo } },
+             { createdAt: { $lte: oneDayAgo } }, // older than 1 day
+                 { kycStatus: { $ne: "Pending" } }  // exclude pending KYC
+
+
       ],
     });
 

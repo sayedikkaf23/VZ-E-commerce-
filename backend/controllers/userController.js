@@ -12,6 +12,7 @@ const VirtualDetails = require('../models/virtualReceptionist'); // Import the m
 const MailDetails = require('../models/mailManagement'); // Import the model
 require('dotenv').config(); 
 
+const OnlinePayment = require("../models/OnlinePaymentModel");
 
 
  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
@@ -1376,30 +1377,131 @@ exports.checkStatus = async (req, res) => {
   }
 };
 
-
 exports.getallUserSerive = async (req, res) => {
   try {
-    // Extract the email from the request body or query (depending on how you send the email)
-    const { email } = req.body; // Or use req.query.email if you're passing the email via query params
-
+    const { email } = req.body;
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
-
-    // Fetch all data associated with the user's email from the Pidata model
+ 
     const userData = await Pidata.find({ "leadWithDetails.Email": email });
-
     if (!userData || userData.length === 0) {
       return res.status(404).json({ message: "No data found for this user" });
     }
-
-    // Send the fetched data back to the frontend
+ 
+    // Authenticate with Salesforce once to get access token
+    const tokenResponse = await axios.post(
+      "https://test.salesforce.com/services/oauth2/token",
+      null,
+      {
+        params: {
+          client_id: process.env.SALESFORCE_CLIENT_ID,
+          client_secret: process.env.SALESFORCE_CLIENT_SECRET,
+          grant_type: "password",
+          username: process.env.SALESFORCE_USERNAME,
+          password: process.env.SALESFORCE_PASSWORD,
+        },
+      }
+    );
+ 
+    const accessToken = tokenResponse.data.access_token;
+    const headers = {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    };
+ 
+    // Helper function to process each quoteDetail
+    async function processQuoteDetail(quoteDetail) {
+      const quotePaymentId = quoteDetail.QuotePaymentId;
+      if (!quotePaymentId) {
+        console.log("No QuotePaymentId found, skipping this quoteDetail");
+        return;
+      }
+ 
+      const paynowdata = await OnlinePayment.findOne({
+        "transactionDetails.quotePaymentId": quotePaymentId,
+      });
+ 
+      if (!paynowdata) {
+        console.log("No payment data found for quotePaymentId:", quotePaymentId);
+        return;
+      }
+ 
+      console.log("Found payment data, making Salesforce API call for quotePaymentId:", quotePaymentId);
+ 
+      try {
+        const response = await axios.put(
+          `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}`,
+          {
+            qp: {
+              paymentMethod: "Pay Now",
+              amountReceived: paynowdata.transactionDetails.amount,
+              bankName: "Payment Gateway",
+              glCode: "1301 - VZ ADCB (AED) 10515838124001",
+              payCurrency: "AED",
+              paymentStatus: "Paid",
+              quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
+            },
+            attachments: [
+              { Body: "", ContentType: "", Name: "" },
+              { Body: "", ContentType: "", Name: "" },
+            ],
+          },
+          { headers }
+        );
+ 
+        console.log("Salesforce API response data:", response.data);
+ 
+        const { invoiceDate, invoiceNumber } = response.data;
+ 
+        // Update Pidata record if found
+        const piDataCheck = await Pidata.findOne({ "quotePaymentWithDetails.QuotePaymentId": quotePaymentId });
+        if (piDataCheck) {
+          await Pidata.updateOne(
+            { _id: piDataCheck._id },
+            {
+              $set: {
+                invoiceDate,
+                invoiceNumber,
+                payment_status: "Paid",
+              },
+            }
+          );
+        }
+      } catch (err) {
+        console.error(`Failed to update Salesforce for quotePaymentId ${quotePaymentId}:`, err.message);
+      }
+    }
+ 
+    // Process each user record
+    for (const userRecord of userData) {
+      console.log("Processing userRecord with _id:", userRecord._id);
+ 
+      const quoteDetails = userRecord.quotePaymentWithDetails;
+ 
+      if (quoteDetails) {
+        if (Array.isArray(quoteDetails)) {
+          for (const quoteDetail of quoteDetails) {
+            await processQuoteDetail(quoteDetail);
+          }
+        } else if (typeof quoteDetails === "object") {
+          await processQuoteDetail(quoteDetails);
+        } else {
+          console.log("quotePaymentWithDetails is neither an array nor an object.");
+        }
+      } else {
+        console.log("No quotePaymentWithDetails found on this user record.");
+      }
+    }
+const updatedUserData = await Pidata.find({ "leadWithDetails.Email": email });
+ 
+    // After all done, send success response
     res.status(200).json({
-      message: "User data fetched successfully",
-      data: userData
+      message: "User data fetched and updated successfully",
+      data: updatedUserData,
     });
   } catch (error) {
-    console.log("Error fetching user data:", error);
+    console.error("Error fetching/updating user data:", error);
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };

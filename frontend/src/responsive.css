@@ -9,6 +9,7 @@
         line-height: 38px;
         font-size: 14px;
         min-width: 120px;
+        
     }
     section {
         padding-top: 80px;
@@ -564,9 +565,13 @@
     }
     html .btn {
         padding: 0 2px 0 8px;
-        line-height: 18px;
+        line-height: 22px;
         font-size: 8px;
+        /* font-size: 10px; */
+        /* width: 97px;
+        height: 32px; */
     }
+  
     header nav > ul > li + li {
         margin-top: 12px;
     }

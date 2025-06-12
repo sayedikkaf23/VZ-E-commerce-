@@ -69,7 +69,13 @@ export class MailsManagement1Component {
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
 
-   
+     // Automatically convert email to lowercase
+  this.personalDetailsForm.get('email')?.valueChanges.subscribe(value => {
+    const lowercaseEmail = value?.toLowerCase();
+    if (value !== lowercaseEmail) {
+      this.personalDetailsForm.get('email')?.setValue(lowercaseEmail, { emitEvent: false });
+    }
+  });
    
  
     // this.getnationalityService.getCountries().subscribe((data) => {
@@ -113,67 +119,151 @@ export class MailsManagement1Component {
     });
   }
 }
+onSubmit() {
+  const currentFormValue = this.personalDetailsForm.value;
 
-  onSubmit() {
-    // Check if 'mailform', 'mailform1', and 'mailform2' exist in localStorage
-    if (this.isBrowser) {
-      const mailform = localStorage.getItem('mailform');
+  // Always update localStorage with the current form values
+  if (this.isBrowser) {
+    const previousMailform = localStorage.getItem('mailform');
+    const mailform1 = localStorage.getItem('mailform1');
 
-      const mailform1 = localStorage.getItem('mailform1');
-      const currentFormValue = this.personalDetailsForm.value;
+    if (previousMailform && mailform1) {
+      const previousData = JSON.parse(previousMailform);
 
-      if (mailform && mailform1) {
-        const previousData = JSON.parse(mailform);
-        // Update 'mailform' with current form values
-        const updatedMailForm = {
-          ...JSON.parse(mailform),
-          ...this.personalDetailsForm.value,
-        };
+      const updatedMailForm = {
+        ...previousData,
+        ...currentFormValue
+      };
+      localStorage.setItem('mailform', JSON.stringify(updatedMailForm));
 
-        localStorage.setItem('mailform', JSON.stringify(updatedMailForm)); // Save updated 'mailform'
+      // Compare nationalities
+      const previousCountry = (previousData?.nationality || '').trim();
+      const currentCountry = (currentFormValue?.nationality || '').trim();
 
-        // Compare selected country with previously stored country
-        const previousCountry = (previousData?.nationality || '').trim();
-        const currentCountry = (currentFormValue?.nationality || '').trim();
-
-        if (previousCountry !== currentCountry) {
-        // Country has changed 
+      if (previousCountry !== currentCountry) {
         this.router.navigate(['/mails-management-2']);
       } else {
-        // Country is same 
         this.router.navigate(['/mails-management-details']);
       }
-        return; // Exit early to avoid further execution
-      }
-    }
-
-    if (this.personalDetailsForm.valid) {
-      const formData = this.personalDetailsForm.value;
-
-      if (this.isBrowser) {
-        if (localStorage.getItem('mailform2')) {
-          this.router.navigate(['/mails-management-details']);
-        } else if (localStorage.getItem('mailform')) {
-          this.router.navigate(['/mails-management-2']);
-        } else {
-          this.router.navigate(['/mails-management-2']);
-        }
-        localStorage.setItem('mailform', JSON.stringify(formData));
-      }
-    } else {
-      const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
-      if (mobileNumberControl?.errors?.['validatePhoneNumber']) {
-        // Correct key here
-        this.toastr.error(
-          'Enter a valid mobile number for the selected country.',
-          'Validation Error'
-        );
-      }
-
-      // Use the updated showSingleValidationError method for better feedback
-      this.showSingleValidationError(this.personalDetailsForm);
+      return; // Exit early — no need to call API again
     }
   }
+
+  // Proceed with API call if no existing localStorage entry or it's the first submission
+  if (this.personalDetailsForm.valid) {
+    const values = this.personalDetailsForm.value;
+    const phoneString = values.mobileNumber?.e164Number || '';
+
+    const payload = {
+      firstName:   values.firstName,
+      lastName:    values.lastName,
+      email:       values.email,
+      nationality: values.nationality,
+      phone:       phoneString,
+      dob:         values.birthday, // yyyy-mm-dd format
+       service_name:"Mail Management",
+    };
+
+    this.isLoading = true;
+    this.userService.createLeadOnly(payload).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+
+        if (this.isBrowser) {
+          localStorage.setItem('mailform', JSON.stringify(values));
+          localStorage.setItem('leadResponse', JSON.stringify(res.data));
+        }
+
+        // Navigate based on localStorage state
+        if (this.isBrowser) {
+          if (localStorage.getItem('mailform2')) {
+            this.router.navigate(['/mails-management-details']);
+          } else {
+            this.router.navigate(['/mails-management-2']);
+          }
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const msg = err.error?.message || 'Failed to create lead';
+        this.toastr.error(msg, 'Error');
+      }
+    });
+  } else {
+    // Handle invalid form
+    const mobileControl = this.personalDetailsForm.get('mobileNumber');
+    if (mobileControl?.errors?.['validatePhoneNumber']) {
+      this.toastr.error(
+        'Enter a valid mobile number for the selected country.',
+        'Validation Error'
+      );
+    }
+    this.showSingleValidationError(this.personalDetailsForm);
+  }
+}
+
+
+
+  // onSubmit() {
+  //   // Check if 'mailform', 'mailform1', and 'mailform2' exist in localStorage
+  //   if (this.isBrowser) {
+  //     const mailform = localStorage.getItem('mailform');
+
+  //     const mailform1 = localStorage.getItem('mailform1');
+  //     const currentFormValue = this.personalDetailsForm.value;
+
+  //     if (mailform && mailform1) {
+  //       const previousData = JSON.parse(mailform);
+  //       // Update 'mailform' with current form values
+  //       const updatedMailForm = {
+  //         ...JSON.parse(mailform),
+  //         ...this.personalDetailsForm.value,
+  //       };
+
+  //       localStorage.setItem('mailform', JSON.stringify(updatedMailForm)); // Save updated 'mailform'
+
+  //       // Compare selected country with previously stored country
+  //       const previousCountry = (previousData?.nationality || '').trim();
+  //       const currentCountry = (currentFormValue?.nationality || '').trim();
+
+  //       if (previousCountry !== currentCountry) {
+  //       // Country has changed 
+  //       this.router.navigate(['/mails-management-2']);
+  //     } else {
+  //       // Country is same 
+  //       this.router.navigate(['/mails-management-details']);
+  //     }
+  //       return; // Exit early to avoid further execution
+  //     }
+  //   }
+
+  //   if (this.personalDetailsForm.valid) {
+  //     const formData = this.personalDetailsForm.value;
+
+  //     if (this.isBrowser) {
+  //       if (localStorage.getItem('mailform2')) {
+  //         this.router.navigate(['/mails-management-details']);
+  //       } else if (localStorage.getItem('mailform')) {
+  //         this.router.navigate(['/mails-management-2']);
+  //       } else {
+  //         this.router.navigate(['/mails-management-2']);
+  //       }
+  //       localStorage.setItem('mailform', JSON.stringify(formData));
+  //     }
+  //   } else {
+  //     const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
+  //     if (mobileNumberControl?.errors?.['validatePhoneNumber']) {
+  //       // Correct key here
+  //       this.toastr.error(
+  //         'Enter a valid mobile number for the selected country.',
+  //         'Validation Error'
+  //       );
+  //     }
+
+  //     // Use the updated showSingleValidationError method for better feedback
+  //     this.showSingleValidationError(this.personalDetailsForm);
+  //   }
+  // }
 
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard

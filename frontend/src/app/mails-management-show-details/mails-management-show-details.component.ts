@@ -6,7 +6,7 @@ import { UserService } from '../service/user.service';
 import { Router } from '@angular/router';
 import AOS from 'aos';
 import { FileStorageService } from '../service/files.service';
-import { switchMap } from 'rxjs';
+import { catchError, map, of, switchMap, tap } from 'rxjs';
 import Swal from 'sweetalert2';
 import { DataStorageService } from '../service/data-storage.service'; // Import the service
 import { MailManagementService } from '../service/mail-management.service';
@@ -41,6 +41,7 @@ export class MailsManagementShowDetailsComponent {
 i: any;
 
   tradeLicenseFileurl: any;
+  serviceProducts: any[] | undefined;
  constructor(
     private http: HttpClient,
     private toastr: ToastrService, // For showing notifications
@@ -263,7 +264,11 @@ i: any;
  
 submitData() {
   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
- 
+  const uploadedFileNames = this.uploadedFiles || [];
+  const shareholdersData = this.shareholders || [];
+
+  
+console.log("object",mergedData,   this.tradeLicenseFile)
   Swal.fire({
     title: 'Confirm Your Data',
     text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
@@ -273,81 +278,191 @@ submitData() {
     confirmButtonText: 'Yes, I confirm',
     cancelButtonText: 'Review Data'
   }).then((result) => {
-    if (result.isConfirmed) {
-      const birthday = new Date(mergedData.birthday);
- 
-      const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
- 
-      const nationality = mergedData.nationality;
-      const match = this.nationalities.find(
-        (item) => item.common.toLowerCase() === nationality.toLowerCase()
-      );
- 
-      // const payload = {
-      //   countries: [match ? match.country : nationality]  // e.g. ["India"] or ["Indian"]
-      // };
-      const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
- 
-// 4. Final payload
-let riskCode;
-switch (appliedRiskData.appliedRisk) {
-  case 'Low':
-    riskCode = 1;
-    break;
-  case 'Medium':
-    riskCode = 2;
-    break;
-  case 'High':
-    riskCode = 3;
-    break;
-  default:
-    riskCode = 0; // Default to 0 if no match
-    break;
-}
- 
- 
-  const payload = {
-    ServiceNameCode: 2,
-    SubTypeCode:16,
-    RiskCode:riskCode,
- 
-  };
-      this.isLoading = true;
- 
-      this.mailManagementService.getServiceProducts(payload).subscribe(
-        (response: any) => {
-          this.isLoading = false;
- 
-          // Store final merged data
-          localStorage.setItem('finalDataMail', JSON.stringify(mergedData));
-          localStorage.setItem('MailServiceProducts', JSON.stringify(response));
-          // Save product data
-          this.matchScoreStorageService.setMatchScoreResponse(response);
- 
-          // Navigate to summary page
-          this.router.navigate(['/mails-summary']);
-        },
-        (error) => {
-          this.isLoading = false;
-          console.error(error);
- 
-          Swal.fire({
-            title: 'Error',
-            text: 'Something went wrong. Would you like to retry?',
-            icon: 'error',
-            showCancelButton: true,
-            confirmButtonText: 'Retry',
-            cancelButtonText: 'Cancel'
-          }).then((retryResult) => {
-            if (retryResult.isConfirmed) {
-              this.submitData(); // Retry
+    if (!result.isConfirmed) return;
+
+    const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
+    const riskCode = appliedRiskData.appliedRisk === 'Low' ? 1 :
+                     appliedRiskData.appliedRisk === 'Medium' ? 2 :
+                     appliedRiskData.appliedRisk === 'High' ? 3 : 0;
+
+    const payload = {
+      ServiceNameCode: 2,
+      SubTypeCode: 16,
+      RiskCode: riskCode,
+    };
+
+    this.isLoading = true;
+
+    this.mailManagementService.getServiceProducts(payload).pipe(
+      catchError(error => {
+        this.isLoading = false;
+        Swal.fire({
+          title: 'Error',
+          text: 'Something went wrong. Would you like to retry?',
+          icon: 'error',
+          showCancelButton: true,
+          confirmButtonText: 'Retry',
+          cancelButtonText: 'Cancel'
+        }).then((retryResult) => {
+          if (retryResult.isConfirmed) this.submitData();
+        });
+        return of(null);
+      }),
+      switchMap((serviceResponse: any) => {
+        if (!serviceResponse) return of(null);
+
+        localStorage.setItem('finalDataMail', JSON.stringify(mergedData));
+        localStorage.setItem('MailServiceProducts', JSON.stringify(serviceResponse));
+        this.matchScoreStorageService.setMatchScoreResponse(serviceResponse);
+
+        const serviceProducts = Array.isArray(serviceResponse) ? serviceResponse : [serviceResponse];
+        this.serviceProducts = serviceProducts;
+         const leadResponseRaw = localStorage.getItem('leadResponse');
+        const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+        const paymentPayload = {
+          LeadId: leadResponse.LeadId || '',
+          AccountId: leadResponse.AccountId || '',
+          ContactId: leadResponse.ContactId || '',
+          firstName: this.personalInfo.firstName,
+          lastName: this.personalInfo.lastName,
+          email: this.personalInfo.email,
+          nationality: this.personalInfo.nationality,
+          phone: this.personalInfo.mobileNumber.number,
+          countryCode: this.personalInfo.mobileNumber.dialCode,
+          dob: this.personalInfo.birthday,
+                   tradeLicenseFile: this.tradeLicenseFile
+  ?.companyTradeLicenseFile
+  ?. [0] ?? null,
+tradeLicenseNo: this.tradeLicenseFile?.companyTradeLicenseNumber || '',
+tradeLicenseFileUrl: this.tradeLicenseFile?.companyTradeLicenseFile?.[0]?.url ?? '',
+
+          type: "Mail Management",
+          CustomerType: "C",
+          uploadedFileNames,
+          prodcutNameList: serviceProducts.map(product => ({
+            ProductName: product.Product_Name,
+            ProductFamily: "Mail Management",
+            ProductDescription: "Service for UAE Resident",
+            ProductCurrencyName: product.Currency_Code,
+            ProductUnitprice: product.price,
+            ProductQuantity: 1,
+            ProductDiscount: 0,
+            vat: product.vat,
+            ProductId: product.Product_Id,  
+
+          })),
+          shareholders: (mergedData.shareholders || []).map((s: any) => ({
+            name: s.name,
+            shareholderPercentage: s.shareholderPercentage,
+            dob: s.dob,
+            nationalityshareholder: s.nationalityshareholder,
+            countryRisk: s.countryRisk,
+            files: s.files || []
+          }))
+
+        };
+
+        return this.userService.createPaymentOpportunity(paymentPayload);
+      }),
+      switchMap((paymentOpportunityResponse: any) => {
+        if (!paymentOpportunityResponse.salesforceResponse?.QuotePaymentId) throw new Error('Missing QuotePaymentId');
+
+        const quotePaymentId = paymentOpportunityResponse.salesforceResponse.QuotePaymentId;
+
+  const shareholders = (paymentOpportunityResponse.pidata.shareholders || []).map(
+    (s: any) => ({
+      name: s.name,
+      shareholderPercentage: s.shareholderPercentage,
+      dob: s.dob,
+      nationalityshareholder: s.nationalityshareholder,
+      files: (s.files || []).map((f: any) => ({
+        name: f.name,
+        url: f.url,
+        type: f.type,
+        oopId:  paymentOpportunityResponse.salesforceResponse.OpportunityId || null   
+      })),
+    })
+  );
+        return this.userService.digicomplice({
+          CustomerId: quotePaymentId,
+          CompanyName: 'Virtuzone'
+        }).pipe(
+          map(secondRes => ({
+            quotePaymentId,
+            leadId: secondRes?.screeningmatchScore?.customerId || null,
+            shareholders
+          }))
+        );
+      }),
+      switchMap(({ quotePaymentId, leadId,shareholders }) => {
+        if (!leadId) throw new Error('Missing LeadId from digicomplice');
+        const uploadedFilesArray = Array.isArray(this.tradeLicenseFile.uploadedFileNames)
+          ? this.tradeLicenseFile.uploadedFileNames
+          : Object.values(this.tradeLicenseFile.uploadedFileNames || {}).flat();
+          const accountId = localStorage.getItem('accountId');
+          const leadResponseRaw = localStorage.getItem('leadResponse');
+            const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+        const documentPayload = {
+          quotePaymentId,
+             AccountId: leadResponse.AccountId || '',
+          serviceName: 'Mail Management',
+          tradelicense: [
+            {
+              License_no: this.tradeLicenseFile.companyTradeLicenseNumber || '',
+              url: uploadedFilesArray.length > 0 ? uploadedFilesArray[0].url : '',
+                AccountId: leadResponse.AccountId || '',
             }
-          });
-        }
-      );
-    }
+          ],
+        shareholders,
+
+        
+        };
+
+        return this.userService.insertShareholderDocuments(
+          documentPayload.quotePaymentId,
+          documentPayload.AccountId,
+          documentPayload.serviceName,
+          documentPayload.tradelicense,
+          documentPayload.shareholders
+        ).pipe(
+          switchMap(() => {
+            return this.userService.checkStatus({
+              CustomerId: leadId,
+              CompanyName: 'Virtuzone'
+            }).pipe(
+              tap(statusRes => {
+                if (statusRes?.data?.CustomerStatus === 'Auto Approved') {
+                  localStorage.setItem('quotePaymentId', documentPayload.quotePaymentId);
+                  this.router.navigate(['/mails-summary']);
+                } else {
+                  alert('Your request has been submitted successfully. You will receive an email when your application is approved.');
+                  this.router.navigate([`/failure/${documentPayload.quotePaymentId}`]);
+                }
+              })
+            );
+          })
+        );
+      })
+    ).subscribe({
+      next: () => this.isLoading = false,
+      error: err => {
+        this.isLoading = false;
+        console.error(err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: err?.message || 'An error occurred',
+          showCancelButton: true,
+          confirmButtonText: 'Retry',
+          cancelButtonText: 'Cancel',
+        }).then(result => {
+          if (result.isConfirmed) this.submitData();
+        });
+      }
+    });
   });
 }
+
 
 
 

@@ -127,6 +127,12 @@ export class MailsManagement3Component implements OnInit {
     if (event.target.files && event.target.files.length > 0) {
       const file: File = event.target.files[0];
 
+        // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
+    if (file.size > 2097152) {
+      this.toastr.error(`File "${file.name}" size should be below 2 MB`, 'File Too Large');
+      event.target.value = null;
+      return; // Skip uploading this file
+    }
       this.isLoading = true;
       this.userService.getPresignedUrl(file).subscribe(
         (response: any) => {
@@ -166,12 +172,32 @@ export class MailsManagement3Component implements OnInit {
   onFileChange(event: any, index: number): void {
     if (event.target.files && event.target.files.length > 0) {
       const filesArray: File[] = Array.from(event.target.files as FileList);
-      this.uploadedFiles[index] = filesArray;
+      this.uploadedFiles[index] = [];
       this.uploadedFileNames[index] = [];
-  
+    // Check if file is greater than 2 MB (2 MB = 2,097,152 bytes)
+     let filesToUpload: File[] = [];
+
+   
+    for (const file of filesArray) { // Iterate through each file selected in this event
+      if (file.size > 2097152) { // Check the size of the current 'file' in the loop
+        this.toastr.error(`File "${file.name}" size should be below 2 MB`, 'File Too Large');
+        // Do not add this file to filesToUpload, but allow others
+      } else {
+        filesToUpload.push(file);
+      }
+    }
+   
+
+    if (filesToUpload.length === 0) {
+      event.target.value = null; // Clear the file input if all were too large
+      return;
+    }
+
+    this.uploadedFiles[index] = filesToUpload; // Store only the valid files
+
       this.isLoading = true;
   
-      const uploadPromises = filesArray.map(file =>
+      const uploadPromises = filesToUpload.map(file =>
         this.userService.getPresignedUrl(file).toPromise().then((response: any) => {
           const presignedUrl = response.url;
           return fetch(presignedUrl, {
@@ -243,7 +269,7 @@ export class MailsManagement3Component implements OnInit {
         })),
   
         // Keep track of all uploaded file names
-        uploadedFileNames: this.companyTradeLicenseFile
+        uploadedFileNames: this.uploadedFileNames
       };
   
       localStorage.setItem('mailform2', JSON.stringify(dataToSave));
@@ -261,8 +287,7 @@ export class MailsManagement3Component implements OnInit {
   }
 
   triggerFileUpload2(index: number): void {
-    const fileInputArray = this.fileInputs.toArray();
-    const fileInput = fileInputArray[index];
+    const fileInput = this.fileInputs.toArray()[index];
     if (fileInput) {
       fileInput.nativeElement.click();
     } else {

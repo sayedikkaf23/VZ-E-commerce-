@@ -3,32 +3,34 @@ import { Router } from '@angular/router';
 import { UserService } from '../service/user.service';
 import { isPlatformBrowser } from '@angular/common';
 import AOS from 'aos';
-
+ 
 declare var $: any;
-
+ 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
 export class _HomeComponent {
-
+ 
   services: any[] = [];
   isBrowser: boolean;
   isLoading = false;
+ isMobile: boolean = false;
 
   constructor(private router: Router, private userService: UserService, private cdRef: ChangeDetectorRef, private zone: NgZone, @Inject(PLATFORM_ID) private platformId: Object) {
     // Check if the platform is browser
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
-
+ 
   ngOnInit(): void {
     this.loadServices();
-
+ 
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-  
+     this.checkScreenSize();
+
     // Remove specific items from localStorage
     const keysToRemove = [
       'step2Data',
@@ -41,21 +43,29 @@ export class _HomeComponent {
       'virtualdata2',
       'virtualdata1'
     ];
-
+ 
     const anyKeyExists = keysToRemove.some((key) => localStorage.getItem(key) !== null);
-
+ 
     if (anyKeyExists) {
       // Set the refresh flag and reload the page
      
       location.reload();
     }
-  
+ 
     keysToRemove.forEach((key) => {
       localStorage.removeItem(key);
     });
   }
-  
+ 
+  @HostListener('window:resize', [])
+  onResize() {
+    this.checkScreenSize();
+  }
 
+  checkScreenSize() {
+    this.isMobile = window.innerWidth <= 768;
+  }
+  
   loadServices(): void {
     this.isLoading = true;
     this.userService.getServices().subscribe(
@@ -64,7 +74,7 @@ export class _HomeComponent {
         this.services = data
           .filter((service: { isActive: any; }) => service.isActive)  // Only include active services
           .sort((a: { order: number; }, b: { order: number; }) => a.order - b.order);   // Sort by the order field in ascending order
-  
+ 
         // console.log('Services loaded:', this.services);
         this.cdRef.detectChanges();  // Trigger change detection if needed
         this.isLoading = false;
@@ -75,21 +85,21 @@ export class _HomeComponent {
       }
     );
   }
-
+ 
   // @HostListener('document:click', ['$event'])
   // handleClick(event: Event): void {
   //   if (this.isBrowser) {  // Check if the code is running on the browser
   //     const target = event.target as HTMLElement;
-
+ 
   //     if (target && target.classList.contains('btn')) {
   //       const href = target.getAttribute('href');
-
+ 
   //       if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
   //         window.open(href, '_blank');
   //       } else {
   //         this.router.navigate(['/step-1']);
   //       }
-
+ 
   //       event.preventDefault();
   //     }
   //   }
@@ -97,7 +107,7 @@ export class _HomeComponent {
   startNow(check:any): void {
     // console.log(check)
 // Check the serviceName and navigate accordingly
-if (check == 'Bank Account Opening') {
+if (check == 'Bank Account') {
   this.router.navigate(['/step-1']); // Replace with the actual route for Service A
 } else if (check == 'Accounting & VAT') {
   this.router.navigate(['/service-b']); // Replace with the actual route for Service B
@@ -112,11 +122,11 @@ if (check == 'Bank Account Opening') {
   this.router.navigate(['/default']); // Replace with your default route
 }
   }
-
+ 
   ngAfterViewInit(): void {
     if (this.isBrowser) {  // Check if it's running in the browser
       AOS.init();
-
+ 
       $(window).scroll(function () {
         const height = $(window).scrollTop();
         if (height > 50) {
@@ -125,22 +135,22 @@ if (check == 'Bank Account Opening') {
           $('html').removeClass('sticky');
         }
       });
-
+ 
       $(document).ready(() => {
         $('.scrollToTop').click(function (event: any) {
           event.preventDefault();
           $('html, body').animate({ scrollTop: 0 }, 'slow');
           return false;
         });
-
+ 
         $('.navbar-toggle').click(function () {
           $('html').toggleClass('menu-show');
         });
-
+ 
         $('.header-menu-overlay').click(function () {
           $('html').removeClass('menu-show');
         });
-
+ 
         $('.sub-menu-toggle').click(() => {
           $(this).parent().toggleClass('submenu_active');
         });
@@ -148,3 +158,4 @@ if (check == 'Bank Account Opening') {
     }
   }
 }
+ 

@@ -62,20 +62,30 @@ export class VirtualReceptionistComponent {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
-
-    if (isPlatformBrowser(this.platformId)) {
-      window.scrollTo(0, 0);
-    }
-    
-    const today = new Date();
+ this.adminAuthService.getCountryRisks().subscribe((data) => {
+      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
+            this.cdRef.detectChanges(); // Trigger change detection to update the view
+    });
+  const today = new Date();
     const year = today.getFullYear() - 18;
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
-    this.adminAuthService.getCountryRisks().subscribe((data) => {
-      this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
-            this.cdRef.detectChanges(); // Trigger change detection to update the view
-    });
+
+
+     if (isPlatformBrowser(this.platformId)) {
+      window.scrollTo(0, 0);
+    }
+    // Automatically convert email to lowercase
+  this.personalDetailsForm.get('email')?.valueChanges.subscribe(value => {
+    const lowercaseEmail = value?.toLowerCase();
+    if (value !== lowercaseEmail) {
+      this.personalDetailsForm.get('email')?.setValue(lowercaseEmail, { emitEvent: false });
+    }
+  });
+  
+  
+   
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects
     //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
@@ -89,6 +99,31 @@ export class VirtualReceptionistComponent {
         this.personalDetailsForm.patchValue(formData);
       }
     }
+
+  if (typeof window !== 'undefined') {
+    const isMobile = window.innerWidth <= 768;  // adjust breakpoint as needed
+    if (!isMobile) {
+      console.log('Not mobile screen, no reload');
+      return;
+    }
+
+    let reloadCount = Number(sessionStorage.getItem('pageReloadCount')) || 0;
+
+    console.log('Reload count:', reloadCount);
+
+    if (reloadCount <= 1) {
+      reloadCount++;
+      sessionStorage.setItem('pageReloadCount', reloadCount.toString());
+      console.log(`Reloading page now on mobile. Reload count is ${reloadCount}`);
+      window.location.reload();
+      return;
+    } else {
+      console.log('Page reloaded twice already on mobile. No more reloads.');
+      sessionStorage.removeItem('pageReloadCount'); // optional reset
+    }
+  }
+
+   
   }
 
   onNationalitySelect(selectedCountry: string): void {
@@ -116,68 +151,159 @@ export class VirtualReceptionistComponent {
     const input = event.target as HTMLInputElement;
     input.showPicker(); // Explicitly trigger the date picker
   }
-
-
 onSubmit() {
-  
-
-   // Check if 'virtualdata', 'virtualdata1', exist in localStorage
-   if (this.isBrowser) {
+  // 1) If both virtualdata and virtualdata1 exist, just update + navigate (no API call here)
+  if (this.isBrowser) {
     const virtualdata = localStorage.getItem('virtualdata');
-    
     const virtualdata1 = localStorage.getItem('virtualdata1');
     const currentFormValue = this.personalDetailsForm.value;
 
     if (virtualdata && virtualdata1) {
       const previousData = JSON.parse(virtualdata);
-      // Update 'virtualdata' with current form values
+      // merge new values into virtualdata
       const updatedVirtualForm = {
-        ...JSON.parse(virtualdata),
-        ...this.personalDetailsForm.value,
+        ...previousData,
+        ...currentFormValue
       };
+      localStorage.setItem('virtualdata', JSON.stringify(updatedVirtualForm));
 
-      localStorage.setItem('virtualdata', JSON.stringify(updatedVirtualForm)); // Save updated 'mailform'
- // Compare selected country with previously stored country
- const previousCountry = (previousData?.nationality || '').trim();
- const currentCountry = (currentFormValue?.nationality || '').trim();
+      // compare countries
+      const previousCountry = (previousData?.nationality || '').trim();
+      const currentCountry = (currentFormValue?.nationality || '').trim();
 
- if (previousCountry !== currentCountry) {
- // Country has changed 
- this.router.navigate(['/virtual-receptionist-1']);
-} else {
- // Country is same 
- this.router.navigate(['/virtual-receptionist-details']);
-}
-      this.router.navigate(['/virtual-receptionist-details']);
-      return; // Exit early to avoid further execution
+      if (previousCountry !== currentCountry) {
+        this.router.navigate(['/virtual-receptionist-1']);
+      } else {
+        this.router.navigate(['/virtual-receptionist-details']);
+      }
+      return; // exit early (no API call)
     }
   }
 
-
+  // 2) If form is valid, build payload & call createLeadOnly
   if (this.personalDetailsForm.valid) {
-    const formData = this.personalDetailsForm.value;
+    const values = this.personalDetailsForm.value;
+    // extract only the phone string
+    const phoneString = values.mobileNumber?.e164Number || '';
 
-    if (this.isBrowser) {
-      if (localStorage.getItem('virtualdata2')) {
-        this.router.navigate(['/virtual-receptionist-details']);
-      } else if (localStorage.getItem('step2Data')) {
-        this.router.navigate(['/virtual-receptionist-1']);
-      } else {
-        this.router.navigate(['/virtual-receptionist-1']);
+    const payload = {
+      firstName:   values.firstName,
+      lastName:    values.lastName,
+      email:       values.email,
+      nationality: values.nationality,
+      phone:       phoneString,
+      dob:         values.birthday,
+      service_name: 'Virtual Receptionist',
+    };
+
+    this.isLoading = true;
+    this.userService.createLeadOnly(payload).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+
+        // save form data to localStorage for next step
+        if (this.isBrowser) {
+          localStorage.setItem('virtualdata', JSON.stringify(values));
+          
+        }
+
+          if (this.isBrowser && res?.data) {
+    localStorage.setItem('leadResponse', JSON.stringify(res.data));
+  }
+        // this.toastr.success('Lead created successfully!');
+
+        // now replicate your original routing logic:
+        if (this.isBrowser) {
+          if (localStorage.getItem('virtualdata2')) {
+            this.router.navigate(['/virtual-receptionist-details']);
+          } else if (localStorage.getItem('step2Data')) {
+            this.router.navigate(['/virtual-receptionist-1']);
+          } else {
+            this.router.navigate(['/virtual-receptionist-1']);
+          }
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const msg = err.error?.message || 'Failed to create lead';
+        this.toastr.error(msg, 'Error');
       }
-      localStorage.setItem('virtualdata', JSON.stringify(formData));
-    }
-  } else {
-
+    });
+  }
+  else {
+    // form is invalid: show validation toast(s)
     const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
-    if (mobileNumberControl?.errors?.['validatePhoneNumber']) { // Correct key here
-      this.toastr.error('Enter a valid mobile number for the selected country.', 'Validation Error');
+    if (mobileNumberControl?.errors?.['validatePhoneNumber']) {
+      this.toastr.error(
+        'Enter a valid mobile number for the selected country.',
+        'Validation Error'
+      );
     }
-
-    // Use the updated `showSingleValidationError` method
     this.showSingleValidationError(this.personalDetailsForm);
   }
 }
+
+
+// onSubmit() {
+  
+
+//    // Check if 'virtualdata', 'virtualdata1', exist in localStorage
+//    if (this.isBrowser) {
+//     const virtualdata = localStorage.getItem('virtualdata');
+    
+//     const virtualdata1 = localStorage.getItem('virtualdata1');
+//     const currentFormValue = this.personalDetailsForm.value;
+
+//     if (virtualdata && virtualdata1) {
+//       const previousData = JSON.parse(virtualdata);
+//       // Update 'virtualdata' with current form values
+//       const updatedVirtualForm = {
+//         ...JSON.parse(virtualdata),
+//         ...this.personalDetailsForm.value,
+//       };
+
+//       localStorage.setItem('virtualdata', JSON.stringify(updatedVirtualForm)); // Save updated 'mailform'
+//  // Compare selected country with previously stored country
+//  const previousCountry = (previousData?.nationality || '').trim();
+//  const currentCountry = (currentFormValue?.nationality || '').trim();
+
+//  if (previousCountry !== currentCountry) {
+//  // Country has changed 
+//  this.router.navigate(['/virtual-receptionist-1']);
+// } else {
+//  // Country is same 
+//  this.router.navigate(['/virtual-receptionist-details']);
+// }
+//       this.router.navigate(['/virtual-receptionist-details']);
+//       return; // Exit early to avoid further execution
+//     }
+//   }
+
+
+//   if (this.personalDetailsForm.valid) {
+//     const formData = this.personalDetailsForm.value;
+
+//     if (this.isBrowser) {
+//       if (localStorage.getItem('virtualdata2')) {
+//         this.router.navigate(['/virtual-receptionist-details']);
+//       } else if (localStorage.getItem('step2Data')) {
+//         this.router.navigate(['/virtual-receptionist-1']);
+//       } else {
+//         this.router.navigate(['/virtual-receptionist-1']);
+//       }
+//       localStorage.setItem('virtualdata', JSON.stringify(formData));
+//     }
+//   } else {
+
+//     const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
+//     if (mobileNumberControl?.errors?.['validatePhoneNumber']) { // Correct key here
+//       this.toastr.error('Enter a valid mobile number for the selected country.', 'Validation Error');
+//     }
+
+//     // Use the updated `showSingleValidationError` method
+//     this.showSingleValidationError(this.personalDetailsForm);
+//   }
+// }
 
   
 

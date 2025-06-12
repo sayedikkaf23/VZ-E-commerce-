@@ -53,7 +53,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   nationalitiesData: string[] = []; // Initialize as an empty array
   businessCategories: any[] = [];
   personalInfo: any;
- 
+ maxDate: string | undefined;
  
   constructor(
     private formDataService: FormDataService,
@@ -73,7 +73,11 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
  
   ngOnInit(): void {
    
- 
+    const today = new Date();
+    const year = today.getFullYear() - 18;
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    this.maxDate = `${year}-${month}-${day}`;
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects
     //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
@@ -139,6 +143,15 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
  
    
   }
+  allowOnlyAlphabets(event: KeyboardEvent): void {
+  const charCode = event.key.charCodeAt(0);
+  // Allow A-Z, a-z, space, and backspace keys
+  const regex = /^[a-zA-Z\s]$/;
+  if (!regex.test(event.key)) {
+    event.preventDefault();
+  }
+}
+
   onCategorySearchSelect(selected: string) {
     this.formData.tradelicense = selected;
   
@@ -175,7 +188,23 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       shareholder.countryRisk = '';
     }
   }
- 
+ onShareholderInput(event: any, index: number) {
+  let val = event.target.value;
+
+  // If empty, don't change
+  if (val === '') return;
+
+  // Clamp value to 100 max
+  if (+val > 100) {
+    this.shareholders[index].shareholderPercentage = 100;
+    event.target.value = 100;
+  } else if (+val < 0) {
+    this.shareholders[index].shareholderPercentage = 0;
+    event.target.value = 0;
+  } else {
+    this.shareholders[index].shareholderPercentage = +val;
+  }
+}
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard
   }

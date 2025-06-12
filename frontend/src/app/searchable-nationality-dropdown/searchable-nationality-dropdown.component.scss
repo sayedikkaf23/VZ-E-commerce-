@@ -33,7 +33,7 @@ $offset: 1px;
     left: -30px;
     width: 100%;
     
-max-width: 600px;
+max-width: 900px;
 min-width: 250px;
     padding: 0px 0px;
     background: white;
@@ -64,7 +64,7 @@ min-width: 250px;
       height: 40px;
       line-height: 40px;
       padding: 0px 20px;
-      padding-left: 50px;
+     
       text-transform: capitalize;
       border-bottom: 1px solid #e5e5e5;
       overflow: hidden;
@@ -127,10 +127,32 @@ min-width: 250px;
         left: -20px !important;
       }
       &__dropdown__item{
-        font-size: 17px;
+        font-size: 15px;
+        line-height: 20px !important;
+        padding: 0px 10px !important;
+        white-space: normal !important;
+        word-wrap: break-word;
       }
     }
   }
+
   
+  @media screen and (max-width: 991px) {
+    .search-dropdown {
+      &__btn {
+       
+        font-size: 15px;
+      
+      }
+     
+      &__dropdown__item{
+        font-size: 15px;
+        line-height: 20px !important;
+        padding: 0px 10px !important;
+        white-space: normal !important;
+        word-wrap: break-word;
+      }
+    }
+  }
 
  

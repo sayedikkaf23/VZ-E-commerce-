@@ -4,7 +4,7 @@
   <div class="loader"></div>
   <span class="loader-text">Analyzing your data...</span>
   </div>
-<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0" class="main-container">
   <app-user-header></app-user-header>
 
 <!-- <div class="gradient_color p-2 p-md-5"></div> -->
@@ -91,7 +91,7 @@
             <div class="box-light">
               <div class="d-flex align-items-center justify-content-between">
                 <h4>Trade License Document</h4>
-                <a [routerLink]="['/mails-management-3']" class="btn-edit">Edit</a>
+                <a [routerLink]="['/virtual-receptionist-2']" class="btn-edit">Edit</a>
               </div>
               <table class="w-100">
                 <thead>
@@ -103,7 +103,7 @@
                       <td>{{ tradeLicenseFile.companyTradeLicense }}</td>
                       <td>
                         <ul>
-                          <li *ngFor="let file of tradeLicenseFile.uploadedFileNames">
+                          <li *ngFor="let file of tradeLicenseFile.companyTradeLicenseFile">
                             <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
                           </li>
                         </ul>

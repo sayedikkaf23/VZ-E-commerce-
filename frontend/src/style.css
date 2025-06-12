@@ -47,6 +47,8 @@ body {
     overflow-x: hidden;
     font-family: 'Satoshi';
     padding-top: 80px;
+      overflow-y: auto; /* or scroll */
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
 }
 html a {
     color: var(--primary);

@@ -1,4 +1,4 @@
-<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0" class="main-container">
   <app-user-header></app-user-header>
 
   <div class="gradient_color">
@@ -20,23 +20,23 @@
             <h3>Company Details</h3>
 
             <div class="form-field">
-              <label for="CompanyName">Company Name?<span
-                  class="required">*</span></label>
+              <label for="CompanyName">Company Name?<span class="required">*</span></label>
 
               <input type="text" name="CompanyName" id="CompanyName" class="form-input"
                 [(ngModel)]="formData.CompanyName" placeholder="Enter Company Name" />
             </div>
             <div class="form-field">
               <div class="form-field">
-                <label for="CompanyIncorporated">Where is your Company Incorporated?<span class="required">*</span></label>
+                <label for="CompanyIncorporated">Where is your Company Incorporated?<span
+                    class="required">*</span></label>
 
                 <fieldset>
                   <select class="form-select" id="CompanyIncorporated" [(ngModel)]="formData.CompanyIncorporated"
-                      [ngModelOptions]="{ standalone: true }">
-                      <option value="" disabled>Select Country</option>
-                      <option *ngFor="let nationality of nationalities" [value]="nationality.country">
-                          {{ nationality.country }}
-                      </option>
+                    [ngModelOptions]="{ standalone: true }">
+                    <option value="" disabled>Select Country</option>
+                    <option *ngFor="let nationality of nationalities" [value]="nationality.country">
+                      {{ nationality.country }}
+                    </option>
                   </select>
                 </fieldset>
               </div>
@@ -45,7 +45,8 @@
               <label for="resident">Where is your Company licensed?<span class="required">*</span></label>
 
               <fieldset>
-                <select name="Companylicensed" id="Companylicensed" class="form-select" [(ngModel)]="formData.Companylicensed">
+                <select name="Companylicensed" id="Companylicensed" class="form-select"
+                  [(ngModel)]="formData.Companylicensed">
                   <option value="" disabled selected>
                     Where is your Company licensed?
                   </option>
@@ -56,26 +57,22 @@
             </div>
 
             <div class="form-field">
-              <label for="tradelicense">What are the type of activities mentioned on your trade license?<span class="required">*</span></label>
+              <label for="tradelicense">What are the type of activities mentioned on your trade license?<span
+                  class="required">*</span></label>
               <fieldset>
-                <app-searchable-nationality-dropdown
-                [list]="businessCategories"
-                [labelKey]="'name'"
-                [value]="formData.tradelicense"
-                (valueChange)="onTradeCategorySelect($event)"
-                placeholder="What are the type of activities mentioned on your trade license?"
-                [searchPlaceholder]="'Search trade license activity'"
+                <app-searchable-nationality-dropdown [list]="businessCategories" [labelKey]="'name'"
+                  [value]="formData.tradelicense" (valueChange)="onTradeCategorySelect($event)"
+                  placeholder="What are the type of activities mentioned on your trade license?"
+                  [searchPlaceholder]="'Search trade license activity'"></app-searchable-nationality-dropdown>
 
-              ></app-searchable-nationality-dropdown>
-              
               </fieldset>
             </div>
             <div class="form-field" *ngIf="formData.CompanyIncorporated">
               <label for="Website">Enter Company Website (if applicable)
-                 </label>
+              </label>
 
-              <input type="text" name="Website" id="Website" class="form-input"
-                [(ngModel)]="formData.Website" placeholder="Company Website" />
+              <input type="text" name="Website" id="Website" class="form-input" [(ngModel)]="formData.Website"
+                placeholder="Company Website" />
             </div>
             <!-- <div class="form-field" *ngIf="formData.CompanyIncorporated !== 'United Arab Emirates' && formData.CompanyIncorporated">
               <label for="tradelicense">What are the types of activities mentioned on your trade license?
@@ -85,7 +82,7 @@
               <input type="text" name="tradelicense" id="tradelicense" class="form-input"
                 [(ngModel)]="formData.tradelicense" placeholder="Trade license" />
             </div> -->
-            
+
             <!-- <div class="form-field">
                 <fieldset>
                   <select
@@ -104,31 +101,31 @@
                   </select>
                 </fieldset>
               </div> -->
-        
+
 
             <div class="form-field" *ngIf="formData.CompanyIncorporated">
               <label for="resident">How many shareholders does your company have?<span class="required">*</span></label>
-                <fieldset>
-                  <select name="shareholdercount" id="shareholdercount" class="form-select"
-                    [(ngModel)]="formData.shareholdercount" (ngModelChange)="updateShareholders()">
-                    <option value="" disabled selected>
-                      How many shareholders does your company have?
-                    </option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10+">10+</option>
-                  </select>
-                </fieldset>
-                
+              <fieldset>
+                <select name="shareholdercount" id="shareholdercount" class="form-select"
+                  [(ngModel)]="formData.shareholdercount" (ngModelChange)="updateShareholders()">
+                  <option value="" disabled selected>
+                    How many shareholders does your company have?
+                  </option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10+">10+</option>
+                </select>
+              </fieldset>
+
             </div>
-          
+
             <div *ngIf="formData.shareholdercount && shareholders.length">
               <h3 style="margin-bottom: 20px;">Shareholders List</h3>
               <div *ngFor="let shareholder of shareholders; let i = index; trackBy: trackByShareholder">
@@ -141,7 +138,8 @@
 
                     <label class="shareholder-label">Full Name<span class="required">*</span></label>
                     <input type="text" [(ngModel)]="shareholder.name" [ngModelOptions]="{ standalone: true }" required
-                      placeholder="Full Name" style="padding: 25px;" data-ui-tooltip title="{{ shareholder.name }}" />
+                      placeholder="Full Name" style="padding: 25px;" data-ui-tooltip title="{{ shareholder.name }}"
+                      (keypress)="allowOnlyAlphabets($event)" />
                     <!-- Tooltip showing the full value -->
 
                   </div>
@@ -150,36 +148,34 @@
                     <!-- Apply new class here -->
                     <input type="number" [(ngModel)]="shareholder.shareholderPercentage"
                       [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100"
-                      style="padding: 25px" />
+                      style="padding: 25px" (input)="onShareholderInput($event, 0)" />
                   </div>
                   <div class="form-field">
                     <label class="shareholder-label">Date of Birth<span class="required">*</span></label>
                     <!-- Apply new class here -->
                     <input type="date" [(ngModel)]="shareholder.dob" [ngModelOptions]="{ standalone: true }" required
-                      style="padding: 25px"  (keydown)="preventManualInput($event)" 
-                      (click)="openDatePicker($event)" [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }" />
+                      style="padding: 25px" (keydown)="preventManualInput($event)" (click)="openDatePicker($event)"
+                      [max]="maxDate"
+                      [ngClass]="{ 'filled-input': shareholder.dob, 'placeholder-input': !shareholder.dob }" />
                   </div>
                   <div class="form-field nationality-wrapper">
                     <label class="shareholder-label">Nationality<span class="required">*</span></label>
                     <!-- Apply new class here -->
                     <div class="nationality-with-remove">
 
-                      <app-searchable-nationality-dropdown
-                      [list]="nationalities"
-                      [labelKey]="'country'"
-                      [value]="shareholder.nationalityshareholder"
-                      (valueChange)="onShareholderNationalitySelect($event, shareholder)"
-                      placeholder="Search country"
-                    ></app-searchable-nationality-dropdown>
-                    
-                    <span (click)="deleteShareholder(i)" class="remove-icon">
-                      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                        <path d="M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                      </svg>
-                    </span>
-                    
-                  </div>
+                      <app-searchable-nationality-dropdown [list]="nationalities" [labelKey]="'country'"
+                        [value]="shareholder.nationalityshareholder"
+                        (valueChange)="onShareholderNationalitySelect($event, shareholder)"
+                        placeholder="Search country"></app-searchable-nationality-dropdown>
+
+                      <span (click)="deleteShareholder(i)" class="remove-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          <path d="M5 5L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                          <path d="M15 5L5 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        </svg>
+                      </span>
+
+                    </div>
                   </div>
 
 

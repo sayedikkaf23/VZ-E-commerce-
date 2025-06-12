@@ -15,6 +15,7 @@ export class AppComponent implements OnInit, OnDestroy {
   specialRoutes: string[] = [
     '/onlinepayment',
     '/failure',
+    '/paymentfailure',
     '/successful',
     '/onlinepayments',
     '/cardmachine',

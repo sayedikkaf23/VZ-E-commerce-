@@ -33,8 +33,8 @@
               <h2>{{ piData?.leadWithDetails.FirstName }}!</h2>
               <hr/>
               <p class="invoice-text">
-                Your Payment for <strong>{{ piData?.planname }}</strong><br/>
-                No – <strong>{{ piData?.quoteWithProductDetails.quotePaymentId }}</strong> is
+                Your Payment for  <strong>{{ piData?.planname }}</strong> is<br/> 
+                <!-- No – <strong>{{ piData?.quoteWithProductDetails.quotePaymentId }}</strong> is -->
               </p>
             
               <h2 class="invoice-amount">
@@ -42,13 +42,15 @@
               </h2>
   
       </div>
-      <div class="col-auto d-none d-md-block">
+      <!-- <div class="col-auto d-none d-md-block">
               <hr/> <h3 class="mb-0"><b>Need Assistance? </b></h3>
-        <p>Contact your sales agent:</p>
-  
-        <p><b>{{ piData?.salesPersonDetails.salesPersonName }}</b></p>
+ 
+              <a href="https://virtuzone.com/contactus/" target="_blank" style="color: #007bff; text-decoration: underline;">
+      Contact Us
+    </a>  -->
+        <!-- <p><b>{{ piData?.salesPersonDetails.salesPersonName }}</b></p> -->
               <!-- <h6>{{ piData?.salesPersonDetails }}</h6> -->
-        <div class="mb-3">
+        <!-- <div class="mb-3">
           <div class="row align-items-center gx-1 mb-0">
             <div class="col-auto">
                           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -57,11 +59,11 @@
             </div>
             <div class="col">
                           <h6 class="mb-0"> <a href="tel:{{ piData?.salesPersonDetails.salesPersonMobile }}">
-                            {{ piData?.salesPersonDetails.salesPersonMobile }}
+                            +97144578200
                           </a></h6>
             </div>
           </div>
-          <div class="row align-items-center gx-1">
+          <div class="row align-items-center gx-1"> -->
             <!-- <div class="col-auto">
                           <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
                               <path d="M5.41618 3.33333C5.7477 3.33333 6.06564 3.46503 6.30006 3.69945C6.53448 3.93387 6.66618 4.25181 6.66618 4.58333C6.66618 4.69384 6.71008 4.79982 6.78822 4.87796C6.86636 4.9561 6.97234 5 7.08284 5C7.19335 5 7.29933 4.9561 7.37747 4.87796C7.45561 4.79982 7.49951 4.69384 7.49951 4.58333C7.49951 4.0308 7.28002 3.5009 6.88932 3.11019C6.49862 2.71949 5.96871 2.5 5.41618 2.5C5.30567 2.5 5.19969 2.5439 5.12155 2.62204C5.04341 2.70018 4.99951 2.80616 4.99951 2.91667C4.99951 3.02717 5.04341 3.13315 5.12155 3.21129C5.19969 3.28943 5.30567 3.33333 5.41618 3.33333Z" fill="#231F20"/>
@@ -72,7 +74,7 @@
             <div class="col">
                           <h6 class="mb-0"><a href="tel:{{ piData?.mobile }}">{{ piData?.mobile }}</a></h6>
             </div> -->
-          </div>
+          <!-- </div>
         </div>
         <div class="row align-items-center gx-1">
           <div class="col-auto">
@@ -86,6 +88,20 @@
                       </a></h6>
           </div>
         </div>
-      </div>
+      </div> -->
+    <!-- </div> -->
+      <div class="col-auto d-none d-md-block"> 
+
+      <!-- <div class="col-auto d-none d-md-block assistance-block"> -->
+      <hr />
+      <h3 class="mb-0"><b>Need Assistance?</b></h3>
+      <a
+        href="https://virtuzone.com/contactus/"
+        target="_blank"
+        class="contact-link"
+      >
+        Contact Us
+      </a>
     </div>
+  </div>
   </div>

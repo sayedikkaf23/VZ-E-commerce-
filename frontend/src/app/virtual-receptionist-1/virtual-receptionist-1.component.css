@@ -363,3 +363,18 @@ select option {
     padding: 0 20px 0 26px;
   }
 }
+
+.main-container { /* Or body */
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure the container takes at least the full viewport height */
+}
+
+section { /* Or the class of your content section */
+  flex-grow: 1; /* Allow the content section to grow and take up available space */
+}
+
+
+.step_1_section {
+    padding: 20px 0 120px !important;
+} 

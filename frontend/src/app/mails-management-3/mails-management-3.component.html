@@ -2,7 +2,7 @@
   <div class="loader"></div>
 </div>
 
-<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0">
+<div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0" class="main-container">
 
   <app-user-header></app-user-header>
 
@@ -22,7 +22,7 @@
             <div class="form-field">
               <label for="companyTradeLicenseNumber">Enter Company Trade License Number<span class="required">*</span></label>
               <input
-                class="form-control"
+                class="form-control rounded-input"
                 type="text"
                 id="companyTradeLicenseNumber"
                 placeholder="Enter Company Trade License Number"
@@ -88,7 +88,7 @@
                 <!-- Passport Number Field -->
                 <div class="form-field">
                   <label for="passportNumber">Enter ID or Passport Number for Shareholder {{ i + 1 }}<span class="required">*</span></label>
-                  <input type="text" class="form-control" formControlName="passportNumber" placeholder="Enter Passport Number" />
+                  <input type="text" class="form-control rounded-input" formControlName="passportNumber" placeholder="Enter Passport Number" />
                   <div *ngIf="shareholder.get('passportNumber')?.invalid && shareholder.get('passportNumber')?.touched" class="error-message">
                     Passport Number is required.
                   </div>
@@ -96,7 +96,7 @@
   
                 <!-- File Upload Field for Shareholder -->
                 <div class="form-field">
-                  <label for="files">File Upload for Shareholder {{ i + 1 }}<span class="required">*</span></label>
+                  <label class="alignment" for="files">Upload ID or Passport for Shareholder {{ i + 1 }}<span class="required">*</span></label>
                   <div class="custom-file-upload">
                     <input
                       type="text"

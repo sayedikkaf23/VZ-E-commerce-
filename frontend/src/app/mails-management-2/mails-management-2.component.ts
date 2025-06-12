@@ -31,7 +31,7 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
   };
 
   shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' }];
-
+ maxDate: string | undefined;
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {};
@@ -57,6 +57,12 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
+     const today = new Date();
+    const year = today.getFullYear() - 18;
+    const month = (today.getMonth() + 1).toString().padStart(2, '0');
+    const day = today.getDate().toString().padStart(2, '0');
+    this.maxDate = `${year}-${month}-${day}`;
+
     // Load nationality data
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Map and trim whitespace, sort case-insensitively
@@ -132,7 +138,23 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
     );
 
   }
+onShareholderInput(event: any, index: number) {
+  let val = event.target.value;
 
+  // If empty, don't change
+  if (val === '') return;
+
+  // Clamp value to 100 max
+  if (+val > 100) {
+    this.shareholders[index].shareholderPercentage = 100;
+    event.target.value = 100;
+  } else if (+val < 0) {
+    this.shareholders[index].shareholderPercentage = 0;
+    event.target.value = 0;
+  } else {
+    this.shareholders[index].shareholderPercentage = +val;
+  }
+}
   onTradeCategorySelect(selectedCategory: string) {
     this.formData.tradelicense = selectedCategory;
   
@@ -232,6 +254,15 @@ export class MailsManagement2Component implements OnInit, AfterViewInit {
       this.files.salaryStatements = Array.from(event.target.files);
     }
   }
+  allowOnlyAlphabets(event: KeyboardEvent): void {
+  const charCode = event.key.charCodeAt(0);
+  // Allow A-Z, a-z, space, and backspace keys
+  const regex = /^[a-zA-Z\s]$/;
+  if (!regex.test(event.key)) {
+    event.preventDefault();
+  }
+}
+
 
   updateShareholders() {
     const count = parseInt(this.formData.shareholdercount, 10);

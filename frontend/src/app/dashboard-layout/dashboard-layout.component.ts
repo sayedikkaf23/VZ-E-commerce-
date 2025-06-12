@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation,  ElementRef, HostListener, ViewChild  } from '@angular/core';
 // import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 // import { UserService } from '../services/user.service';
@@ -11,6 +11,8 @@ import { Router } from '@angular/router';
   encapsulation: ViewEncapsulation.None,
 })
 export class DashboardLayoutComponent   {
+  @ViewChild('sidebar', { static: true }) sidebarRef!: ElementRef;
+  @ViewChild('header', { static: true }) headerRef!: ElementRef;
   permissions: any = [];
 
   constructor(
@@ -55,6 +57,20 @@ export class DashboardLayoutComponent   {
       bodyElement.classList.add('sidebar-collapsein');
     } else {
       bodyElement.classList.remove('sidebar-collapsein');
+    }
+  }
+
+
+  @HostListener('document:click', ['$event'])
+  handleClickOutside(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+     const sidebar = document.getElementById('menu-sidebar');
+    const header = document.getElementById('app-header');
+
+    const clickedInsideSidebar = sidebar?.contains(target);
+    const clickedInsideHeader = header?.contains(target);
+    if (!clickedInsideSidebar && !clickedInsideHeader) {
+      document.body.classList.remove('sidebar-collapsein');
     }
   }
 

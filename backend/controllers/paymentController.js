@@ -11,8 +11,8 @@ const crypto = require("crypto");
 const User = require("../models/user"); // Assuming the User model is in 'models/user'
 const CashCounter = require("../models/CashOverCounter");
 const bcrypt = require("bcrypt");
-const MailDetails = require('../models/mailManagement'); // Import the model
-const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
+const MailDetails = require("../models/mailManagement"); // Import the model
+const VirtualDetails = require("../models/virtualReceptionist"); // Import the model
 const CashDeposit = require("../models/CashDeposit");
 const BankTransfer = require("../models/BankTransferModel");
 const Decimal = require("decimal.js"); // Install the library if needed
@@ -67,12 +67,10 @@ const mailTransporter = nodemailer.createTransport({
   },
 });
 
-
-
 const rates = {
   EUR: { USD: 1.08, AED: 3.98 },
   USD: { EUR: 0.92, AED: 3.65 },
-  AED: { USD: 1/3.65, EUR: 0.25 }, // changed this line
+  AED: { USD: 1 / 3.65, EUR: 0.25 }, // changed this line
 };
 
 const convertFileToBase64 = (filePath) => {
@@ -81,13 +79,12 @@ const convertFileToBase64 = (filePath) => {
       if (err) {
         reject(err);
       } else {
-        const base64Data = data.toString('base64');
+        const base64Data = data.toString("base64");
         resolve(base64Data);
       }
     });
   });
 };
-
 
 const AddCashMachin = async (req, res) => {
   // Validation errors check
@@ -124,14 +121,12 @@ const AddCashMachin = async (req, res) => {
     //   $or: [{ quoteId: quoteId }, { quotePaymentId: quoteId }],
     // });
 
-     const existingUser = await PiData.findOne({
-            $or: [
-              { "quoteWithProductDetails.quoteId": quoteId },
-              { "quotePaymentWithDetails.QuotePaymentId": quoteId },
-            ],
-          });
-
-
+    const existingUser = await PiData.findOne({
+      $or: [
+        { "quoteWithProductDetails.quoteId": quoteId },
+        { "quotePaymentWithDetails.QuotePaymentId": quoteId },
+      ],
+    });
 
     if (!existingUser) {
       return res.status(400).json({ message: "User not found" });
@@ -156,10 +151,12 @@ const AddCashMachin = async (req, res) => {
       transactionDetails: {
         amount: existingUser.salesforceResponseMatchScreening.totalAmount,
         quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
-        partPayment: existingUser.salesforceResponseMatchScreening.total_including_Vat,
+        partPayment:
+          existingUser.salesforceResponseMatchScreening.total_including_Vat,
         // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
         // toCurrency: currency_convertingto,
-        proformaInvoiceNumber: existingUser.quotePaymentWithDetails.QuotePaymentId,
+        proformaInvoiceNumber:
+          existingUser.quotePaymentWithDetails.QuotePaymentId,
         currencyPaid: "AED",
         // amountPaid:existingUser.totalIncludingVAT,
       },
@@ -427,6 +424,11 @@ const AddCashMachin = async (req, res) => {
 
 async function payNow(req, res) {
   const { quoteId } = req.params;
+  let order_number,
+    acountname,
+    acountemail,
+    order_amount,
+    type = "Online";
 
   const data = await PiData.findOne({
     $or: [
@@ -439,16 +441,16 @@ async function payNow(req, res) {
   // Static data
 
   order_number = data.quotePaymentWithDetails.QuotePaymentId;
-  acountname = data.quoteWithProductDetails.AccountName;
+  acountname = data.leadWithDetails.FirstName;
   acountemail = data.quoteWithProductDetails.quoteEmail;
-  order_amount = Number(
-    data.salesforceResponseMatchScreening.total_including_Vat
-  ).toFixed(2);
+  order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(
+    2
+  );
   // const order_number = "order-1234";
   // const order_amount = "0.19";
   const order_currency = "AED";
-  const order_description = "gift";
-  const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
+  const order_description = "purchase";
+  const password = "050936a2e5f2bbb873dd97cbe42e57f1"; // Replace with your password
 
   // Create hash
   const stringToHash =
@@ -468,38 +470,38 @@ async function payNow(req, res) {
   //   return res.status(400).json({ message: "Account details not found" });
   // }
 
-  const TokenResponse = await axios.post(
-    `https://test.salesforce.com/services/oauth2/token`,
-    null,
-    {
-      params: {
-        client_id: process.env.SALESFORCE_CLIENT_ID,
-        client_secret: process.env.SALESFORCE_CLIENT_SECRET,
-        grant_type: "password",
-        username: process.env.SALESFORCE_USERNAME,
-        password: process.env.SALESFORCE_PASSWORD,
-      },
-    }
-  );
-  const accessToken = TokenResponse.data.access_token;
+  // const TokenResponse = await axios.post(
+  //   https://test.salesforce.com/services/oauth2/token,
+  //   null,
+  //   {
+  //     params: {
+  //       client_id: process.env.SALESFORCE_CLIENT_ID,
+  //       client_secret: process.env.SALESFORCE_CLIENT_SECRET,
+  //       grant_type: "password",
+  //       username: process.env.SALESFORCE_USERNAME,
+  //       password: process.env.SALESFORCE_PASSWORD,
+  //     },
+  //   }
+  // );
+  // const accessToken = TokenResponse.data.access_token;
 
   // console.log("Access Token:", accessToken);
 
   // Create a new PaymentForm instance
   const newOnlinePayForm = new OnlinePayment({
     transactionDetails: {
-      amount: data.salesforceResponseMatchScreening.total_including_Vat,
+      amount: data.quoteWithProductDetails.totalIncludingVAT,
       quotePaymentId: order_number,
       //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
 
       // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
       // toCurrency: currency_convertingto,
-      proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
+      proformaInvoiceNumber: data.leadWithDetails.LeadId,
       currencyPaid: "AED",
       // amountPaid:existingUser.totalIncludingVAT,
     },
     customerDetails: {
-      name: data.quoteWithProductDetails.AccountName,
+      name: data.leadWithDetails.FirstName,
       id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
     },
 
@@ -513,14 +515,14 @@ async function payNow(req, res) {
 
   // Create request body
   const requestBody = {
-    merchant_key: "38e1fdfc-5b72-11ee-a23d-de864d357ae1",
+    merchant_key: "8695c034-2a41-11f0-a0cc-2af5069be677",
     operation: "purchase",
     methods: ["card"],
     order: {
       number: order_number,
       amount: order_amount,
       currency: order_currency,
-      description: order_description,
+      description: 'purchase',
     },
     billing_address: {
       country: "AE",
@@ -533,11 +535,12 @@ async function payNow(req, res) {
       zip: "00000",
       phone: "+971090450954",
     },
-    cancel_url: `https://ecommerce.virtuzone.com/failure/${order_number}`,
+    cancel_url: `https://ecommerce.virtuzone.com/paymentfailure/${order_number}`,
     success_url: `https://ecommerce.virtuzone.com/successful/${order_number}`,
     customer: {
-      // name: acountname,
+      // name: data.leadWithDetails.FirstName,
       email: acountemail,
+      birth_date: data.leadWithDetails.dob,
     },
     recurring_init: "true",
     hash: sha1Hash,
@@ -556,15 +559,15 @@ async function payNow(req, res) {
     const totalpayResponseData = totalpayResponse.data;
 
     const combinedResponse = {
-      message: "Online Payment",
-      GL_code: "1352 - Payment Gateway",
-      bank_name: "Payment Gateway",
-      Bankstatus: newOnlinePayForm.status,
-      Name: newOnlinePayForm.customerDetails.name,
-      proformaInvoiceNumber:
-        newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
-      // receiptfile: newOnlinePayForm.fileUpload,
-      currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
+      // message: "Online Payment",
+      // GL_code: "1352 - Payment Gateway",
+      // bank_name: "Payment Gateway",
+      // Bankstatus: newOnlinePayForm.status,
+      // Name: newOnlinePayForm.customerDetails.name,
+      // proformaInvoiceNumber:
+      //   newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
+      // // receiptfile: newOnlinePayForm.fileUpload,
+      // currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
       totalpayData: totalpayResponseData, // Include data from the first response here
     };
 
@@ -584,6 +587,423 @@ async function payNow(req, res) {
 
     res.status(500).json({ message: "Internal Server Error" });
   }
+}
+
+exports.getTotalPayRedirectUrl = async (quoteId) =>  {
+ 
+  let order_number,
+    acountname,
+    acountemail,
+    order_amount,
+    type = "Online";
+
+  const data = await PiData.findOne({
+    $or: [
+      { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+      { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+    ],
+  });
+
+  console.log("Data received in createTotalpaySession:", data);
+  // Static data
+
+  order_number = data.quotePaymentWithDetails.QuotePaymentId;
+  acountname = data.leadWithDetails.FirstName;
+  acountemail = data.quoteWithProductDetails.quoteEmail;
+  order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(
+    2
+  );
+  // const order_number = "order-1234";
+  // const order_amount = "0.19";
+  const order_currency = "AED";
+  const order_description = "purchase";
+  const password = "050936a2e5f2bbb873dd97cbe42e57f1"; // Replace with your password
+
+  // Create hash
+  const stringToHash =
+    order_number + order_amount + order_currency + order_description + password;
+  console.log("String to hash:", stringToHash); // log the string to be hashed
+  const md5hash = crypto
+    .createHash("md5")
+    .update(stringToHash.toUpperCase())
+    .digest("hex");
+  console.log(md5hash);
+
+  const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
+  console.log("SHA-1 Hash:", sha1Hash);
+
+  // const accountDetailsResult = await AccountDetail.find();
+  // if (!accountDetailsResult || accountDetailsResult.length === 0) {
+  //   return res.status(400).json({ message: "Account details not found" });
+  // }
+
+  // const TokenResponse = await axios.post(
+  //   https://test.salesforce.com/services/oauth2/token,
+  //   null,
+  //   {
+  //     params: {
+  //       client_id: process.env.SALESFORCE_CLIENT_ID,
+  //       client_secret: process.env.SALESFORCE_CLIENT_SECRET,
+  //       grant_type: "password",
+  //       username: process.env.SALESFORCE_USERNAME,
+  //       password: process.env.SALESFORCE_PASSWORD,
+  //     },
+  //   }
+  // );
+  // const accessToken = TokenResponse.data.access_token;
+
+  // console.log("Access Token:", accessToken);
+
+  // Create a new PaymentForm instance
+  const newOnlinePayForm = new OnlinePayment({
+    transactionDetails: {
+      amount: data.quoteWithProductDetails.totalIncludingVAT,
+      quotePaymentId: order_number,
+      //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
+
+      // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+      // toCurrency: currency_convertingto,
+      proformaInvoiceNumber: data.leadWithDetails.LeadId,
+      currencyPaid: "AED",
+      // amountPaid:existingUser.totalIncludingVAT,
+    },
+    customerDetails: {
+      name: data.leadWithDetails.FirstName,
+      id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
+    },
+
+    paymentType: "Online",
+    status: "Paid",
+    quoteId: data.quoteWithProductDetails.oppurtunityId,
+    // Default status
+  });
+
+  await newOnlinePayForm.save();
+
+  // Create request body
+  const requestBody = {
+    merchant_key: "8695c034-2a41-11f0-a0cc-2af5069be677",
+    operation: "purchase",
+    methods: ["card"],
+    order: {
+      number: order_number,
+      amount: order_amount,
+      currency: order_currency,
+      description: 'purchase',
+    },
+    billing_address: {
+      country: "AE",
+      state: "Dubai",
+      district: "Dubai",
+      address: "Dubai",
+      house_number: "1",
+      address: "Moor Building",
+      city: "Dubai",
+      zip: "00000",
+      phone: "+971090450954",
+    },
+    cancel_url: `https://ecommerce.virtuzone.com/paymentfailure/${order_number}`,
+    success_url: `https://ecommerce.virtuzone.com/successful/${order_number}`,
+    customer: {
+      // name: data.leadWithDetails.FirstName,
+      email: acountemail,
+      birth_date: data.leadWithDetails.dob,
+    },
+    recurring_init: "true",
+    hash: sha1Hash,
+  };
+
+  console.log(sha1Hash, "sha1Hash");
+
+  try {
+    // Send request to Totalpay
+    console.log("second");
+    const totalpayResponse = await axios.post(
+      "https://checkout.totalpay.global/api/v1/session",
+      requestBody
+    );
+return totalpayResponse.data.redirect_url;
+
+    const totalpayResponseData = totalpayResponse.data;
+
+    const combinedResponse = {
+      // message: "Online Payment",
+      // GL_code: "1352 - Payment Gateway",
+      // bank_name: "Payment Gateway",
+      // Bankstatus: newOnlinePayForm.status,
+      // Name: newOnlinePayForm.customerDetails.name,
+      // proformaInvoiceNumber:
+      //   newOnlinePayForm.transactionDetails.proformaInvoiceNumber,
+      // // receiptfile: newOnlinePayForm.fileUpload,
+      // currencyPaid: newOnlinePayForm.transactionDetails.currencyPaid,
+      totalpayData: totalpayResponseData, // Include data from the first response here
+    };
+
+    // console.log(combinedResponse);
+
+    // res.status(200).json(combinedResponse);
+  } catch (error) {
+    console.error("Error message:", error.message);
+
+    // Log the server's response provided by Axios in the error object
+    if (error.response) {
+      console.error("Error response data:", error.response.data);
+    }
+
+    // Log the full error stack for debugging purposes
+    console.error("Error stack:", error.stack);
+
+    throw new Error("Failed to create TotalPay session");
+  }
+}
+
+exports.getStripeRedirectUrl = async (quoteId) =>  {
+  let order_number;
+  let acountname;
+  let acountemail;
+  let order_amount;
+  let type = "Online";
+  const data = await PiData.findOne({
+    $or: [
+      { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+      { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+    ],
+  });
+
+  // if (!data) {
+  //   const ManualPiData = await manualPiData.findOne({
+  //     accountId: quoteId,
+  //   });
+
+  //   data = {
+  //     quotePaymentId: ManualPiData.accountId,
+  //     quoteName: ManualPiData.billTo,
+  //     quoteEmail: ManualPiData.email,
+  //     partPayment: ManualPiData.totalAmount,
+  //     totalIncludingVAT: ManualPiData.totalAmount,
+  //     invoiceNumber: ManualPiData.invoiceNumber,
+  //     quoteId: ManualPiData.invoiceNumber,
+  //     AccountName: ManualPiData.billTo,
+  //   };
+  //   type = "Manual";
+  // }
+
+  order_number = data.quotePaymentWithDetails.QuotePaymentId;
+  acountname = data.quoteWithProductDetails.AccountName;
+  acountemail = data.quoteWithProductDetails.quoteEmail;
+  order_amount = Number(
+    data.salesforceResponseMatchScreening.total_including_Vat
+  ).toFixed(2);
+  // const order_number = "order-1234";
+  // const order_amount = "0.19";
+  const order_currency = "AED";
+  const order_description = "gift";
+  const password = "23515a8aacd96768236258c7d8afc206"; // Replace with your password
+
+  // Create hash
+  const stringToHash =
+    order_number + order_amount + order_currency + order_description + password;
+
+  const md5hash = crypto
+    .createHash("md5")
+    .update(stringToHash.toUpperCase())
+    .digest("hex");
+
+  const sha1Hash = crypto.createHash("sha1").update(md5hash).digest("hex");
+
+  // const accountDetailsResult = await AccountDetail.find();
+  // if (!accountDetailsResult || accountDetailsResult.length === 0) {
+  //   return res.status(400).json({ message: "Account details not found" });
+  // }
+
+  try {
+    //   const isManual = type === "Manual";
+    //   const successType = isManual ? "?type=manual" : "";
+    //   const cancelType = isManual ? "?type=manual" : "";
+
+    const stripeResponse = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price_data: {
+            currency: "aed", // Replace with your currency code
+            product_data: {
+              name: acountname, // Replace with your product name
+            },
+            unit_amount: order_amount * 100, // Specify the amount in cents (e.g., $10.00 USD)
+          },
+          quantity: 1,
+        },
+      ],
+      mode: "payment",
+      success_url: `https://ecommerce.virtuzone.com/successful/${data.quotePaymentId}`,
+      cancel_url: `https://ecommerce.virtuzone.com/paymentfailure/${data.quotePaymentId}`,
+    });
+
+    const stripeResponseData = stripeResponse;
+
+    const newOnlinePayForm = new OnlinePayment({
+      transactionDetails: {
+        amount: data.salesforceResponseMatchScreening.total_including_Vat,
+        quotePaymentId: order_number,
+        //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
+
+        // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+        // toCurrency: currency_convertingto,
+        proformaInvoiceNumber: data.quoteWithProductDetails.ownerId,
+        currencyPaid: "AED",
+        // amountPaid:existingUser.totalIncludingVAT,
+      },
+      customerDetails: {
+        name: data.quoteWithProductDetails.AccountName,
+        id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
+      },
+
+      paymentType: "Online",
+      status: "Paid",
+      quoteId: data.quoteWithProductDetails.oppurtunityId,
+      // Default status
+    });
+
+    await newOnlinePayForm.save();
+
+    return stripeResponseData.data.redirect_url;
+    const combinedResponse = {
+      stripeData: stripeResponseData, // Include data from the first response here
+    };
+
+    res.status(200).json(combinedResponse);
+  } catch (error) {
+    console.error("Error message:", "OnlinePayment Failed");
+    console.error(
+      "Error creating checkout session:",
+      error.response.data.error
+    );
+   return;
+  }
+  
+}
+
+exports.getTelrRedirectUrl = async (quoteId) =>  {
+  let order_number,
+    acountname,
+    acountemail,
+    order_amount,
+    type = "Online";
+
+  // Fetch order details
+  const data = await PiData.findOne({
+    $or: [
+      { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+      { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+    ],
+  });
+  // if (!data) {
+  // //   const ManualPiData = await manualPiData.findOne({ accountId: quoteId });
+  //   data = {
+  //     quotePaymentId: ManualPiData.accountId,
+  //     quoteName: ManualPiData.billTo,
+  //     quoteEmail: ManualPiData.email,
+  //     partPayment: ManualPiData.totalAmount,
+  //     totalIncludingVAT: ManualPiData.totalAmount,
+  //     invoiceNumber: ManualPiData.invoiceNumber,
+  //     AccountName: ManualPiData.billTo,
+  //   };
+  // //   type = "Manual";
+  // }
+
+  order_number = data.quotePaymentWithDetails.QuotePaymentId;
+  acountname = data.leadWithDetails.FirstName;
+  acountemail = data.quoteWithProductDetails.quoteEmail;
+  order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(
+    2
+  );
+  const order_currency = "AED";
+  const order_description = "payment_description";
+
+  try {
+    // Define success and cancel URLs based on payment type
+    //   const isManual = type === "Manual";
+    //   const successType = type === "Manual" ? "?type=manual" : "";
+    //   const cancelType = type === "Manual" ? "?type=manual" : "";
+
+    const telrResponse = await axios.post(
+      "https://secure.telr.com/gateway/order.json",
+      {
+        method: "create",
+        store: process.env.TELR_STORE_ID,
+        authkey: process.env.TELR_AUTH_KEY,
+        framed: 0, // Use 0 to disable iframe integration
+        order: {
+          cartid: order_number, // Unique order reference
+          test: "1", // Use "1" for test mode; "0" for live transactions
+          amount: order_amount, // Transaction amount
+          currency: order_currency, // Currency (e.g., "AED")
+          description: order_description, // Order description
+        },
+        return: {
+          authorised: `https://ecommerce.virtuzone.com/successful/${order_number}`,
+          declined: `https://ecommerce.virtuzone.com/paymentfailure/${order_number}`,
+          cancelled: `https://ecommerce.virtuzone.com/cancelled/${order_number}`,
+        },
+        customer: {
+          ref: order_number, // Unique customer reference
+          email: acountemail, // Customer email
+          name: {
+            title: "tler", // Leave empty if not required
+            forenames: acountname, // Full or first name of the customer
+            surname: "tler", // Leave empty if no surname is needed
+          },
+          // Address fields left empty to hide them
+          address: {
+            line1: "101 Pine Ln Dummy",
+            city: "Dubai",
+            country: "AE",
+          },
+          // Optionally, leave out the phone field
+          phone: "+911234569898", // Leave empty to avoid displaying the phone number
+        },
+      },
+      {
+        headers: {
+          Authorization: `Basic ${process.env.TELR_BASIC_AUTH}`,
+          "Content-Type": "application/json",
+          accept: "application/json",
+        },
+      }
+    );
+
+    const newOnlinePayForm = new OnlinePayment({
+      transactionDetails: {
+        amount: data.quoteWithProductDetails.totalIncludingVAT,
+        quotePaymentId: order_number,
+        //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
+
+        // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+        // toCurrency: currency_convertingto,
+        proformaInvoiceNumber: data.leadWithDetails.LeadId,
+        currencyPaid: "AED",
+        // amountPaid:existingUser.totalIncludingVAT,
+      },
+      customerDetails: {
+        name: data.leadWithDetails.FirstName,
+        id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
+      },
+
+      paymentType: "Online",
+      status: "Paid",
+      quoteId: data.quoteWithProductDetails.oppurtunityId,
+      // Default status
+    });
+
+    await newOnlinePayForm.save();
+
+    return telrResponse.data.redirect_url;
+  } catch (error) {
+    console.error("Error with Telr API:", error);
+   return;
+  }
+  
 }
 
 async function payNowByStripe(req, res) {
@@ -667,7 +1087,7 @@ async function payNowByStripe(req, res) {
       ],
       mode: "payment",
       success_url: `https://ecommerce.virtuzone.com/successful/${data.quotePaymentId}`,
-      cancel_url: `https://ecommerce.virtuzone.com/failure/${data.quotePaymentId}`,
+      cancel_url: `https://ecommerce.virtuzone.com/paymentfailure/${data.quotePaymentId}`,
     });
 
     const stripeResponseData = stripeResponse;
@@ -744,9 +1164,9 @@ async function payNowByTelr(req, res) {
   order_number = data.quotePaymentWithDetails.QuotePaymentId;
   acountname = data.leadWithDetails.FirstName;
   acountemail = data.quoteWithProductDetails.quoteEmail;
-  order_amount = Number(
-    data.quoteWithProductDetails.totalIncludingVAT
-  ).toFixed(2);
+  order_amount = Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(
+    2
+  );
   const order_currency = "AED";
   const order_description = "payment_description";
 
@@ -772,7 +1192,7 @@ async function payNowByTelr(req, res) {
         },
         return: {
           authorised: `https://ecommerce.virtuzone.com/successful/${order_number}`,
-          declined: `https://ecommerce.virtuzone.com/failure/${order_number}`,
+          declined: `https://ecommerce.virtuzone.com/paymentfailure/${order_number}`,
           cancelled: `https://ecommerce.virtuzone.com/cancelled/${order_number}`,
         },
         customer: {
@@ -784,11 +1204,10 @@ async function payNowByTelr(req, res) {
             surname: "tler", // Leave empty if no surname is needed
           },
           // Address fields left empty to hide them
-        address: 
-          {
+          address: {
             line1: "101 Pine Ln Dummy",
             city: "Dubai",
-            country: "AE"
+            country: "AE",
           },
           // Optionally, leave out the phone field
           phone: "+911234569898", // Leave empty to avoid displaying the phone number
@@ -805,7 +1224,7 @@ async function payNowByTelr(req, res) {
 
     const newOnlinePayForm = new OnlinePayment({
       transactionDetails: {
-        amount:  data.quoteWithProductDetails.totalIncludingVAT,
+        amount: data.quoteWithProductDetails.totalIncludingVAT,
         quotePaymentId: order_number,
         //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
 
@@ -869,95 +1288,102 @@ async function payNowSaleforce(req, res) {
       ],
     });
 
+    const virtualDetails = await VirtualDetails.findOne({
+      QuotePaymentId: quoteId,
+    });
+    const mailDetails = await MailDetails.findOne({ QuotePaymentId: quoteId });
 
-    const virtualDetails = await VirtualDetails.findOne({ "QuotePaymentId": quoteId });
-    const mailDetails = await MailDetails.findOne({ "QuotePaymentId": quoteId });
-    
     if (virtualDetails || mailDetails) {
-        // Prepare the updated fields from virtualDetails or mailDetails
-        const updatedShareholders = [];
-        
-        // Example logic: Check if there are any shareholders in virtualDetails or mailDetails
-        if (virtualDetails && virtualDetails.shareholders) {
-            virtualDetails.shareholders.forEach(shareholder => {
-                updatedShareholders.push({
-                    name: shareholder.name,
-                    shareholderPercentage: shareholder.shareholderPercentage,
-                    dob: shareholder.dob,
-                    nationalityshareholder: shareholder.nationalityshareholder,
-                    passportNumber: shareholder.passportNumber,
-                    files: shareholder.files,  // Assuming `files` contain URLs or other file data
-                });
-            });
+      // Prepare the updated fields from virtualDetails or mailDetails
+      const updatedShareholders = [];
+
+      // Example logic: Check if there are any shareholders in virtualDetails or mailDetails
+      if (virtualDetails && virtualDetails.shareholders) {
+        virtualDetails.shareholders.forEach((shareholder) => {
+          updatedShareholders.push({
+            name: shareholder.name,
+            shareholderPercentage: shareholder.shareholderPercentage,
+            dob: shareholder.dob,
+            nationalityshareholder: shareholder.nationalityshareholder,
+            passportNumber: shareholder.passportNumber,
+            files: shareholder.files, // Assuming `files` contain URLs or other file data
+          });
+        });
+      }
+
+      if (mailDetails && mailDetails.shareholders) {
+        mailDetails.shareholders.forEach((shareholder) => {
+          updatedShareholders.push({
+            name: shareholder.name,
+            shareholderPercentage: shareholder.shareholderPercentage,
+            dob: shareholder.dob,
+            nationalityshareholder: shareholder.nationalityshareholder,
+            passportNumber: shareholder.passportNumber,
+            files: shareholder.files, // Assuming `files` contain URLs or other file data
+          });
+        });
+      }
+
+      // Update PiData with new or modified shareholders
+      const updateFile = await PiData.updateOne(
+        { _id: PiDataCheck._id }, // Match by the PiData document's ID
+        {
+          $set: {
+            shareholders: updatedShareholders || "", // Update shareholders field
+          },
         }
-    
-        if (mailDetails && mailDetails.shareholders) {
-            mailDetails.shareholders.forEach(shareholder => {
-                updatedShareholders.push({
-                    name: shareholder.name,
-                    shareholderPercentage: shareholder.shareholderPercentage,
-                    dob: shareholder.dob,
-                    nationalityshareholder: shareholder.nationalityshareholder,
-                    passportNumber: shareholder.passportNumber,
-                    files: shareholder.files,  // Assuming `files` contain URLs or other file data
-                });
-            });
-        }
-    
-        // Update PiData with new or modified shareholders
-        const updateFile = await PiData.updateOne(
-            { _id: PiDataCheck._id },  // Match by the PiData document's ID
-            {
-                $set: {
-                 
-                    shareholders: updatedShareholders || '',  // Update shareholders field
-                },
-            }
-        );
-    
-        console.log("PiData updated successfully:", updateFile);
+      );
+
+      console.log("PiData updated successfully:", updateFile);
     }
-    
 
     if (!paynowdata) {
       // Throw an error if the document is not found
       throw new Error("Document not found");
     }
 
-    const requestBodySalesforce = {
-      qp: {
-        paymentmethod: "Pay Now",
-        amount_received: paynowdata.transactionDetails.amount,
-        bank_name: "Payment Gateway",
-        GL_code: "1301 - VZ ADCB (AED) 10515838124001",
-        payment_status: "Paid",
-        quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
-      },
-      attachments: [
-        {
-          Body: "",
-          ContentType: "",
-          Name: "",
+    if (PiDataCheck) {
+      await PiData.updateOne(
+        { _id: PiDataCheck._id },
+        { $set: { isPayment: true } }
+      );
+
+      const requestBodySalesforce = {
+        qp: {
+          paymentmethod: "Pay Now",
+          amount_received: paynowdata.transactionDetails.amount,
+          bank_name: "Payment Gateway",
+          GL_code: "1301 - VZ ADCB (AED) 10515838124001",
+          payment_status: "Paid",
+          quotePaymentId: paynowdata.transactionDetails.quotePaymentId,
         },
-        {
-          Body: "",
-          ContentType: "",
-          Name: "",
-        },
-      ],
-    };
+        attachments: [
+          {
+            Body: "",
+            ContentType: "",
+            Name: "",
+          },
+          {
+            Body: "",
+            ContentType: "",
+            Name: "",
+          },
+        ],
+      };
 
-    const headers = {
-      Authorization: `Bearer ${accessToken}`,
-      "Content-Type": "application/json", // Specify the content type as JSON
-    };
+      const headers = {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json", // Specify the content type as JSON
+      };
 
-    const endpointUrl = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${paynowdata.transactionDetails.quotePaymentId}`;
-    console.log("requestBodySalesforce",requestBodySalesforce)
+      const endpointUrl = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdateQuotePayments/${paynowdata.transactionDetails.quotePaymentId}`;
+      console.log("requestBodySalesforce", requestBodySalesforce);
 
-    const response1 = await axios.put(endpointUrl, requestBodySalesforce, { headers });
+      const response1 = await axios.put(endpointUrl, requestBodySalesforce, {
+        headers,
+      });
 
-console.log(response1,"response 1 data")
+      console.log(response1, "response 1 data");
 
       const requestBodySalesforce2 = {
         qp: {
@@ -982,34 +1408,33 @@ console.log(response1,"response 1 data")
           },
         ],
       };
-  
+
       // Endpoint URL for the second API call
       const endpointUrl2 = `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${paynowdata.transactionDetails.quotePaymentId}`;
-  
-      console.log(requestBodySalesforce2,"requestBodySalesforce2")
-      // Making the second API call
-      const response2 = await axios.put(endpointUrl2, requestBodySalesforce2, { headers });
-console.log(response2,"response 2 data")
-      const { invoiceDate, invoiceNumber } = response2.data;
-    if (PiDataCheck) {
-      await PiData.updateOne(
-        { _id: PiDataCheck._id },
-        {
-          $set: {
-            invoiceDate,
-            invoiceNumber,
-            payment_status: "Paid"
-          },
-        }
-      );
-    }
 
-    // 12. Mark isPayment = true on PiData if it exists
-    if (PiDataCheck) {
-      await PiData.updateOne(
-        { _id: PiDataCheck._id },
-        { $set: { isPayment: true } }
-      );
+      console.log(requestBodySalesforce2, "requestBodySalesforce2");
+      // Making the second API call
+      const response2 = await axios.put(endpointUrl2, requestBodySalesforce2, {
+        headers,
+      });
+      console.log(response2, "response 2 data");
+      const { invoiceDate, invoiceNumber } = response2.data;
+      if (PiDataCheck) {
+        await PiData.updateOne(
+          { _id: PiDataCheck._id },
+          {
+            $set: {
+              invoiceDate,
+              invoiceNumber,
+              payment_status: "Paid",
+             
+            },
+          }
+        );
+      }
+
+      // 12. Mark isPayment = true on PiData if it exists
+
       console.log("isPayment updated to true for:", PiDataCheck._id);
     } else {
       console.log("No document found for the given quoteId.");
@@ -1021,8 +1446,7 @@ console.log(response2,"response 2 data")
     const Amount = paynowdata.transactionDetails.amount;
     const planName = PiDataCheck?.planname || "";
 
-
-    console.log(planName,"planName................",PiDataCheck)
+    console.log(planName, "planName................", PiDataCheck);
 
     console.log("User Email:", userEmail);
 
@@ -1058,9 +1482,9 @@ console.log(response2,"response 2 data")
 
     <strong>Below are your service details:</strong><br>
     <strong>Service Plan:</strong> ${planName}<br>
-    <strong>Amount:</strong> AED ${parseFloat(Amount).toLocaleString('en-US', {
+    <strong>Amount:</strong> AED ${parseFloat(Amount).toLocaleString("en-US", {
       minimumFractionDigits: 2,
-      maximumFractionDigits: 2
+      maximumFractionDigits: 2,
     })}<br><br>
 
     You can access your Customer Portal Link here:<br>
@@ -1070,7 +1494,7 @@ console.log(response2,"response 2 data")
     </a><br><br>
 
     Your Email: <strong>${userEmail}</strong><br>
-    Your temporary password: <strong>${randomPassword}</strong>.<br><br>
+    Your temporary password: <strong>${randomPassword}</strong><br><br>
 
 
     Feel free to reach out if you have any questions.<br><br>
@@ -1151,8 +1575,6 @@ console.log(response2,"response 2 data")
       console.log("User already exists, no need to create or send email");
     }
 
-
-
     const verifyMailOptions = {
       from: "mishalnunu@gmail.com", // Sender address
       to: userEmail, // Receiver email address
@@ -1171,10 +1593,17 @@ console.log(response2,"response 2 data")
       <li style="margin-bottom: 8px;">A dedicated team ready to help you succeed</li>
     </ul>
     <p>
-      Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br><br>
-      Best regards,<br>
-      <strong>The Virtuzone Team</strong><br>
-    </p>
+  Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br>
+  <a href="https://ecommerce.virtuzone.com" target="_blank" style="text-decoration: none; display: inline-block; margin-bottom: 15px;">
+   https://ecommerce.virtuzone.com/
+  </a>
+</p>
+
+<p style="margin-top: 0;">
+  Best regards,<br>
+  <strong>The Virtuzone Team</strong><br>
+</p>
+
     
     
 <table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
@@ -1234,32 +1663,31 @@ console.log(response2,"response 2 data")
 
 </div>
       `,
-  };
-  
-  // Send the verification email
-  mailTransporter.sendMail(verifyMailOptions, (error, info) => {
-      if (error) {
-          console.error("Error sending verification email:", error);
-      } else {
-          console.log("Verification email sent:", info.response);
-      }
-  });
-  
-if (PiDataCheck) {
-  // Update the isPayment field to true
-  await PiData.updateOne(
-    { _id: PiDataCheck._id },
-    { $set: { isPayment: true } }
-  );
-  console.log("isPayment updated to true for:", PiDataCheck._id);
-} else {
-  console.log("No document found for the given quoteId.");
-}
-res.json({
-  message: "Success",
-  response2: response2.data,
-});
+    };
 
+    // Send the verification email
+    mailTransporter.sendMail(verifyMailOptions, (error, info) => {
+      if (error) {
+        console.error("Error sending verification email:", error);
+      } else {
+        console.log("Verification email sent:", info.response);
+      }
+    });
+
+    if (PiDataCheck) {
+      // Update the isPayment field to true
+      await PiData.updateOne(
+        { _id: PiDataCheck._id },
+        { $set: { isPayment: true } }
+      );
+      console.log("isPayment updated to true for:", PiDataCheck._id);
+    } else {
+      console.log("No document found for the given quoteId.");
+    }
+    res.json({
+      message: "Success",
+      response2: response2.data,
+    });
   } catch (error) {
     console.error("Error in payNowSaleforce:", error);
     if (error.response) {
@@ -1484,7 +1912,6 @@ async function MagnatiTransactionStatus(req, res) {
   }
 }
 
-
 const AddCashCounter = async (req, res) => {
   // Validation errors check
   const errors = validationResult(req);
@@ -1494,15 +1921,14 @@ const AddCashCounter = async (req, res) => {
   const { quoteId } = req.params;
   //  console.log(quoteId)
 
-   const tokenResponse = await axios.post(
-       `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
-     );
+  const tokenResponse = await axios.post(
+    `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token?client_id=3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip&client_secret=0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1&grant_type=password&username=vzpaymentapi@vz.ae.vzfullcopy&password=VZ@12345678`
+  );
 
   const accessToken = tokenResponse.data.access_token;
   const saleforcUrl = tokenResponse.data.instance_url;
   console.log("Access Token:", accessToken);
 
- 
   try {
     const existingUser = await PiData.findOne({
       $or: [
@@ -1523,7 +1949,9 @@ const AddCashCounter = async (req, res) => {
     const accountDetails = accountDetailsResult[0];
 
     // Check the condition for totalIncludingVAT
-    if (existingUser.salesforceResponseMatchScreening.total_including_Vat < 55000) {
+    if (
+      existingUser.salesforceResponseMatchScreening.total_including_Vat < 55000
+    ) {
       // Handle the case when totalIncludingVAT is less than 55000
       // For example, save the file here or send a different response
       // You can add your specific logic here
@@ -1542,10 +1970,12 @@ const AddCashCounter = async (req, res) => {
         },
         transactionDetails: {
           amount: existingUser.salesforceResponseMatchScreening.totalAmount,
-        quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
-        partPayment: existingUser.salesforceResponseMatchScreening.total_including_Vat,
-        proformaInvoiceNumber: existingUser.quotePaymentWithDetails.QuotePaymentId,
-        currencyPaid: "AED",
+          quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
+          partPayment:
+            existingUser.salesforceResponseMatchScreening.total_including_Vat,
+          proformaInvoiceNumber:
+            existingUser.quotePaymentWithDetails.QuotePaymentId,
+          currencyPaid: "AED",
         },
         customerDetails: {
           name: existingUser.leadWithDetails.FirstName,
@@ -1565,29 +1995,29 @@ const AddCashCounter = async (req, res) => {
       //   payment_status: newBankTransferForm.status,
       // };
 
-      const requestBody =  {
-        "qp": {
+      const requestBody = {
+        qp: {
           paymentmethod: "Cash Over Counter",
           amount_received: newBankTransferForm.transactionDetails.amount,
           bank_name: "Cash in Hand (AED)",
           GL_code: newBankTransferForm.generalLedgerCode,
           Pay_Currency: newBankTransferForm.transactionDetails.currencyPaid,
           payment_status: newBankTransferForm.status,
-          quotePaymentId:newBankTransferForm.transactionDetails.quotePaymentId
+          quotePaymentId: newBankTransferForm.transactionDetails.quotePaymentId,
         },
-        "attachments": [
+        attachments: [
           {
-            "Body": "",
-            "ContentType": "",
-            "Name": ""
+            Body: "",
+            ContentType: "",
+            Name: "",
           },
           {
-            "Body": "",
-            "ContentType": "",
-            "Name": ""
-          }
-        ]
-      }
+            Body: "",
+            ContentType: "",
+            Name: "",
+          },
+        ],
+      };
 
       console.log(requestBody);
 
@@ -1631,7 +2061,7 @@ const AddCashCounter = async (req, res) => {
       // const fileNames = uploadedFiles/
       console.log(fileNames);
       const uploadPromises = uploadedFiles.map(async (file) => {
-        const filePath = 'transfer_copy/' + file.filename; // Update this path
+        const filePath = "transfer_copy/" + file.filename; // Update this path
         const fileContent = fs.readFileSync(filePath);
         const params = {
           Bucket: process.env.S3_BUCKET_NAME,
@@ -1639,13 +2069,12 @@ const AddCashCounter = async (req, res) => {
           Body: fileContent,
           ContentType: file.mimetype, // Set this according to your file type
         };
-    
+
         const uploadResult = await s3.upload(params).promise();
         return uploadResult.Location; // URL of the uploaded file
       });
-    
+
       const paymentReceiptURLs = await Promise.all(uploadPromises);
- 
 
       const newBankTransferForm = new CashCounter({
         bankDetails: {
@@ -1659,10 +2088,11 @@ const AddCashCounter = async (req, res) => {
         transactionDetails: {
           amount: existingUser.salesforceResponseMatchScreening.totalAmount,
           quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
-          partPayment: existingUser.salesforceResponseMatchScreening.total_including_Vat,
-          proformaInvoiceNumber: existingUser.quotePaymentWithDetails.QuotePaymentId,
-        currencyPaid: "AED",
-          
+          partPayment:
+            existingUser.salesforceResponseMatchScreening.total_including_Vat,
+          proformaInvoiceNumber:
+            existingUser.quotePaymentWithDetails.QuotePaymentId,
+          currencyPaid: "AED",
         },
         customerDetails: {
           name: existingUser.leadWithDetails.FirstName,
@@ -1674,15 +2104,14 @@ const AddCashCounter = async (req, res) => {
         generalLedgerCode: "1301 - VZ ADCB (AED) 10515838124001",
       });
 
-
       let attachments = [];
       for (const file of req.files) {
-        const filePath = 'transfer_copy/' + file.filename; // Update this path
+        const filePath = "transfer_copy/" + file.filename; // Update this path
         const base64Data = await convertFileToBase64(filePath);
         attachments.push({
           Body: base64Data,
-          ContentType:file.mimetype, // Set this according to your file type
-          Name: file.originalname
+          ContentType: file.mimetype, // Set this according to your file type
+          Name: file.originalname,
         });
       }
 
@@ -1691,21 +2120,19 @@ const AddCashCounter = async (req, res) => {
       const qp = {
         paymentmethod: "Cash Over Counter",
         amount_received: newBankTransferForm.transactionDetails.partPayment,
-          bank_name:  "Cash in Hand (AED)",
-          GL_code: newBankTransferForm.generalLedgerCode,
-          Pay_Currency: newBankTransferForm.transactionDetails.currencyPaid,
-          payment_status: newBankTransferForm.status,
-          quotePaymentId:newBankTransferForm.transactionDetails.quotePaymentId
-      };
-    
-     
-      const requestBody = {
-        qp,
-        paymentReceiptURLs
-        
+        bank_name: "Cash in Hand (AED)",
+        GL_code: newBankTransferForm.generalLedgerCode,
+        Pay_Currency: newBankTransferForm.transactionDetails.currencyPaid,
+        payment_status: newBankTransferForm.status,
+        quotePaymentId: newBankTransferForm.transactionDetails.quotePaymentId,
       };
 
-      console.log(requestBody)
+      const requestBody = {
+        qp,
+        paymentReceiptURLs,
+      };
+
+      console.log(requestBody);
       // Set up the headers with the access token
       const headers = {
         Authorization: `Bearer ${accessToken}`,
@@ -1725,8 +2152,13 @@ const AddCashCounter = async (req, res) => {
           console.error("Error:", error);
         });
 
-        await sendEmail(existingUser.salesPersonDetails.salesPersonName,newBankTransferForm.customerDetails.id, existingUser.leadWithDetails.FirstName,existingUser.salesPersonDetails.salesPersonEmail);
-        let HtmlBody=`<!DOCTYPE html>
+      await sendEmail(
+        existingUser.salesPersonDetails.salesPersonName,
+        newBankTransferForm.customerDetails.id,
+        existingUser.leadWithDetails.FirstName,
+        existingUser.salesPersonDetails.salesPersonEmail
+      );
+      let HtmlBody = `<!DOCTYPE html>
         <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
         
         <head>
@@ -1902,10 +2334,16 @@ const AddCashCounter = async (req, res) => {
         </body>
         
         </html>
-        `
-        let subjectMail="Customer paying via cash over counter"
-        let toMail= process.env.ToMailCashOverCounter
-        await  ReviewsendEmail(existingUser.salesPersonDetails.salesPersonEmail,toMail,subjectMail,HtmlBody,attachments)
+        `;
+      let subjectMail = "Customer paying via cash over counter";
+      let toMail = process.env.ToMailCashOverCounter;
+      await ReviewsendEmail(
+        existingUser.salesPersonDetails.salesPersonEmail,
+        toMail,
+        subjectMail,
+        HtmlBody,
+        attachments
+      );
 
       return res.status(200).json({
         message: "Cash Over Counter Transfer processed successfully",
@@ -1929,19 +2367,16 @@ const AddCashCounter = async (req, res) => {
   }
 };
 
-
-
-
-async function sendEmail(opportunityName,to,name,opportunityOwnerEmail) {
+async function sendEmail(opportunityName, to, name, opportunityOwnerEmail) {
   // Email options
 
-    const data = {
-      from: process.env.SMTP_USER,
-      to: to,
-      cc: opportunityOwnerEmail,
-      replyTo:"monish@yeepeey.com",
-      subject:"Notice: Your documents are now under review",
-       html: `<!DOCTYPE html>
+  const data = {
+    from: process.env.SMTP_USER,
+    to: to,
+    cc: opportunityOwnerEmail,
+    replyTo: "monish@yeepeey.com",
+    subject: "Notice: Your documents are now under review",
+    html: `<!DOCTYPE html>
       <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
     
     <head>
@@ -2116,19 +2551,23 @@ async function sendEmail(opportunityName,to,name,opportunityOwnerEmail) {
     
     </html>
     `,
-    };
-  
-    mailTransporter.sendMail(data, function (error, info) {
-      if (error) {
-          console.error('Failed to send email:', error);
-      } else {
-          console.log('Email sent:', info.response);
-      }
+  };
+
+  mailTransporter.sendMail(data, function (error, info) {
+    if (error) {
+      console.error("Failed to send email:", error);
+    } else {
+      console.log("Email sent:", info.response);
+    }
   });
-
-
 }
-async function ReviewsendEmail(opportunityOwnerEmail,toMail,subjectMail,HtmlBody,attachments) {
+async function ReviewsendEmail(
+  opportunityOwnerEmail,
+  toMail,
+  subjectMail,
+  HtmlBody,
+  attachments
+) {
   // Email options
 
   const mailOptions = {
@@ -2137,33 +2576,38 @@ async function ReviewsendEmail(opportunityOwnerEmail,toMail,subjectMail,HtmlBody
     subject: subjectMail,
     html: HtmlBody,
     attachments: attachments.map((attachment) => ({
-        filename: attachment.Name,
-        content: attachment.Body,
-        encoding: 'base64',
-        contentType: attachment.ContentType,
+      filename: attachment.Name,
+      content: attachment.Body,
+      encoding: "base64",
+      contentType: attachment.ContentType,
     })),
-};
-  
-mailTransporter.sendMail(mailOptions, function (error, info) {
-  if (error) {
-      console.error('Failed to send email:', error);
-  } else {
-      console.log('Email sent:', info.response);
-  }
-});
-  // Send the email
+  };
 
+  mailTransporter.sendMail(mailOptions, function (error, info) {
+    if (error) {
+      console.error("Failed to send email:", error);
+    } else {
+      console.log("Email sent:", info.response);
+    }
+  });
+  // Send the email
 }
 
 const sendWaitingEmail = async (req, res) => {
+
+  
   if (!req.body || typeof req.body !== "object") {
-    return res.status(400).json({ message: "Invalid request format. Expected JSON." });
+    return res
+      .status(400)
+      .json({ message: "Invalid request format. Expected JSON." });
   }
 
   const { email } = req.body;
 
   if (!email) {
-    return res.status(400).json({ message: "Email is required", body: req.body });
+    return res
+      .status(400)
+      .json({ message: "Email is required", body: req.body });
   }
 
   const data = {
@@ -2295,7 +2739,7 @@ const sendWaitingEmail = async (req, res) => {
                                 <tr>
                                   <td class="pad" style="padding-bottom:20px;width:100%;padding-right:0px;padding-left:0px;">
                                     <div class="alignment" align="center" style="line-height:10px">
-                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="https://d15k2d11r6t6rl.cloudfront.net/public/users/Integrators/BeeProAgency/661805_644134/VZ%20Logo.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
+                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
                                     </div>
                                   </td>
                                 </tr>
@@ -2345,9 +2789,6 @@ const sendWaitingEmail = async (req, res) => {
     
     </html>
     `,
-         
-        
-        
   };
 
   try {
@@ -2358,8 +2799,6 @@ const sendWaitingEmail = async (req, res) => {
     res.status(500).json({ message: "Error sending email", error });
   }
 };
-
-
 
 const AddCashDeposit = async (req, res) => {
   // Validation errors check
@@ -2406,7 +2845,6 @@ const AddCashDeposit = async (req, res) => {
   const paymentReceiptURLs = await Promise.all(uploadPromises);
 
   try {
-
     const existingUser = await PiData.findOne({
       $or: [
         { "quoteWithProductDetails.quoteId": quoteId },
@@ -2435,11 +2873,12 @@ const AddCashDeposit = async (req, res) => {
         bank_address: accountDetails.bank_address,
       },
       transactionDetails: {
-     
         amount: existingUser.salesforceResponseMatchScreening.totalAmount,
         quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
-        partPayment: existingUser.salesforceResponseMatchScreening.total_including_Vat,
-        proformaInvoiceNumber: existingUser.quotePaymentWithDetails.QuotePaymentId,
+        partPayment:
+          existingUser.salesforceResponseMatchScreening.total_including_Vat,
+        proformaInvoiceNumber:
+          existingUser.quotePaymentWithDetails.QuotePaymentId,
         // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
         // toCurrency: currency_convertingto,
 
@@ -2451,7 +2890,7 @@ const AddCashDeposit = async (req, res) => {
         id: existingUser.leadWithDetails.Email, // Assuming this is the desired ID
       },
       fileUpload: paymentReceiptURLs,
-      quoteId:existingUser.quotePaymentWithDetails.QuotePaymentId,
+      quoteId: existingUser.quotePaymentWithDetails.QuotePaymentId,
       status: "AR Review",
       generalLedgerCode: "1341 - Cash in Hand (AED)", // Default status
     });
@@ -2506,7 +2945,10 @@ const AddCashDeposit = async (req, res) => {
       });
 
     await sendEmail(
-      existingUser.salesPersonDetails.salesPersonName,newBankTransferForm.customerDetails.id, existingUser.leadWithDetails.FirstName,existingUser.salesPersonDetails.salesPersonEmail
+      existingUser.salesPersonDetails.salesPersonName,
+      newBankTransferForm.customerDetails.id,
+      existingUser.leadWithDetails.FirstName,
+      existingUser.salesPersonDetails.salesPersonEmail
     );
     let HtmlBody = `<!DOCTYPE html>
       <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
@@ -2716,7 +3158,6 @@ const AddCashDeposit = async (req, res) => {
   }
 };
 
-
 const convertCurrency = async (req, res) => {
   const xeApiUsername = process.env.XE_API_USERNAME;
   const xeApiPassword = process.env.XE_API_PASSWORD;
@@ -2845,21 +3286,19 @@ const AddBankTransfer = async (req, res) => {
         bank_address: accountDetails.bank_address,
       },
       transactionDetails: {
-
         amount: existingUser.salesforceResponseMatchScreening.totalAmount,
         quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
-        partPayment: existingUser.salesforceResponseMatchScreening.total_including_Vat,
-        proformaInvoiceNumber: existingUser.quotePaymentWithDetails.QuotePaymentId,
+        partPayment:
+          existingUser.salesforceResponseMatchScreening.total_including_Vat,
+        proformaInvoiceNumber:
+          existingUser.quotePaymentWithDetails.QuotePaymentId,
 
-
-      
-
-     
         fromCurrency: currency_convertingfrom,
         toCurrency: currency_convertingto,
-      
+
         currencyPaid: currencyPaid,
-        amountPaid: existingUser.salesforceResponseMatchScreening.total_including_Vat,
+        amountPaid:
+          existingUser.salesforceResponseMatchScreening.total_including_Vat,
       },
       customerDetails: {
         name: existingUser.leadWithDetails.FirstName,
@@ -2976,7 +3415,10 @@ const AddBankTransfer = async (req, res) => {
       });
 
     await sendEmail(
-      existingUser.salesPersonDetails.salesPersonName,newBankTransferForm.customerDetails.id, existingUser.leadWithDetails.FirstName,existingUser.salesPersonDetails.salesPersonEmail
+      existingUser.salesPersonDetails.salesPersonName,
+      newBankTransferForm.customerDetails.id,
+      existingUser.leadWithDetails.FirstName,
+      existingUser.salesPersonDetails.salesPersonEmail
     );
     let HtmlBody = `<!DOCTYPE html>
       <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
@@ -3182,8 +3624,6 @@ const AddBankTransfer = async (req, res) => {
   }
 };
 
-
-
 const AddChequeDeposit = async (req, res) => {
   // Validation errors check
   const errors = validationResult(req);
@@ -3261,8 +3701,10 @@ const AddChequeDeposit = async (req, res) => {
       transactionDetails: {
         amount: existingUser.salesforceResponseMatchScreening.totalAmount,
         quotePaymentId: existingUser.quotePaymentWithDetails.QuotePaymentId,
-        partPayment: existingUser.salesforceResponseMatchScreening.total_including_Vat,
-        proformaInvoiceNumber: existingUser.quotePaymentWithDetails.QuotePaymentId,
+        partPayment:
+          existingUser.salesforceResponseMatchScreening.total_including_Vat,
+        proformaInvoiceNumber:
+          existingUser.quotePaymentWithDetails.QuotePaymentId,
         // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
         // toCurrency: currency_convertingto,
 
@@ -3330,7 +3772,10 @@ const AddChequeDeposit = async (req, res) => {
       });
 
     await sendEmail(
-      existingUser.salesPersonDetails.salesPersonName,newBankTransferForm.customerDetails.id, existingUser.leadWithDetails.FirstName,existingUser.salesPersonDetails.salesPersonEmail
+      existingUser.salesPersonDetails.salesPersonName,
+      newBankTransferForm.customerDetails.id,
+      existingUser.leadWithDetails.FirstName,
+      existingUser.salesPersonDetails.salesPersonEmail
     );
     let HtmlBody = `<!DOCTYPE html>
       <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
@@ -3540,9 +3985,6 @@ const AddChequeDeposit = async (req, res) => {
     return res.status(500).json({ message: "Server error" });
   }
 };
-
-
-
 
 exports.AddBankTransfer = AddBankTransfer;
 exports.convertCurrency = convertCurrency;

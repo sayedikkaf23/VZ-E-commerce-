@@ -1,4 +1,11 @@
 /* Navigation Links */
+html, body {
+  height: 100%;
+  overflow-y: auto; /* or scroll */
+  -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+}
+
+
 .header-navbar {
     display: flex;
     flex: 1;

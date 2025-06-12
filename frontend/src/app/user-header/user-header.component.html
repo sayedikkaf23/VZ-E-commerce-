@@ -8,7 +8,7 @@
         <div class="header-main-bar"
     >
           <div class="header-logo">
-            <a href="https://virtuzone.com" target="_blank">
+            <a [routerLink]="['/']" (click)="$event.preventDefault()">
               <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" height="30" width="140" />
             </a>
           </div>
@@ -89,11 +89,15 @@
                 </a>
                 <span class="sub-menu-toggle" (click)="onDropdownClick($event)"></span>
                <!-- src/app/components/submenu/submenu.component.html -->
-                  <ul class="sub-menu" [class.show]="isSubMenuOpen">
-                    <li *ngFor="let item of menuItems">
-                      <a [routerLink]="item.link">{{ item.name }}</a>
-                    </li>
-                  </ul>
+                <ul class="sub-menu" [class.show]="isSubMenuOpen">
+  <li *ngFor="let item of menuItems">
+    <!-- Call startNow with item.name on click, prevent default routerLink navigation -->
+    <a  (click)="startNow(item.name)">
+      {{ item.name }}
+    </a>
+  </li>
+</ul>
+
 
               </li>
               <li>
