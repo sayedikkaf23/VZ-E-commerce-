@@ -1319,7 +1319,7 @@ exports.checkStatus = async (req, res) => {
       `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/authenticate`,
       {
         username: 'VirtuUAT',
-        password: 'Virtuzone@1234',
+        password: 'VirtuApiuat@123',
         CompanyName: 'Virtuzone',
       },
       {
