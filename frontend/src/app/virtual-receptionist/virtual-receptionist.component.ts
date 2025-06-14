@@ -185,6 +185,8 @@ onSubmit() {
     const values = this.personalDetailsForm.value;
     // extract only the phone string
     const phoneString = values.mobileNumber?.e164Number || '';
+      const leadDataRaw = localStorage.getItem('leadResponse');
+    const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
     const payload = {
       firstName:   values.firstName,
@@ -194,6 +196,7 @@ onSubmit() {
       phone:       phoneString,
       dob:         values.birthday,
       service_name: 'Virtual Receptionist',
+      leadId: leadData?.LeadId || ""
     };
 
     this.isLoading = true;
