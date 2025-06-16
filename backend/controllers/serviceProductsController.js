@@ -451,7 +451,7 @@ exports.createLeadOnly = async (req, res) => {
         const cleanedPhone = phone.replace(/\s+/g, ""); // Example cleanup
     const countryCode = "+" + cleanedPhone.slice(0, 2); // Or get it from input/parse lib
 
-      await Pidata.create({
+      const leadData = {
       leadWithDetails: {
         FirstName: firstName,
         LastName: lastName,
@@ -464,11 +464,18 @@ exports.createLeadOnly = async (req, res) => {
         dob: dob,
         LeadId: leadResp.data?.LeadId || null,
       },
-       quotePaymentWithDetails: {
-      AccountId: leadResp.data?.AccountId || null,
-    },
-    ContactId: leadResp.data?.ContactId || null,
-    });
+      quotePaymentWithDetails: {
+        AccountId: leadResp.data?.AccountId || null,
+      },
+      ContactId: leadResp.data?.ContactId || null,
+    };
+
+     //  If leadId exists, update the record, else create a new one
+    const pidataDoc = await Pidata.findOneAndUpdate(
+      { "leadWithDetails.LeadId": leadResp.data?.LeadId }, // condition
+      { $set: leadData },
+      { upsert: true, new: true } // upsert = create if not exists
+    );
 
     return res.status(200).json({
       message: "Lead created successfully",
