@@ -311,6 +311,9 @@ submitData() {
           type: "Bank Account Opening",
           CustomerType: "I",
           subcategory: "personal",
+          companyLocationUAE: this.bankInfo.resident,
+          employmentType: this.bankInfo.working,
+          salary: this.bankInfo.salary,
           prodcutNameList: serviceProducts.map(product => ({
             ProductName: product.Product_Name,
             ProductFamily: "Traditional Services",
