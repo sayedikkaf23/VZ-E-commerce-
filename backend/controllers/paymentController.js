@@ -1273,6 +1273,7 @@ async function payNowSaleforce(req, res) {
   );
 
   const accessToken = TokenResponse.data.access_token;
+  let response2 = null; // Declare response2 in a higher scope and initialize it
 
   try {
     const paynowdata = await OnlinePayment.findOne({
@@ -1414,7 +1415,7 @@ async function payNowSaleforce(req, res) {
 
       console.log(requestBodySalesforce2, "requestBodySalesforce2");
       // Making the second API call
-      const response2 = await axios.put(endpointUrl2, requestBodySalesforce2, {
+       response2 = await axios.put(endpointUrl2, requestBodySalesforce2, {
         headers,
       });
       console.log(response2, "response 2 data");
