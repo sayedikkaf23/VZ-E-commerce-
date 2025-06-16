@@ -241,7 +241,11 @@ if (errorText && !isDuplicate && !isConvertedLead) {
     totalPrice = subTotal;
 const salesPersonDetails = salesforceData?.salesPersonDetails || {};
 
-    const pidataDoc = await Pidata.create({
+    //  Update existing piData document by LeadId
+    const pidataDoc = await Pidata.findOneAndUpdate(
+      { "leadWithDetails.LeadId": LeadId }, // Match by LeadId from initial step
+      {
+        $set: {
       leadWithDetails: {
         FirstName: firstName,
         LastName: lastName,
@@ -292,9 +296,17 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
       tradeLicenseFileUrl,
       subcategory: subcategory,
       customerType: CustomerType,
-    });
+    },
+   },
+    { new: true } // Return the updated document
+  );
+
+     if (!pidataDoc) {
+      return res.status(404).json({ message: "Pidata record not found for the provided LeadId" });
+    }
 
 return res.status(200).json({
+  message: "Opportunity created and Pidata updated successfully",
   salesforceResponse: salesforceResponse.data,
   pidata: pidataDoc
 });
@@ -435,6 +447,28 @@ exports.createLeadOnly = async (req, res) => {
         },
       }
     );
+
+        const cleanedPhone = phone.replace(/\s+/g, ""); // Example cleanup
+    const countryCode = "+" + cleanedPhone.slice(0, 2); // Or get it from input/parse lib
+
+      await Pidata.create({
+      leadWithDetails: {
+        FirstName: firstName,
+        LastName: lastName,
+        Email: email,
+        Nationality: nationality,
+        Phone: cleanedPhone,
+        countryCode: countryCode,
+        Origin__c: "Website",
+        Status: "Created",
+        dob: dob,
+        LeadId: leadResp.data?.LeadId || null,
+      },
+       quotePaymentWithDetails: {
+      AccountId: leadResp.data?.AccountId || null,
+    },
+    ContactId: leadResp.data?.ContactId || null,
+    });
 
     return res.status(200).json({
       message: "Lead created successfully",
