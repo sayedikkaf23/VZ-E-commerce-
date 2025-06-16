@@ -152,31 +152,33 @@ export class VirtualReceptionistComponent {
     input.showPicker(); // Explicitly trigger the date picker
   }
 onSubmit() {
-  // 1) If both virtualdata and virtualdata1 exist, just update + navigate (no API call here)
-  if (this.isBrowser) {
+  const currentFormValue = this.personalDetailsForm.value;
+   let previousData: any = {};
+    let isChanged = true;
+    if (this.isBrowser) {
     const virtualdata = localStorage.getItem('virtualdata');
     const virtualdata1 = localStorage.getItem('virtualdata1');
     const currentFormValue = this.personalDetailsForm.value;
 
     if (virtualdata && virtualdata1) {
-      const previousData = JSON.parse(virtualdata);
-      // merge new values into virtualdata
-      const updatedVirtualForm = {
-        ...previousData,
-        ...currentFormValue
-      };
-      localStorage.setItem('virtualdata', JSON.stringify(updatedVirtualForm));
+      previousData = JSON.parse(virtualdata);
 
-      // compare countries
-      const previousCountry = (previousData?.nationality || '').trim();
-      const currentCountry = (currentFormValue?.nationality || '').trim();
+      // Check if any field changed
+      isChanged = Object.keys(currentFormValue).some((key) => {
+        const currentVal = (currentFormValue[key] || '').toString().trim();
+        const previousVal = (previousData[key] || '').toString().trim();
+        return currentVal !== previousVal;
+      });
+    }
 
-      if (previousCountry !== currentCountry) {
-        this.router.navigate(['/virtual-receptionist-1']);
-      } else {
+    // If no changes, navigate based on virtualdata1
+    if (!isChanged) {
+      if (virtualdata1) {
         this.router.navigate(['/virtual-receptionist-details']);
+      } else {
+        this.router.navigate(['/virtual-receptionist-1']);
       }
-      return; // exit early (no API call)
+      return;
     }
   }
 
@@ -214,16 +216,20 @@ onSubmit() {
     localStorage.setItem('leadResponse', JSON.stringify(res.data));
   }
         // this.toastr.success('Lead created successfully!');
+         // After successful API, navigate based on mailform1 and nationality change
+        const virtualdata1 = localStorage.getItem('virtualdata1');
+        const previousNationality = (previousData?.nationality || '').trim();
+        const currentNationality = (values.nationality || '').trim();
 
         // now replicate your original routing logic:
         if (this.isBrowser) {
-          if (localStorage.getItem('virtualdata2')) {
-            this.router.navigate(['/virtual-receptionist-details']);
-          } else if (localStorage.getItem('step2Data')) {
-            this.router.navigate(['/virtual-receptionist-1']);
-          } else {
-            this.router.navigate(['/virtual-receptionist-1']);
-          }
+         if (previousNationality !== currentNationality) {
+          this.router.navigate(['/virtual-receptionist-1']);
+        } else if (virtualdata1) {
+          this.router.navigate(['/virtual-receptionist-details']);
+        } else {
+          this.router.navigate(['/virtual-receptionist-1']);
+        }
         }
       },
       error: (err) => {
