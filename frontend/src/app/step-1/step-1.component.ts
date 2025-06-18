@@ -226,7 +226,7 @@ onSubmit() {
       nationality: values.nationality,
       phone:       phoneString,
       dob:         values.birthday, // yyyy-mm-dd
-      service_name: 'Bank Account Opening',
+      service_id: 1,
     };
 
     this.isLoading = true;

@@ -197,7 +197,7 @@ onSubmit() {
       nationality: values.nationality,
       phone:       phoneString,
       dob:         values.birthday,
-      service_name: 'Virtual Receptionist',
+      service_id: 3,
       leadId: leadData?.LeadId || ""
     };
 

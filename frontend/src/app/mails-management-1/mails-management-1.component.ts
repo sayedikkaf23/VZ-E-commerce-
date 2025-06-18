@@ -166,7 +166,7 @@ onSubmit() {
       nationality: values.nationality,
       phone: phoneString,
       dob: values.birthday,
-      service_name: 'Mail Management',
+      service_id: 2,
       leadId: leadData?.LeadId || ''
     };
 
