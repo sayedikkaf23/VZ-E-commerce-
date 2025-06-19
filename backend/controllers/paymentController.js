@@ -1515,7 +1515,7 @@ async function payNowSaleforce(req, res) {
                     <tr>
                       <td style="padding-bottom:20px; text-align:center;">
                         <!-- swap this src for your new logo -->
-                        <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png"
+                        <img src="assets/images/vz_logo.png"
                              alt="Virtuzone Logo"
                              style="max-width:183px; width:100%; height:auto; border:0;">
                       </td>
@@ -1618,7 +1618,7 @@ async function payNowSaleforce(req, res) {
                     <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
                         <td style="padding-bottom: 20px; text-align: center;">
-                          <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
+                          <img src="assets/images/vz_logo.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
                         </td>
                       </tr>
                     </table>
@@ -2501,8 +2501,8 @@ async function sendEmail(opportunityName, to, name, opportunityOwnerEmail) {
                               <table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                 <tr>
                                   <td class="pad" style="padding-bottom:20px;width:100%;padding-right:0px;padding-left:0px;">
-                                    <div class="alignment" align="center" style="line-height:10px">
-                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
+                                    <div class="alignment" align="center" style="line-height:10px">assets/images/vz_logo.png
+                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
                                     </div>
                                   </td>
                                 </tr>
@@ -2740,7 +2740,7 @@ const sendWaitingEmail = async (req, res) => {
                                 <tr>
                                   <td class="pad" style="padding-bottom:20px;width:100%;padding-right:0px;padding-left:0px;">
                                     <div class="alignment" align="center" style="line-height:10px">
-                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
+                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="assets/images/vz_logo.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
                                     </div>
                                   </td>
                                 </tr>

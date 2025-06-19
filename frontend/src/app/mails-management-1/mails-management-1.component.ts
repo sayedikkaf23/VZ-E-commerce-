@@ -121,35 +121,38 @@ export class MailsManagement1Component {
 }
 onSubmit() {
   const currentFormValue = this.personalDetailsForm.value;
+   let previousData: any = {};
+    let isChanged = true;
 
-  // Always update localStorage with the current form values
   if (this.isBrowser) {
     const previousMailform = localStorage.getItem('mailform');
     const mailform1 = localStorage.getItem('mailform1');
 
-    if (previousMailform && mailform1) {
-      const previousData = JSON.parse(previousMailform);
+   
 
-      const updatedMailForm = {
-        ...previousData,
-        ...currentFormValue
-      };
-      localStorage.setItem('mailform', JSON.stringify(updatedMailForm));
+    if (previousMailform) {
+      previousData = JSON.parse(previousMailform);
 
-      // Compare nationalities
-      const previousCountry = (previousData?.nationality || '').trim();
-      const currentCountry = (currentFormValue?.nationality || '').trim();
+      // Check if any field changed
+      isChanged = Object.keys(currentFormValue).some((key) => {
+        const currentVal = (currentFormValue[key] || '').toString().trim();
+        const previousVal = (previousData[key] || '').toString().trim();
+        return currentVal !== previousVal;
+      });
+    }
 
-      if (previousCountry !== currentCountry) {
-        this.router.navigate(['/mails-management-2']);
-      } else {
+    // If no changes, navigate based on nationality and mailform1
+    if (!isChanged) {
+      if (mailform1) {
         this.router.navigate(['/mails-management-details']);
+      } else {
+        this.router.navigate(['/mails-management-2']);
       }
-      return; // Exit early — no need to call API again
+      return;
     }
   }
 
-  // Proceed with API call if no existing localStorage entry or it's the first submission
+  // Proceed with API call since data changed or it's first submission
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
     const phoneString = values.mobileNumber?.e164Number || '';
@@ -157,14 +160,14 @@ onSubmit() {
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
     const payload = {
-      firstName:   values.firstName,
-      lastName:    values.lastName,
-      email:       values.email,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
       nationality: values.nationality,
-      phone:       phoneString,
-      dob:         values.birthday, // yyyy-mm-dd format
-       service_name:"Mail Management",
-       leadId: leadData?.LeadId || ""
+      phone: phoneString,
+      dob: values.birthday,
+      service_id: 2,
+      leadId: leadData?.LeadId || ''
     };
 
     this.isLoading = true;
@@ -177,13 +180,17 @@ onSubmit() {
           localStorage.setItem('leadResponse', JSON.stringify(res.data));
         }
 
-        // Navigate based on localStorage state
-        if (this.isBrowser) {
-          if (localStorage.getItem('mailform2')) {
-            this.router.navigate(['/mails-management-details']);
-          } else {
-            this.router.navigate(['/mails-management-2']);
-          }
+        // After successful API, navigate based on mailform1 and nationality change
+        const mailform1 = localStorage.getItem('mailform1');
+        const previousNationality = (previousData?.nationality || '').trim();
+        const currentNationality = (values.nationality || '').trim();
+
+        if (previousNationality !== currentNationality) {
+          this.router.navigate(['/mails-management-2']);
+        } else if (mailform1) {
+          this.router.navigate(['/mails-management-details']);
+        } else {
+          this.router.navigate(['/mails-management-2']);
         }
       },
       error: (err) => {
@@ -204,6 +211,7 @@ onSubmit() {
     this.showSingleValidationError(this.personalDetailsForm);
   }
 }
+
 
 
 
