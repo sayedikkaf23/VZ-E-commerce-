@@ -68,6 +68,19 @@ const pidataSchema = new mongoose.Schema(
       LastName: String,
       FirstName: String,
       LeadId: String,
+
+      companyLocationUAE: String,    // Added companyLocationUAE
+      employmentType: String,        // Added employmentType
+      salary: String,                // Added salary
+      bankType: String,              // Added bankType
+      companyLicensed: String,       // Added companyLicensed
+      activityType: String,          // Added activityType
+      totalShareholders: String,     // Added totalShareholders
+      companyTurnover: String,       // Added companyTurnover
+      companyLocation: String,       // Added companyLocation
+      companyWebsite: String,        // Added companyWebsite
+      // shareholderfilesnumber: String, // Added shareholderfilesnumber
+      // shareholdersfiles: String,     // Added shareholdersfiles
     },
     quotePaymentWithDetails: {
       Currency: String,

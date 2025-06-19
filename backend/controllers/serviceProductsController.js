@@ -489,3 +489,168 @@ exports.createLeadOnly = async (req, res) => {
     });
   }
 };
+
+
+
+exports.insertEconomicDetails = async (req, res) => {
+  try {
+    const {
+      leadId,
+      accountId,
+      serviceName,
+      subServiceName,
+      firstName,
+      lastName,
+      email,
+      nationality,
+      phone,
+      dob,
+      companyLocationUAE,
+      employmentType,
+      companyName,
+      salary,
+      bankType,
+      companyLicensed,
+      activityType,
+      totalShareholders,
+      companyTurnover,
+      companyLocation,
+      companyWebsite,
+      tradeLicenseNo,
+      shareholderfilesnumber,
+      tradeLicenseFile,
+      shareholdersfiles,
+      shareholders
+    } = req.body;
+
+    // Construct the payload dynamically, excluding null or undefined fields
+    const payload = {};
+
+    if (leadId) payload.leadId = leadId;
+    if (accountId) payload.accountId = accountId;
+    if (serviceName) payload.serviceName = serviceName;
+    if (subServiceName) payload.subServiceName = subServiceName;
+    if (firstName) payload.FirstName = firstName;
+    if (lastName) payload.LastName = lastName;
+    if (email) payload.Email = email;
+    if (nationality) payload.Nationality = nationality;
+    if (phone) payload.Phone = phone;
+    if (dob) payload.dob = dob;
+    if (companyLocationUAE) payload.companyLocationUAE = companyLocationUAE;
+    if (employmentType) payload.employmentType = employmentType;
+    if (companyName) payload.companyName = companyName;
+    if (salary) payload.salary = salary;
+    if (bankType) payload.bankType = bankType;
+    if (companyLicensed) payload.companyLicensed = companyLicensed;
+    if (activityType) payload.activityType = activityType;
+    if (totalShareholders) payload.totalShareholders = totalShareholders;
+    if (companyTurnover) payload.companyTurnover = companyTurnover;
+    if (companyLocation) payload.companyLocation = companyLocation;
+    if (companyWebsite) payload.companyWebsite = companyWebsite;
+    if (tradeLicenseNo) payload.tradeLicenseNo = tradeLicenseNo;
+    if (shareholderfilesnumber) payload.shareholderfilesnumber = shareholderfilesnumber;
+    if (tradeLicenseFile) payload.tradeLicenseFile = tradeLicenseFile;
+    if (shareholdersfiles) payload.shareholdersfiles = shareholdersfiles;
+    if (shareholders && Array.isArray(shareholders)) payload.shareholders = shareholders;
+
+    // Step 1: Get Salesforce token
+    const tokenResp = await axios.post(
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
+      null,
+      {
+        params: {
+          client_id: "your_client_id",
+          client_secret: "your_client_secret",
+          grant_type: "password",
+          username: "your_salesforce_username",
+          password: "your_salesforce_password",
+        },
+      }
+    );
+
+    const accessToken = tokenResp.data.access_token;
+    const salesforceUrl = tokenResp.data.instance_url;
+
+    // Step 2: Call the InsertEconomicDetails API with dynamic payload
+    const economicDetailsResp = await axios.post(
+      `${salesforceUrl}/services/apexrest/insertEconomicDetails`,
+      payload,  // Use the dynamically created payload
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    // Clean phone number and generate country code
+    const cleanedPhone = phone.replace(/\s+/g, "");
+    const countryCode = "+" + cleanedPhone.slice(0, 2);
+
+    // Prepare the data for your local database (Pidata, etc.)
+    const economicData = {
+      leadWithDetails: {
+        LeadId: leadId,
+        AccountId: accountId,
+        ServiceName: serviceName,
+        SubServiceName: subServiceName,
+        FirstName: firstName,
+        LastName: lastName,
+        Email: email,
+        Nationality: nationality,
+        Phone: cleanedPhone,
+        countryCode: countryCode,
+        dob,
+        companyLocationUAE,
+        employmentType,
+        companyName,
+        salary,
+        bankType,
+        companyLicensed,
+        activityType,
+        totalShareholders,
+        companyTurnover,
+        companyLocation,
+        companyWebsite,
+        tradeLicenseNo,
+        shareholderfilesnumber,
+        tradeLicenseFile,
+        shareholdersfiles,
+        shareholders,
+      },
+    };
+
+    // Step 3: Save the data to Pidata (or another local database)
+const pidataDoc = await Pidata.findOneAndUpdate(
+  { "leadWithDetails.LeadId": leadId },
+  {
+    $set: {
+      // Only set these fields if they are present in economicData
+      ...(economicData.companyLocationUAE && { "leadWithDetails.companyLocationUAE": economicData.companyLocationUAE }),
+      ...(economicData.employmentType && { "leadWithDetails.employmentType": economicData.employmentType }),
+      ...(economicData.salary && { "leadWithDetails.salary": economicData.salary }),
+      ...(economicData.bankType && { "leadWithDetails.bankType": economicData.bankType }),
+      ...(economicData.companyLicensed && { "leadWithDetails.companyLicensed": economicData.companyLicensed }),
+      ...(economicData.activityType && { "leadWithDetails.activityType": economicData.activityType }),
+      ...(economicData.totalShareholders && { "leadWithDetails.totalShareholders": economicData.totalShareholders }),
+      ...(economicData.companyTurnover && { "leadWithDetails.companyTurnover": economicData.companyTurnover }),
+      ...(economicData.companyLocation && { "leadWithDetails.companyLocation": economicData.companyLocation }),
+      ...(economicData.companyWebsite && { "leadWithDetails.companyWebsite": economicData.companyWebsite }),
+    },
+  },
+  { upsert: true, new: true }
+);
+
+
+    return res.status(200).json({
+      message: "Economic details inserted successfully",
+      data: economicDetailsResp.data,
+    });
+  } catch (err) {
+    console.error("insertEconomicDetails error:", err);
+    return res.status(500).json({
+      message: "Failed to insert economic details",
+      error: err.response?.data || err.toString(),
+    });
+  }
+};
