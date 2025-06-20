@@ -163,6 +163,8 @@ getFilteredProductsByCountry(data: {
 }) {
   return this.http.post<any>(`${this.url}/api/customer/get-by-country-risk`, data);
 }
-
+insertEconomicDetails(data: any) {
+    return this.http.post<any>(`${this.url}/service/insertEconomicDetails`, data);
+  }
 
 }

@@ -8,7 +8,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { DecimalPipe } from '@angular/common'; // Import DecimalPipe
-
+import { AdminAuthService } from '../service/admin-auth.service';
 declare var $: any;
 
 @Component({
@@ -27,6 +27,8 @@ export class Step2Component implements AfterViewInit, OnInit {
     Bank: '',
     type: 'Personal Bank',
     CustomerType: 'I',
+        leadId: ''              // ← add this
+
   };
   isValidSalary = true;
 
@@ -41,6 +43,7 @@ export class Step2Component implements AfterViewInit, OnInit {
     private router: Router,
     private cdRef: ChangeDetectorRef,
     private decimalPipe: DecimalPipe,
+    private adminAuthService: AdminAuthService,
 
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
@@ -56,6 +59,18 @@ export class Step2Component implements AfterViewInit, OnInit {
       this.formData = JSON.parse(storedStep2Data);
       this.cdRef.detectChanges();
       // console.log(  this.formData.working)
+    }
+     // first try your separate leadId key
+    const savedLeadId = localStorage.getItem('leadId');
+    if (savedLeadId) {
+      this.formData.leadId = savedLeadId;
+    } else {
+      // fallback: parse out of full response
+      const raw = localStorage.getItem('leadResponse');
+      if (raw) {
+        const leadData = JSON.parse(raw);
+        this.formData.leadId = leadData.LeadId ?? '';
+      }
     }
   }
 
@@ -116,35 +131,57 @@ export class Step2Component implements AfterViewInit, OnInit {
     }
   }
 
-  // Validation and submission logic
-  onSubmit() {
-    if (this.validateForm()) {
-      const formDataToSend = new FormData();
+onSubmit() {
+  if (!this.validateForm()) return;
 
-      // Append Step 1 data
-      for (const key in this.step1Data) {
-        if (this.step1Data.hasOwnProperty(key)) {
-          formDataToSend.append(key, this.step1Data[key]);
-        }
-      }
+  const formDataToSend = new FormData();
 
-      // Append Step 2 data
-      formDataToSend.append('resident', this.formData.resident);
-      formDataToSend.append('working', this.formData.working);
-      formDataToSend.append('salary', this.formData.salary);
-      formDataToSend.append('companyname', this.formData.companyname);
-      formDataToSend.append('Bank', this.formData.Bank);
-      formDataToSend.append('type', this.formData.type);
-      formDataToSend.append('CustomerType', this.formData.CustomerType);
-
-      // Save Step 2 data to localStorage
-      localStorage.setItem('step2Data', JSON.stringify(this.formData));
-
-      // Append files
-      // Add logic to append file data if necessary
-      this.router.navigate(['/ShowDetails']);
+  // — Step 1 data (unchanged) —
+  for (const key in this.step1Data) {
+    if (this.step1Data.hasOwnProperty(key)) {
+      formDataToSend.append(key, this.step1Data[key]);
     }
   }
+
+  // — Step 2 data (unchanged) —
+  formDataToSend.append('resident',    this.formData.resident);
+  formDataToSend.append('working',     this.formData.working);
+  formDataToSend.append('salary',      this.formData.salary);
+  formDataToSend.append('companyname', this.formData.companyname);
+  formDataToSend.append('Bank',        this.formData.Bank);
+  formDataToSend.append('type',        this.formData.type);
+  formDataToSend.append('CustomerType',this.formData.CustomerType);
+
+  // — YOUR additional fields for the insertEconomicDetails API —
+  formDataToSend.append('companyLocationUAE', this.formData.resident);
+  formDataToSend.append('employmentType',      this.formData.working);
+  formDataToSend.append('companyName',         this.formData.companyname);
+  formDataToSend.append('salary',              this.formData.salary);
+  formDataToSend.append('bankType',            this.formData.Bank);
+    formDataToSend.append('leadId', this.formData.leadId);
+  formDataToSend.append('serviceName',         'Personal Bank');
+  formDataToSend.append('subServiceName',      'Personal Bank Account Opening');
+
+  // — Save Step 2 to localStorage (unchanged) —
+  localStorage.setItem('step2Data', JSON.stringify(this.formData));
+
+  // — (Optional) Append any files here —
+  // if (this.selectedFile) {
+  //   formDataToSend.append('someFile', this.selectedFile, this.selectedFile.name);
+  // }
+
+  // — Call your API —
+  this.adminAuthService.insertEconomicDetails(formDataToSend)
+    .subscribe({
+      next: (res: any) => {
+        console.log('Economic details saved', res);
+        this.router.navigate(['/ShowDetails']);
+      },
+      error: (err: any) => {
+        console.error('Save failed', err);
+      }
+    });
+}
 
  // Validate form and show a single toast for missing fields
 validateForm(): boolean {

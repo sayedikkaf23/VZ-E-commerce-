@@ -174,6 +174,8 @@ onSubmit() {
     const step2Data = localStorage.getItem('step2Data');
     const mailform2 = localStorage.getItem('mailform2');
     const currentFormValue = this.personalDetailsForm.value;
+     const leadDataRaw = localStorage.getItem('leadResponse');
+    const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
     if (step1Data && step2Data) {
       // merge current values into step1Data
@@ -217,7 +219,8 @@ onSubmit() {
     const values = this.personalDetailsForm.value;
     // grab only the phone string
     const phoneString = values.mobileNumber?.e164Number || '';
-
+const leadDataRaw = localStorage.getItem('leadResponse');
+const leadData    = leadDataRaw ? JSON.parse(leadDataRaw) : null;
     // build the payload exactly as Salesforce expects
     const payload = {
       firstName:   values.firstName,
@@ -227,6 +230,8 @@ onSubmit() {
       phone:       phoneString,
       dob:         values.birthday, // yyyy-mm-dd
       service_id: 1,
+            leadId: leadData?.LeadId || ''
+
     };
 
     this.isLoading = true;
