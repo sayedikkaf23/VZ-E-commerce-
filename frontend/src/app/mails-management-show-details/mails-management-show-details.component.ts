@@ -319,6 +319,10 @@ console.log("object",mergedData,   this.tradeLicenseFile)
         this.serviceProducts = serviceProducts;
          const leadResponseRaw = localStorage.getItem('leadResponse');
         const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+         const mailform2 = localStorage.getItem('mailform1');
+        const mail2 = mailform2 ? JSON.parse(mailform2) : {};
+         const mailform3 = localStorage.getItem('mailform2');
+        const mail3 = mailform3 ? JSON.parse(mailform3) : {};
         const paymentPayload = {
           LeadId: leadResponse.LeadId || '',
           AccountId: leadResponse.AccountId || '',
@@ -330,12 +334,22 @@ console.log("object",mergedData,   this.tradeLicenseFile)
           phone: this.personalInfo.mobileNumber.number,
           countryCode: this.personalInfo.mobileNumber.dialCode,
           dob: this.personalInfo.birthday,
-                   tradeLicenseFile: this.tradeLicenseFile
-  ?.companyTradeLicenseFile
-  ?. [0] ?? null,
-tradeLicenseNo: this.tradeLicenseFile?.companyTradeLicenseNumber || '',
-tradeLicenseFileUrl: this.tradeLicenseFile?.companyTradeLicenseFile?.[0]?.url ?? '',
+           companyName: mail2.CompanyName,
+            companyLicensed: mail2.Companylicensed,
+            activityType: mail2.tradelicense,
+           totalShareholders: mail2.shareholdercount ,
 
+            companyLocation: mail2.CompanyIncorporated,
+            companyWebsite: mail2.Website,
+                   tradeLicenseFile: this.tradeLicenseFile
+              ?.companyTradeLicenseFile
+              ?. [0] ?? null,
+            tradeLicenseNo: this.tradeLicenseFile?.companyTradeLicenseNumber || '',
+            tradeLicenseFileUrl: this.tradeLicenseFile?.companyTradeLicenseFile?.[0]?.url ?? '',
+           shareholdersfiles: Object.values(mail3.uploadedFileNames || {})
+            .flat()
+            .map((f: any) => f.url)
+            .filter(Boolean)[0] || '',
           type: "Mail Management",
           CustomerType: "C",
           uploadedFileNames,

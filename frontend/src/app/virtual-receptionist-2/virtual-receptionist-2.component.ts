@@ -26,7 +26,8 @@ export class VirtualReceptionist2Component implements OnInit {
 
   // For the company trade license, we store an array of { name, url }
   companyTradeLicenseFile: { name: string; url: string; type: string;}[] = [];
-
+  personalInfo: any;
+  leadResponse: any;
   isLoading = false;
 
   constructor(
@@ -311,12 +312,62 @@ export class VirtualReceptionist2Component implements OnInit {
         uploadedFileNames: this.uploadedFileNames
 
       };
+       const mailform = localStorage.getItem('virtualdata');
+        this.personalInfo = mailform ? JSON.parse(mailform) : {};
 
-      // Save to localStorage for retrieval later
+         const leadResponseRaw = localStorage.getItem('leadResponse');
+        this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+
+     const mailform2 = localStorage.getItem('virtualdata1');
+        const mail2 = mailform2 ? JSON.parse(mailform2) : {};
+  
+         // payload for salesforce api
+        const insertPayload = {
+            leadId: this.leadResponse.LeadId,
+            accountId: this.leadResponse.AccountId,
+            serviceName: 'Virtual Receptionist',
+            // subServiceName: '',
+            firstName: this.personalInfo.firstName,
+            lastName: this.personalInfo.lastName,
+            email: this.personalInfo.email,
+            nationality: this.personalInfo.nationality,
+            phone: this.personalInfo.phone,
+            dob: this.personalInfo.birthday,
+            // companyLocationUAE: '',
+            // employmentType: '',
+            companyName: mail2.CompanyName,
+            // salary: '',
+            // bankType: '',
+            companyLicensed: mail2.Companylicensed,
+            activityType: mail2.tradelicense,
+           totalShareholders: mail2.shareholdercount ,
+            // companyTurnover: '',
+            companyLocation: mail2.CompanyIncorporated,
+            companyWebsite: mail2.Website,
+            tradeLicenseNo: formValues.companyTradeLicense,
+            shareholderfilesnumber: formValues.shareholders?.[0]?.passportNumber || '',
+            tradeLicenseFile: this.companyTradeLicenseFile?.[0]?.url || '',
+            shareholdersfiles: Object.values(this.uploadedFileNames || {})
+            .flat()
+            .map((f: any) => f.url)
+            .filter(Boolean)[0] || '',
+            shareholders: this.shareholders.value,
+          };
+            console.log(insertPayload);
+           this.isLoading = true;
+          this.userService.insertEconomicDetails(insertPayload).subscribe(
+          (response) => {
+            console.log('API Response:', response);
+            this.isLoading = false;
+             // Save to localStorage for retrieval later
       localStorage.setItem('virtualdata2', JSON.stringify(dataToSave));
 
       // Navigate to the next page
       this.router.navigate(['/virtual-receptionist-details']);
+          }
+          );
+
+     
     } else {
       // console.log('Please fill all required fields');
       // Optionally log the form to see which control is invalid:

@@ -55,6 +55,8 @@ maxDate: string | undefined;
   nationalities: any[] = []; 
   nationalitiesData: string[] = []; 
   personalInfo: any;
+  leadResponse: any;
+  isLoading = false;
 
   constructor(
     private formDataService: FormDataService,
@@ -355,9 +357,80 @@ onShareholderInput(event: any, index: number) {
         const mailform = localStorage.getItem('virtualdata');
         this.personalInfo = mailform ? JSON.parse(mailform) : {};
 
+         const leadResponseRaw = localStorage.getItem('leadResponse');
+        this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+
+        const mailform3 = localStorage.getItem('virtualdata2');
+        const mail3 = mailform3 ? JSON.parse(mailform3) : {};
+
         // Save Step 2 data to localStorage
         localStorage.setItem('virtualdata1', JSON.stringify(combinedFormData));
-        // Prepare payload for the API call using Step 1 and Shareholders data
+
+         // payload for salesforce api
+        const insertPayload: any = {
+            leadId: this.leadResponse.LeadId,
+            accountId: this.leadResponse.AccountId,
+            serviceName: 'Virtual Receptionist',
+            // subServiceName: '',
+            firstName: this.personalInfo.firstName,
+            lastName: this.personalInfo.lastName,
+            email: this.personalInfo.email,
+            nationality: this.personalInfo.nationality,
+            phone: this.personalInfo.mobileNumber.number,
+            dob: this.personalInfo.birthday,
+            // companyLocationUAE: '',
+            // employmentType: '',
+            companyName: this.formData.CompanyName,
+            // salary: '',
+            // bankType: '',
+            // companyLicensed: this.formData.Companylicensed,
+            activityType: this.formData.tradelicense,
+           totalShareholders: this.formData.shareholdercount ,
+            // companyTurnover: '',
+            companyLocation: this.formData.CompanyIncorporated,
+            companyWebsite: this.formData.Website,
+            // tradeLicenseNo: mail3.companyTradeLicenseNumber,
+            // shareholderfilesnumber: mail3.shareholders?.[0]?.passportNumber || '',
+            // tradeLicenseFile: mail3.companyTradeLicenseFile?.[0]?.url || '',
+            // shareholdersfiles: Object.values(mail3.uploadedFileNames || {})
+            // .flat()
+            // .map((f: any) => f.url)
+            // .filter(Boolean)[0] || '',
+            shareholders: this.shareholders
+          };
+
+           // Conditionally add fields only if they exist and are not empty
+          if (this.formData.Companylicensed) {
+            insertPayload.companyLicensed = this.formData.Companylicensed;
+          }
+
+           if (mail3.companyTradeLicense) {
+            insertPayload.tradeLicenseNo = mail3.companyTradeLicense;
+          }
+
+          if (mail3.shareholders?.[0]?.passportNumber) {
+            insertPayload.shareholderfilesnumber = mail3.shareholders[0].passportNumber;
+          }
+
+          const tradeLicenseUrl = mail3.companyTradeLicenseFile?.[0]?.url;
+          if (tradeLicenseUrl) {
+            insertPayload.tradeLicenseFile = tradeLicenseUrl;
+          }
+
+          const allShareholderFiles = Object.values(mail3.uploadedFileNames || {})
+            .flat()
+            .map((f: any) => f.url)
+            .filter(Boolean);
+
+          if (allShareholderFiles.length) {
+            insertPayload.shareholdersfiles = allShareholderFiles[0]; // Or the whole list if needed
+          }
+            console.log(insertPayload);
+           this.isLoading = true;
+          this.userService.insertEconomicDetails(insertPayload).subscribe(
+          (response) => {
+            console.log('API Response:', response);
+             // Prepare payload for the API call using Step 1 and Shareholders data
          const payload = {
           customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
           BusisnessActivityRisk: this.formData.BusinessActivityRisk,
@@ -376,7 +449,7 @@ onShareholderInput(event: any, index: number) {
               userRating: response.userRating, // Assuming the response contains 'userRating'
               totalPossibleRating: response.totalPossibleRating // Assuming the response contains 'totalPossibleRating'
             };
-
+              this.isLoading = false;
             // Save the appliedRisk data to localStorage
             localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
             // Handle the response (e.g., store the products in a variable or pass to the next page)
@@ -392,6 +465,13 @@ onShareholderInput(event: any, index: number) {
             this.toastr.error('Failed to fetch products.', 'API Error');
           }
         );
+          },
+         (error) => {
+            console.error('Insert Economic Details API Error:', error);
+            this.toastr.error('Failed to submit economic details.', 'API Error');
+          }
+        );
+       
        
       }
     }

@@ -175,7 +175,7 @@ onSubmit() {
       leadId: leadData?.LeadId || ''
     };
 
-    // ✅ Conditionally add fields from mail1 and mail2 if they exist and are not empty
+    //  Conditionally add fields from mail1 and mail2 if they exist and are not empty
     if (mail1?.CompanyName) {
       payload.companyName = mail1.CompanyName;
     }
@@ -198,7 +198,7 @@ onSubmit() {
       payload.shareholders = mail1.shareholders;
     }
 
-    // ✅ Conditionally add documents from mail2
+    //  Conditionally add documents from mail2
     if (mail2?.companyTradeLicenseNumber) {
       payload.tradeLicenseNo = mail2.companyTradeLicenseNumber;
     }
