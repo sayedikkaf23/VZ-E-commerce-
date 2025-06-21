@@ -137,7 +137,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       ContactId,
       ProductId,
       tradeLicenseFile = [],
-       
+
       companyLocationUAE,
       employmentType,
       companyName,
@@ -154,7 +154,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       tradeLicenseFileUrl,
       uploadedFileNames = [],
       shareholders = [],
-      shareholdersfiles
+      shareholdersfiles,
     } = req.body;
     // console.log(req.body)
     // Log the RiskCode to ensure it's what you expect
@@ -221,17 +221,16 @@ exports.createPaymentOpportunity = async (req, res) => {
     };
 
     const salesforceResponse = await axios.request(config);
-   // ✅ Extract and guard data early
-const salesforceData = salesforceResponse?.data || {};
-const errorText = salesforceData?.error || "";
+    // ✅ Extract and guard data early
+    const salesforceData = salesforceResponse?.data || {};
+    const errorText = salesforceData?.error || "";
 
-const isDuplicate = errorText.includes("DUPLICATE_VALUE");
-const isConvertedLead = errorText.includes("CANNOT_UPDATE_CONVERTED_LEAD");
+    const isDuplicate = errorText.includes("DUPLICATE_VALUE");
+    const isConvertedLead = errorText.includes("CANNOT_UPDATE_CONVERTED_LEAD");
 
-if (errorText && !isDuplicate && !isConvertedLead) {
-  return res.status(400).json({ error: errorText });
-}
-
+    if (errorText && !isDuplicate && !isConvertedLead) {
+      return res.status(400).json({ error: errorText });
+    }
 
     console.log("salesforceResponse", salesforceResponse.data);
     let subTotal = 0;
@@ -253,91 +252,92 @@ if (errorText && !isDuplicate && !isConvertedLead) {
 
     // Here, totalPrice = subTotal, or you can add tax/extra if needed
     totalPrice = subTotal;
-const salesPersonDetails = salesforceData?.salesPersonDetails || {};
+    const salesPersonDetails = salesforceData?.salesPersonDetails || {};
 
     //  Update existing piData document by LeadId
     const pidataDoc = await Pidata.findOneAndUpdate(
       { "leadWithDetails.LeadId": LeadId }, // Match by LeadId from initial step
       {
         $set: {
-      leadWithDetails: {
-        FirstName: firstName,
-        LastName: lastName,
-        Email: email,
-        Nationality: nationality,
-        Phone: cleanedPhone,
-        countryCode: countryCode,
-        Origin__c: "Website", // or whatever source you want
-        Status: "Created",
-        dob: dob,
-        ServiceName: type,
-        LeadId: salesforceResponse.data?.LeadId ?? LeadId,
-         companyLocationUAE,
-        employmentType,
-        Company: companyName,
-        salary,
-        bankType,
-        companyLicensed,
-        activityType,
-        totalShareholders,
-        companyTurnover,
-        companyLocation,
-        companyWebsite,
-      },
-      quotePaymentWithDetails: {
-        QuotePaymentId: salesforceResponse.data?.QuotePaymentId,
-      },
-      quoteWithProductDetails: {
-        quoteEmail: email,
-        quoteName: firstName + " " + lastName,
-        // QuotePaymentName: salesforceResponse.data?.QuotePaymentName,
-        quotePaymentId: salesforceResponse.data?.QuotePaymentId,
-        totalIncludingVAT: totalPrice,
-        subTotal: subTotal,
-        totalPrice: totalPrice,
-        product: req.body.prodcutNameList, // store the whole array
-      },
-     salesPersonDetails: {
-    salesPersonName: salesPersonDetails.salesPersonName || null,
-    salesPersonEmail: salesPersonDetails.salesPersonEmail || null,
-    salesPersonMobile: salesPersonDetails.salesPersonMobile || null,
-  },
-      // salesforceResponseMatchScreening: {
+          leadWithDetails: {
+            FirstName: firstName,
+            LastName: lastName,
+            Email: email,
+            Nationality: nationality,
+            Phone: cleanedPhone,
+            countryCode: countryCode,
+            Origin__c: "Website", // or whatever source you want
+            Status: "Created",
+            dob: dob,
+            ServiceName: type,
+            LeadId: salesforceResponse.data?.LeadId ?? LeadId,
+            companyLocationUAE,
+            employmentType,
+            Company: companyName,
+            salary,
+            bankType,
+            companyLicensed,
+            activityType,
+            totalShareholders,
+            companyTurnover,
+            companyLocation,
+            companyWebsite,
+          },
+          quotePaymentWithDetails: {
+            QuotePaymentId: salesforceResponse.data?.QuotePaymentId,
+          },
+          quoteWithProductDetails: {
+            quoteEmail: email,
+            quoteName: firstName + " " + lastName,
+            // QuotePaymentName: salesforceResponse.data?.QuotePaymentName,
+            quotePaymentId: salesforceResponse.data?.QuotePaymentId,
+            totalIncludingVAT: totalPrice,
+            subTotal: subTotal,
+            totalPrice: totalPrice,
+            product: req.body.prodcutNameList, // store the whole array
+          },
+          salesPersonDetails: {
+            salesPersonName: salesPersonDetails.salesPersonName || null,
+            salesPersonEmail: salesPersonDetails.salesPersonEmail || null,
+            salesPersonMobile: salesPersonDetails.salesPersonMobile || null,
+          },
+          // salesforceResponseMatchScreening: {
 
-      //   leadId:         sfResp.data?.LeadId         ?? null,
-        accountId:      salesforceResponse.data?.AccountId      ?? AccountId,
-        // opportunityId:  salesforceResponse.data?.OpportunityId  ?? null,
-        ContactId:  salesforceResponse.data?.ContactId  ?? ContactId,
-      //   quoteId:        sfResp.data?.QuoteId        ?? null,
-      //   quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
-      //   message:        sfResp.data?.Message        ?? ''
-      // },
-      ProductId: ProductId,
-      tradeLicenseFile,
-      uploadedFileNames,
-      planname: type,
-      subServiceName : subcategory,
-      tradeLicenseFileUrl: tradeLicenseFileUrl,
-        shareholdersfiles,
-        shareholders,
-        tradeLicenseNo,
+          //   leadId:         sfResp.data?.LeadId         ?? null,
+          accountId: salesforceResponse.data?.AccountId ?? AccountId,
+          // opportunityId:  salesforceResponse.data?.OpportunityId  ?? null,
+          ContactId: salesforceResponse.data?.ContactId ?? ContactId,
+          //   quoteId:        sfResp.data?.QuoteId        ?? null,
+          //   quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
+          //   message:        sfResp.data?.Message        ?? ''
+          // },
+          ProductId: ProductId,
+          tradeLicenseFile,
+          uploadedFileNames,
+          planname: type,
+          subServiceName: subcategory,
+          tradeLicenseFileUrl: tradeLicenseFileUrl,
+          shareholdersfiles,
+          shareholders,
+          tradeLicenseNo,
           shareholderfilesnumber,
-      customerType: CustomerType,
-    },
-   },
-    { new: true } // Return the updated document
-  );
+          customerType: CustomerType,
+        },
+      },
+      { new: true } // Return the updated document
+    );
 
-     if (!pidataDoc) {
-      return res.status(404).json({ message: "Pidata record not found for the provided LeadId" });
+    if (!pidataDoc) {
+      return res
+        .status(404)
+        .json({ message: "Pidata record not found for the provided LeadId" });
     }
 
-return res.status(200).json({
-  message: "Opportunity created and Pidata updated successfully",
-  salesforceResponse: salesforceResponse.data,
-  pidata: pidataDoc
-});
-
+    return res.status(200).json({
+      message: "Opportunity created and Pidata updated successfully",
+      salesforceResponse: salesforceResponse.data,
+      pidata: pidataDoc,
+    });
   } catch (err) {
     console.error("createOpportunity error:", err);
     return res.status(500).json({
@@ -418,8 +418,16 @@ exports.insertDocumentsFromShareholders = async (req, res) => {
 
 exports.createLeadOnly = async (req, res) => {
   try {
-    const { firstName, lastName, email, nationality, phone, dob , service_id, leadId,
-       subServiceName,
+    const {
+      firstName,
+      lastName,
+      email,
+      nationality,
+      phone,
+      dob,
+      service_id,
+      leadId,
+      subServiceName,
       companyLocationUAE,
       employmentType,
       companyName,
@@ -435,7 +443,7 @@ exports.createLeadOnly = async (req, res) => {
       shareholderfilesnumber,
       tradeLicenseFile,
       shareholdersfiles,
-      shareholders
+      shareholders,
     } = req.body;
 
     if (!firstName || !lastName || !email || !nationality || !phone || !dob) {
@@ -493,10 +501,10 @@ exports.createLeadOnly = async (req, res) => {
       }
     );
 
-        const cleanedPhone = phone.replace(/\s+/g, ""); // Example cleanup
+    const cleanedPhone = phone.replace(/\s+/g, ""); // Example cleanup
     const countryCode = "+" + cleanedPhone.slice(0, 2); // Or get it from input/parse lib
 
-      const leadData = {
+    const leadData = {
       leadWithDetails: {
         FirstName: firstName,
         LastName: lastName,
@@ -508,7 +516,7 @@ exports.createLeadOnly = async (req, res) => {
         Status: "Created",
         dob: dob,
         LeadId: leadResp.data?.LeadId || null,
-      companyLocationUAE,
+        companyLocationUAE,
         employmentType,
         Company: companyName,
         salary,
@@ -519,24 +527,21 @@ exports.createLeadOnly = async (req, res) => {
         companyTurnover,
         companyLocation,
         companyWebsite,
-      
-        
-      
       },
-      
-    subcategory: subServiceName,
+
+      subcategory: subServiceName,
       tradeLicenseFileUrl: tradeLicenseFile,
-        shareholdersfiles,
-        shareholders,
-        tradeLicenseNo,
-          shareholderfilesnumber,
+      shareholdersfiles,
+      shareholders,
+      tradeLicenseNo,
+      shareholderfilesnumber,
       quotePaymentWithDetails: {
         AccountId: leadResp.data?.AccountId || null,
       },
       ContactId: leadResp.data?.ContactId || null,
     };
 
-     //  If leadId exists, update the record, else create a new one
+    //  If leadId exists, update the record, else create a new one
     const pidataDoc = await Pidata.findOneAndUpdate(
       { "leadWithDetails.LeadId": leadResp.data?.LeadId }, // condition
       { $set: leadData },
@@ -555,8 +560,6 @@ exports.createLeadOnly = async (req, res) => {
     });
   }
 };
-
-
 
 exports.insertEconomicDetails = async (req, res) => {
   try {
@@ -586,7 +589,7 @@ exports.insertEconomicDetails = async (req, res) => {
       shareholderfilesnumber,
       tradeLicenseFile,
       shareholdersfiles,
-      shareholders
+      shareholders,
     } = req.body;
 
     // Construct the payload dynamically, excluding null or undefined fields
@@ -614,10 +617,12 @@ exports.insertEconomicDetails = async (req, res) => {
     if (companyLocation) payload.companyLocation = companyLocation;
     if (companyWebsite) payload.companyWebsite = companyWebsite;
     if (tradeLicenseNo) payload.tradeLicenseNo = tradeLicenseNo;
-    if (shareholderfilesnumber) payload.shareholderfilesnumber = shareholderfilesnumber;
+    if (shareholderfilesnumber)
+      payload.shareholderfilesnumber = shareholderfilesnumber;
     if (tradeLicenseFile) payload.tradeLicenseFile = tradeLicenseFile;
     if (shareholdersfiles) payload.shareholdersfiles = shareholdersfiles;
-    if (shareholders && Array.isArray(shareholders)) payload.shareholders = shareholders;
+    if (shareholders && Array.isArray(shareholders))
+      payload.shareholders = shareholders;
 
     // Step 1: Get Salesforce token
     const tokenResp = await axios.post(
@@ -642,7 +647,7 @@ exports.insertEconomicDetails = async (req, res) => {
     // Step 2: Call the InsertEconomicDetails API with dynamic payload
     const economicDetailsResp = await axios.post(
       `${salesforceUrl}/services/apexrest/insertEconomicDetails`,
-      payload,  // Use the dynamically created payload
+      payload, // Use the dynamically created payload
       {
         headers: {
           "Content-Type": "application/json",
@@ -659,9 +664,9 @@ exports.insertEconomicDetails = async (req, res) => {
     const economicData = {
       leadWithDetails: {
         LeadId: leadId,
-        
+
         ServiceName: serviceName,
-        
+
         FirstName: firstName,
         LastName: lastName,
         Email: email,
@@ -680,39 +685,33 @@ exports.insertEconomicDetails = async (req, res) => {
         companyTurnover,
         companyLocation,
         companyWebsite,
-      
-        
-      
       },
-       quotePaymentWithDetails: {
-      
-      AccountId: accountId,
-    },
-    subcategory: subServiceName,
+      quotePaymentWithDetails: {
+        AccountId: accountId,
+      },
+      subcategory: subServiceName,
       tradeLicenseFileUrl: tradeLicenseFile,
-        shareholdersfiles,
-        shareholders,
-        tradeLicenseNo,
-          shareholderfilesnumber,
+      shareholdersfiles,
+      shareholders,
+      tradeLicenseNo,
+      shareholderfilesnumber,
     };
 
     // Step 3: Save the data to Pidata (or another local database)
-const pidataDoc = await Pidata.findOneAndUpdate(
-  { "leadWithDetails.LeadId": leadId },
-  {
-    $set: {
-     ...economicData
-    },
-  },
-  { upsert: true, new: true }
-);
+    const pidataDoc = await Pidata.findOneAndUpdate(
+      { "leadWithDetails.LeadId": leadId },
+      {
+        $set: {
+          ...economicData,
+        },
+      },
+      { upsert: true, new: true }
+    );
 
-
-   return res.status(200).json({
-  message: "Economic details inserted successfully",
-  data: economicDetailsResp.data,
-});
-
+    return res.status(200).json({
+      message: "Economic details inserted successfully",
+      data: economicDetailsResp.data,
+    });
   } catch (err) {
     console.error("insertEconomicDetails error:", err);
     return res.status(500).json({
