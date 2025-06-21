@@ -137,7 +137,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       ContactId,
       ProductId,
       tradeLicenseFile = [],
-       
+       isLead,
       companyLocationUAE,
       employmentType,
       companyName,
@@ -283,6 +283,7 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
         companyTurnover,
         companyLocation,
         companyWebsite,
+        isLead,
       },
       quotePaymentWithDetails: {
         QuotePaymentId: salesforceResponse.data?.QuotePaymentId,

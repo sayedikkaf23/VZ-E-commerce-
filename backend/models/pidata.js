@@ -68,7 +68,7 @@ const pidataSchema = new mongoose.Schema(
       LastName: String,
       FirstName: String,
       LeadId: String,
-
+      isLead: Boolean,
       ServiceName: String,
       companyLocationUAE: String,    // Added companyLocationUAE
       employmentType: String,        // Added employmentType
