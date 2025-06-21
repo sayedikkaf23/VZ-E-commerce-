@@ -123,6 +123,10 @@ export class UserService {  // Changed the service name to UserService
     return this.http.post(`${this.url}/service/create-opportunity`, payload); 
   }
 
+    insertEconomicDetails(payload: any): Observable<any> {
+    return this.http.post(`${this.url}/service/insertEconomicDetails`, payload); 
+  }
+
 
   insertShareholderDocuments(quotePaymentId: any,AccountId:any, serviceName: any,tradelicense:any, shareholders: any): Observable<any> {
   const body = {

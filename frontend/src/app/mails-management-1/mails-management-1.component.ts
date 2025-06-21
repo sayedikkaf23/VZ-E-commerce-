@@ -159,7 +159,12 @@ onSubmit() {
     const leadDataRaw = localStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
-    const payload = {
+     const mailform1 = localStorage.getItem('mailform1');
+     const mail1 = mailform1 ? JSON.parse(mailform1): null;
+
+      const mailform2 = localStorage.getItem('mailform2');
+     const mail2 = mailform2 ? JSON.parse(mailform2): null;
+    const payload: any = {
       firstName: values.firstName,
       lastName: values.lastName,
       email: values.email,
@@ -169,6 +174,51 @@ onSubmit() {
       service_id: 2,
       leadId: leadData?.LeadId || ''
     };
+
+    // ✅ Conditionally add fields from mail1 and mail2 if they exist and are not empty
+    if (mail1?.CompanyName) {
+      payload.companyName = mail1.CompanyName;
+    }
+    if (mail1?.Companylicensed) {
+      payload.companyLicensed = mail1.Companylicensed;
+    }
+    if (mail1?.tradelicense) {
+      payload.activityType = mail1.tradelicense;
+    }
+    if (mail1?.shareholdercount) {
+      payload.totalShareholders = mail1.shareholdercount;
+    }
+    if (mail1?.CompanyIncorporated) {
+      payload.companyLocation = mail1.CompanyIncorporated;
+    }
+    if (mail1?.Website) {
+      payload.companyWebsite = mail1.Website;
+    }
+    if (mail1?.shareholders?.length) {
+      payload.shareholders = mail1.shareholders;
+    }
+
+    // ✅ Conditionally add documents from mail2
+    if (mail2?.companyTradeLicenseNumber) {
+      payload.tradeLicenseNo = mail2.companyTradeLicenseNumber;
+    }
+    if (mail2?.shareholders?.[0]?.passportNumber) {
+      payload.shareholderfilesnumber = mail2.shareholders[0].passportNumber;
+    }
+
+    const tradeLicenseUrl = mail2?.companyTradeLicenseFile?.[0]?.url;
+    if (tradeLicenseUrl) {
+      payload.tradeLicenseFile = tradeLicenseUrl;
+    }
+
+    const allShareholderFiles = Object.values(mail2?.uploadedFileNames || {})
+      .flat()
+      .map((f: any) => f.url)
+      .filter(Boolean);
+
+    if (allShareholderFiles.length) {
+      payload.shareholdersfiles = allShareholderFiles[0]; // Or use full array if needed
+    }
 
     this.isLoading = true;
     this.userService.createLeadOnly(payload).subscribe({
@@ -181,7 +231,7 @@ onSubmit() {
         }
 
         // After successful API, navigate based on mailform1 and nationality change
-        const mailform1 = localStorage.getItem('mailform1');
+       
         const previousNationality = (previousData?.nationality || '').trim();
         const currentNationality = (values.nationality || '').trim();
 

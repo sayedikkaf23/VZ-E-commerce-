@@ -137,10 +137,24 @@ exports.createPaymentOpportunity = async (req, res) => {
       ContactId,
       ProductId,
       tradeLicenseFile = [],
+       subServiceName,
+      companyLocationUAE,
+      employmentType,
+      companyName,
+      salary,
+      bankType,
+      companyLicensed,
+      activityType,
+      totalShareholders,
+      companyTurnover,
+      companyLocation,
+      companyWebsite,
       tradeLicenseNo,
+      shareholderfilesnumber,
       tradeLicenseFileUrl,
       uploadedFileNames = [],
       shareholders = [],
+      shareholdersfiles
     } = req.body;
     // console.log(req.body)
     // Log the RiskCode to ensure it's what you expect
@@ -258,6 +272,17 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
         dob: dob,
  
         LeadId: salesforceResponse.data?.LeadId,
+         companyLocationUAE,
+        employmentType,
+        Company: companyName,
+        salary,
+        bankType,
+        companyLicensed,
+        activityType,
+        totalShareholders,
+        companyTurnover,
+        companyLocation,
+        companyWebsite,
       },
       quotePaymentWithDetails: {
         QuotePaymentId: salesforceResponse.data?.QuotePaymentId,
@@ -288,13 +313,15 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
       //   message:        sfResp.data?.Message        ?? ''
       // },
       ProductId: ProductId,
-      shareholders,
       tradeLicenseFile,
       uploadedFileNames,
       planname: type,
-           tradeLicenseNo,
-      tradeLicenseFileUrl,
-      subcategory: subcategory,
+       subcategory: subServiceName,
+      tradeLicenseFileUrl: tradeLicenseFileUrl,
+        shareholdersfiles,
+        shareholders,
+        tradeLicenseNo,
+          shareholderfilesnumber,
       customerType: CustomerType,
     },
    },
@@ -391,7 +418,25 @@ exports.insertDocumentsFromShareholders = async (req, res) => {
 
 exports.createLeadOnly = async (req, res) => {
   try {
-    const { firstName, lastName, email, nationality, phone, dob , service_id, leadId} = req.body;
+    const { firstName, lastName, email, nationality, phone, dob , service_id, leadId,
+       subServiceName,
+      companyLocationUAE,
+      employmentType,
+      companyName,
+      salary,
+      bankType,
+      companyLicensed,
+      activityType,
+      totalShareholders,
+      companyTurnover,
+      companyLocation,
+      companyWebsite,
+      tradeLicenseNo,
+      shareholderfilesnumber,
+      tradeLicenseFile,
+      shareholdersfiles,
+      shareholders
+    } = req.body;
 
     if (!firstName || !lastName || !email || !nationality || !phone || !dob) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -438,7 +483,7 @@ exports.createLeadOnly = async (req, res) => {
         phone,
         dob,
         service_id,
-        leadId
+        leadId,
       },
       {
         headers: {
@@ -463,7 +508,28 @@ exports.createLeadOnly = async (req, res) => {
         Status: "Created",
         dob: dob,
         LeadId: leadResp.data?.LeadId || null,
+      companyLocationUAE,
+        employmentType,
+        Company: companyName,
+        salary,
+        bankType,
+        companyLicensed,
+        activityType,
+        totalShareholders,
+        companyTurnover,
+        companyLocation,
+        companyWebsite,
+      
+        
+      
       },
+      
+    subcategory: subServiceName,
+      tradeLicenseFileUrl: tradeLicenseFile,
+        shareholdersfiles,
+        shareholders,
+        tradeLicenseNo,
+          shareholderfilesnumber,
       quotePaymentWithDetails: {
         AccountId: leadResp.data?.AccountId || null,
       },
@@ -559,11 +625,13 @@ exports.insertEconomicDetails = async (req, res) => {
       null,
       {
         params: {
-          client_id: "your_client_id",
-          client_secret: "your_client_secret",
+          client_id:
+            "3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip",
+          client_secret:
+            "0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1",
           grant_type: "password",
-          username: "your_salesforce_username",
-          password: "your_salesforce_password",
+          username: "vzpaymentapi@vz.ae.vzfullcopy",
+          password: "Virtuzone@1234",
         },
       }
     );
@@ -584,16 +652,16 @@ exports.insertEconomicDetails = async (req, res) => {
     );
 
     // Clean phone number and generate country code
-    const cleanedPhone = phone.replace(/\s+/g, "");
-    const countryCode = "+" + cleanedPhone.slice(0, 2);
+    const cleanedPhone = phone ? phone.replace(/\s+/g, "") : null;
+    const countryCode = cleanedPhone ? "+" + cleanedPhone.slice(0, 2) : null;
 
     // Prepare the data for your local database (Pidata, etc.)
     const economicData = {
       leadWithDetails: {
         LeadId: leadId,
-        AccountId: accountId,
+        
         ServiceName: serviceName,
-        SubServiceName: subServiceName,
+        
         FirstName: firstName,
         LastName: lastName,
         Email: email,
@@ -603,7 +671,7 @@ exports.insertEconomicDetails = async (req, res) => {
         dob,
         companyLocationUAE,
         employmentType,
-        companyName,
+        Company: companyName,
         salary,
         bankType,
         companyLicensed,
@@ -612,12 +680,20 @@ exports.insertEconomicDetails = async (req, res) => {
         companyTurnover,
         companyLocation,
         companyWebsite,
-        tradeLicenseNo,
-        shareholderfilesnumber,
-        tradeLicenseFile,
+      
+        
+      
+      },
+       quotePaymentWithDetails: {
+      
+      AccountId: accountId,
+    },
+    subcategory: subServiceName,
+      tradeLicenseFileUrl: tradeLicenseFile,
         shareholdersfiles,
         shareholders,
-      },
+        tradeLicenseNo,
+          shareholderfilesnumber,
     };
 
     // Step 3: Save the data to Pidata (or another local database)
@@ -625,17 +701,7 @@ const pidataDoc = await Pidata.findOneAndUpdate(
   { "leadWithDetails.LeadId": leadId },
   {
     $set: {
-      // Only set these fields if they are present in economicData
-      ...(economicData.companyLocationUAE && { "leadWithDetails.companyLocationUAE": economicData.companyLocationUAE }),
-      ...(economicData.employmentType && { "leadWithDetails.employmentType": economicData.employmentType }),
-      ...(economicData.salary && { "leadWithDetails.salary": economicData.salary }),
-      ...(economicData.bankType && { "leadWithDetails.bankType": economicData.bankType }),
-      ...(economicData.companyLicensed && { "leadWithDetails.companyLicensed": economicData.companyLicensed }),
-      ...(economicData.activityType && { "leadWithDetails.activityType": economicData.activityType }),
-      ...(economicData.totalShareholders && { "leadWithDetails.totalShareholders": economicData.totalShareholders }),
-      ...(economicData.companyTurnover && { "leadWithDetails.companyTurnover": economicData.companyTurnover }),
-      ...(economicData.companyLocation && { "leadWithDetails.companyLocation": economicData.companyLocation }),
-      ...(economicData.companyWebsite && { "leadWithDetails.companyWebsite": economicData.companyWebsite }),
+     ...economicData
     },
   },
   { upsert: true, new: true }

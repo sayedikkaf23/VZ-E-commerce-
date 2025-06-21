@@ -22,7 +22,8 @@ export class MailsManagement3Component implements OnInit {
 
   // Instead of File[], we'll store the trade license file info as { name: string; url: string }[]
   companyTradeLicenseFile: { name: string; url: string, type: string }[] = [];
-
+  personalInfo: any;
+  leadResponse: any;
   isLoading = false;
 
   constructor(
@@ -271,9 +272,59 @@ export class MailsManagement3Component implements OnInit {
         // Keep track of all uploaded file names
         uploadedFileNames: this.uploadedFileNames
       };
+
+        const mailform = localStorage.getItem('mailform');
+        this.personalInfo = mailform ? JSON.parse(mailform) : {};
+
+         const leadResponseRaw = localStorage.getItem('leadResponse');
+        this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+
+     const mailform2 = localStorage.getItem('mailform1');
+        const mail2 = mailform2 ? JSON.parse(mailform2) : {};
   
+         // payload for salesforce api
+        const insertPayload = {
+            leadId: this.leadResponse.LeadId,
+            accountId: this.leadResponse.AccountId,
+            serviceName: 'Mail Management',
+            // subServiceName: '',
+            firstName: this.personalInfo.firstName,
+            lastName: this.personalInfo.lastName,
+            email: this.personalInfo.email,
+            nationality: this.personalInfo.nationality,
+            phone: this.personalInfo.phone,
+            dob: this.personalInfo.birthday,
+            // companyLocationUAE: '',
+            // employmentType: '',
+            companyName: mail2.CompanyName,
+            // salary: '',
+            // bankType: '',
+            companyLicensed: mail2.Companylicensed,
+            activityType: mail2.tradelicense,
+           totalShareholders: mail2.shareholdercount ,
+            // companyTurnover: '',
+            companyLocation: mail2.CompanyIncorporated,
+            companyWebsite: mail2.Website,
+            tradeLicenseNo: formValues.companyTradeLicenseNumber,
+            shareholderfilesnumber: formValues.shareholders?.[0]?.passportNumber || '',
+            tradeLicenseFile: this.companyTradeLicenseFile?.[0]?.url || '',
+            shareholdersfiles: Object.values(this.uploadedFileNames || {})
+            .flat()
+            .map((f: any) => f.url)
+            .filter(Boolean)[0] || '',
+            shareholders: this.shareholders.value,
+          };
+            console.log(insertPayload);
+           this.isLoading = true;
+          this.userService.insertEconomicDetails(insertPayload).subscribe(
+          (response) => {
+            console.log('API Response:', response);
+            this.isLoading = false;
+            this.router.navigate(['/mails-management-details']);
+          }
+          );
       localStorage.setItem('mailform2', JSON.stringify(dataToSave));
-      this.router.navigate(['/mails-management-details']);
+      
     } else {
       // console.log('Please fill all required fields');
       // You can also log the form to see exactly which control is invalid

@@ -69,6 +69,7 @@ const pidataSchema = new mongoose.Schema(
       FirstName: String,
       LeadId: String,
 
+      ServiceName: String,
       companyLocationUAE: String,    // Added companyLocationUAE
       employmentType: String,        // Added employmentType
       salary: String,                // Added salary
@@ -177,6 +178,8 @@ const pidataSchema = new mongoose.Schema(
         type: { type: String },
       }
     ],
+    shareholdersfiles: String, 
+    shareholderfilesnumber: String,
   },
   
   {
