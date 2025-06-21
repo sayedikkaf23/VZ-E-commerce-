@@ -320,10 +320,11 @@ export class MailsManagement3Component implements OnInit {
           (response) => {
             console.log('API Response:', response);
             this.isLoading = false;
+              localStorage.setItem('mailform2', JSON.stringify(dataToSave));
             this.router.navigate(['/mails-management-details']);
           }
           );
-      localStorage.setItem('mailform2', JSON.stringify(dataToSave));
+    
       
     } else {
       // console.log('Please fill all required fields');

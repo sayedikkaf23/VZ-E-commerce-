@@ -137,7 +137,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       ContactId,
       ProductId,
       tradeLicenseFile = [],
-       subServiceName,
+       
       companyLocationUAE,
       employmentType,
       companyName,
@@ -270,8 +270,8 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
         Origin__c: "Website", // or whatever source you want
         Status: "Created",
         dob: dob,
- 
-        LeadId: salesforceResponse.data?.LeadId,
+        ServiceName: type,
+        LeadId: salesforceResponse.data?.LeadId ?? LeadId,
          companyLocationUAE,
         employmentType,
         Company: companyName,
@@ -305,9 +305,9 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
       // salesforceResponseMatchScreening: {
 
       //   leadId:         sfResp.data?.LeadId         ?? null,
-        accountId:      salesforceResponse.data?.AccountId      ?? null,
+        accountId:      salesforceResponse.data?.AccountId      ?? AccountId,
         // opportunityId:  salesforceResponse.data?.OpportunityId  ?? null,
-        ContactId:  salesforceResponse.data?.ContactId  ?? null,
+        ContactId:  salesforceResponse.data?.ContactId  ?? ContactId,
       //   quoteId:        sfResp.data?.QuoteId        ?? null,
       //   quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
       //   message:        sfResp.data?.Message        ?? ''
@@ -316,7 +316,7 @@ const salesPersonDetails = salesforceData?.salesPersonDetails || {};
       tradeLicenseFile,
       uploadedFileNames,
       planname: type,
-       subcategory: subServiceName,
+      subServiceName : subcategory,
       tradeLicenseFileUrl: tradeLicenseFileUrl,
         shareholdersfiles,
         shareholders,
