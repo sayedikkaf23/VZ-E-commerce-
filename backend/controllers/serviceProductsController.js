@@ -708,10 +708,11 @@ const pidataDoc = await Pidata.findOneAndUpdate(
 );
 
 
-    return res.status(200).json({
-      message: "Economic details inserted successfully",
-      data: economicDetailsResp.data,
-    });
+   return res.status(200).json({
+  message: "Economic details inserted successfully",
+  data: economicDetailsResp.data,
+});
+
   } catch (err) {
     console.error("insertEconomicDetails error:", err);
     return res.status(500).json({
