@@ -137,7 +137,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       ContactId,
       ProductId,
       tradeLicenseFile = [],
-
+       isLead,
       companyLocationUAE,
       employmentType,
       companyName,
@@ -259,49 +259,50 @@ exports.createPaymentOpportunity = async (req, res) => {
       { "leadWithDetails.LeadId": LeadId }, // Match by LeadId from initial step
       {
         $set: {
-          leadWithDetails: {
-            FirstName: firstName,
-            LastName: lastName,
-            Email: email,
-            Nationality: nationality,
-            Phone: cleanedPhone,
-            countryCode: countryCode,
-            Origin__c: "Website", // or whatever source you want
-            Status: "Created",
-            dob: dob,
-            ServiceName: type,
-            LeadId: salesforceResponse.data?.LeadId ?? LeadId,
-            companyLocationUAE,
-            employmentType,
-            Company: companyName,
-            salary,
-            bankType,
-            companyLicensed,
-            activityType,
-            totalShareholders,
-            companyTurnover,
-            companyLocation,
-            companyWebsite,
-          },
-          quotePaymentWithDetails: {
-            QuotePaymentId: salesforceResponse.data?.QuotePaymentId,
-          },
-          quoteWithProductDetails: {
-            quoteEmail: email,
-            quoteName: firstName + " " + lastName,
-            // QuotePaymentName: salesforceResponse.data?.QuotePaymentName,
-            quotePaymentId: salesforceResponse.data?.QuotePaymentId,
-            totalIncludingVAT: totalPrice,
-            subTotal: subTotal,
-            totalPrice: totalPrice,
-            product: req.body.prodcutNameList, // store the whole array
-          },
-          salesPersonDetails: {
-            salesPersonName: salesPersonDetails.salesPersonName || null,
-            salesPersonEmail: salesPersonDetails.salesPersonEmail || null,
-            salesPersonMobile: salesPersonDetails.salesPersonMobile || null,
-          },
-          // salesforceResponseMatchScreening: {
+      leadWithDetails: {
+        FirstName: firstName,
+        LastName: lastName,
+        Email: email,
+        Nationality: nationality,
+        Phone: cleanedPhone,
+        countryCode: countryCode,
+        Origin__c: "Website", // or whatever source you want
+        Status: "Created",
+        dob: dob,
+        ServiceName: type,
+        LeadId: salesforceResponse.data?.LeadId ?? LeadId,
+         companyLocationUAE,
+        employmentType,
+        Company: companyName,
+        salary,
+        bankType,
+        companyLicensed,
+        activityType,
+        totalShareholders,
+        companyTurnover,
+        companyLocation,
+        companyWebsite,
+        isLead,
+      },
+      quotePaymentWithDetails: {
+        QuotePaymentId: salesforceResponse.data?.QuotePaymentId,
+      },
+      quoteWithProductDetails: {
+        quoteEmail: email,
+        quoteName: firstName + " " + lastName,
+        // QuotePaymentName: salesforceResponse.data?.QuotePaymentName,
+        quotePaymentId: salesforceResponse.data?.QuotePaymentId,
+        totalIncludingVAT: totalPrice,
+        subTotal: subTotal,
+        totalPrice: totalPrice,
+        product: req.body.prodcutNameList, // store the whole array
+      },
+     salesPersonDetails: {
+    salesPersonName: salesPersonDetails.salesPersonName || null,
+    salesPersonEmail: salesPersonDetails.salesPersonEmail || null,
+    salesPersonMobile: salesPersonDetails.salesPersonMobile || null,
+  },
+      // salesforceResponseMatchScreening: {
 
           //   leadId:         sfResp.data?.LeadId         ?? null,
           accountId: salesforceResponse.data?.AccountId ?? AccountId,

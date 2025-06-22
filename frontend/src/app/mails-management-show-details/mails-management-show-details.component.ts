@@ -325,6 +325,7 @@ console.log("object",mergedData,   this.tradeLicenseFile)
         const mail3 = mailform3 ? JSON.parse(mailform3) : {};
         const paymentPayload = {
           LeadId: leadResponse.LeadId || '',
+          isLead: true,
           AccountId: leadResponse.AccountId || '',
           ContactId: leadResponse.ContactId || '',
           firstName: this.personalInfo.firstName,
