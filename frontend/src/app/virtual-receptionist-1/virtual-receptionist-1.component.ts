@@ -494,6 +494,23 @@ onShareholderInput(event: any, index: number) {
       isValid = false;
     }
 
+     if(this.formData.CompanyIncorporated === "United Arab Emirates"){
+      if (!this.formData.Companylicensed) {
+      missingFields.push('Companylicensed');
+      isValid = false;
+    }
+    }
+
+       if (!this.formData.tradelicense) {
+      missingFields.push('tradelicense');
+      isValid = false;
+    }
+
+    if (!this.formData.shareholdercount) {
+      missingFields.push('shareholdercount');
+      isValid = false;
+    }
+
     if (missingFields.length > 0) {
       const message = `All fields are required`;
       this.toastr.error(message);

@@ -459,6 +459,7 @@ onShareholderInput(event: any, index: number) {
     let isValid = true;
     const missingFields: string[] = [];
 
+
     if (!this.formData.CompanyName) {
       missingFields.push('CompanyName');
       isValid = false;
@@ -466,6 +467,23 @@ onShareholderInput(event: any, index: number) {
 
     if (!this.formData.CompanyIncorporated) {
       missingFields.push('CompanyIncorporated');
+      isValid = false;
+    }
+
+    if(this.formData.CompanyIncorporated === "United Arab Emirates"){
+      if (!this.formData.Companylicensed) {
+      missingFields.push('Companylicensed');
+      isValid = false;
+    }
+    }
+
+       if (!this.formData.tradelicense) {
+      missingFields.push('tradelicense');
+      isValid = false;
+    }
+
+    if (!this.formData.shareholdercount) {
+      missingFields.push('shareholdercount');
       isValid = false;
     }
 
