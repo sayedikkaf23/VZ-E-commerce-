@@ -545,6 +545,30 @@ trackByShareholder(index: number, shareholder: any): number {
       missingFields.push('Company Location');
       isValid = false;
     }
+     if (this.formData.companylocation === 'Yes' && !this.formData.Companylicensed) {
+    missingFields.push('Company Licensed');
+    isValid = false;
+  }
+
+  if (!this.formData.tradelicense) {
+    missingFields.push('Trade License Activity');
+    isValid = false;
+  }
+
+  if (!this.formData.shareholdercount) {
+    missingFields.push('Shareholder Count');
+    isValid = false;
+  }
+
+  if (!this.formData.Turnover) {
+    missingFields.push('Turnover');
+    isValid = false;
+  }
+
+  if (!this.formData.Bank) {
+    missingFields.push('Bank Application Type');
+    isValid = false;
+  }
     // if (!this.formData.jurisdiction) {
     //   missingFields.push('Jurisdiction');
     //   isValid = false;
