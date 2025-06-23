@@ -74,7 +74,20 @@ export class BackAccountOpeningComponent implements OnInit {
       this.fetchUserDetails(page, this.itemsPerPage);
     }
   }
- 
+showCompanyModal = false;
+selectedCompanyDetails: any = null;
+
+openCompanyModal(leadDetails: any) {
+  this.selectedCompanyDetails = leadDetails;
+  this.showCompanyModal = true;
+}
+
+closeCompanyModal() {
+  this.selectedCompanyDetails = null;
+  this.showCompanyModal = false;
+}
+
+
   salesforceResponseMatchScreening: any = {}; // Declare this at the top
  
  

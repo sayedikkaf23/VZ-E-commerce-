@@ -12,6 +12,7 @@ export class AdminMailManagementComponent {
   mailList: any[] = []; // To store fetched mail data
   selectedMailDetails: any[] = []; // To store selected mail details
   showModal: boolean = false; // Flag to control modal visibility
+  showCompanyModal: boolean = false; 
   userList: any[] = []; // To store the fetched user data
   hasSalaryData: boolean = false;
   hasCompanyNameData: boolean = false;
@@ -28,7 +29,7 @@ export class AdminMailManagementComponent {
   itemsPerPage: number = 10; // Adjust as needed
   totalRecords: number = 0;
   totalPages: number = 0;
-
+  selectedMailComapny: any;
   salesforceResponseMatchScreening: any = {}; // Declare this at the top
  
  
@@ -100,8 +101,9 @@ showDocumentModal: boolean = false;
  
  
   openMailDetails(details: any): void {
-    this.selectedMailDetails = details; // Assign selected mail details
-    this.showModal = true; // Open the modal for shareholders
+    this.selectedMailComapny = details; // Assign selected mail details
+    console.log("Mail details = ",this.selectedMailComapny)
+    this.showCompanyModal = true; // Open the modal for shareholders
   }
  
   openDetailsModal(details: any): void {
@@ -121,6 +123,7 @@ showDocumentModal: boolean = false;
  
   closeModal(): void {
     this.showModal = false; // Close the modal
+    this.showCompanyModal =false;
   }
  
   closeDetailsModal(): void {
