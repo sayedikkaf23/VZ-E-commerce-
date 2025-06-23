@@ -159,6 +159,7 @@ const pidataSchema = new mongoose.Schema(
     invoiceNumber: { type: String },
     kycStatus: { type: String ,default: 'Pending'},
     shareholders: [shareholderSchema],
+    economicDetailId: { type: String },
     salesPersonDetails: {
       salesPersonEmail: { type: String },
       salesPersonMobile: { type: String },

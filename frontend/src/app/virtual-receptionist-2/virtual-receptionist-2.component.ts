@@ -19,7 +19,7 @@ export class VirtualReceptionist2Component implements OnInit {
 
   // We’ll load shareholders data from localStorage (virtualdata1, virtualdata2)
   shareholdersData: any[] = [];
-
+  economicDetailId: any;
   // For storing uploaded files & file names
   uploadedFiles: File[][] = [];
   uploadedFileNames: { [key: number]: { name: string; url: string; type: string;}[] } = {};
@@ -296,6 +296,14 @@ export class VirtualReceptionist2Component implements OnInit {
       tradeLicenseControl?.setErrors(null);
     }
 
+      this.economicDetailId = localStorage.getItem('economicDetailId');
+
+    //check for economicDetailId
+    if(!this.economicDetailId){
+       alert("economicDetailId not found");
+        this.router.navigate(['/mails-management']);
+    }
+
     // If everything is valid, proceed
     if (this.formData.valid) {
       const formValues = this.formData.value;
@@ -340,6 +348,7 @@ export class VirtualReceptionist2Component implements OnInit {
             // bankType: '',
             companyLicensed: mail2.Companylicensed,
             activityType: mail2.tradelicense,
+             economicDetailId: this.economicDetailId,
            totalShareholders: mail2.shareholdercount ,
             // companyTurnover: '',
             companyLocation: mail2.CompanyIncorporated,

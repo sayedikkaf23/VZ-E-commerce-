@@ -567,6 +567,7 @@ exports.insertEconomicDetails = async (req, res) => {
     const {
       leadId,
       accountId,
+      economicDetailId,
       serviceName,
       subServiceName,
       firstName,
@@ -609,6 +610,7 @@ exports.insertEconomicDetails = async (req, res) => {
     if (companyLocationUAE) payload.companyLocationUAE = companyLocationUAE;
     if (employmentType) payload.employmentType = employmentType;
     if (companyName) payload.companyName = companyName;
+     if (economicDetailId) payload.economicDetailId = economicDetailId;
     if (salary) payload.salary = salary;
     if (bankType) payload.bankType = bankType;
     if (companyLicensed) payload.companyLicensed = companyLicensed;
@@ -690,6 +692,7 @@ exports.insertEconomicDetails = async (req, res) => {
       quotePaymentWithDetails: {
         AccountId: accountId,
       },
+      economicDetailId : economicDetailsResp.data?.economicDetailId,
       subcategory: subServiceName,
       tradeLicenseFileUrl: tradeLicenseFile,
       shareholdersfiles,

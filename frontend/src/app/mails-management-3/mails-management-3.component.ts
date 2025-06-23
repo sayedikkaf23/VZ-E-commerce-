@@ -25,6 +25,7 @@ export class MailsManagement3Component implements OnInit {
   personalInfo: any;
   leadResponse: any;
   isLoading = false;
+  economicDetailId: any;
 
   constructor(
     private fb: FormBuilder,
@@ -253,6 +254,14 @@ export class MailsManagement3Component implements OnInit {
     } else {
       tradeLicenseControl?.setErrors(null);
     }
+
+    this.economicDetailId = localStorage.getItem('economicDetailId');
+
+    //check for economicDetailId
+    if(!this.economicDetailId){
+       alert("economicDetailId not found");
+        this.router.navigate(['/mails-management']);
+    }
   
     // Now proceed if form is valid
     if (this.formData.valid) {
@@ -294,6 +303,7 @@ export class MailsManagement3Component implements OnInit {
             nationality: this.personalInfo.nationality,
             phone: this.personalInfo.phone,
             dob: this.personalInfo.birthday,
+            economicDetailId: this.economicDetailId,
             // companyLocationUAE: '',
             // employmentType: '',
             companyName: mail2.CompanyName,

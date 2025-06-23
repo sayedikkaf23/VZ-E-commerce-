@@ -40,6 +40,7 @@ isLoading = false;
   businessCategories: any[] = [];
   personalInfo: any;
   leadResponse: any;
+   economicDetailId : any;
 
   constructor(
     private formDataService: FormDataService,
@@ -338,7 +339,7 @@ onShareholderInput(event: any, index: number) {
         // Save Step 2 data to localStorage
         localStorage.setItem('mailform1', JSON.stringify(combinedFormData));
       
-
+        const economicDetailId = localStorage.getItem('economicDetailId');
         // payload for salesforce api
         const insertPayload: any = {
             leadId: this.leadResponse.LeadId,
@@ -377,6 +378,10 @@ onShareholderInput(event: any, index: number) {
             insertPayload.companyLicensed = this.formData.Companylicensed;
           }
 
+            if (economicDetailId) {
+            insertPayload.economicDetailId = economicDetailId;
+          }
+
            if (mail3.companyTradeLicenseNumber) {
             insertPayload.tradeLicenseNo = mail3.companyTradeLicenseNumber;
           }
@@ -403,6 +408,8 @@ onShareholderInput(event: any, index: number) {
           this.userService.insertEconomicDetails(insertPayload).subscribe(
           (response) => {
             console.log('API Response:', response);
+               this.economicDetailId = response.data?.economicDetailId;
+            localStorage.setItem('economicDetailId',this.economicDetailId);
             // Prepare payload for the API call using Step 1 and Shareholders data
         const payload = {
           customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1

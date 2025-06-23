@@ -57,6 +57,7 @@ maxDate: string | undefined;
   personalInfo: any;
   leadResponse: any;
   isLoading = false;
+  economicDetailId : any;
 
   constructor(
     private formDataService: FormDataService,
@@ -362,6 +363,7 @@ onShareholderInput(event: any, index: number) {
 
         const mailform3 = localStorage.getItem('virtualdata2');
         const mail3 = mailform3 ? JSON.parse(mailform3) : {};
+        const economicDetailId = localStorage.getItem('economicDetailId');
 
         // Save Step 2 data to localStorage
         localStorage.setItem('virtualdata1', JSON.stringify(combinedFormData));
@@ -404,6 +406,10 @@ onShareholderInput(event: any, index: number) {
             insertPayload.companyLicensed = this.formData.Companylicensed;
           }
 
+           if (economicDetailId) {
+            insertPayload.economicDetailId = economicDetailId;
+          }
+
            if (mail3.companyTradeLicense) {
             insertPayload.tradeLicenseNo = mail3.companyTradeLicense;
           }
@@ -430,6 +436,8 @@ onShareholderInput(event: any, index: number) {
           this.userService.insertEconomicDetails(insertPayload).subscribe(
           (response) => {
             console.log('API Response:', response);
+            this.economicDetailId = response.data?.economicDetailId;
+            localStorage.setItem('economicDetailId',this.economicDetailId);
              // Prepare payload for the API call using Step 1 and Shareholders data
          const payload = {
           customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
