@@ -54,6 +54,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   businessCategories: any[] = [];
   personalInfo: any;
  maxDate: string | undefined;
+  leadResponse: any;
  
   constructor(
     private formDataService: FormDataService,
@@ -319,79 +320,215 @@ deleteShareholder(index: number) {
   }
  
   // Validation and submission logic
+  // onSubmit() {
+  //   // Check if the form is invalid
+  //   if (this.isFormInvalid()) {
+  //     this.toastr.error('Please fill out all required fields.', 'Form Incomplete');
+  //   } else {
+  //     if (this.validateForm()) {
+  //       const formDataToSend = new FormData();
+ 
+  //       // Append Step 1 data
+  //       for (const key in this.step1Data) {
+  //         if (this.step1Data.hasOwnProperty(key)) {
+  //           formDataToSend.append(key, this.step1Data[key]);
+  //         }
+  //       }
+ 
+  //       // Append Step 2 data
+  //       formDataToSend.append('companylocation', this.formData.companylocation);
+  //       formDataToSend.append('tradelicense', this.formData.tradelicense);
+  //       formDataToSend.append('Companylicensed', this.formData.Companylicensed);
+  //       formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
+  //       formDataToSend.append('Turnover', this.formData.Turnover);
+  //       formDataToSend.append('CustomerType', this.formData.CustomerType);
+  //       formDataToSend.append('BusinessActivityRisk',this.formData.BusinessActivityRisk)
+ 
+  //       this.shareholders.forEach((shareholder, index) => {
+  //         formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
+  //       });
+ 
+  //       const combinedFormData = {
+  //         ...this.formData, // Spread formData properties
+  //         shareholders: this.shareholders // Add the shareholders array
+  //       };
+  //       const mailform = localStorage.getItem('step1Data');
+  //       this.personalInfo = mailform ? JSON.parse(mailform) : {};
+  //       // Save Step 2 data to localStorage
+  //       localStorage.setItem('mailform2', JSON.stringify(combinedFormData));
+  // console.log(this.step1Data, 'step1Data',combinedFormData)
+  //       // Prepare payload for the API call using Step 1 and Shareholders data
+  //       const payload = {
+  //         customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
+  //         BusisnessActivityRisk: this.formData.BusinessActivityRisk,
+  //         shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
+  //         totalCusotmerSelected: this.shareholders.length + 2,
+  //       };
+ 
+  //       // Call the API to get products by category and country risk
+  //       this.userService.getProductsByCategoryAndCountryRisk(payload).subscribe(
+  //         (response) => {
+  //           console.log('API Response:', response);
+ 
+  //           const appliedRiskData = {
+  //             appliedRisk: response.appliedRisk, // Assuming the response contains 'appliedRisk'
+  //             percentage: response.percentage, // Assuming the response contains 'percentage'
+  //             userRating: response.userRating, // Assuming the response contains 'userRating'
+  //             totalPossibleRating: response.totalPossibleRating // Assuming the response contains 'totalPossibleRating'
+  //           };
+ 
+  //           // Save the appliedRisk data to localStorage
+  //           localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
+  //           // Handle the response (e.g., store the products in a variable or pass to the next page)
+ 
+  //           // Navigate to BusinessBankShowDetails after the API call completes
+  //           this.router.navigate(['/BusinessBankShowDetails']);
+  //         },
+  //         (error) => {
+  //           console.error('API Error:', error);
+  //           this.toastr.error('Failed to fetch products.', 'API Error');
+  //         }
+  //       );
+  //     }
+  //   }
+  // }
+ 
+
   onSubmit() {
-    // Check if the form is invalid
-    if (this.isFormInvalid()) {
-      this.toastr.error('Please fill out all required fields.', 'Form Incomplete');
-    } else {
-      if (this.validateForm()) {
-        const formDataToSend = new FormData();
- 
-        // Append Step 1 data
-        for (const key in this.step1Data) {
-          if (this.step1Data.hasOwnProperty(key)) {
-            formDataToSend.append(key, this.step1Data[key]);
-          }
-        }
- 
-        // Append Step 2 data
-        formDataToSend.append('companylocation', this.formData.companylocation);
-        formDataToSend.append('tradelicense', this.formData.tradelicense);
-        formDataToSend.append('Companylicensed', this.formData.Companylicensed);
-        formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
-        formDataToSend.append('Turnover', this.formData.Turnover);
-        formDataToSend.append('CustomerType', this.formData.CustomerType);
-        formDataToSend.append('BusinessActivityRisk',this.formData.BusinessActivityRisk)
- 
-        this.shareholders.forEach((shareholder, index) => {
-          formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
-        });
- 
-        const combinedFormData = {
-          ...this.formData, // Spread formData properties
-          shareholders: this.shareholders // Add the shareholders array
-        };
-        const mailform = localStorage.getItem('step1Data');
+  // 1️⃣ Validation
+  if (this.isFormInvalid()) {
+    this.toastr.error('Please fill out all required fields.', 'Form Incomplete');
+    return;
+  }
+  if (!this.validateForm()) return;
+  const mailform = localStorage.getItem('step1Data');
         this.personalInfo = mailform ? JSON.parse(mailform) : {};
-        // Save Step 2 data to localStorage
-        localStorage.setItem('mailform2', JSON.stringify(combinedFormData));
-  console.log(this.step1Data, 'step1Data',combinedFormData)
-        // Prepare payload for the API call using Step 1 and Shareholders data
-        const payload = {
-          customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
-          BusisnessActivityRisk: this.formData.BusinessActivityRisk,
-          shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
-          totalCusotmerSelected: this.shareholders.length + 2,
-        };
- 
-        // Call the API to get products by category and country risk
-        this.userService.getProductsByCategoryAndCountryRisk(payload).subscribe(
-          (response) => {
-            console.log('API Response:', response);
- 
-            const appliedRiskData = {
-              appliedRisk: response.appliedRisk, // Assuming the response contains 'appliedRisk'
-              percentage: response.percentage, // Assuming the response contains 'percentage'
-              userRating: response.userRating, // Assuming the response contains 'userRating'
-              totalPossibleRating: response.totalPossibleRating // Assuming the response contains 'totalPossibleRating'
-            };
- 
-            // Save the appliedRisk data to localStorage
-            localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
-            // Handle the response (e.g., store the products in a variable or pass to the next page)
- 
-            // Navigate to BusinessBankShowDetails after the API call completes
-            this.router.navigate(['/BusinessBankShowDetails']);
-          },
-          (error) => {
-            console.error('API Error:', error);
-            this.toastr.error('Failed to fetch products.', 'API Error');
-          }
-        );
-      }
+
+  // 2️⃣ Build & persist Step 2 FormData (if you actually need it; otherwise you can skip this)
+  const formDataToSend = new FormData();
+  for (const key in this.step1Data) {
+    if (this.step1Data.hasOwnProperty(key)) {
+      formDataToSend.append(key, this.step1Data[key]);
     }
   }
- 
+  formDataToSend.append('companylocation', this.formData.companylocation);
+  formDataToSend.append('tradelicense', this.formData.tradelicense);
+  formDataToSend.append('Companylicensed', this.formData.Companylicensed);
+  formDataToSend.append('shareholder', this.shareholders.length.toString());
+  formDataToSend.append('Turnover', this.formData.Turnover);
+  formDataToSend.append('CustomerType', this.formData.CustomerType);
+  formDataToSend.append('BusinessActivityRisk', this.formData.BusinessActivityRisk);
+  this.shareholders.forEach((sh, i) =>
+    formDataToSend.append(`shareholders[${i}]`, JSON.stringify(sh))
+  );
+
+  const combinedFormData = {
+    ...this.formData,
+    shareholders: this.shareholders
+  };
+  localStorage.setItem('mailform2', JSON.stringify(combinedFormData));
+  console.log(this.step1Data, 'step1Data', combinedFormData);
+
+  // 3️⃣ FIRST API CALL: get products by category & risk
+  const riskPayload = {
+    customerCountryRisk: this.personalInfo?.countryRisk,
+    BusisnessActivityRisk: this.formData.BusinessActivityRisk,
+    shareholderCountriesRisk: this.shareholders.map(sh => sh.countryRisk),
+    totalCusotmerSelected: this.shareholders.length + 2
+  };
+     
+
+
+  this.userService.getProductsByCategoryAndCountryRisk(riskPayload)
+    .subscribe({
+      next: response => {
+        console.log('API Response:', response);
+
+        // save appliedRisk
+        const appliedRiskData = {
+          appliedRisk: response.appliedRisk,
+          percentage: response.percentage,
+          userRating: response.userRating,
+          totalPossibleRating: response.totalPossibleRating
+        };
+        localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
+
+        // 4️⃣ AFTER FIRST CALL: build & fire your second payload
+        const getValue = (v: any, fb = '') => v == null ? fb : v;
+
+        const leadResponseRaw = localStorage.getItem('leadResponse');
+        this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+
+      
+        const payload2 = {
+          ...this.step1Data,
+
+          resident: getValue(this.formData.resident),
+          working: getValue(this.formData.working),
+          salary: getValue(this.formData.salary),
+          companyname: getValue(this.formData.companyname),
+          Bank: getValue(this.formData.Bank),
+          type: getValue(this.formData.type),
+          CustomerType: getValue(this.formData.CustomerType),
+
+          companyLocationUAE: getValue(this.formData.resident),
+          employmentType: getValue(this.formData.working),
+          companyName: getValue(this.formData.companyname),
+          bankType: getValue(this.formData.Bank),
+
+          leadId: getValue(this.leadResponse.LeadId),
+          accountId: getValue(this.leadResponse.AccountId),
+
+          serviceName: 'Bank Account Opening',
+          subServiceName: 'Business Bank Account Opening',
+
+          firstName: this.personalInfo.firstName,
+          lastName: this.personalInfo.lastName,
+          email: this.personalInfo.email,
+          nationality: this.personalInfo.nationality,
+          phone: this.personalInfo.mobileNumber?.number,
+          dob: this.personalInfo.birthday,
+
+          companyLicensed: getValue(this.formData.companyLicensed),
+          activityType: getValue(this.formData.activityType),
+          totalShareholders: getValue(this.formData.totalShareholders),
+          companyTurnover: getValue(this.formData.companyTurnover),
+          companyLocation: getValue(this.formData.companyLocation),
+          companyWebsite: getValue(this.formData.companyWebsite),
+          tradeLicenseNo: getValue(this.formData.tradeLicenseNo),
+          shareholderfilesnumber: getValue(this.formData.shareholderfilesnumber),
+          tradeLicenseFile: getValue(this.formData.tradeLicenseFile),
+          shareholdersfiles: getValue(this.formData.shareholdersfiles),
+
+          shareholders: Array.isArray(this.formData.shareholders)
+            ? this.formData.shareholders
+            : []
+        };
+
+        // persist step2 JSON
+        localStorage.setItem('step2Data', JSON.stringify(this.formData));
+
+        // call insertEconomicDetails
+        this.adminAuthService.insertEconomicDetails(payload2)
+          .subscribe({
+            next: res2 => {
+              console.log('Economic details saved', res2);
+                        this.router.navigate(['/BusinessBankShowDetails']);
+
+            },
+            error: err2 => {
+              console.error('Save failed', err2);
+              this.toastr.error('Could not save details. Try again.', 'Error');
+            }
+          });
+      },
+      error: err => {
+        console.error('API Error:', err);
+        this.toastr.error('Failed to fetch products.', 'API Error');
+      }
+    });
+}
+
  
 trackByShareholder(index: number, shareholder: any): number {
   return index; // Or return a unique identifier if you have one
