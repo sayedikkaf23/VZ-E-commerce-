@@ -168,9 +168,18 @@ export class Step1Component implements OnInit {
     input.showPicker(); // Explicitly trigger the date picker
   }
 onSubmit() {
-  if (this.personalDetailsForm.valid) {
+
+
+    if (this.personalDetailsForm.valid) {
+
     const values = this.personalDetailsForm.value;
     const phoneString = values.mobileNumber?.e164Number || '';
+    
+
+
+
+
+
     const leadDataRaw = localStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
