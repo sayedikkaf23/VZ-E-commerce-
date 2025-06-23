@@ -168,93 +168,80 @@ export class Step1Component implements OnInit {
     input.showPicker(); // Explicitly trigger the date picker
   }
 onSubmit() {
-  // 1) If both step1Data and step2Data exist, just update + navigate (no API call)
-  if (this.isBrowser) {
-    const step1Data = localStorage.getItem('step1Data');
-    const step2Data = localStorage.getItem('step2Data');
-    const mailform2 = localStorage.getItem('mailform2');
-    const currentFormValue = this.personalDetailsForm.value;
-     const leadDataRaw = localStorage.getItem('leadResponse');
-    const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
-
-    if (step1Data && step2Data) {
-      // merge current values into step1Data
-      const updatedStep1Data = {
-        ...JSON.parse(step1Data),
-        ...currentFormValue,
-      };
-      localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data));
-      this.router.navigate(['/ShowDetails']);
-      return; // exit early
-    }
-
-    if (step1Data && mailform2) {
-      const previousData = JSON.parse(step1Data);
-      const mailform2Data = JSON.parse(mailform2);
-
-      // merge current values into step1Data
-      const updatedStep1Data = {
-        ...previousData,
-        ...currentFormValue,
-      };
-      localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data));
-
-      // compare old vs new nationality
-      const previousCountry = (previousData?.nationality || '').trim();
-      const currentCountry = (currentFormValue?.nationality || '').trim();
-      if (previousCountry !== currentCountry) {
-        // country changed → clear tradelicense from mailform2
-        mailform2Data.tradelicense = '';
-        localStorage.setItem('mailform2', JSON.stringify(mailform2Data));
-        this.router.navigate(['/BusinessBankform']);
-      } else {
-        this.router.navigate(['/BusinessBankShowDetails']);
-      }
-      return; // exit early
-    }
-  }
-
-  // 2) If form is valid (and none of the above returned), call createLeadOnly first
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
-    // grab only the phone string
     const phoneString = values.mobileNumber?.e164Number || '';
-const leadDataRaw = localStorage.getItem('leadResponse');
-const leadData    = leadDataRaw ? JSON.parse(leadDataRaw) : null;
-    // build the payload exactly as Salesforce expects
-    const payload = {
-      firstName:   values.firstName,
-      lastName:    values.lastName,
-      email:       values.email,
-      nationality: values.nationality,
-      phone:       phoneString,
-      dob:         values.birthday, // yyyy-mm-dd
-      service_id: 1,
-            leadId: leadData?.LeadId || ''
+    const leadDataRaw = localStorage.getItem('leadResponse');
+    const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
-    };
+    // Check for email change
+    const storedEmail = localStorage.getItem('step1Data')
+      ? JSON.parse(localStorage.getItem('step1Data') || '{}').email
+      : '';
+    const currentEmail = values.email;
 
+    let payload: any;
+
+    if (storedEmail !== currentEmail) {
+      // Email changed, create a new lead with an empty leadId
+      payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: currentEmail,
+        nationality: values.nationality,
+        phone: phoneString,
+        dob: values.birthday, // yyyy-mm-dd
+        service_id: 1,
+        leadId: '' // Empty leadId when email is changed
+      };
+    } else {
+      // Email didn't change, use the same leadId
+      payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: currentEmail,
+        nationality: values.nationality,
+        phone: phoneString,
+        dob: values.birthday, // yyyy-mm-dd
+        service_id: 1,
+        leadId: leadData?.LeadId || '' // Use existing leadId
+      };
+    }
+
+    // Show loading spinner
     this.isLoading = true;
+
+    // Call createLeadOnly API
     this.userService.createLeadOnly(payload).subscribe({
       next: (res) => {
         this.isLoading = false;
-        // on success, save step1Data to localStorage
+
+        // Save step 1 data to localStorage
         if (this.isBrowser) {
           localStorage.setItem('step1Data', JSON.stringify(values));
         }
-        // this.toastr.success('Lead created successfully!');
 
-  if (this.isBrowser && res?.data) {
-    localStorage.setItem('leadResponse', JSON.stringify(res.data));
-  }
-        // now replicate your original navigation logic
-        if (this.isBrowser) {
-          if (localStorage.getItem('step2Data')) {
-            // if step2Data already exists, go straight to ShowDetails
-            this.router.navigate(['/ShowDetails']);
-          } else {
-            // otherwise, go to account-type
-            this.router.navigate(['/account-type']);
+        // Save response data to localStorage (new lead)
+        if (this.isBrowser && res?.data) {
+          localStorage.setItem('leadResponse', JSON.stringify(res.data));
+        }
+ if (!localStorage.getItem('step2Data') && !localStorage.getItem('mailform2')) {
+          this.router.navigate(['/account-type']);
+        } else {
+          // If business account (mailform2 exists), navigate to BusinessBankShowDetails
+          const isBusinessAccount = localStorage.getItem('mailform2') !== null;
+          const isPersonalAccount = localStorage.getItem('step2Data') !== null;
+// localStorage.setItem('mailform2', JSON.stringify(isBusinessAccount));
+          if (this.isBrowser) {
+            if (isBusinessAccount) {
+              // Save business data to mailform2 and navigate to BusinessBankShowDetails
+              // localStorage.setItem('mailform2', JSON.stringify(values));
+              this.router.navigate(['/BusinessBankShowDetails']);
+            } else if (isPersonalAccount) {
+              // Save personal data to step1Data and navigate to ShowDetails
+              localStorage.setItem('step1Data', JSON.stringify(values));
+              this.router.navigate(['/ShowDetails']);
+            }
           }
         }
       },
@@ -264,19 +251,11 @@ const leadData    = leadDataRaw ? JSON.parse(leadDataRaw) : null;
         this.toastr.error(msg, 'Error');
       }
     });
-  }
-  else {
-    // form invalid: show validation toasts
-    const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
-    if (mobileNumberControl?.errors?.['validatePhoneNumber']) {
-      this.toastr.error(
-        'Enter a valid mobile number for the selected country.',
-        'Validation Error'
-      );
-    }
+  } else {
     this.showFieldValidationErrors(this.personalDetailsForm);
   }
 }
+
 
 
 // onSubmit() {
