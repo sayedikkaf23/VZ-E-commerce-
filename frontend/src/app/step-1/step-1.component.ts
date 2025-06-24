@@ -168,18 +168,10 @@ export class Step1Component implements OnInit {
     input.showPicker(); // Explicitly trigger the date picker
   }
 onSubmit() {
-
-
-    if (this.personalDetailsForm.valid) {
-
+  if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
     const phoneString = values.mobileNumber?.e164Number || '';
     
-
-
-
-
-
     const leadDataRaw = localStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
@@ -203,8 +195,15 @@ onSubmit() {
         service_id: 1,
         leadId: '' // Empty leadId when email is changed
       };
+      
+      // If email changes, reset to Step 2 (new lead)
+      if (this.isBrowser) {
+        localStorage.setItem('step1Data', JSON.stringify(values)); // Save the new step1Data
+        localStorage.removeItem('step2Data'); // Clear Step 2 data as it's a new lead
+      }
+
     } else {
-      // Email didn't change, use the same leadId
+      // Email didn't change, continue with the existing leadId
       payload = {
         firstName: values.firstName,
         lastName: values.lastName,
@@ -234,21 +233,18 @@ onSubmit() {
         if (this.isBrowser && res?.data) {
           localStorage.setItem('leadResponse', JSON.stringify(res.data));
         }
- if (!localStorage.getItem('step2Data') && !localStorage.getItem('mailform2')) {
-          this.router.navigate(['/account-type']);
+
+        // Navigate to the next step based on the email change
+        if (!localStorage.getItem('step2Data') && !localStorage.getItem('mailform2')) {
+          this.router.navigate(['/account-type']); // Navigate to Step 2
         } else {
-          // If business account (mailform2 exists), navigate to BusinessBankShowDetails
           const isBusinessAccount = localStorage.getItem('mailform2') !== null;
           const isPersonalAccount = localStorage.getItem('step2Data') !== null;
-// localStorage.setItem('mailform2', JSON.stringify(isBusinessAccount));
+
           if (this.isBrowser) {
             if (isBusinessAccount) {
-              // Save business data to mailform2 and navigate to BusinessBankShowDetails
-              // localStorage.setItem('mailform2', JSON.stringify(values));
               this.router.navigate(['/BusinessBankShowDetails']);
             } else if (isPersonalAccount) {
-              // Save personal data to step1Data and navigate to ShowDetails
-              localStorage.setItem('step1Data', JSON.stringify(values));
               this.router.navigate(['/ShowDetails']);
             }
           }

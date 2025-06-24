@@ -36,7 +36,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     Companylicensed: '',
     BusinessActivityRisk: ''
   };
-  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '', countryRisk: '' }]; // Initialize with one shareholder
+  shareholders: any[] = [{ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' }]; // Initialize with one shareholder
  
   // openDatePicker() {
   //   if (this.dateInput && this.dateInput.nativeElement) {
@@ -118,7 +118,8 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     const storedStep2Data = localStorage.getItem('mailform2');
     if (storedStep2Data) {
       const parsedData = JSON.parse(storedStep2Data);
-     
+      const phoneNumberWithCountryCode = this.formData?.mobileNumber?.e164Number || '';
+    console.log('Phone number with country code:', phoneNumberWithCountryCode);
       // Update formData and shareholders separately
       this.formData = {
         companylocation: parsedData.companylocation,
@@ -190,22 +191,22 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     }
   }
  onShareholderInput(event: any, index: number) {
-  let val = event.target.value;
+    let val = event.target.value;
 
-  // If empty, don't change
-  if (val === '') return;
+    // If empty, don't change
+    if (val === '') return;
 
-  // Clamp value to 100 max
-  if (+val > 100) {
-    this.shareholders[index].shareholderPercentage = 100;
-    event.target.value = 100;
-  } else if (+val < 0) {
-    this.shareholders[index].shareholderPercentage = 0;
-    event.target.value = 0;
-  } else {
-    this.shareholders[index].shareholderPercentage = +val;
+    // Clamp value to 100 max
+    if (+val > 100) {
+      this.shareholders[index].shareholderPercentage = 100;
+      event.target.value = 100;
+    } else if (+val < 0) {
+      this.shareholders[index].shareholderPercentage = 0;
+      event.target.value = 0;
+    } else {
+      this.shareholders[index].shareholderPercentage = +val;
+    }
   }
-}
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard
   }
@@ -255,15 +256,24 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     const found = this.nationalities.find(n => n.country === selectedCountry);
     shareholder.countryRisk = found?.RiskRating ?? '';
   }
-  addShareholder() {
-    // console.log('Add shareholder clicked');
-    this.shareholders.push({ name: '', phone: '', dob: '', nationality: '' });
-    this.cdRef.detectChanges(); // Only if necessary
-}
+
+   addShareholder() {
+    this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+  }
+
+  deleteShareholder(index: number) {
+    this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
+  }
+
+//   addShareholder() {
+//     // console.log('Add shareholder clicked');
+//     this.shareholders.push({ name: '', phone: '', dob: '', nationality: '' });
+//     this.cdRef.detectChanges(); // Only if necessary
+// }
  
-deleteShareholder(index: number) {
-  this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
-}
+// deleteShareholder(index: number) {
+//   this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
+// }
  
   // Handle file input changes
   onFileChange(event: any, fieldName: string) {
@@ -276,17 +286,11 @@ deleteShareholder(index: number) {
  
   updateShareholders() {
     const count = parseInt(this.formData.shareholdercount, 10);
-    this.shareholders = [];
-  
-    if (!isNaN(count)) {
-      for (let i = 0; i < count; i++) {
-        this.shareholders.push({
-          name: '',
-          dob: '',
-          nationalityshareholder: '',
-          shareholderPercentage: null,
-        });
-      }
+    while (this.shareholders.length < count) {
+      this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+    }
+    while (this.shareholders.length > count) {
+      this.shareholders.pop();
     }
   }
   
@@ -459,6 +463,7 @@ deleteShareholder(index: number) {
         const leadResponseRaw = localStorage.getItem('leadResponse');
         this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 const economicDetailId = localStorage.getItem('economicDetailId') || "";
+   const phoneString = this.personalInfo?.mobileNumber?.e164Number || '';
 
       
         const payload2 = {
@@ -487,7 +492,8 @@ const economicDetailId = localStorage.getItem('economicDetailId') || "";
           lastName: this.personalInfo.lastName,
           email: this.personalInfo.email,
           nationality: this.personalInfo.nationality,
-          phone: this.personalInfo.mobileNumber?.number,
+          // phone: this.personalInfo.mobileNumber?.number,
+          phone:phoneString,
           dob: this.personalInfo.birthday,
 
           companyLicensed: getValue(this.formData.companyLicensed),

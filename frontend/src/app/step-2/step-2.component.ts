@@ -64,6 +64,9 @@ export class Step2Component implements AfterViewInit, OnInit {
     if (storedStep2Data) {
       this.formData = JSON.parse(storedStep2Data);
       this.cdRef.detectChanges();
+
+       const phoneNumberWithCountryCode = this.formData?.mobileNumber?.e164Number || '';
+    console.log('Phone number with country code:', phoneNumberWithCountryCode);
       // console.log(  this.formData.working)
     }
     // first try your separate leadId key
@@ -148,6 +151,8 @@ onSubmit() {
        const mailform = localStorage.getItem('step1Data');
         this.personalInfo = mailform ? JSON.parse(mailform) : {};
  const economicDetailId = localStorage.getItem('economicDetailId') || "";
+   const phoneString = this.personalInfo?.mobileNumber?.e164Number || '';
+
 
   const payload = {
     ...this.step1Data,
@@ -177,7 +182,8 @@ onSubmit() {
             lastName: this.personalInfo.lastName,
             email: this.personalInfo.email,
             nationality: this.personalInfo.nationality,
-            phone: this.personalInfo.mobileNumber.number,
+            // phone: this.personalInfo.mobileNumber.number,
+            phone:phoneString,
             dob: this.personalInfo.birthday,
     companyLicensed: getValue(this.formData.companyLicensed),
     activityType: getValue(this.formData.activityType),
