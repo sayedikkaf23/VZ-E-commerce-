@@ -398,7 +398,8 @@ onShareholderInput(event: any, index: number) {
             // .flat()
             // .map((f: any) => f.url)
             // .filter(Boolean)[0] || '',
-            shareholders: this.shareholders
+            shareholders: this.shareholders,
+            economicDetailId: economicDetailId || '',
           };
 
            // Conditionally add fields only if they exist and are not empty
@@ -406,9 +407,9 @@ onShareholderInput(event: any, index: number) {
             insertPayload.companyLicensed = this.formData.Companylicensed;
           }
 
-           if (economicDetailId) {
-            insertPayload.economicDetailId = economicDetailId;
-          }
+          //  if (economicDetailId) {
+          //   insertPayload.economicDetailId = economicDetailId;
+          // }
 
            if (mail3.companyTradeLicense) {
             insertPayload.tradeLicenseNo = mail3.companyTradeLicense;
