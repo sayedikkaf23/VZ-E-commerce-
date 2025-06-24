@@ -41,7 +41,10 @@ export class _HomeComponent {
       'mergedData',
       'virtualdata',
       'virtualdata2',
-      'virtualdata1'
+      'virtualdata1',
+      'economicDetailId',
+      'leadResponse',
+      'economicDetailId',
     ];
  
     const anyKeyExists = keysToRemove.some((key) => localStorage.getItem(key) !== null);

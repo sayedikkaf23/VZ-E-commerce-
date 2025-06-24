@@ -147,7 +147,8 @@ onSubmit() {
  
        const mailform = localStorage.getItem('step1Data');
         this.personalInfo = mailform ? JSON.parse(mailform) : {};
- 
+ const economicDetailId = localStorage.getItem('economicDetailId') || "";
+
   const payload = {
     ...this.step1Data,
  
@@ -163,7 +164,8 @@ onSubmit() {
     employmentType: getValue(this.formData.working),
     companyName: getValue(this.formData.companyname),
     bankType: getValue(this.formData.Bank),
- 
+           economicDetailId:economicDetailId,
+
     leadId: getValue(this.leadResponse.LeadId),
     accountId: getValue(this.leadResponse.AccountId),
  
@@ -198,6 +200,10 @@ onSubmit() {
  
   this.adminAuthService.insertEconomicDetails(payload).subscribe({
     next: (res: any) => {
+
+            const economicDetailId = res.data ? res.data.economicDetailId : "";
+      localStorage.setItem('economicDetailId', economicDetailId);
+
       console.log('Economic details saved', res);
       this.router.navigate(['/ShowDetails']);
     },

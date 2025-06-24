@@ -458,6 +458,7 @@ deleteShareholder(index: number) {
 
         const leadResponseRaw = localStorage.getItem('leadResponse');
         this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+const economicDetailId = localStorage.getItem('economicDetailId') || "";
 
       
         const payload2 = {
@@ -478,7 +479,7 @@ deleteShareholder(index: number) {
 
           leadId: getValue(this.leadResponse.LeadId),
           accountId: getValue(this.leadResponse.AccountId),
-
+          economicDetailId:economicDetailId,
           serviceName: 'Bank Account Opening',
           subServiceName: 'Business Bank Account Opening',
 
@@ -513,6 +514,9 @@ deleteShareholder(index: number) {
           .subscribe({
             next: res2 => {
               console.log('Economic details saved', res2);
+                    const economicDetailId = res2.data ? res2.data.economicDetailId : "";
+      localStorage.setItem('economicDetailId', economicDetailId);
+
                         this.router.navigate(['/BusinessBankShowDetails']);
 
             },
