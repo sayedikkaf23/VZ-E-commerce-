@@ -164,16 +164,40 @@ onSubmit() {
 
       const mailform2 = localStorage.getItem('mailform2');
      const mail2 = mailform2 ? JSON.parse(mailform2): null;
-    const payload: any = {
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      nationality: values.nationality,
-      phone: phoneString,
-      dob: values.birthday,
-      service_id: 2,
-      leadId: leadData?.LeadId || ''
-    };
+    let payload: any;
+
+     
+    // Check for email change
+    const storedEmail = localStorage.getItem('mailform')
+      ? JSON.parse(localStorage.getItem('mailform') || '{}').email
+      : '';
+    const currentEmail = values.email;
+
+    if (storedEmail !== currentEmail) {
+      // Email changed, create a new lead with an empty leadId
+      payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: currentEmail,
+        nationality: values.nationality,
+        phone: phoneString,
+        dob: values.birthday, // yyyy-mm-dd
+        service_id: 2,
+        leadId: '' // Empty leadId when email is changed
+      };
+    } else {
+      // Email didn't change, use the same leadId
+      payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: currentEmail,
+        nationality: values.nationality,
+        phone: phoneString,
+        dob: values.birthday, // yyyy-mm-dd
+        service_id: 2,
+        leadId: leadData?.LeadId || '' // Use existing leadId
+      };
+    }
 
     //  Conditionally add fields from mail1 and mail2 if they exist and are not empty
     if (mail1?.CompanyName) {
