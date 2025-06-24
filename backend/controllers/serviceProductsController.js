@@ -611,6 +611,7 @@ exports.insertEconomicDetails = async (req, res) => {
     if (employmentType) payload.employmentType = employmentType;
     if (companyName) payload.companyName = companyName;
      if (economicDetailId) payload.economicDetailId = economicDetailId;
+     else payload.economicDetailId = '';
     if (salary) payload.salary = salary;
     if (bankType) payload.bankType = bankType;
     if (companyLicensed) payload.companyLicensed = companyLicensed;
@@ -646,7 +647,7 @@ exports.insertEconomicDetails = async (req, res) => {
 
     const accessToken = tokenResp.data.access_token;
     const salesforceUrl = tokenResp.data.instance_url;
-
+console.log("Salesforce payload: ", payload);
     // Step 2: Call the InsertEconomicDetails API with dynamic payload
     const economicDetailsResp = await axios.post(
       `${salesforceUrl}/services/apexrest/insertEconomicDetails`,
