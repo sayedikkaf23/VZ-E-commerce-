@@ -16,7 +16,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { DecimalPipe } from '@angular/common'; // Import DecimalPipe
 import { AdminAuthService } from '../service/admin-auth.service';
 declare var $: any;
- 
+
 @Component({
   selector: 'app-step-2',
   templateUrl: './step-2.component.html',
@@ -36,11 +36,11 @@ export class Step2Component implements AfterViewInit, OnInit {
   };
   isValidSalary = true;
   personalInfo: any;
- 
+
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
   leadResponse: any;
- 
+
   constructor(
     private formDataService: FormDataService,
     private http: HttpClient,
@@ -50,14 +50,14 @@ export class Step2Component implements AfterViewInit, OnInit {
     private cdRef: ChangeDetectorRef,
     private decimalPipe: DecimalPipe,
     private adminAuthService: AdminAuthService,
- 
+
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // Retrieve Step 1 data from the service when Step 2 initializes
     this.step1Data = this.formDataService.getStep1Data();
     // console.log('Step 1 data:', this.step1Data);
   }
- 
+
   ngOnInit(): void {
     // Retrieve Step 2 data from localStorage
     const storedStep2Data = localStorage.getItem('step2Data');
@@ -65,8 +65,12 @@ export class Step2Component implements AfterViewInit, OnInit {
       this.formData = JSON.parse(storedStep2Data);
       this.cdRef.detectChanges();
 
-       const phoneNumberWithCountryCode = this.formData?.mobileNumber?.e164Number || '';
-    console.log('Phone number with country code:', phoneNumberWithCountryCode);
+      const phoneNumberWithCountryCode =
+        this.formData?.mobileNumber?.e164Number || '';
+      console.log(
+        'Phone number with country code:',
+        phoneNumberWithCountryCode
+      );
       // console.log(  this.formData.working)
     }
     // first try your separate leadId key
@@ -82,7 +86,7 @@ export class Step2Component implements AfterViewInit, OnInit {
       }
     }
   }
- 
+
   // Handle file input changes
   onFileChange(event: any, fieldName: string) {
     if (fieldName === 'passport') {
@@ -91,27 +95,27 @@ export class Step2Component implements AfterViewInit, OnInit {
       this.files.salaryStatements = Array.from(event.target.files);
     }
   }
- 
+
   onSalaryInput(event: any) {
     // Get the input value and remove any non-digit characters
     let inputValue = event.target.value.replace(/[^0-9]/g, '');
- 
+
     // Format the number with commas
     if (inputValue) {
       this.formData.salary = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     } else {
       this.formData.salary = '';
     }
- 
+
     // Update the input field value directly to avoid any delay
     event.target.value = this.formData.salary;
   }
- 
+
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
       // Ensure DOM-related code runs only in the browser
       AOS.init(); // Initialize AOS animations
- 
+
       $(window).scroll(() => {
         const height = $(window).scrollTop();
         if (height > 50) {
@@ -120,128 +124,123 @@ export class Step2Component implements AfterViewInit, OnInit {
           $('html').removeClass('sticky');
         }
       });
- 
+
       $(document).ready(() => {
         $('.scrollToTop').click((event: any) => {
           event.preventDefault();
           $('html, body').animate({ scrollTop: 0 }, 'slow');
           return false;
         });
- 
+
         $('.navbar-toggle').click(() => {
           $('html').toggleClass('menu-show');
         });
- 
+
         $('.header-menu-overlay').click(() => {
           $('html').removeClass('menu-show');
         });
       });
     }
   }
- 
-onSubmit() {
-  if (!this.validateForm()) return;
- 
-  const getValue = (value: any, fallback = '') =>
-    value === null || value === undefined ? fallback : value;
- 
-  const leadResponseRaw = localStorage.getItem('leadResponse');
-  this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
- 
-       const mailform = localStorage.getItem('step1Data');
-        this.personalInfo = mailform ? JSON.parse(mailform) : {};
- const economicDetailId = localStorage.getItem('economicDetailId') || "";
-   const phoneString = this.personalInfo?.mobileNumber?.e164Number || '';
 
+  onSubmit() {
+    if (!this.validateForm()) return;
 
-  const payload = {
-    ...this.step1Data,
- 
-    resident: getValue(this.formData.resident),
-    working: getValue(this.formData.working),
-    salary: getValue(this.formData.salary),
-    companyname: getValue(this.formData.companyname),
-    Bank: getValue(this.formData.Bank),
-    type: getValue(this.formData.type),
-    CustomerType: getValue(this.formData.CustomerType),
- 
-    companyLocationUAE: getValue(this.formData.resident),
-    employmentType: getValue(this.formData.working),
-    companyName: getValue(this.formData.companyname),
-    bankType: getValue(this.formData.Bank),
-           economicDetailId:economicDetailId,
+    const getValue = (value: any, fallback = '') =>
+      value === null || value === undefined ? fallback : value;
 
-    leadId: getValue(this.leadResponse.LeadId),
-    accountId: getValue(this.leadResponse.AccountId),
- 
-    serviceName: 'Bank Account Opening',
-    subServiceName: 'Personal Bank Account Opening',
- 
-    // Optional fields
+    const leadResponseRaw = localStorage.getItem('leadResponse');
+    this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+
+    const mailform = localStorage.getItem('step1Data');
+    this.personalInfo = mailform ? JSON.parse(mailform) : {};
+    const economicDetailId = localStorage.getItem('economicDetailId') || '';
+    const phoneString = this.personalInfo?.mobileNumber?.e164Number || '';
+
+    const payload = {
+      ...this.step1Data,
+
+      resident: getValue(this.formData.resident),
+      working: getValue(this.formData.working),
+      salary: getValue(this.formData.salary),
+      companyname: getValue(this.formData.companyname),
+      Bank: getValue(this.formData.Bank),
+      type: getValue(this.formData.type),
+      CustomerType: getValue(this.formData.CustomerType),
+
+      companyLocationUAE: getValue(this.formData.resident),
+      employmentType: getValue(this.formData.working),
+      companyName: getValue(this.formData.companyname),
+      bankType: getValue(this.formData.Bank),
+      economicDetailId: economicDetailId,
+
+      leadId: getValue(this.leadResponse.LeadId),
+      accountId: getValue(this.leadResponse.AccountId),
+
+      serviceName: 'Bank Account Opening',
+      subServiceName: 'Personal Bank Account Opening',
+
+      // Optional fields
       firstName: this.personalInfo.firstName,
-            lastName: this.personalInfo.lastName,
-            email: this.personalInfo.email,
-            nationality: this.personalInfo.nationality,
-            // phone: this.personalInfo.mobileNumber.number,
-            phone:phoneString,
-            dob: this.personalInfo.birthday,
-    companyLicensed: getValue(this.formData.companyLicensed),
-    activityType: getValue(this.formData.activityType),
-    totalShareholders: getValue(this.formData.totalShareholders),
-    companyTurnover: getValue(this.formData.companyTurnover),
-    companyLocation: getValue(this.formData.companyLocation),
-    companyWebsite: getValue(this.formData.companyWebsite),
-    tradeLicenseNo: getValue(this.formData.tradeLicenseNo),
-    shareholderfilesnumber: getValue(this.formData.shareholderfilesnumber),
-    tradeLicenseFile: getValue(this.formData.tradeLicenseFile),
-    shareholdersfiles: getValue(this.formData.shareholdersfiles),
- 
-    // Use [] instead of "" for array field
-    shareholders: Array.isArray(this.formData.shareholders)
-      ? this.formData.shareholders
-      : [],
-  };
- 
-  localStorage.setItem('step2Data', JSON.stringify(this.formData));
- 
-  this.adminAuthService.insertEconomicDetails(payload).subscribe({
-    next: (res: any) => {
+      lastName: this.personalInfo.lastName,
+      email: this.personalInfo.email,
+      nationality: this.personalInfo.nationality,
+      // phone: this.personalInfo.mobileNumber.number,
+      phone: phoneString,
+      dob: this.personalInfo.birthday,
+      companyLicensed: getValue(this.formData.companyLicensed),
+      activityType: getValue(this.formData.activityType),
+      totalShareholders: getValue(this.formData.totalShareholders),
+      companyTurnover: getValue(this.formData.companyTurnover),
+      companyLocation: getValue(this.formData.companyLocation),
+      companyWebsite: getValue(this.formData.companyWebsite),
+      tradeLicenseNo: getValue(this.formData.tradeLicenseNo),
+      shareholderfilesnumber: getValue(this.formData.shareholderfilesnumber),
+      tradeLicenseFile: getValue(this.formData.tradeLicenseFile),
+      shareholdersfiles: getValue(this.formData.shareholdersfiles),
 
-            const economicDetailId = res.data ? res.data.economicDetailId : "";
-      localStorage.setItem('economicDetailId', economicDetailId);
+      // Use [] instead of "" for array field
+      shareholders: Array.isArray(this.formData.shareholders)
+        ? this.formData.shareholders
+        : [],
+    };
 
-      console.log('Economic details saved', res);
-      this.router.navigate(['/ShowDetails']);
-    },
-    error: (err: any) => {
-      console.error('Save failed', err);
-    },
-  });
-}
- 
- 
- 
- 
+    localStorage.setItem('step2Data', JSON.stringify(this.formData));
+
+    this.adminAuthService.insertEconomicDetails(payload).subscribe({
+      next: (res: any) => {
+        const economicDetailId = res.data ? res.data.economicDetailId : '';
+        localStorage.setItem('economicDetailId', economicDetailId);
+
+        console.log('Economic details saved', res);
+        this.router.navigate(['/ShowDetails']);
+      },
+      error: (err: any) => {
+        console.error('Save failed', err);
+      },
+    });
+  }
+
   // Validate form and show a single toast for missing fields
   validateForm(): boolean {
     let isValid = true;
     const missingFields: string[] = []; // Array to hold missing fields
- 
+
     if (!this.formData.resident) {
       missingFields.push('Resident status');
       isValid = false;
     }
- 
+
     if (!this.formData.working) {
       missingFields.push('Working status');
       isValid = false;
     }
- 
+
     if (this.formData.working === 'Salaried' && !this.formData.salary) {
       missingFields.push('Salary for Salaried individuals');
       isValid = false;
     }
- 
+
     if (
       this.formData.working === 'Self Employed' &&
       !this.formData.companyname
@@ -249,18 +248,18 @@ onSubmit() {
       missingFields.push('Company name for Self Employed individuals');
       isValid = false;
     }
- 
+
     if (!this.formData.Bank) {
       missingFields.push('Bank information');
       isValid = false;
     }
- 
+
     // Show a single toast for all missing fields if any
     if (missingFields.length > 0) {
       const message = `All fields are required`;
       this.toastr.error(message);
     }
- 
+
     return isValid;
   }
   // Function to format salary as the user types

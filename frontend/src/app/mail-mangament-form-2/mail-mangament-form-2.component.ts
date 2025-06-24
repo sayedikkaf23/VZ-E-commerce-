@@ -11,6 +11,7 @@ import AOS from 'aos';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
+import { get } from 'node:http';
  
 declare var $: any;
  
@@ -93,7 +94,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     this.adminAuthService.getCountryRisks().subscribe((data) => {
       this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
        
-      
+     
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
  
@@ -101,7 +102,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       (response) => {
         // Log for debugging
         console.log('Categories response:', response);
-
+ 
        
         this.businessCategories = response.data.sort(
           (a: any, b: any) => a.name.localeCompare(b.name)
@@ -126,7 +127,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
         jurisdiction: parsedData.jurisdiction,
         Turnover: parsedData.Turnover,
         Bank: parsedData.Bank,
-
+ 
         shareholdercount: parsedData.shareholdercount,
         type: parsedData.type,
         Companylicensed: parsedData.Companylicensed,
@@ -153,10 +154,10 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     event.preventDefault();
   }
 }
-
+ 
   onCategorySearchSelect(selected: string) {
     this.formData.tradelicense = selected;
-  
+ 
     const selectedCategory = this.businessCategories.find(cat => cat.name === selected);
     if (selectedCategory) {
       this.formData.BusinessActivityRisk = selectedCategory.Score;
@@ -164,26 +165,26 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.formData.BusinessActivityRisk = null;
     }
   }
-  
+ 
   onCategoryChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const selectedCategoryName = selectElement.value;
-  
+ 
     const selectedCategory = this.businessCategories.find(
       (cat: any) => cat.name === selectedCategoryName
     );
-  
+ 
     if (selectedCategory) {
       this.formData.BusinessActivityRisk = selectedCategory.Score; // Store Score in formData
     } else {
       this.formData.BusinessActivityRisk = null; // Optional fallback
     }
   }
-
+ 
   onNationalityChange(event: Event, shareholder: any): void {
     const selectedCountry = (event.target as HTMLSelectElement).value;
     const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
-  
+ 
     if (selectedNationality) {
       shareholder.countryRisk = selectedNationality.RiskRating;
     } else {
@@ -192,10 +193,10 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   }
  onShareholderInput(event: any, index: number) {
     let val = event.target.value;
-
+ 
     // If empty, don't change
     if (val === '') return;
-
+ 
     // Clamp value to 100 max
     if (+val > 100) {
       this.shareholders[index].shareholderPercentage = 100;
@@ -216,7 +217,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     input.showPicker(); // Explicitly trigger the date picker
   }
  
-  
+ 
   ngAfterViewInit() {
     const Tooltip = (window as any).Tooltip;
     Tooltip.initAll();
@@ -256,15 +257,15 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     const found = this.nationalities.find(n => n.country === selectedCountry);
     shareholder.countryRisk = found?.RiskRating ?? '';
   }
-
+ 
    addShareholder() {
     this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
   }
-
+ 
   deleteShareholder(index: number) {
     this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
   }
-
+ 
 //   addShareholder() {
 //     // console.log('Add shareholder clicked');
 //     this.shareholders.push({ name: '', phone: '', dob: '', nationality: '' });
@@ -293,7 +294,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
       this.shareholders.pop();
     }
   }
-  
+ 
  
   // updateShareholders() {
   //   const count = parseInt(this.formData.shareholdercount, 10); // Convert count to number
@@ -397,7 +398,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   //   }
   // }
  
-
+ 
   onSubmit() {
   // 1️⃣ Validation
   if (this.isFormInvalid()) {
@@ -407,8 +408,8 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   if (!this.validateForm()) return;
   const mailform = localStorage.getItem('step1Data');
         this.personalInfo = mailform ? JSON.parse(mailform) : {};
-
-  // 2️⃣ Build & persist Step 2 FormData (if you actually need it; otherwise you can skip this)
+ 
+  // 2️⃣ Build & persist Step 2 FormData (if you actually need it; otherwise you can skip this)
   const formDataToSend = new FormData();
   for (const key in this.step1Data) {
     if (this.step1Data.hasOwnProperty(key)) {
@@ -425,14 +426,14 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   this.shareholders.forEach((sh, i) =>
     formDataToSend.append(`shareholders[${i}]`, JSON.stringify(sh))
   );
-
+ 
   const combinedFormData = {
     ...this.formData,
     shareholders: this.shareholders
   };
   localStorage.setItem('mailform2', JSON.stringify(combinedFormData));
   console.log(this.step1Data, 'step1Data', combinedFormData);
-
+ 
   // 3️⃣ FIRST API CALL: get products by category & risk
   const riskPayload = {
     customerCountryRisk: this.personalInfo?.countryRisk,
@@ -441,13 +442,13 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     totalCusotmerSelected: this.shareholders.length + 2
   };
      
-
-
+ 
+ 
   this.userService.getProductsByCategoryAndCountryRisk(riskPayload)
     .subscribe({
       next: response => {
         console.log('API Response:', response);
-
+ 
         // save appliedRisk
         const appliedRiskData = {
           appliedRisk: response.appliedRisk,
@@ -456,38 +457,39 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
           totalPossibleRating: response.totalPossibleRating
         };
         localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
-
+ 
         // 4️⃣ AFTER FIRST CALL: build & fire your second payload
         const getValue = (v: any, fb = '') => v == null ? fb : v;
-
+ 
         const leadResponseRaw = localStorage.getItem('leadResponse');
         this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 const economicDetailId = localStorage.getItem('economicDetailId') || "";
    const phoneString = this.personalInfo?.mobileNumber?.e164Number || '';
-
-      
+ 
+     
         const payload2 = {
           ...this.step1Data,
-
-          resident: getValue(this.formData.resident),
-          working: getValue(this.formData.working),
-          salary: getValue(this.formData.salary),
-          companyname: getValue(this.formData.companyname),
+ 
+          // resident: getValue(this.formData.resident),
+          // working: getValue(this.formData.working),
+          companyLicensed: getValue(this.formData.Companylicensed),
+          // salary: getValue(this.formData.salary),
+          // companyname: getValue(this.formData.companyname),
           Bank: getValue(this.formData.Bank),
           type: getValue(this.formData.type),
-          CustomerType: getValue(this.formData.CustomerType),
-
-          companyLocationUAE: getValue(this.formData.resident),
-          employmentType: getValue(this.formData.working),
-          companyName: getValue(this.formData.companyname),
+          // CustomerType: getValue(this.formData.CustomerType),
+ 
+          companyLocationUAE: getValue(this.formData.companylocation),
+          // employmentType: getValue(this.formData.working),
+          // companyName: getValue(this.formData.companyname),
           bankType: getValue(this.formData.Bank),
-
+ 
           leadId: getValue(this.leadResponse.LeadId),
           accountId: getValue(this.leadResponse.AccountId),
           economicDetailId:economicDetailId,
           serviceName: 'Bank Account Opening',
           subServiceName: 'Business Bank Account Opening',
-
+ 
           firstName: this.personalInfo.firstName,
           lastName: this.personalInfo.lastName,
           email: this.personalInfo.email,
@@ -495,26 +497,32 @@ const economicDetailId = localStorage.getItem('economicDetailId') || "";
           // phone: this.personalInfo.mobileNumber?.number,
           phone:phoneString,
           dob: this.personalInfo.birthday,
-
-          companyLicensed: getValue(this.formData.companyLicensed),
-          activityType: getValue(this.formData.activityType),
-          totalShareholders: getValue(this.formData.totalShareholders),
-          companyTurnover: getValue(this.formData.companyTurnover),
+ 
+          // companyLicensed: getValue(this.formData.companyLicensed),
+          activityType: getValue(this.formData.tradelicense),
+          totalShareholders: getValue(this.formData.shareholdercount),
+          companyTurnover: getValue(this.formData.Turnover),
           companyLocation: getValue(this.formData.companyLocation),
-          companyWebsite: getValue(this.formData.companyWebsite),
-          tradeLicenseNo: getValue(this.formData.tradeLicenseNo),
-          shareholderfilesnumber: getValue(this.formData.shareholderfilesnumber),
-          tradeLicenseFile: getValue(this.formData.tradeLicenseFile),
-          shareholdersfiles: getValue(this.formData.shareholdersfiles),
-
-          shareholders: Array.isArray(this.formData.shareholders)
-            ? this.formData.shareholders
-            : []
+          // companyWebsite: getValue(this.formData.companyWebsite),
+          // tradeLicenseNo: getValue(this.formData.tradeLicenseNo),
+          // shareholderfilesnumber: getValue(this.formData.shareholderfilesnumber),
+          // tradeLicenseFile: getValue(this.formData.tradeLicenseFile),
+          // shareholdersfiles: getValue(this.formData.shareholdersfiles),
+        //  totalShareholders:getValue(this.formData.shareholdercount),
+         shareholders: Array.isArray(this.shareholders) && this.shareholders.length
+    ? this.shareholders.map((shareholder) => ({
+        name: shareholder.name,
+        shareholderPercentage: shareholder.shareholderPercentage,
+        dob: shareholder.dob,
+        nationalityshareholder: shareholder.nationalityshareholder,
+        files: shareholder.files || [], // Ensure files are an empty array if not provided
+      }))
+    : []
         };
-
+ 
         // persist step2 JSON
         localStorage.setItem('step2Data', JSON.stringify(this.formData));
-
+ 
         // call insertEconomicDetails
         this.adminAuthService.insertEconomicDetails(payload2)
           .subscribe({
@@ -522,9 +530,9 @@ const economicDetailId = localStorage.getItem('economicDetailId') || "";
               console.log('Economic details saved', res2);
                     const economicDetailId = res2.data ? res2.data.economicDetailId : "";
       localStorage.setItem('economicDetailId', economicDetailId);
-
+ 
                         this.router.navigate(['/BusinessBankShowDetails']);
-
+ 
             },
             error: err2 => {
               console.error('Save failed', err2);
@@ -538,7 +546,7 @@ const economicDetailId = localStorage.getItem('economicDetailId') || "";
       }
     });
 }
-
+ 
  
 trackByShareholder(index: number, shareholder: any): number {
   return index; // Or return a unique identifier if you have one
@@ -559,22 +567,22 @@ trackByShareholder(index: number, shareholder: any): number {
     missingFields.push('Company Licensed');
     isValid = false;
   }
-
+ 
   if (!this.formData.tradelicense) {
     missingFields.push('Trade License Activity');
     isValid = false;
   }
-
+ 
   if (!this.formData.shareholdercount) {
     missingFields.push('Shareholder Count');
     isValid = false;
   }
-
+ 
   if (!this.formData.Turnover) {
     missingFields.push('Turnover');
     isValid = false;
   }
-
+ 
   if (!this.formData.Bank) {
     missingFields.push('Bank Application Type');
     isValid = false;
@@ -601,4 +609,3 @@ trackByShareholder(index: number, shareholder: any): number {
     return isValid;
   }
 }
- 
