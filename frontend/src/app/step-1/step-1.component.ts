@@ -374,7 +374,13 @@ onSubmit() {
         } else if (control.errors?.['email']) {
           this.toastr.error(`Please provide a valid ${this.getFieldName(field)}.`, 'Validation Error');
           return; // Show error and return
-        }
+        } if (control.errors?.['validatePhoneNumber']) {
+        this.toastr.error(
+          'Enter a valid mobile number for the selected country.',
+          'Validation Error'
+        );
+        return;
+      }
       }
     }
   }
