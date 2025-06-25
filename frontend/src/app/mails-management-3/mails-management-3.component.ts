@@ -304,6 +304,7 @@ export class MailsManagement3Component implements OnInit {
             phone: this.personalInfo.phone,
             dob: this.personalInfo.birthday,
             economicDetailId: this.economicDetailId,
+            countryCode: this.personalInfo.mobileNumber.dialCode,
             // companyLocationUAE: '',
             // employmentType: '',
             companyName: mail2.CompanyName,

@@ -428,23 +428,23 @@ exports.createLeadOnly = async (req, res) => {
       dob,
       service_id,
       leadId,
-      subServiceName,
-      companyLocationUAE,
-      employmentType,
-      companyName,
-      salary,
-      bankType,
-      companyLicensed,
-      activityType,
-      totalShareholders,
-      companyTurnover,
-      companyLocation,
-      companyWebsite,
-      tradeLicenseNo,
-      shareholderfilesnumber,
-      tradeLicenseFile,
-      shareholdersfiles,
-      shareholders,
+      // subServiceName,
+      // companyLocationUAE,
+      // employmentType,
+      // companyName,
+      // salary,
+      // bankType,
+      // companyLicensed,
+      // activityType,
+      // totalShareholders,
+      // companyTurnover,
+      // companyLocation,
+      // companyWebsite,
+      // tradeLicenseNo,
+      // shareholderfilesnumber,
+      // tradeLicenseFile,
+      // shareholdersfiles,
+      // shareholders,
     } = req.body;
 
     if (!firstName || !lastName || !email || !nationality || !phone || !dob) {
@@ -505,8 +505,12 @@ exports.createLeadOnly = async (req, res) => {
     const cleanedPhone = phone.replace(/\s+/g, ""); // Example cleanup
     const countryCode = "+" + cleanedPhone.slice(0, 2); // Or get it from input/parse lib
 
-    const leadData = {
-      leadWithDetails: {
+    
+    const existingDoc = await Pidata.findOne({ "leadWithDetails.LeadId": leadResp.data?.LeadId });
+
+    let updatedLeadWithDetails = {
+      ...(existingDoc?.leadWithDetails || {}), // keep existing
+      ...{
         FirstName: firstName,
         LastName: lastName,
         Email: email,
@@ -517,35 +521,13 @@ exports.createLeadOnly = async (req, res) => {
         Status: "Created",
         dob: dob,
         LeadId: leadResp.data?.LeadId || null,
-        companyLocationUAE,
-        employmentType,
-        Company: companyName,
-        salary,
-        bankType,
-        companyLicensed,
-        activityType,
-        totalShareholders,
-        companyTurnover,
-        companyLocation,
-        companyWebsite,
-      },
-
-      subcategory: subServiceName,
-      tradeLicenseFileUrl: tradeLicenseFile,
-      shareholdersfiles,
-      shareholders,
-      tradeLicenseNo,
-      shareholderfilesnumber,
-      quotePaymentWithDetails: {
-        AccountId: leadResp.data?.AccountId || null,
-      },
-      ContactId: leadResp.data?.ContactId || null,
+      }
     };
 
     //  If leadId exists, update the record, else create a new one
     const pidataDoc = await Pidata.findOneAndUpdate(
       { "leadWithDetails.LeadId": leadResp.data?.LeadId }, // condition
-      { $set: leadData },
+      { $set: updatedLeadWithDetails },
       { upsert: true, new: true } // upsert = create if not exists
     );
 
@@ -575,6 +557,7 @@ exports.insertEconomicDetails = async (req, res) => {
       email,
       nationality,
       phone,
+      countryCode,
       dob,
       companyLocationUAE,
       employmentType,
@@ -604,6 +587,7 @@ exports.insertEconomicDetails = async (req, res) => {
     if (firstName) payload.FirstName = firstName;
     if (lastName) payload.LastName = lastName;
     if (email) payload.Email = email;
+    if (countryCode) payload.Email = countryCode;
     if (nationality) payload.Nationality = nationality;
     if (phone) payload.Phone = phone;
     if (dob) payload.dob = dob;
@@ -647,7 +631,7 @@ exports.insertEconomicDetails = async (req, res) => {
 
     const accessToken = tokenResp.data.access_token;
     const salesforceUrl = tokenResp.data.instance_url;
-console.log("Salesforce payload: ", payload);
+    console.log("Salesforce payload: ", payload);
     // Step 2: Call the InsertEconomicDetails API with dynamic payload
     const economicDetailsResp = await axios.post(
       `${salesforceUrl}/services/apexrest/insertEconomicDetails`,
@@ -661,8 +645,8 @@ console.log("Salesforce payload: ", payload);
     );
 
     // Clean phone number and generate country code
-    const cleanedPhone = phone ? phone.replace(/\s+/g, "") : null;
-    const countryCode = cleanedPhone ? "+" + cleanedPhone.slice(0, 2) : null;
+    // const cleanedPhone = phone ? phone.replace(/\s+/g, "") : null;
+    // const countryCode = cleanedPhone ? "+" + cleanedPhone.slice(0, 2) : null;
 
     // Prepare the data for your local database (Pidata, etc.)
     const economicData = {
@@ -675,8 +659,8 @@ console.log("Salesforce payload: ", payload);
         LastName: lastName,
         Email: email,
         Nationality: nationality,
-        Phone: cleanedPhone,
-        countryCode: countryCode,
+        Phone: phone,
+        countryCode,
         dob,
         companyLocationUAE,
         employmentType,
