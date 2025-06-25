@@ -349,6 +349,7 @@ export class VirtualReceptionist2Component implements OnInit {
             companyLicensed: mail2.Companylicensed,
             activityType: mail2.tradelicense,
              economicDetailId: this.economicDetailId,
+             countryCode: this.personalInfo.mobileNumber.dialCode,
            totalShareholders: mail2.shareholdercount ,
             // companyTurnover: '',
             companyLocation: mail2.CompanyIncorporated,

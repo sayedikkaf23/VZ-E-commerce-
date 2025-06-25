@@ -383,6 +383,7 @@ onShareholderInput(event: any, index: number) {
             // companyLocationUAE: '',
             // employmentType: '',
             companyName: this.formData.CompanyName,
+            countryCode: this.personalInfo.mobileNumber.dialCode,
             // salary: '',
             // bankType: '',
             // companyLicensed: this.formData.Companylicensed,

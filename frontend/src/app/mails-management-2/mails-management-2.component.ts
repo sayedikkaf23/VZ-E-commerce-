@@ -352,6 +352,7 @@ onShareholderInput(event: any, index: number) {
             nationality: this.personalInfo.nationality,
             phone: this.personalInfo.mobileNumber.number,
             dob: this.personalInfo.birthday,
+            countryCode: this.personalInfo.mobileNumber.dialCode,
             // companyLocationUAE: '',
             // employmentType: '',
             companyName: this.formData.CompanyName,

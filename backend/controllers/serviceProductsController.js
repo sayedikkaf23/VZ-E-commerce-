@@ -562,6 +562,7 @@ exports.createLeadOnly = async (req, res) => {
   }
 };
 
+
 exports.insertEconomicDetails = async (req, res) => {
   try {
     const {
@@ -575,6 +576,7 @@ exports.insertEconomicDetails = async (req, res) => {
       email,
       nationality,
       phone,
+      countryCode,
       dob,
       companyLocationUAE,
       employmentType,
@@ -604,6 +606,7 @@ exports.insertEconomicDetails = async (req, res) => {
     if (firstName) payload.FirstName = firstName;
     if (lastName) payload.LastName = lastName;
     if (email) payload.Email = email;
+    if (countryCode) payload.Email = countryCode;
     if (nationality) payload.Nationality = nationality;
     if (phone) payload.Phone = phone;
     if (dob) payload.dob = dob;
@@ -647,7 +650,7 @@ exports.insertEconomicDetails = async (req, res) => {
 
     const accessToken = tokenResp.data.access_token;
     const salesforceUrl = tokenResp.data.instance_url;
-console.log("Salesforce payload: ", payload);
+    console.log("Salesforce payload: ", payload);
     // Step 2: Call the InsertEconomicDetails API with dynamic payload
     const economicDetailsResp = await axios.post(
       `${salesforceUrl}/services/apexrest/insertEconomicDetails`,
@@ -661,8 +664,8 @@ console.log("Salesforce payload: ", payload);
     );
 
     // Clean phone number and generate country code
-    const cleanedPhone = phone ? phone.replace(/\s+/g, "") : null;
-    const countryCode = cleanedPhone ? "+" + cleanedPhone.slice(0, 2) : null;
+    // const cleanedPhone = phone ? phone.replace(/\s+/g, "") : null;
+    // const countryCode = cleanedPhone ? "+" + cleanedPhone.slice(0, 2) : null;
 
     // Prepare the data for your local database (Pidata, etc.)
     const economicData = {
@@ -675,8 +678,8 @@ console.log("Salesforce payload: ", payload);
         LastName: lastName,
         Email: email,
         Nationality: nationality,
-        Phone: cleanedPhone,
-        countryCode: countryCode,
+        Phone: phone,
+        countryCode,
         dob,
         companyLocationUAE,
         employmentType,
