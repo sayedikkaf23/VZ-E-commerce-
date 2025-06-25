@@ -190,11 +190,6 @@ onSubmit() {
       const leadDataRaw = localStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
-    const mailform1 = localStorage.getItem('virtualdata1');
-     const mail1 = mailform1 ? JSON.parse(mailform1): null;
-
-      const mailform2 = localStorage.getItem('virtualdata2');
-     const mail2 = mailform2 ? JSON.parse(mailform2): null;
 
      let payload: any;
 
@@ -217,6 +212,9 @@ onSubmit() {
         service_id: 3,
         leadId: '' // Empty leadId when email is changed
       };
+      // erase previous form values if exists
+      localStorage.removeItem('virtualdata1');
+      localStorage.removeItem('virtualdata2');
     } else {
       // Email didn't change, use the same leadId
       payload = {
@@ -229,51 +227,6 @@ onSubmit() {
         service_id: 3,
         leadId: leadData?.LeadId || '' // Use existing leadId
       };
-    }
-
-       //  Conditionally add fields from mail1 and mail2 if they exist and are not empty
-    if (mail1?.CompanyName) {
-      payload.companyName = mail1.CompanyName;
-    }
-    if (mail1?.Companylicensed) {
-      payload.companyLicensed = mail1.Companylicensed;
-    }
-    if (mail1?.tradelicense) {
-      payload.activityType = mail1.tradelicense;
-    }
-    if (mail1?.shareholdercount) {
-      payload.totalShareholders = mail1.shareholdercount;
-    }
-    if (mail1?.CompanyIncorporated) {
-      payload.companyLocation = mail1.CompanyIncorporated;
-    }
-    if (mail1?.Website) {
-      payload.companyWebsite = mail1.Website;
-    }
-    if (mail1?.shareholders?.length) {
-      payload.shareholders = mail1.shareholders;
-    }
-
-    //  Conditionally add documents from mail2
-    if (mail2?.companyTradeLicenseNumber) {
-      payload.tradeLicenseNo = mail2.companyTradeLicenseNumber;
-    }
-    if (mail2?.shareholders?.[0]?.passportNumber) {
-      payload.shareholderfilesnumber = mail2.shareholders[0].passportNumber;
-    }
-
-    const tradeLicenseUrl = mail2?.companyTradeLicenseFile?.[0]?.url;
-    if (tradeLicenseUrl) {
-      payload.tradeLicenseFile = tradeLicenseUrl;
-    }
-
-    const allShareholderFiles = Object.values(mail2?.uploadedFileNames || {})
-      .flat()
-      .map((f: any) => f.url)
-      .filter(Boolean);
-
-    if (allShareholderFiles.length) {
-      payload.shareholdersfiles = allShareholderFiles[0]; // Or use full array if needed
     }
 
     this.isLoading = true;
