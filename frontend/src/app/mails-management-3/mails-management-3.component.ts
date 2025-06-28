@@ -301,7 +301,7 @@ export class MailsManagement3Component implements OnInit {
             lastName: this.personalInfo.lastName,
             email: this.personalInfo.email,
             nationality: this.personalInfo.nationality,
-            phone: this.personalInfo.phone,
+            phone: this.personalInfo.mobileNumber.number,
             dob: this.personalInfo.birthday,
             economicDetailId: this.economicDetailId,
             countryCode: this.personalInfo.mobileNumber.dialCode,
