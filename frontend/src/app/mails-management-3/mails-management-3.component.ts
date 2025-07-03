@@ -161,10 +161,10 @@ export class MailsManagement3Component implements OnInit {
 
           // Angular’s HttpClient typically puts the server’s JSON under error.error
           // e.g., error.error = { error: "File size cannot exceed 1MB" }
-          const errorMsg = error.error?.error || 'An error occurred while getting URL';
+          // const errorMsg = error.error?.error || 'An error occurred while getting URL';
   
-          // Show it in a toast (using ngx-toastr for example)
-          this.toastr.error(errorMsg, 'Error');
+          // // Show it in a toast (using ngx-toastr for example)
+          // this.toastr.error(errorMsg, 'Error');
           this.isLoading = false;
         }
       );
@@ -301,7 +301,7 @@ export class MailsManagement3Component implements OnInit {
             lastName: this.personalInfo.lastName,
             email: this.personalInfo.email,
             nationality: this.personalInfo.nationality,
-            phone: this.personalInfo.phone,
+            phone: this.personalInfo.mobileNumber.number,
             dob: this.personalInfo.birthday,
             economicDetailId: this.economicDetailId,
             countryCode: this.personalInfo.mobileNumber.dialCode,
@@ -323,7 +323,10 @@ export class MailsManagement3Component implements OnInit {
             .flat()
             .map((f: any) => f.url)
             .filter(Boolean)[0] || '',
-            shareholders: this.shareholders.value,
+            shareholders: this.shareholders.value.map((shareholder: any, idx: number) => ({
+              ...shareholder,
+              files: this.uploadedFileNames[idx] || []
+            })),
           };
             console.log(insertPayload);
            this.isLoading = true;
