@@ -134,6 +134,22 @@ export class AdminDocumentTypeComponent {
           }
         );
         break;
+         case 'Virtual Receptionist':
+      this.documenttypeService.getVirtualReceptions().subscribe(
+        (response: any[]) => {
+          this.docRecords    = response;
+          this.docTypes      = response.map(r => r.documentType);
+          this.selectedCount = this.docTypes.length;
+        },
+        err => {
+          console.error('Error fetching Virtual Receptions:', err);
+          this.docRecords = [];
+          this.docTypes   = [];
+          this.selectedCount = 0;
+        }
+      );
+      break;
+
  
       default:
         console.warn('Unknown service name:', serviceName);
