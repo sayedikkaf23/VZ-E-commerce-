@@ -348,47 +348,84 @@ fetchPersonalBanks(): void {
   }
   
   
-  submitDocuments(): void {
-    // Example payload
-    const payload = {
-      someId: this.selectedRecord._id,
-      files: this.uploadedFiles
-    };
+submitDocuments(): void {
+  const payload = {
+    someId: this.selectedRecord._id,
+    files: this.uploadedFiles
+  };
 
-    // console.log('Submitting documents:', payload);
-    document.querySelector('.app-wrapper')?.classList.remove('blur-background'); //clears the background blur
+  document.querySelector('.app-wrapper')?.classList.remove('blur-background');
 
-    // Make a call to your backend to save file info
-    // or do any other processing you need here.
-    this.userService.updateAdditionalUploadedFiles(payload)
-      .subscribe(
-        (response) => {
-          // console.log('Documents submitted successfully!', response);
-          const email = localStorage.getItem('userEmail') ?? '';
-          this.fetchUserServices(email);
-          
-          this.uploadedFiles = [];
-          const modalElement = document.getElementById('uploadDetailsModal');
-          if (modalElement) {
-            modalElement.classList.remove('show'); // Remove Bootstrap's "show" class
-            modalElement.style.display = 'none'; // Hide the modal
-            modalElement.setAttribute('aria-hidden', 'true'); // Update accessibility
-            document.body.classList.remove('modal-open'); // Remove modal-open class from body
-            const backdrop = document.querySelector('.modal-backdrop');
-            if (backdrop) {
-              backdrop.remove(); // Remove the backdrop manually if it exists
-            }
+  this.userService.updateAdditionalUploadedFiles(payload).subscribe(
+    (response) => {
 
-           
-          }
-    
-          // Optionally close the modal or reset the form
+
+      this.uploadedFiles = [];
+
+      const modalElement = document.getElementById('uploadDetailsModal');
+      if (modalElement) {
+        modalElement.classList.remove('show');
+        modalElement.style.display = 'none';
+        modalElement.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) backdrop.remove();
+      }
+
+      // Safely extract data from response
+      const record = response?.record ?? {};
+      const lead = record.leadWithDetails ?? {};
+      const getValue = (val: any) => val !== undefined && val !== null ? val : '';
+
+      const payload2 = {
+        companyLicensed: getValue(lead.companyLicensed),
+        Bank: getValue(record.Bank), // Assuming Bank is top-level (or set to empty if not available)
+        type: getValue(record.type),
+        companyLocationUAE: getValue(lead.companyLocation),
+        bankType: getValue(record.Bank),
+        leadId: getValue(lead.LeadId),
+        accountId: getValue(record.accountId),
+        economicDetailId: getValue(record._id),
+        serviceName: getValue(lead.ServiceName),
+        subServiceName: getValue(record.planname),
+        firstName: getValue(lead.FirstName),
+        lastName: getValue(lead.LastName),
+        email: getValue(lead.Email),
+        nationality: getValue(lead.Nationality),
+        phone: `${getValue(lead.countryCode)}${getValue(lead.Phone)}`,
+        dob: getValue(lead.dob),
+        activityType: getValue(lead.activityType),
+        totalShareholders: getValue(lead.totalShareholders),
+        companyTurnover: getValue(record.companyTurnover),
+        companyLocation: getValue(lead.companyLocation),
+        shareholders: Array.isArray(record.shareholders) ? record.shareholders.map((s: any) => ({
+          name: getValue(s.name),
+          shareholderPercentage: getValue(s.shareholderPercentage),
+          dob: getValue(s.dob),
+          nationalityshareholder: getValue(s.nationalityshareholder),
+          files: Array.isArray(s.files) ? s.files : []
+        })) : []
+      };
+
+      this.userService.insertEconomicDetails(payload2).subscribe(
+        (res) => {
+                const email = localStorage.getItem('userEmail') ?? '';
+      this.fetchUserServices(email);
+          console.log('Economic details submitted:', res);
         },
-        (error) => {
-          console.error('Error submitting documents', error);
+        (err) => {
+          console.error('Error submitting economic details', err);
         }
       );
-  }
+    },
+    (error) => {
+      console.error('Error submitting documents', error);
+    }
+  );
+}
+
+
+
 
   closeModal(): void {
     this.showModal = false;
