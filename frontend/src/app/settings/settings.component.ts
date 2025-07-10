@@ -105,7 +105,31 @@ export class SettingsComponent implements OnInit {
       this.selectedFile = event.target.files[0];
     }
   }
+  onStatusChange(service: any, event: Event): void {
+    const newStatus = (event.target as HTMLInputElement)?.checked;
 
+    // Update local value immediately
+    service.isActive = newStatus;
+
+    const updateData = {
+      serviceName: service.serviceName,
+      description: service.description,
+      isActive: newStatus
+    };
+
+    this.adminAuthService.updateService(service._id, updateData, null)
+      .subscribe({
+        next: () => {
+          this.toastr.success('Service status updated successfully!');
+        },
+        error: (error) => {
+          console.error('Error updating service status:', error);
+          this.toastr.error('Failed to update service status.');
+          // Revert local change on failure
+          service.isActive = !newStatus;
+        }
+      });
+  }
 
 
   updateService(): void {
