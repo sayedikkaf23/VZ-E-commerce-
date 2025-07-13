@@ -46,6 +46,8 @@
           <th scope="col">Quote Payment ID</th>
           <th scope="col">Compliance Score</th>
           <th scope="col">Compliance Status</th>
+          <th scope="col">Created Date</th>
+          <th scope="col">Updated Date</th>
           <th scope="col">View Product</th>
           <th scope="col">View Document</th>
           <th scope="col">View Company</th>
@@ -71,6 +73,8 @@
           <td>{{ user.quotePaymentWithDetails?.QuotePaymentId }}</td>
           <td>{{ user.screeningDetails?.matchScore }}</td>
           <td>{{ user.kycStatus }}</td>
+          <td>{{ user.createdAt | slice:0:10 }}</td>
+          <td>{{ user.updatedAt | slice:0:10 }}</td>
           <td>
             <button class="green-button" (click)="openProductModal(user)">
               View Products

@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const searchController = require ("../controllers/bankAccountSearchController");
 const { multipleUpload, singleUpload } = require('../middleware/fileUpload'); // Import file upload middleware
 
 // Route to handle form submission with multiple file uploads
@@ -15,6 +16,10 @@ router.post('/services', userController.createService);
 router.get('/submissions', userController.getAllSubmissions);
 router.get('/getBusinessBank', userController.getBusinessBank);
 router.get('/getPersonalBank', userController.getPersonalBank);
+router.get('/getSearchedPersonalBank', searchController.getPersonalBankSearch);
+router.get('/getDateFilteredPersonalBank', searchController.getPersonalBankDateFilter);
+router.get('/getSearchedBusinessBank', searchController.getPersonalBankSearch);
+router.get('/getDateFilteredBusinessBank', searchController.getPersonalBankDateFilter);
 router.post('/login', userController.loginAdmin);
 router.post('/payNowByStripe', userController.payNowByStripe);
 router.post('/checkUser', userController.checkUser);
