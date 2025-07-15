@@ -75,7 +75,7 @@ export class VirtualReceptionistDetailsComponent {
       window.scrollTo(0, 0);
     }
     // Redirect if either mailform or mailform2 is missing
-    const leadDataRaw = localStorage.getItem('leadResponse');
+    const leadDataRaw = sessionStorage.getItem('leadResponse');
   const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
    const leadId = leadData?.LeadId;
    if (leadId) {
@@ -370,7 +370,7 @@ console.log("Trade License Data:", tradeData);
   // }
 
   submitData() {
-    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+    const mergedData = JSON.parse(sessionStorage.getItem('mergedData') || '{}');
     const uploadedFileNames = this.tradeLicenseFile?.uploadedFileNames || [];
     const shareholdersData = mergedData?.shareholders || [];
     console.log(mergedData, 'mergedData', this.tradeLicenseFile);
@@ -388,7 +388,7 @@ console.log("Trade License Data:", tradeData);
       this.isLoading = true;
 
       const appliedRiskData = JSON.parse(
-        localStorage.getItem('appliedRisk') || '{}'
+        sessionStorage.getItem('appliedRisk') || '{}'
       );
       const riskCode =
         appliedRiskData.appliedRisk === 'Low'
@@ -427,7 +427,7 @@ console.log("Trade License Data:", tradeData);
             if (!serviceResponse) return of(null);
 
            
-            localStorage.setItem(
+            sessionStorage.setItem(
               'VirtualServiceProducts',
               JSON.stringify(serviceResponse)
             );
@@ -439,7 +439,7 @@ console.log("Trade License Data:", tradeData);
               ? serviceResponse
               : [serviceResponse];
             this.serviceProducts = serviceProducts;
-            const leadResponseRaw = localStorage.getItem('leadResponse');
+            const leadResponseRaw = sessionStorage.getItem('leadResponse');
             const leadResponse = leadResponseRaw
               ? JSON.parse(leadResponseRaw)
               : {};
@@ -533,7 +533,7 @@ console.log("Trade License Data:", tradeData);
           }),
           switchMap(({ quotePaymentId, leadId ,shareholders}) => {
             if (!leadId) throw new Error('Missing LeadId from digicomplice');
-            const leadResponseRaw = localStorage.getItem('leadResponse');
+            const leadResponseRaw = sessionStorage.getItem('leadResponse');
             const leadResponse = leadResponseRaw
               ? JSON.parse(leadResponseRaw)
               : {};
@@ -572,7 +572,7 @@ console.log("Trade License Data:", tradeData);
                         if (
                           statusRes?.data?.CustomerStatus === 'Auto Approved'
                         ) {
-                          localStorage.setItem(
+                          sessionStorage.setItem(
                             'quotePaymentId',
                             documentPayload.quotePaymentId
                           );

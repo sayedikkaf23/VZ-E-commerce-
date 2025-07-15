@@ -185,6 +185,7 @@ onSubmit() {
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
     const phoneString = values.mobileNumber?.e164Number || '';
+    const countryCode = values.mobileNumber?.dialCode || '';
    
     const leadDataRaw = sessionStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
@@ -204,6 +205,7 @@ onSubmit() {
                   nationality: values.nationality,
                   phone: phoneString,
                   dob: values.birthday,
+                  countryCode: countryCode,
                   service_id: 1,
                   leadId: '' // empty leadId triggers new lead creation
                 };
@@ -217,6 +219,7 @@ onSubmit() {
                   nationality: values.nationality,
                   phone: phoneString,
                   dob: values.birthday,
+                  countryCode: countryCode,
                   service_id: 1,
                   leadId: leadId
                 };

@@ -119,7 +119,7 @@ isBrowser: boolean;
     });
 
       if (this.isBrowser) {
-  const leadDataRaw = localStorage.getItem('leadResponse');
+  const leadDataRaw = sessionStorage.getItem('leadResponse');
   const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
   const leadId = leadData?.LeadId;
 
@@ -380,10 +380,10 @@ onShareholderInput(event: any, index: number) {
 
        
 
-         const leadResponseRaw = localStorage.getItem('leadResponse');
+         const leadResponseRaw = sessionStorage.getItem('leadResponse');
         this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
-        const economicDetailId = localStorage.getItem('economicDetailId');
+        const economicDetailId = sessionStorage.getItem('economicDetailId');
 
       
 
@@ -459,10 +459,10 @@ onShareholderInput(event: any, index: number) {
           (response) => {
             console.log('API Response:', response);
             this.economicDetailId = response.data?.economicDetailId;
-            localStorage.setItem('economicDetailId',this.economicDetailId);
+            sessionStorage.setItem('economicDetailId',this.economicDetailId);
             let storedRisk = '0';
               if (this.isBrowser) {
-                storedRisk = localStorage.getItem('countryRisk') || '0';
+                storedRisk = sessionStorage.getItem('countryRisk') || '0';
               }
              // Prepare payload for the API call using Step 1 and Shareholders data
          const payload = {
@@ -484,8 +484,8 @@ onShareholderInput(event: any, index: number) {
               totalPossibleRating: response.totalPossibleRating // Assuming the response contains 'totalPossibleRating'
             };
               this.isLoading = false;
-            // Save the appliedRisk data to localStorage
-            localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
+            // Save the appliedRisk data to sessionStorage
+            sessionStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
             // Handle the response (e.g., store the products in a variable or pass to the next page)
 
             if (this.formData.CompanyIncorporated === 'United Arab Emirates') {

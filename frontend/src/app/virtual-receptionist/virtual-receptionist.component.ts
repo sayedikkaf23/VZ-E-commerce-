@@ -93,7 +93,7 @@ previousStep1Data: any = {};
     // });
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
-      const leadDataRaw = localStorage.getItem('leadResponse');
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
       const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
       const leadId = leadData?.LeadId;
 
@@ -147,11 +147,11 @@ previousStep1Data: any = {};
   
     if (selectedNationality) {
       if (this.isBrowser) {
-      localStorage.setItem('countryRisk', selectedNationality.RiskRating);
+      sessionStorage.setItem('countryRisk', selectedNationality.RiskRating);
     }
     } else {
       if (this.isBrowser) {
-      localStorage.setItem('countryRisk', '');
+      sessionStorage.setItem('countryRisk', '');
     }
     }
   }
@@ -191,7 +191,7 @@ onSubmit() {
     const values = this.personalDetailsForm.value;
     // extract only the phone string
     const phoneString = values.mobileNumber?.number || '';
-      const leadDataRaw = localStorage.getItem('leadResponse');
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
 
@@ -243,7 +243,7 @@ onSubmit() {
         }
 
           if (this.isBrowser && res?.data) {
-    localStorage.setItem('leadResponse', JSON.stringify(res.data));
+    sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
   }
         // this.toastr.success('Lead created successfully!');
          // After successful API, navigate based on mailform1 and nationality change

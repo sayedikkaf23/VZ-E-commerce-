@@ -126,7 +126,7 @@ isLoading = false;
     //   this.cdRef.detectChanges();
     // }
           if (this.isBrowser) {
-  const leadDataRaw = localStorage.getItem('leadResponse');
+  const leadDataRaw = sessionStorage.getItem('leadResponse');
   const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
   const leadId = leadData?.LeadId;
 

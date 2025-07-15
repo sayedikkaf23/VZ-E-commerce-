@@ -66,7 +66,7 @@ export class MailMangamentShowDetailsComponent {
     // Ensure this code runs only in the browser environment
     if(this.isBrowser) {
              if (this.isBrowser) {
-  const leadDataRaw = localStorage.getItem('leadResponse');
+  const leadDataRaw = sessionStorage.getItem('leadResponse');
   const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
   const leadId = leadData?.LeadId;
 
@@ -353,7 +353,7 @@ console.log("Trade License Data:", tradeData);
     if (!result.isConfirmed) return;
 
    
-    const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
+    const appliedRiskData = JSON.parse(sessionStorage.getItem('appliedRisk') || '{}');
     let subTypeId = this.personalInfo.bankType === 'Traditional Corporate Bank Account Opening' ? 13 : 
                     this.personalInfo.bankType === 'Digital Corporate Bank Account Opening' ? 14 : 
                     this.personalInfo.bankType === 'Any of the above' ? 13 : null;
@@ -382,11 +382,11 @@ console.log("Trade License Data:", tradeData);
       switchMap(resp => {
         if (!resp) return of(null);
         const serviceProducts = Array.isArray(resp) ? resp : [resp];
-        localStorage.setItem('serviceProducts', JSON.stringify(resp));
-        localStorage.setItem('BussinessServiceProducts', JSON.stringify(resp));
+        sessionStorage.setItem('serviceProducts', JSON.stringify(resp));
+        sessionStorage.setItem('BussinessServiceProducts', JSON.stringify(resp));
 
         this.matchScoreStorageService.setMatchScoreResponse(resp);
- const leadResponseRaw = localStorage.getItem('leadResponse');
+ const leadResponseRaw = sessionStorage.getItem('leadResponse');
   const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
         const paymentPayload = {
@@ -448,7 +448,7 @@ console.log("Trade License Data:", tradeData);
         return this.userService.checkStatus(checkStatusData).pipe(
           tap(res => {
             if (res?.data?.CustomerStatus === 'Auto Approved') {
-              localStorage.setItem("quotePaymentId", quotePaymentId);
+              sessionStorage.setItem("quotePaymentId", quotePaymentId);
               this.router.navigate(['/bussiness-show-details']);
             } else {
               alert('Your request has been submitted successfully. You will receive an email when your application is approved.');

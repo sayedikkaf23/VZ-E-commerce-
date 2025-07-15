@@ -17,7 +17,7 @@ export class VirtualReceptionist2Component implements OnInit {
   // Our main form group
   formData: FormGroup;
 
-  // We’ll load shareholders data from localStorage (virtualdata1, virtualdata2)
+  // We’ll load shareholders data from sessionStorage (virtualdata1, virtualdata2)
   shareholdersData: any[] = [];
   economicDetailId: any;
   // For storing uploaded files & file names
@@ -57,7 +57,7 @@ export class VirtualReceptionist2Component implements OnInit {
       window.scrollTo(0, 0);
     }
 
-     const leadDataRaw = localStorage.getItem('leadResponse');
+     const leadDataRaw = sessionStorage.getItem('leadResponse');
   const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
   const leadId = leadData?.LeadId;
 
@@ -280,7 +280,7 @@ console.log("Trade License Data:", tradeData);
       tradeLicenseControl?.setErrors(null);
     }
 
-      this.economicDetailId = localStorage.getItem('economicDetailId');
+      this.economicDetailId = sessionStorage.getItem('economicDetailId');
 
     //check for economicDetailId
     if(!this.economicDetailId){
@@ -292,7 +292,7 @@ console.log("Trade License Data:", tradeData);
     if (this.formData.valid) {
       const formValues = this.formData.value;
 
-      // Build an object to store in localStorage
+      // Build an object to store in sessionStorage
       const dataToSave = {
         ...formValues,  // includes { companyTradeLicense, companyTradeLicenseFile, shareholders }
         companyTradeLicenseFile: this.companyTradeLicenseFile,
@@ -306,7 +306,7 @@ console.log("Trade License Data:", tradeData);
       };
        
 
-         const leadResponseRaw = localStorage.getItem('leadResponse');
+         const leadResponseRaw = sessionStorage.getItem('leadResponse');
         this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
     
@@ -355,8 +355,8 @@ console.log("Trade License Data:", tradeData);
           (response) => {
             console.log('API Response:', response);
             this.isLoading = false;
-             // Save to localStorage for retrieval later
-      localStorage.setItem('virtualdata2', JSON.stringify(dataToSave));
+             // Save to sessionStorage for retrieval later
+      sessionStorage.setItem('virtualdata2', JSON.stringify(dataToSave));
 
       // Navigate to the next page
       this.router.navigate(['/virtual-receptionist-details']);

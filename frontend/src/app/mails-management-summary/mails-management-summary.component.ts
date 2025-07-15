@@ -51,14 +51,14 @@ export class MailsManagementSummaryComponent {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
-      const storedProductData = localStorage.getItem('MailServiceProducts');
+      const storedProductData = sessionStorage.getItem('MailServiceProducts');
       if (storedProductData) {
         const productData = JSON.parse(storedProductData);
         // If the data is an object, wrap it in an array
         this.serviceProducts = Array.isArray(productData) ? productData : [productData];
-        console.log("Retrieved Products from localStorage: ", this.serviceProducts);
+        console.log("Retrieved Products from sessionStorage: ", this.serviceProducts);
       } else {
-        console.log("No products found in localStorage.");
+        console.log("No products found in sessionStorage.");
       }
    
     }
@@ -95,10 +95,6 @@ export class MailsManagementSummaryComponent {
           ...this.tradeLicenseFile,
         };
  
-        localStorage.setItem('mergedData', JSON.stringify(mergedData));
-        this.displayShareholders = Array.isArray(mergedData.shareholders)
-          ? mergedData.shareholders
-          : Object.values(mergedData.shareholders || []);
    
   }
  

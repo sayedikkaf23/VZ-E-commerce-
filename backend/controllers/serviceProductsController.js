@@ -428,6 +428,7 @@ exports.createLeadOnly = async (req, res) => {
       dob,
       service_id,
       leadId,
+      countryCode,
       // subServiceName,
       // companyLocationUAE,
       // employmentType,
@@ -503,7 +504,7 @@ exports.createLeadOnly = async (req, res) => {
     );
 
     const cleanedPhone = phone.replace(/\s+/g, ""); // Example cleanup
-    const countryCode = "+" + cleanedPhone.slice(0, 2); // Or get it from input/parse lib
+   
 
     
     const existingDoc = await Pidata.findOne({ "leadWithDetails.LeadId": leadResp.data?.LeadId });
