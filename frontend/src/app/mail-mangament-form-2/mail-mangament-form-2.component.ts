@@ -148,7 +148,10 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
             next: (tradeData: any) => {
 
           if (tradeData.shareholders && Array.isArray(tradeData.shareholders)) {
-            this.shareholders = tradeData.shareholders;
+            this.shareholders = tradeData.shareholders.map((sh: any) => ({
+              ...sh,
+              dob: sh.dob ? sh.dob.split('T')[0] : ''
+            }));
           }
 
            },
