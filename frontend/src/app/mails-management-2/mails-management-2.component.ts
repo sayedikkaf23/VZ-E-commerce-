@@ -402,7 +402,7 @@ onShareholderInput(event: any, index: number) {
             nationality: this.personalInfo.Nationality,
             phone: this.personalInfo.Phone,
             dob: this.personalInfo.dob,
-            countryCode: this.personalInfo.Phone,
+            countryCode: this.personalInfo.countryCode,
             // companyLocationUAE: '',
             // employmentType: '',
             companyName: this.formData.CompanyName,

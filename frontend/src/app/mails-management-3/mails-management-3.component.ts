@@ -309,7 +309,7 @@ console.log("Trade License Data:", tradeData);
             phone: this.personalInfo.Phone,
             dob: this.personalInfo.dob,
             economicDetailId: this.economicDetailId,
-            countryCode: this.personalInfo.Phone,
+            countryCode: this.personalInfo.countryCode,
             // companyLocationUAE: '',
             // employmentType: '',
             companyName: this.personalInfo.Company,

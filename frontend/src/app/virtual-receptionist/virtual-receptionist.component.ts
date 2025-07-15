@@ -193,7 +193,7 @@ onSubmit() {
     const phoneString = values.mobileNumber?.number || '';
       const leadDataRaw = sessionStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
-
+const countryCode = values.mobileNumber?.dialCode || '';
 
      let payload: any;
 
@@ -210,6 +210,7 @@ onSubmit() {
         email: currentEmail,
         nationality: values.nationality,
         phone: phoneString,
+        countryCode: countryCode,
         dob: values.birthday, // yyyy-mm-dd
         service_id: 3,
         leadId: '' // Empty leadId when email is changed
@@ -225,6 +226,7 @@ onSubmit() {
         email: currentEmail,
         nationality: values.nationality,
         phone: phoneString,
+        countryCode: countryCode,
         dob: values.birthday, // yyyy-mm-dd
         service_id: 3,
         leadId: leadData?.LeadId || '' // Use existing leadId

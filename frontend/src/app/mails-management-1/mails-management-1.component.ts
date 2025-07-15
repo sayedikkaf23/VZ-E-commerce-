@@ -169,6 +169,7 @@ onSubmit() {
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
     const phoneString = values.mobileNumber?.number || '';
+    const countryCode = values.mobileNumber?.dialCode || '';
    
     const leadDataRaw = sessionStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
@@ -190,6 +191,7 @@ onSubmit() {
         email: currentEmail,
         nationality: values.nationality,
         phone: phoneString,
+        countryCode: countryCode,
         dob: values.birthday, // yyyy-mm-dd
         service_id: 2,
         leadId: '' // Empty leadId when email is changed
@@ -205,6 +207,7 @@ onSubmit() {
         email: values.email,
         nationality: values.nationality,
         phone: phoneString,
+        countryCode: countryCode,
         dob: values.birthday, // yyyy-mm-dd
         service_id: 2,
         leadId: leadData?.LeadId || '' // Use existing leadId

@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { get } from 'node:http';
+import { count } from 'node:console';
  
 declare var $: any;
  
@@ -445,6 +446,7 @@ const economicDetailId = sessionStorage.getItem('economicDetailId') || "";
           email: this.personalInfo.Email,
           nationality: this.personalInfo.Nationality,
           // phone: this.personalInfo.mobileNumber?.number,
+          countryCode: this.personalInfo.countryCode || '',
           phone:this.personalInfo.Phone,
           dob: this.personalInfo.dob,
  

@@ -398,7 +398,7 @@ console.log("Trade License Data:", tradeData);
           email: this.personalInfo.Email,
           nationality: this.personalInfo.Nationality,
           phone: this.personalInfo.Phone,
-          countryCode: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
           dob: this.personalInfo.dob,
           type: "Bank Account Opening",
           CustomerType: "C",

@@ -301,7 +301,7 @@ submitData() {
   //         // then navigate:
   //         this.router.navigate(['/ShowDetails-2']);
         const paymentPayload = {
-          countryCode:this.personalInfo.Phone,
+          countryCode:this.personalInfo.countryCode,
           LeadId: leadResponse.LeadId || '',
     AccountId: leadResponse.AccountId || '',
     ContactId: leadResponse.ContactId || '',

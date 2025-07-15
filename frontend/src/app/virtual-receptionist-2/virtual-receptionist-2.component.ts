@@ -332,7 +332,7 @@ console.log("Trade License Data:", tradeData);
             activityType: this.personalInfo.activityType,
            totalShareholders: this.personalInfo.totalShareholders ,
              economicDetailId: this.economicDetailId,
-             countryCode: this.personalInfo.Phone,
+             countryCode: this.personalInfo.countryCode,
             // companyTurnover: '',
             companyLocation: this.personalInfo.companyLocation,
             companyWebsite: this.personalInfo.companyWebsite,

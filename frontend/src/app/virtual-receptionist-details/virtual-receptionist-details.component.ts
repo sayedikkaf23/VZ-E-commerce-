@@ -454,7 +454,7 @@ console.log("Trade License Data:", tradeData);
           email: this.personalInfo.Email,
           nationality: this.personalInfo.Nationality,
           phone: this.personalInfo.Phone,
-          countryCode: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
           dob: this.personalInfo.dob,
            companyName: this.personalInfo.Company,
             companyLicensed: this.personalInfo.companyLicensed,

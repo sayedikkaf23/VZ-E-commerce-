@@ -15,6 +15,7 @@ import { Router } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
 import { DecimalPipe } from '@angular/common'; // Import DecimalPipe
 import { AdminAuthService } from '../service/admin-auth.service';
+import { count } from 'console';
 declare var $: any;
 
 @Component({
@@ -198,6 +199,7 @@ export class Step2Component implements AfterViewInit, OnInit {
       nationality: this.formData.Nationality,
       // phone: this.personalInfo.mobileNumber.number,
       phone: this.formData.Phone,
+      countryCode: this.formData.countryCode || '', 
       dob: this.formData.dob,
       companyLicensed: getValue(this.formData.companyLicensed),
       activityType: getValue(this.formData.activityType),
