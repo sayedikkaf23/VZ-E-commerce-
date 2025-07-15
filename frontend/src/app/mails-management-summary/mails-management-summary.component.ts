@@ -66,34 +66,10 @@ export class MailsManagementSummaryComponent {
    
    
  
-      const mailform = localStorage.getItem('mailform');
-      const mailform2 = localStorage.getItem('mailform1');
-      const mailform3 = localStorage.getItem('mailform2');
+
    
  
-        this.personalInfo = mailform ? JSON.parse(mailform) : {};
-        this.companyInfo = JSON.parse(mailform2 || '{}');
-        this.tradeLicenseFile = mailform3 ? JSON.parse(mailform3) : {};
- 
-        const shareholdersFromMailform2 = this.companyInfo.shareholders || [];
-        const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
- 
-        const mergedShareholders = additionalShareholderInfo.shareholders.length > 0
-          ? additionalShareholderInfo.shareholders
-          : shareholdersFromMailform2;
- 
- 
- 
- 
- 
- 
-        const mergedData = {
-          ...this.personalInfo,
-          ...this.companyInfo,
-          companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-          shareholders: mergedShareholders,
-          ...this.tradeLicenseFile,
-        };
+       
  
    
   }
@@ -357,7 +333,7 @@ export class MailsManagementSummaryComponent {
    submitData() {
   this.isLoading = true;
 
-  const quotePaymentId = localStorage.getItem("quotePaymentId");
+  const quotePaymentId = sessionStorage.getItem("quotePaymentId");
 
   if (quotePaymentId) {
     this.callActivePaymentMethod(quotePaymentId);
@@ -369,7 +345,7 @@ export class MailsManagementSummaryComponent {
               localStorage.removeItem('finalDataMail');
               localStorage.removeItem('mailform1');
               localStorage.removeItem('mailform2');
-            localStorage.removeItem('quotePaymentId');
+            sessionStorage.removeItem('quotePaymentId');
 
   this.isLoading = false;
 }
