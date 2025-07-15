@@ -126,33 +126,41 @@ isBrowser: boolean;
   if (leadId) {
     this.isLoading = true;
     this.userService.getStep1(leadId).subscribe({
-      next: (storedData) => {
+      next: (step1Data) => {
         this.isLoading = false;
         // storedData contains all step1 + step2 fields if you saved them
 
         //  patch step1 form
-        this.personalInfo = storedData; 
+        this.personalInfo = step1Data; 
 
         //  patch step2 form data (your custom object or form)
-        this.formData = {
-          CompanyName: storedData.CompanyName || '',
-          CompanyIncorporated: storedData.CompanyIncorporated || '',
-          Website: storedData.Website || '',
-          tradelicense: storedData.tradelicense || '',
-          shareholdercount: storedData.shareholdercount || '',
-          Companylicensed: storedData.Companylicensed || '',
-          BusinessActivityRisk: storedData.BusinessActivityRisk || ''
-        };
+     
+        if (step1Data && Object.keys(step1Data).length > 0) {
+          // Safely map fields
+          this.formData.CompanyName = step1Data.Company || '';
+          this.formData.CompanyIncorporated = step1Data.companyLocation || '';
+          this.formData.Website = step1Data.companyWebsite || '';
+          this.formData.shareholdercount = step1Data.totalShareholders || '';
+          this.formData.type = step1Data.type || '';
+          this.formData.Companylicensed = step1Data.companyLicensed || '';
+          this.formData.tradelicense = step1Data.activityType || '';
+
 
         this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
-      next: (res) => {
-        this.companyInfo = res;
+      next: (tradeData) => {
+        this.companyInfo = tradeData;
+         if (tradeData.shareholders && Array.isArray(tradeData.shareholders)) {
+            this.shareholders = tradeData.shareholders;
+          }
         },
       error: (err) => {
         this.isLoading = false;
         console.error('Failed to load step1 & step2 data', err);
       }
     });
+
+      this.cdRef.detectChanges();
+        }
         
       },
       error: (err) => {

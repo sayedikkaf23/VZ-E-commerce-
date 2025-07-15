@@ -101,8 +101,17 @@ previousStep1Data: any = {};
         this.isLoading = true;
         this.userService.getStep1(leadId).subscribe({
           next: (formData) => {
-            this.personalDetailsForm.patchValue(formData);
+             if (formData && Object.keys(formData).length > 0) {
+        this.personalDetailsForm.patchValue({
+          firstName: formData.FirstName || '',
+          lastName: formData.LastName || '',
+          email: formData.Email || '',
+          nationality: formData.Nationality || '',
+          mobileNumber: formData.Phone ? { number: formData.Phone } : '', 
+          birthday: formData.dob || ''
+        });
              this.previousStep1Data = formData; 
+      }
             this.isLoading = false;
           },
           error: (err) => {

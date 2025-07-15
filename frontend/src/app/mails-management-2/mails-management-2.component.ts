@@ -133,42 +133,49 @@ isLoading = false;
   if (leadId) {
     this.isLoading = true;
     this.userService.getStep1(leadId).subscribe({
-      next: (storedData) => {
+      next: (step1Data) => {
         this.isLoading = false;
         // storedData contains all step1 + step2 fields if you saved them
 
         //  patch step1 form
-        this.personalInfo = storedData; 
+        this.personalInfo = step1Data; 
 
-        //  patch step2 form data (your custom object or form)
-        this.formData = {
-          CompanyName: storedData.CompanyName || '',
-          CompanyIncorporated: storedData.CompanyIncorporated || '',
-          Website: storedData.Website || '',
-          tradelicense: storedData.tradelicense || '',
-          shareholdercount: storedData.shareholdercount || '',
-          Companylicensed: storedData.Companylicensed || '',
-          BusinessActivityRisk: storedData.BusinessActivityRisk || ''
-        };
+    
+              if (step1Data && Object.keys(step1Data).length > 0) {
+          // Safely map fields
+          this.formData.CompanyName = step1Data.Company || '';
+          this.formData.CompanyIncorporated = step1Data.companyLocation || '';
+          this.formData.Website = step1Data.companyWebsite || '';
+          this.formData.shareholdercount = step1Data.totalShareholders || '';
+          this.formData.type = step1Data.type || '';
+          this.formData.Companylicensed = step1Data.companyLicensed || '';
+          this.formData.tradelicense = step1Data.activityType || '';
 
-         this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+         
+
+           this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
             next: (tradeData: any) => {
-              this.tradeLicenseFile = tradeData || {};
-console.log("Trade License Data:", tradeData);
-              this.shareholders = tradeData.shareholders || []; 
+this.tradeLicenseFile = tradeData || {};
+          if (tradeData.shareholders && Array.isArray(tradeData.shareholders)) {
+            this.shareholders = tradeData.shareholders;
+          }
+
+           },
+            error: (err:any) => {
+              console.error('Failed to load trade license data:', err);
+              this.toastr.error('Could not load trade license data.', 'Error');
+            }
+          });
+
+
+          this.cdRef.detectChanges();
+        }
                },
             error: (err:any) => {
               console.error('Failed to load trade license data:', err);
               this.toastr.error('Could not load trade license data.', 'Error');
             }
           });
-        
-      },
-      error: (err) => {
-        this.isLoading = false;
-        console.error('Failed to load step1 & step2 data', err);
-      }
-    });
   }
 }
 

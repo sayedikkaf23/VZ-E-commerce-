@@ -68,34 +68,7 @@ export class VirtualReceptionist2Component implements OnInit {
         this.isLoading = false;
         this.personalInfo = storedData; 
         
-         this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
-            next: (tradeData: any) => {
-              this.tradeLicenseFile = tradeData || {};
-console.log("Trade License Data:", tradeData);
-             this.tradeLicenseFile = tradeData || {};
-            console.log("Trade License Data:", tradeData);
-
-            this.shareholdersData = tradeData.shareholders || [];
-            console.log("Shareholders Data:", this.shareholdersData);
-
-            //  Initialize form array now, after shareholders data is ready
-            this.initializeShareholders();
-              //  Update other fields in the formData if needed
-            if (tradeData.companyTradeLicenseNumber) {
-              this.formData.get('companyTradeLicenseNumber')?.setValue(tradeData.TradeLicenseNumber);
-            }
-              if (Array.isArray(tradeData.companyTradeLicenseFile) && tradeData.companyTradeLicenseFile.length > 0) {
-              this.companyTradeLicenseFile = tradeData.tradeLicenseFileURL;
-              this.formData.get('companyTradeLicenseFileName')?.setValue(tradeData.companyTradeLicenseFile[0].name);
-            }
-            this.uploadedFileNames = tradeData.uploadedFileNames || {};
-
-            },
-            error: (err:any) => {
-              console.error('Failed to load trade license data:', err);
-              this.toastr.error('Could not load trade license data.', 'Error');
-            }
-          });
+         this.loadTradeLicenseAndShareholders(leadId);
       },
       error: (err) => {
         this.isLoading = false;
@@ -105,6 +78,42 @@ console.log("Trade License Data:", tradeData);
   }
 
   }
+
+   private loadTradeLicenseAndShareholders(leadId: string): void {
+      this.isLoading = true;
+
+      this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+        next: (tradeData: any) => {
+          this.isLoading = false;
+          console.log('Trade License Data:', tradeData);
+
+            this.tradeLicenseFile = tradeData.tradeLicenseFile || {};
+      this.shareholdersData = tradeData.shareholders || [];
+      // You’d need to map per shareholder
+this.uploadedFileNames = (tradeData.shareholders || []).map((s: any) => s.files || []);
+
+
+      // Auto-fill trade license number if available
+      if (tradeData.tradeLicenseNo) {
+        this.formData.get('companyTradeLicense')?.setValue(tradeData.tradeLicenseNo);
+      }
+
+      // Auto-fill uploaded trade license file name & URL
+      if (Array.isArray(tradeData.tradeLicenseFile) && tradeData.tradeLicenseFile.length > 0) {
+        this.companyTradeLicenseFile = tradeData.tradeLicenseFile || [];
+        this.formData.get('companyTradeLicenseFile')?.setValue(tradeData.tradeLicenseFile[0].name);
+      }
+
+          // Initialize shareholders form array
+          this.initializeShareholders();
+        },
+        error: err => {
+          this.isLoading = false;
+          console.error('Failed to load trade license and shareholder data:', err);
+          this.toastr.error('Could not load trade license or shareholder details.', 'Error');
+        }
+      });
+    }
 
   // Helper to get the shareholders FormArray
   get shareholders(): FormArray {
@@ -338,7 +347,9 @@ console.log("Trade License Data:", tradeData);
             companyWebsite: this.personalInfo.companyWebsite,
             tradeLicenseNo: formValues.companyTradeLicense,
             shareholderfilesnumber: formValues.shareholders?.[0]?.passportNumber || '',
-            tradeLicenseFile: this.companyTradeLicenseFile?.[0]?.url || '',
+            tradeLicenseFileUrl: this.companyTradeLicenseFile?.[0]?.url || '',
+            uploadedFileNames: Object.values(this.uploadedFileNames).flat(),
+            tradeLicenseFile: this.companyTradeLicenseFile,
             shareholdersfiles: Object.values(this.uploadedFileNames || {})
             .flat()
             .map((f: any) => f.url)

@@ -106,9 +106,20 @@ export class Step1Component implements OnInit {
         this.isLoading = true;
         this.userService.getStep1(leadId).subscribe({
           next: (formData) => {
-            this.personalDetailsForm.patchValue(formData);
-             this.previousStep1Data = formData; 
-            this.isLoading = false;
+            if (formData && Object.keys(formData).length > 0) {
+        this.personalDetailsForm.patchValue({
+          firstName: formData.FirstName || '',
+          lastName: formData.LastName || '',
+          email: formData.Email || '',
+          nationality: formData.Nationality || '',
+          mobileNumber: formData.Phone ? { number: formData.Phone } : '', 
+          birthday: formData.dob || ''
+        });
+        this.previousStep1Data = formData; 
+         }
+      // else: do nothing, keep form empty
+      this.isLoading = false;
+      this.cdRef.detectChanges(); // update view
           },
           error: (err) => {
             console.error('Failed to load step1 data', err);

@@ -574,8 +574,10 @@ exports.insertEconomicDetails = async (req, res) => {
       tradeLicenseNo,
       shareholderfilesnumber,
       tradeLicenseFile,
+      tradeLicenseFileUrl,
       shareholdersfiles,
       shareholders,
+      uploadedFileNames
     } = req.body;
 
     // Construct the payload dynamically, excluding null or undefined fields
@@ -588,7 +590,7 @@ exports.insertEconomicDetails = async (req, res) => {
     if (firstName) payload.FirstName = firstName;
     if (lastName) payload.LastName = lastName;
     if (email) payload.Email = email;
-    if (countryCode) payload.Email = countryCode;
+    if (countryCode) payload.countryCode = countryCode;
     if (nationality) payload.Nationality = nationality;
     if (phone) payload.Phone = phone;
     if (dob) payload.dob = dob;
@@ -608,10 +610,17 @@ exports.insertEconomicDetails = async (req, res) => {
     if (tradeLicenseNo) payload.tradeLicenseNo = tradeLicenseNo;
     if (shareholderfilesnumber)
       payload.shareholderfilesnumber = shareholderfilesnumber;
-    if (tradeLicenseFile) payload.tradeLicenseFile = tradeLicenseFile;
+    if (tradeLicenseFile && Array.isArray(tradeLicenseFile))
+      payload.tradeLicenseFile = tradeLicenseFile;
+    if (uploadedFileNames && Array.isArray(uploadedFileNames))
+      payload.uploadedFileNames = uploadedFileNames;
+    if (tradeLicenseFileUrl) payload.tradeLicenseFileUrl = tradeLicenseFileUrl;
     if (shareholdersfiles) payload.shareholdersfiles = shareholdersfiles;
     if (shareholders && Array.isArray(shareholders))
       payload.shareholders = shareholders;
+
+    console.log("Payload before sending to Salesforce:", payload);
+
 
     // Step 1: Get Salesforce token
     const tokenResp = await axios.post(
@@ -680,9 +689,11 @@ exports.insertEconomicDetails = async (req, res) => {
       },
       economicDetailId : economicDetailsResp.data?.economicDetailId,
       subcategory: subServiceName,
-      tradeLicenseFileUrl: tradeLicenseFile,
+      tradeLicenseFileUrl,
+      tradeLicenseFile,
       shareholdersfiles,
       shareholders,
+      uploadedFileNames,
       tradeLicenseNo,
       shareholderfilesnumber,
     };

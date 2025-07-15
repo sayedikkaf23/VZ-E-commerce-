@@ -1685,7 +1685,9 @@ exports.getTradeLicenseAndShareholders = async (req, res) => {
       tradeLicenseNo: doc.tradeLicenseNo || null,
       shareholdersfiles: doc.shareholdersfiles || null,
       shareholderfilesnumber: doc.shareholderfilesnumber || null,
-      shareholders: doc.shareholders || []
+      shareholders: doc.shareholders || [],
+      tradeLicenseFile: doc.tradeLicenseFile || [],
+      uploadedFileNames: doc.uploadedFileNames || [],
     };
 
     return res.json(response);

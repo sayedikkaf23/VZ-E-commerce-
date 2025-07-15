@@ -42,6 +42,7 @@ export class Step2Component implements AfterViewInit, OnInit {
   step1Data: any = {}; // To store Step 1 data
   leadResponse: any;
   isLoading = false;
+  previousStep1Data: any;
   constructor(
     private formDataService: FormDataService,
     private http: HttpClient,
@@ -88,8 +89,21 @@ export class Step2Component implements AfterViewInit, OnInit {
         this.isLoading = true;
         this.userService.getStep1(this.formData.leadId).subscribe({
           next: (res) => {
-            this.formData = res;
-            this.isLoading = false;
+            if (res && Object.keys(res).length > 0) {
+          // safely map API fields → formData fields
+          this.formData.resident = res.companyLocationUAE || '';
+          this.formData.working = res.employmentType || '';
+          this.formData.salary = res.salary || '';
+          this.formData.companyname = res.Company || '';
+          this.formData.Bank = res.bankType || '';
+          this.formData.type = res.type || '';
+          this.formData.CustomerType = res.CustomerType || '';
+          this.formData.companyLocation = res.companyLocation || '';
+
+           this.previousStep1Data = res;
+        }
+        this.isLoading = false;
+        this.cdRef.detectChanges();
           },
           error: (err) => {
             console.error('Failed to load step1 data', err);
@@ -193,14 +207,14 @@ export class Step2Component implements AfterViewInit, OnInit {
       subServiceName: 'Personal Bank Account Opening',
 
       // Optional fields
-      firstName: this.formData.FirstName,
-      lastName: this.formData.LastName,
-      email: this.formData.Email,
-      nationality: this.formData.Nationality,
+      firstName: this.previousStep1Data.FirstName,
+      lastName: this.previousStep1Data.LastName,
+      email: this.previousStep1Data.Email,
+      nationality: this.previousStep1Data.Nationality,
       // phone: this.personalInfo.mobileNumber.number,
-      phone: this.formData.Phone,
-      countryCode: this.formData.countryCode || '', 
-      dob: this.formData.dob,
+      phone: this.previousStep1Data.Phone,
+      countryCode: this.previousStep1Data.countryCode || '', 
+      dob: this.previousStep1Data.dob,
       companyLicensed: getValue(this.formData.companyLicensed),
       activityType: getValue(this.formData.activityType),
       totalShareholders: getValue(this.formData.totalShareholders),
@@ -217,12 +231,12 @@ export class Step2Component implements AfterViewInit, OnInit {
         ? this.formData.shareholders
         : [],
     };
-
+    this.isLoading = true
     this.adminAuthService.insertEconomicDetails(payload).subscribe({
       next: (res: any) => {
         const economicDetailId = res.data ? res.data.economicDetailId : '';
         sessionStorage.setItem('economicDetailId', economicDetailId);
-
+        this.isLoading = false;
         console.log('Economic details saved', res);
         this.router.navigate(['/ShowDetails']);
       },

@@ -130,42 +130,45 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     }
 
     if (this.formData.leadId) {
-  this.userService.getStep1(this.formData.leadId).subscribe(
-    (step1Data) => {
-      console.log('API step1Data:', step1Data);
-      // Update your formData and shareholders based on step1Data
+   this.userService.getStep1(this.formData.leadId).subscribe({
+      next: (step1Data) => {
+        if (step1Data && Object.keys(step1Data).length > 0) {
+          // Safely map fields
+          this.formData.companylocation = step1Data.companyLocationUAE || '';
+          this.formData.Turnover = step1Data.companyTurnover || '';
+          this.formData.Bank = step1Data.bankType || '';
+          this.formData.shareholdercount = step1Data.totalShareholders || '';
+          this.formData.type = step1Data.type || '';
+          this.formData.Companylicensed = step1Data.companyLicensed || '';
+          this.formData.tradelicense = step1Data.activityType || '';
 
-      this.formData = {
-        companylocation: step1Data.companylocation,
-        jurisdiction: step1Data.jurisdiction,
-        Turnover: step1Data.Turnover,
-        Bank: step1Data.Bank,
-        shareholdercount: step1Data.shareholdercount,
-        type: step1Data.type,
-        Companylicensed: step1Data.Companylicensed,
-        tradelicense: step1Data.tradelicense,
-        BusinessActivityRisk: step1Data.BusinessActivityRisk,
-        // Add other fields you have in your form
-      };
-      this.personalInfo = step1Data;
+          this.personalInfo = step1Data;
 
-      if (step1Data.shareholders) {
-        this.shareholders = step1Data.shareholders;
+           this.userService.getTradeLicenseAndShareholders(this.formData.leadId).subscribe({
+            next: (tradeData: any) => {
+
+          if (tradeData.shareholders && Array.isArray(tradeData.shareholders)) {
+            this.shareholders = tradeData.shareholders;
+          }
+
+           },
+            error: (err:any) => {
+              console.error('Failed to load trade license data:', err);
+              this.toastr.error('Could not load trade license data.', 'Error');
+            }
+          });
+
+          this.updateShareholders();
+          this.cdRef.detectChanges();
+        }
+      },
+      error: (err) => {
+        console.error('Error fetching step1 data:', err);
+        this.toastr.error('Failed to load saved data.', 'API Error');
       }
-
-      this.updateShareholders();
-
-      // Trigger change detection if needed
-      this.cdRef.detectChanges();
-    },
-    (error) => {
-      console.error('Error fetching step1 data:', error);
-      this.toastr.error('Failed to load saved data.', 'API Error');
-    }
-  );
+    });
+    
 }
-
- 
    
   }
   allowOnlyAlphabets(event: KeyboardEvent): void {
