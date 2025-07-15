@@ -150,7 +150,10 @@ isBrowser: boolean;
       next: (tradeData) => {
         this.companyInfo = tradeData;
          if (tradeData.shareholders && Array.isArray(tradeData.shareholders)) {
-            this.shareholders = tradeData.shareholders;
+            this.shareholders = tradeData.shareholders.map((sh: any) => ({
+              ...sh,
+              dob: sh.dob ? sh.dob.split('T')[0] : ''
+            }));
           }
         },
       error: (err) => {

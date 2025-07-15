@@ -370,7 +370,7 @@ submitData() {
         return this.userService.checkStatus(checkStatusData).pipe(
           tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
             if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-              localStorage.setItem(  "quotePaymentId",quotePaymentId)
+              sessionStorage.setItem(  "quotePaymentId",quotePaymentId)
                this.router.navigate(['/ShowDetails-2']);
             } else {
               window.alert('Your request has been submitted successfully. You will receive an email when your application is approved.');

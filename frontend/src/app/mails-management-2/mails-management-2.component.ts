@@ -155,10 +155,14 @@ isLoading = false;
 
            this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
             next: (tradeData: any) => {
-this.tradeLicenseFile = tradeData || {};
+            this.tradeLicenseFile = tradeData || {};
           if (tradeData.shareholders && Array.isArray(tradeData.shareholders)) {
-            this.shareholders = tradeData.shareholders;
+            this.shareholders = tradeData.shareholders.map((sh: any) => ({
+              ...sh,
+              dob: sh.dob ? sh.dob.split('T')[0] : ''
+            }));
           }
+
 
            },
             error: (err:any) => {
