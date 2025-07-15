@@ -35,4 +35,6 @@ router.post('/updateUserFiles', userController.updateUserFiles);
 router.get('/dashboards', userController.dashboard);
 router.post('/updateKycStatus', userController.updateKycStatus);
 router.post('/createOpportunity', userController.createOpportunity);
+router.get('/get-step1', userController.getStep1);
+router.get('/getTradeLicenseAndShareholders', userController.getTradeLicenseAndShareholders);
 module.exports = router;

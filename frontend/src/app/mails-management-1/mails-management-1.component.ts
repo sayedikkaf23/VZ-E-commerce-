@@ -29,7 +29,7 @@ export class MailsManagement1Component {
   isBrowser: boolean;
   isLoading = false;
   maxDate: string | undefined;
-
+  previousStep1Data: any = {}; 
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -52,7 +52,7 @@ export class MailsManagement1Component {
       nationality: ['', Validators.required],
       mobileNumber: ['', Validators.required],
       birthday: ['', Validators.required],
-      countryRisk: ['', Validators.required]
+
     });
   }
 
@@ -88,11 +88,31 @@ export class MailsManagement1Component {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-    if (this.isBrowser) {
-      const storedData = localStorage.getItem('mailform');
-      if (storedData) {
-        const formData = JSON.parse(storedData);
-        this.personalDetailsForm.patchValue(formData);
+    // if (this.isBrowser) {
+    //   const storedData = localStorage.getItem('mailform');
+    //   if (storedData) {
+    //     const formData = JSON.parse(storedData);
+    //     this.personalDetailsForm.patchValue(formData);
+    //   }
+    // }
+      if (this.isBrowser) {
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
+      const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+      const leadId = leadData?.LeadId;
+
+      if (leadId) {
+        this.isLoading = true;
+        this.userService.getStep1(leadId).subscribe({
+          next: (formData) => {
+            this.personalDetailsForm.patchValue(formData);
+             this.previousStep1Data = formData; 
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Failed to load step1 data', err);
+            this.isLoading = false;
+          }
+        });
       }
     }
     this.adminAuthService.getCountryRisks().subscribe((data) => {
@@ -110,64 +130,56 @@ export class MailsManagement1Component {
   const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
 
   if (selectedNationality) {
-    this.personalDetailsForm.patchValue({
-      countryRisk: selectedNationality.RiskRating
-    });
+      // Save risk rating in localStorage instead of form
+    if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', selectedNationality.RiskRating);
+    }
   } else {
-    this.personalDetailsForm.patchValue({
-      countryRisk: ''
-    });
+    // Remove or reset in localStorage if no risk found
+    if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', '');
+    }
   }
 }
 onSubmit() {
   const currentFormValue = this.personalDetailsForm.value;
-   let previousData: any = {};
+
     let isChanged = true;
 
-  if (this.isBrowser) {
-    const previousMailform = localStorage.getItem('mailform');
-    const mailform1 = localStorage.getItem('mailform1');
-
-   
-
-    if (previousMailform) {
-      previousData = JSON.parse(previousMailform);
-
-      // Check if any field changed
-      isChanged = Object.keys(currentFormValue).some((key) => {
-        const currentVal = (currentFormValue[key] || '').toString().trim();
-        const previousVal = (previousData[key] || '').toString().trim();
-        return currentVal !== previousVal;
-      });
-    }
+  if (this.previousStep1Data) {
+    isChanged = Object.keys(currentFormValue).some((key) => {
+      const currentVal = (currentFormValue[key] || '').toString().trim();
+      const previousVal = (this.previousStep1Data[key] || '').toString().trim();
+      return currentVal !== previousVal;
+    });
+  }
 
     // If no changes, navigate based on nationality and mailform1
     if (!isChanged) {
-      if (mailform1) {
+      if (this.previousStep1Data.Company) {
         this.router.navigate(['/mails-management-details']);
       } else {
         this.router.navigate(['/mails-management-2']);
       }
       return;
     }
-  }
+  
 
   // Proceed with API call since data changed or it's first submission
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
-    const phoneString = values.mobileNumber?.e164Number || '';
-    const leadDataRaw = localStorage.getItem('leadResponse');
+    const phoneString = values.mobileNumber?.number || '';
+   
+    const leadDataRaw = sessionStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
-    
+      const leadId = leadData?.LeadId;
    
   
     let payload: any;
 
      
     // Check for email change
-    const storedEmail = localStorage.getItem('mailform')
-      ? JSON.parse(localStorage.getItem('mailform') || '{}').email
-      : '';
+    const storedEmail = this.previousStep1Data.Email;
     const currentEmail = values.email;
 
     if (storedEmail !== currentEmail) {
@@ -190,7 +202,7 @@ onSubmit() {
       payload = {
         firstName: values.firstName,
         lastName: values.lastName,
-        email: currentEmail,
+        email: values.email,
         nationality: values.nationality,
         phone: phoneString,
         dob: values.birthday, // yyyy-mm-dd
@@ -199,26 +211,24 @@ onSubmit() {
       };
     }
 
- const mailform1 = localStorage.getItem('mailform1');
-     const mail1 = mailform1 ? JSON.parse(mailform1): null;
+
     this.isLoading = true;
     this.userService.createLeadOnly(payload).subscribe({
       next: (res) => {
         this.isLoading = false;
 
         if (this.isBrowser) {
-          localStorage.setItem('mailform', JSON.stringify(values));
-          localStorage.setItem('leadResponse', JSON.stringify(res.data));
+          sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
         }
 
         // After successful API, navigate based on mailform1 and nationality change
        
-        const previousNationality = (previousData?.nationality || '').trim();
+        const previousNationality = (this.previousStep1Data?.Nationality || '').trim();
         const currentNationality = (values.nationality || '').trim();
 
         if (previousNationality !== currentNationality) {
           this.router.navigate(['/mails-management-2']);
-        } else if (mailform1) {
+        } else if (this.previousStep1Data.Company) {
           this.router.navigate(['/mails-management-details']);
         } else {
           this.router.navigate(['/mails-management-2']);

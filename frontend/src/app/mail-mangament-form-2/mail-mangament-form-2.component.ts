@@ -115,34 +115,55 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     );
  
  
-    // Retrieve Step 2 data from localStorage
-    const storedStep2Data = localStorage.getItem('mailform2');
-    if (storedStep2Data) {
-      const parsedData = JSON.parse(storedStep2Data);
-      const phoneNumberWithCountryCode = this.formData?.mobileNumber?.e164Number || '';
-    console.log('Phone number with country code:', phoneNumberWithCountryCode);
-      // Update formData and shareholders separately
-      this.formData = {
-        companylocation: parsedData.companylocation,
-        jurisdiction: parsedData.jurisdiction,
-        Turnover: parsedData.Turnover,
-        Bank: parsedData.Bank,
- 
-        shareholdercount: parsedData.shareholdercount,
-        type: parsedData.type,
-        Companylicensed: parsedData.Companylicensed,
-        tradelicense: parsedData.tradelicense,
-        BusinessActivityRisk: parsedData.BusinessActivityRisk
-      };
-     
-      // Update shareholders if it exists in the parsed data
-      if (parsedData.shareholders) {
-        this.shareholders = parsedData.shareholders;
+
+        const savedLeadId = sessionStorage.getItem('leadId');
+    if (savedLeadId) {
+      this.formData.leadId = savedLeadId;
+    } else {
+      // fallback: parse out of full response
+      const raw = sessionStorage.getItem('leadResponse');
+      if (raw) {
+        const leadData = JSON.parse(raw);
+        this.formData.leadId = leadData.LeadId ?? '';
       }
-      this.updateShareholders();
-      // Trigger change detection if necessary
-      this.cdRef.detectChanges();
     }
+
+    if (this.formData.leadId) {
+  this.userService.getStep1(this.formData.leadId).subscribe(
+    (step1Data) => {
+      console.log('API step1Data:', step1Data);
+      // Update your formData and shareholders based on step1Data
+
+      this.formData = {
+        companylocation: step1Data.companylocation,
+        jurisdiction: step1Data.jurisdiction,
+        Turnover: step1Data.Turnover,
+        Bank: step1Data.Bank,
+        shareholdercount: step1Data.shareholdercount,
+        type: step1Data.type,
+        Companylicensed: step1Data.Companylicensed,
+        tradelicense: step1Data.tradelicense,
+        BusinessActivityRisk: step1Data.BusinessActivityRisk,
+        // Add other fields you have in your form
+      };
+      this.personalInfo = step1Data;
+
+      if (step1Data.shareholders) {
+        this.shareholders = step1Data.shareholders;
+      }
+
+      this.updateShareholders();
+
+      // Trigger change detection if needed
+      this.cdRef.detectChanges();
+    },
+    (error) => {
+      console.error('Error fetching step1 data:', error);
+      this.toastr.error('Failed to load saved data.', 'API Error');
+    }
+  );
+}
+
  
    
   }
@@ -324,79 +345,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     return false; // Form is valid if all required fields are filled
   }
  
-  // Validation and submission logic
-  // onSubmit() {
-  //   // Check if the form is invalid
-  //   if (this.isFormInvalid()) {
-  //     this.toastr.error('Please fill out all required fields.', 'Form Incomplete');
-  //   } else {
-  //     if (this.validateForm()) {
-  //       const formDataToSend = new FormData();
- 
-  //       // Append Step 1 data
-  //       for (const key in this.step1Data) {
-  //         if (this.step1Data.hasOwnProperty(key)) {
-  //           formDataToSend.append(key, this.step1Data[key]);
-  //         }
-  //       }
- 
-  //       // Append Step 2 data
-  //       formDataToSend.append('companylocation', this.formData.companylocation);
-  //       formDataToSend.append('tradelicense', this.formData.tradelicense);
-  //       formDataToSend.append('Companylicensed', this.formData.Companylicensed);
-  //       formDataToSend.append('shareholder', this.shareholders.length.toString()); // Convert number to string
-  //       formDataToSend.append('Turnover', this.formData.Turnover);
-  //       formDataToSend.append('CustomerType', this.formData.CustomerType);
-  //       formDataToSend.append('BusinessActivityRisk',this.formData.BusinessActivityRisk)
- 
-  //       this.shareholders.forEach((shareholder, index) => {
-  //         formDataToSend.append(`shareholders[${index}]`, JSON.stringify(shareholder));
-  //       });
- 
-  //       const combinedFormData = {
-  //         ...this.formData, // Spread formData properties
-  //         shareholders: this.shareholders // Add the shareholders array
-  //       };
-  //       const mailform = localStorage.getItem('step1Data');
-  //       this.personalInfo = mailform ? JSON.parse(mailform) : {};
-  //       // Save Step 2 data to localStorage
-  //       localStorage.setItem('mailform2', JSON.stringify(combinedFormData));
-  // console.log(this.step1Data, 'step1Data',combinedFormData)
-  //       // Prepare payload for the API call using Step 1 and Shareholders data
-  //       const payload = {
-  //         customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
-  //         BusisnessActivityRisk: this.formData.BusinessActivityRisk,
-  //         shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
-  //         totalCusotmerSelected: this.shareholders.length + 2,
-  //       };
- 
-  //       // Call the API to get products by category and country risk
-  //       this.userService.getProductsByCategoryAndCountryRisk(payload).subscribe(
-  //         (response) => {
-  //           console.log('API Response:', response);
- 
-  //           const appliedRiskData = {
-  //             appliedRisk: response.appliedRisk, // Assuming the response contains 'appliedRisk'
-  //             percentage: response.percentage, // Assuming the response contains 'percentage'
-  //             userRating: response.userRating, // Assuming the response contains 'userRating'
-  //             totalPossibleRating: response.totalPossibleRating // Assuming the response contains 'totalPossibleRating'
-  //           };
- 
-  //           // Save the appliedRisk data to localStorage
-  //           localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
-  //           // Handle the response (e.g., store the products in a variable or pass to the next page)
- 
-  //           // Navigate to BusinessBankShowDetails after the API call completes
-  //           this.router.navigate(['/BusinessBankShowDetails']);
-  //         },
-  //         (error) => {
-  //           console.error('API Error:', error);
-  //           this.toastr.error('Failed to fetch products.', 'API Error');
-  //         }
-  //       );
-  //     }
-  //   }
-  // }
+
  
  
   onSubmit() {
@@ -405,9 +354,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     this.toastr.error('Please fill out all required fields.', 'Form Incomplete');
     return;
   }
-  if (!this.validateForm()) return;
-  const mailform = localStorage.getItem('step1Data');
-        this.personalInfo = mailform ? JSON.parse(mailform) : {};
+
  
   // 2️⃣ Build & persist Step 2 FormData (if you actually need it; otherwise you can skip this)
   const formDataToSend = new FormData();
@@ -431,12 +378,15 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     ...this.formData,
     shareholders: this.shareholders
   };
-  localStorage.setItem('mailform2', JSON.stringify(combinedFormData));
+
   console.log(this.step1Data, 'step1Data', combinedFormData);
- 
+             let storedRisk = '0';
+              
+                storedRisk = sessionStorage.getItem('countryRisk') || '0';
+              
   // 3️⃣ FIRST API CALL: get products by category & risk
   const riskPayload = {
-    customerCountryRisk: this.personalInfo?.countryRisk,
+    customerCountryRisk: parseInt(storedRisk, 10),
     BusisnessActivityRisk: this.formData.BusinessActivityRisk,
     shareholderCountriesRisk: this.shareholders.map(sh => sh.countryRisk),
     totalCusotmerSelected: this.shareholders.length + 2
@@ -456,14 +406,14 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
           userRating: response.userRating,
           totalPossibleRating: response.totalPossibleRating
         };
-        localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
+        sessionStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
  
         // 4️⃣ AFTER FIRST CALL: build & fire your second payload
         const getValue = (v: any, fb = '') => v == null ? fb : v;
  
-        const leadResponseRaw = localStorage.getItem('leadResponse');
+        const leadResponseRaw = sessionStorage.getItem('leadResponse');
         this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
-const economicDetailId = localStorage.getItem('economicDetailId') || "";
+const economicDetailId = sessionStorage.getItem('economicDetailId') || "";
    const phoneString = this.personalInfo?.mobileNumber?.e164Number || '';
  
      
@@ -490,13 +440,13 @@ const economicDetailId = localStorage.getItem('economicDetailId') || "";
           serviceName: 'Bank Account Opening',
           subServiceName: 'Business Bank Account Opening',
  
-          firstName: this.personalInfo.firstName,
-          lastName: this.personalInfo.lastName,
-          email: this.personalInfo.email,
-          nationality: this.personalInfo.nationality,
+          firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
           // phone: this.personalInfo.mobileNumber?.number,
-          phone:phoneString,
-          dob: this.personalInfo.birthday,
+          phone:this.personalInfo.Phone,
+          dob: this.personalInfo.dob,
  
           // companyLicensed: getValue(this.formData.companyLicensed),
           activityType: getValue(this.formData.tradelicense),
@@ -521,7 +471,7 @@ const economicDetailId = localStorage.getItem('economicDetailId') || "";
         };
  
         // persist step2 JSON
-        localStorage.setItem('step2Data', JSON.stringify(this.formData));
+       
  
         // call insertEconomicDetails
         this.adminAuthService.insertEconomicDetails(payload2)
@@ -529,7 +479,7 @@ const economicDetailId = localStorage.getItem('economicDetailId') || "";
             next: res2 => {
               console.log('Economic details saved', res2);
                     const economicDetailId = res2.data ? res2.data.economicDetailId : "";
-      localStorage.setItem('economicDetailId', economicDetailId);
+      sessionStorage.setItem('economicDetailId', economicDetailId);
  
                         this.router.navigate(['/BusinessBankShowDetails']);
  

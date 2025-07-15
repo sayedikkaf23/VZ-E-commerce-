@@ -32,6 +32,7 @@ export class MailMangamentShowDetailsComponent {
   companyInfo: any = {}; // To store bank service information (Step 2 data)
   shareholders :any= [];
   serviceProducts: any[] | undefined;
+  tradeLicenseFile: any = {};
  
   constructor(
     private http: HttpClient,
@@ -63,25 +64,43 @@ export class MailMangamentShowDetailsComponent {
     }
  
     // Ensure this code runs only in the browser environment
-    if (this.isBrowser) {
-      // Retrieve data from localStorage
-   
-      const mailform = localStorage.getItem('step1Data');
-      const mailform2 = localStorage.getItem('mailform2');
-  // console.log(mailform2,"sssss")
-      // If there is no data in localStorage, navigate away from this page
-      if ( !mailform || !mailform2 ) {
-        // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
-        this.router.navigate(['/home']); // Replace with the correct route
-      } else {
-        // Parse and store data if it exists
-        this.personalInfo = JSON.parse(mailform);
-        this.companyInfo = JSON.parse(mailform2);
-        this.shareholders=this.companyInfo.shareholders
-        this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
-        // console.log(  this.displayShareholders)
- 
+    if(this.isBrowser) {
+             if (this.isBrowser) {
+  const leadDataRaw = localStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+  const leadId = leadData?.LeadId;
+
+  if (leadId) {
+    this.isLoading = true;
+    this.userService.getStep1(leadId).subscribe({
+      next: (storedData) => {
+        this.isLoading = false;
+        this.personalInfo = storedData; 
+         // 3) getTradeLicenseandShareholder → tradeLicenseFile etc.
+          this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+            next: (tradeData: any) => {
+              this.tradeLicenseFile = tradeData || {};
+console.log("Trade License Data:", tradeData);
+              this.shareholders = tradeData.shareholders || []; 
+              console.log("Shareholders Data:", this.shareholders);
+             
+
+            
+            },
+            error: (err:any) => {
+              console.error('Failed to load trade license data:', err);
+              this.toastr.error('Could not load trade license data.', 'Error');
+            }
+          });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load step1 & step2 data', err);
       }
+    });
+  }
+}
+     
     }
   }
  
@@ -320,8 +339,7 @@ export class MailMangamentShowDetailsComponent {
 //   }
  
  submitData() {
-  const finalData = { ...this.personalInfo, ...this.companyInfo };
-  console.log(finalData, "finalData");
+
 
   Swal.fire({
     title: 'Confirm Your Data',
@@ -334,13 +352,11 @@ export class MailMangamentShowDetailsComponent {
   }).then((result) => {
     if (!result.isConfirmed) return;
 
-    const birthday = new Date(finalData.birthday);
-    const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
-
+   
     const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
-    let subTypeId = finalData.Bank === 'Traditional Corporate Bank Account Opening' ? 13 : 
-                    finalData.Bank === 'Digital Corporate Bank Account Opening' ? 14 : 
-                    finalData.Bank === 'Any of the above' ? 13 : null;
+    let subTypeId = this.personalInfo.bankType === 'Traditional Corporate Bank Account Opening' ? 13 : 
+                    this.personalInfo.bankType === 'Digital Corporate Bank Account Opening' ? 14 : 
+                    this.personalInfo.bankType === 'Any of the above' ? 13 : null;
 
     if (!subTypeId) throw new Error('Invalid Bank Type Selected ❌');
 
@@ -368,7 +384,7 @@ export class MailMangamentShowDetailsComponent {
         const serviceProducts = Array.isArray(resp) ? resp : [resp];
         localStorage.setItem('serviceProducts', JSON.stringify(resp));
         localStorage.setItem('BussinessServiceProducts', JSON.stringify(resp));
-        localStorage.setItem('finalDatabussiness', JSON.stringify(finalData));
+
         this.matchScoreStorageService.setMatchScoreResponse(resp);
  const leadResponseRaw = localStorage.getItem('leadResponse');
   const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
@@ -377,16 +393,22 @@ export class MailMangamentShowDetailsComponent {
                    LeadId: leadResponse.LeadId || '',
     AccountId: leadResponse.AccountId || '',
     ContactId: leadResponse.ContactId || '',
-          firstName: this.personalInfo.firstName,
-          lastName: this.personalInfo.lastName,
-          email: this.personalInfo.email,
-          nationality: this.personalInfo.nationality,
-          phone: this.personalInfo.mobileNumber.number,
-          countryCode: this.personalInfo.mobileNumber.dialCode,
-          dob: this.personalInfo.birthday,
+          firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.Phone,
+          dob: this.personalInfo.dob,
           type: "Bank Account Opening",
           CustomerType: "C",
           subcategory: "business",
+          activityType: this.personalInfo.activeType,
+          totalShareholders: this.personalInfo.totalShareholders,
+          companyTurnover: this.personalInfo.companyTurnover,
+          companyLocationUAE: this.personalInfo.companyLocationUAE,
+          companyLicensed: this.personalInfo.companyLicensed,
+          bankType: this.personalInfo.bankType,
           prodcutNameList: serviceProducts.map(product => ({
             ProductName: product.Product_Name,
             ProductFamily: "Traditional Services",

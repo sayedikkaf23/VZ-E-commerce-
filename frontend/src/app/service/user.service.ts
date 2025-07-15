@@ -157,6 +157,14 @@ createLeadOnly(payload: {
   );
 }
 
+getTradeLicenseAndShareholders(leadId: string): Observable<any> {
+  return this.http.get<any>(`${this.url}/user/getTradeLicenseAndShareholders?leadId=${leadId}`);
+}
+
+getStep1(leadId: string): Observable<any> {
+  return this.http.get<any>(`${this.url}/user/get-step1?leadId=${leadId}`);
+}
+
 
 
 }

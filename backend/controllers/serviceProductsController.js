@@ -527,7 +527,7 @@ exports.createLeadOnly = async (req, res) => {
     //  If leadId exists, update the record, else create a new one
     const pidataDoc = await Pidata.findOneAndUpdate(
       { "leadWithDetails.LeadId": leadResp.data?.LeadId }, // condition
-      { $set: updatedLeadWithDetails },
+      { $set:  { leadWithDetails: updatedLeadWithDetails } },
       { upsert: true, new: true } // upsert = create if not exists
     );
 

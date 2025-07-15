@@ -61,7 +61,7 @@ serviceProducts: any[] = [];
  
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const raw = localStorage.getItem('BussinessServiceProducts');
+      const raw = sessionStorage.getItem('BussinessServiceProducts');
       if (raw) {
         const parsed = JSON.parse(raw);
         // ensure it’s always an array

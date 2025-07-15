@@ -30,7 +30,7 @@ export class Step1Component implements OnInit {
   isBrowser: boolean;
   isLoading = false;
   maxDate: string | undefined;
- 
+ previousStep1Data: any = {}; 
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -54,7 +54,7 @@ export class Step1Component implements OnInit {
       nationality: ['', Validators.required],
       mobileNumber: ['', Validators.required],
       birthday: ['', Validators.required],
-      countryRisk: ['', Validators.required]
+      // countryRisk: ['', Validators.required]
     });
   }
  
@@ -97,16 +97,28 @@ export class Step1Component implements OnInit {
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
  
-    // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
-      const storedData = localStorage.getItem('step1Data');
-   
-      if (storedData) {
-        const formData = JSON.parse(storedData);
-        this.personalDetailsForm.patchValue(formData);
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
+      const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+      const leadId = leadData?.LeadId;
+
+      if (leadId) {
+        this.isLoading = true;
+        this.userService.getStep1(leadId).subscribe({
+          next: (formData) => {
+            this.personalDetailsForm.patchValue(formData);
+             this.previousStep1Data = formData; 
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Failed to load step1 data', err);
+            this.isLoading = false;
+          }
+        });
       }
     }
-  console.log('ngOnInit called');
+
+
  if (typeof window !== 'undefined') {
  
     const isMobile = window.innerWidth <= 768;  // adjust breakpoint as needed
@@ -145,14 +157,16 @@ export class Step1Component implements OnInit {
     const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
  
     if (selectedNationality) {
-      this.personalDetailsForm.patchValue({
-        countryRisk: selectedNationality.RiskRating
-      });
-    } else {
-      this.personalDetailsForm.patchValue({
-        countryRisk: ''
-      });
+    // Save risk rating in localStorage instead of form
+    if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', selectedNationality.RiskRating);
     }
+  } else {
+    // Remove or reset in localStorage if no risk found
+    if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', '');
+    }
+  }
   }
  
   get birthdayControl() {
@@ -172,101 +186,89 @@ onSubmit() {
     const values = this.personalDetailsForm.value;
     const phoneString = values.mobileNumber?.e164Number || '';
    
-    const leadDataRaw = localStorage.getItem('leadResponse');
+    const leadDataRaw = sessionStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
  
-    // Check for email change
-    const storedEmail = localStorage.getItem('step1Data')
-      ? JSON.parse(localStorage.getItem('step1Data') || '{}').email
-      : '';
+      const leadId = leadData?.LeadId;
+         this.isLoading = true;
+            let payload: any;
+                // Check for email change
+    const storedEmail = this.previousStep1Data.Email;
     const currentEmail = values.email;
- 
-    let payload: any;
- 
-    if (storedEmail !== currentEmail) {
-      // Email changed, create a new lead with an empty leadId
-      payload = {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        email: currentEmail,
-        nationality: values.nationality,
-        phone: phoneString,
-        dob: values.birthday, // yyyy-mm-dd
-        service_id: 1,
-        leadId: '' // Empty leadId when email is changed
-      };
-     
-      // If email changes, reset to Step 2 (new lead)
-      // if (this.isBrowser) {
-      //   localStorage.setItem('step1Data', JSON.stringify(values)); // Save the new step1Data
-      //   localStorage.removeItem('step2Data'); // Clear Step 2 data as it's a new lead
-      // }
- 
-    } else {
-      // Email didn't change, continue with the existing leadId
-      payload = {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        email: currentEmail,
-        nationality: values.nationality,
-        phone: phoneString,
-        dob: values.birthday, // yyyy-mm-dd
-        service_id: 1,
-        leadId: leadData?.LeadId || '' // Use existing leadId
-      };
-    }
- 
-    // Show loading spinner
-    this.isLoading = true;
- 
-    // Call createLeadOnly API
-    this.userService.createLeadOnly(payload).subscribe({
-      next: (res) => {
-        this.isLoading = false;
- 
-        // Save step 1 data to localStorage
-        if (this.isBrowser) {
-          localStorage.setItem('step1Data', JSON.stringify(values));
-        }
- 
-        // Save response data to localStorage (new lead)
-        if (this.isBrowser && res?.data) {
-          localStorage.setItem('leadResponse', JSON.stringify(res.data));
-        }
- 
-        // Navigate to the next step based on the email change
-        if (!localStorage.getItem('step2Data') && !localStorage.getItem('mailform2')) {
-          this.router.navigate(['/account-type']); // Navigate to Step 2
-        } else {
-          const isBusinessAccount = localStorage.getItem('mailform2') !== null;
-          const isPersonalAccount = localStorage.getItem('step2Data') !== null;
- 
-          if (this.isBrowser) {
-           if (storedEmail !== currentEmail) {
-  // Remove localStorage items
-  localStorage.removeItem('step2Data');
-  localStorage.removeItem('mailform2');
- 
-  // Redirect to account-type page for both cases
-  this.router.navigate(['/account-type']);
-} else {
-  if (isBusinessAccount) {
-    // Remove localStorage items for business account
-    // localStorage.removeItem('step2Data');
-    // localStorage.removeItem('mailform2');
-   
-    // Redirect to business details page
-    this.router.navigate(['/BusinessBankShowDetails']);
-  } else if (isPersonalAccount) {
-    // Remove localStorage items for personal account
-    // localStorage.removeItem('step2Data');
-    // localStorage.removeItem('mailform2');
-   
-    // Redirect to personal details page
-    this.router.navigate(['/ShowDetails']);
-  }
-}
- 
+              if (storedEmail !== currentEmail) {
+                // Email changed → create new lead with empty leadId
+                payload = {
+                  firstName: values.firstName,
+                  lastName: values.lastName,
+                  email: currentEmail,
+                  nationality: values.nationality,
+                  phone: phoneString,
+                  dob: values.birthday,
+                  service_id: 1,
+                  leadId: '' // empty leadId triggers new lead creation
+                };
+              }
+              else {
+                // Email not changed → keep existing leadId
+                payload = {
+                  firstName: values.firstName,
+                  lastName: values.lastName,
+                  email: values.email,
+                  nationality: values.nationality,
+                  phone: phoneString,
+                  dob: values.birthday,
+                  service_id: 1,
+                  leadId: leadId
+                };
+              }
+                  // Call createLeadOnly API
+                  this.userService.createLeadOnly(payload).subscribe({
+                    next: (res) => {
+                      this.isLoading = false;
+              
+                      // Save step 1 data to localStorage
+                      // if (this.isBrowser) {
+                      //   localStorage.setItem('step1Data', JSON.stringify(values));
+                      // }
+              
+                      // Save response data to localStorage (new lead)
+                      if (this.isBrowser && res?.data) {
+                        sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+                      }
+              
+                      // Navigate to the next step based on the email change
+                      if (!this.previousStep1Data.Company) {
+                        this.router.navigate(['/account-type']); // Navigate to Step 2
+                      } else {
+                        const isBusinessAccount = localStorage.getItem('mailform2') !== null;
+                        const isPersonalAccount = localStorage.getItem('step2Data') !== null;
+              
+                        if (this.isBrowser) {
+                        if (storedEmail !== currentEmail) {
+                // Remove localStorage items
+                localStorage.removeItem('step2Data');
+                localStorage.removeItem('mailform2');
+              
+                // Redirect to account-type page for both cases
+                this.router.navigate(['/account-type']);
+              } else {
+                if (isBusinessAccount) {
+                  // Remove localStorage items for business account
+                  // localStorage.removeItem('step2Data');
+                  // localStorage.removeItem('mailform2');
+                
+                  // Redirect to business details page
+                  this.router.navigate(['/BusinessBankShowDetails']);
+                } else if (isPersonalAccount) {
+                  // Remove localStorage items for personal account
+                  // localStorage.removeItem('step2Data');
+                  // localStorage.removeItem('mailform2');
+                
+                  // Redirect to personal details page
+                  this.router.navigate(['/ShowDetails']);
+                }
+              }
+              
           }
         }
       },
@@ -276,6 +278,7 @@ onSubmit() {
         this.toastr.error(msg, 'Error');
       }
     });
+
   } else {
     this.showFieldValidationErrors(this.personalDetailsForm);
   }

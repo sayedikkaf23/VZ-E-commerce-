@@ -29,7 +29,7 @@ export class VirtualReceptionist2Component implements OnInit {
   personalInfo: any;
   leadResponse: any;
   isLoading = false;
-
+ tradeLicenseFile: any;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -57,69 +57,53 @@ export class VirtualReceptionist2Component implements OnInit {
       window.scrollTo(0, 0);
     }
 
-    // Read localStorage
-    const savedData1 = localStorage.getItem('virtualdata1');
-    const savedData2 = localStorage.getItem('virtualdata2');
+     const leadDataRaw = localStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+  const leadId = leadData?.LeadId;
 
-    let parsedData1: any = {};
-    let parsedData2: any = {};
+  if (leadId) {
+    this.isLoading = true;
+    this.userService.getStep1(leadId).subscribe({
+      next: (storedData) => {
+        this.isLoading = false;
+        this.personalInfo = storedData; 
+        
+         this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+            next: (tradeData: any) => {
+              this.tradeLicenseFile = tradeData || {};
+console.log("Trade License Data:", tradeData);
+             this.tradeLicenseFile = tradeData || {};
+            console.log("Trade License Data:", tradeData);
 
-    // Parse the JSON from virtualdata1
-    if (savedData1) {
-      parsedData1 = JSON.parse(savedData1);
-    }
+            this.shareholdersData = tradeData.shareholders || [];
+            console.log("Shareholders Data:", this.shareholdersData);
 
-    // Start with shareholders from `virtualdata1`
-    this.shareholdersData = parsedData1.shareholders || [];
-    this.initializeShareholders();
+            //  Initialize form array now, after shareholders data is ready
+            this.initializeShareholders();
+              //  Update other fields in the formData if needed
+            if (tradeData.companyTradeLicenseNumber) {
+              this.formData.get('companyTradeLicenseNumber')?.setValue(tradeData.TradeLicenseNumber);
+            }
+              if (Array.isArray(tradeData.companyTradeLicenseFile) && tradeData.companyTradeLicenseFile.length > 0) {
+              this.companyTradeLicenseFile = tradeData.tradeLicenseFileURL;
+              this.formData.get('companyTradeLicenseFileName')?.setValue(tradeData.companyTradeLicenseFile[0].name);
+            }
+            this.uploadedFileNames = tradeData.uploadedFileNames || {};
 
-    // Parse the JSON from virtualdata2
-    if (savedData2) {
-      parsedData2 = JSON.parse(savedData2);
-
-      // Merge any existing shareholder data (including passportNumber, name, etc.)
-      if (parsedData2.shareholders) {
-        this.shareholdersData.forEach((sh, i) => {
-          if (parsedData2.shareholders[i]) {
-            // Merge passportNumber if it exists
-            if (parsedData2.shareholders[i].passportNumber) {
-              sh.passportNumber = parsedData2.shareholders[i].passportNumber;
+            },
+            error: (err:any) => {
+              console.error('Failed to load trade license data:', err);
+              this.toastr.error('Could not load trade license data.', 'Error');
             }
-            // Merge name, DOB, nationality, etc. if you wish:
-            if (parsedData2.shareholders[i].name) {
-              sh.name = parsedData2.shareholders[i].name;
-            }
-            if (parsedData2.shareholders[i].shareholderPercentage) {
-              sh.shareholderPercentage = parsedData2.shareholders[i].shareholderPercentage;
-            }
-            if (parsedData2.shareholders[i].dob) {
-              sh.dob = parsedData2.shareholders[i].dob;
-            }
-            if (parsedData2.shareholders[i].nationalityshareholder) {
-              sh.nationalityshareholder = parsedData2.shareholders[i].nationalityshareholder;
-            }
-          }
-        });
+          });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load step1 & step2 data', err);
       }
-      // Re-initialize the form array with merged data
-      this.initializeShareholders();
+    });
+  }
 
-      // Restore the company trade license text (the "number" or label) from parsedData2
-      if (parsedData2.companyTradeLicense) {
-        this.formData.get('companyTradeLicense')?.setValue(parsedData2.companyTradeLicense);
-      }
-
-      // Restore the uploaded license file info
-      this.companyTradeLicenseFile = parsedData2.companyTradeLicenseFile || [];
-
-      if (this.companyTradeLicenseFile.length > 0) {
-        // Update the form control to show we have a license file uploaded
-        this.formData.get('companyTradeLicenseFile')?.setValue(this.companyTradeLicenseFile[0].name);
-      }
-
-      // Restore the uploaded file names for shareholders
-      this.uploadedFileNames = parsedData2.uploadedFileNames || {};
-    }
   }
 
   // Helper to get the shareholders FormArray
@@ -320,14 +304,12 @@ export class VirtualReceptionist2Component implements OnInit {
         uploadedFileNames: this.uploadedFileNames
 
       };
-       const mailform = localStorage.getItem('virtualdata');
-        this.personalInfo = mailform ? JSON.parse(mailform) : {};
+       
 
          const leadResponseRaw = localStorage.getItem('leadResponse');
         this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
-     const mailform2 = localStorage.getItem('virtualdata1');
-        const mail2 = mailform2 ? JSON.parse(mailform2) : {};
+    
   
          // payload for salesforce api
         const insertPayload = {
@@ -335,25 +317,25 @@ export class VirtualReceptionist2Component implements OnInit {
             accountId: this.leadResponse.AccountId,
             serviceName: 'Virtual Receptionist',
             // subServiceName: '',
-            firstName: this.personalInfo.firstName,
-            lastName: this.personalInfo.lastName,
-            email: this.personalInfo.email,
-            nationality: this.personalInfo.nationality,
-            phone: this.personalInfo.mobileNumber.number,
-            dob: this.personalInfo.birthday,
+           firstName: this.personalInfo.FirstName,
+            lastName: this.personalInfo.LastName,
+            email: this.personalInfo.Email,
+            nationality: this.personalInfo.Nationality,
+            phone: this.personalInfo.Phone,
+            dob: this.personalInfo.dob,
             // companyLocationUAE: '',
             // employmentType: '',
-            companyName: mail2.CompanyName,
+             companyName: this.personalInfo.Company,
             // salary: '',
             // bankType: '',
-            companyLicensed: mail2.Companylicensed,
-            activityType: mail2.tradelicense,
+             companyLicensed: this.personalInfo.companyLicensed,
+            activityType: this.personalInfo.activityType,
+           totalShareholders: this.personalInfo.totalShareholders ,
              economicDetailId: this.economicDetailId,
-             countryCode: this.personalInfo.mobileNumber.dialCode,
-           totalShareholders: mail2.shareholdercount ,
+             countryCode: this.personalInfo.Phone,
             // companyTurnover: '',
-            companyLocation: mail2.CompanyIncorporated,
-            companyWebsite: mail2.Website,
+            companyLocation: this.personalInfo.companyLocation,
+            companyWebsite: this.personalInfo.companyWebsite,
             tradeLicenseNo: formValues.companyTradeLicense,
             shareholderfilesnumber: formValues.shareholders?.[0]?.passportNumber || '',
             tradeLicenseFile: this.companyTradeLicenseFile?.[0]?.url || '',

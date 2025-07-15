@@ -26,6 +26,7 @@ export class MailsManagement3Component implements OnInit {
   leadResponse: any;
   isLoading = false;
   economicDetailId: any;
+  tradeLicenseFile: any;
 
   constructor(
     private fb: FormBuilder,
@@ -48,56 +49,60 @@ export class MailsManagement3Component implements OnInit {
       window.scrollTo(0, 0);
     }
 
-    const savedData1 = localStorage.getItem('mailform1');
-    const savedData2 = localStorage.getItem('mailform2');
+              
+  const leadDataRaw = sessionStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+  const leadId = leadData?.LeadId;
 
-    let parsedData1: any = {};
-    let parsedData2: any = {};
+  if (leadId) {
+    this.isLoading = true;
+    this.userService.getStep1(leadId).subscribe({
+      next: (storedData) => {
+        this.isLoading = false;
+        this.personalInfo = storedData; 
+        
+         this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+            next: (tradeData: any) => {
+              this.tradeLicenseFile = tradeData || {};
+console.log("Trade License Data:", tradeData);
+             this.tradeLicenseFile = tradeData || {};
+            console.log("Trade License Data:", tradeData);
 
-    if (savedData1) {
-      parsedData1 = JSON.parse(savedData1);
-    }
+            this.shareholdersData = tradeData.shareholders || [];
+            console.log("Shareholders Data:", this.shareholdersData);
 
-    // Initialize shareholders from mailform1 data
-    this.shareholdersData = parsedData1.shareholders || [];
-    this.initializeShareholders();
+            //  Initialize form array now, after shareholders data is ready
+            this.initializeShareholders();
 
-    if (savedData2) {
-      parsedData2 = JSON.parse(savedData2);
-
-      // Merge passportNumber if counts match
-      if (parsedData2.shareholders) {
-        // Loop through all shareholders in `this.shareholdersData`
-        this.shareholdersData.forEach((sh, i) => {
-          // If a corresponding shareholder in parsedData2 exists, merge it
-          if (parsedData2.shareholders[i]) {
-            if (parsedData2.shareholders[i].passportNumber) {
-              sh.passportNumber = parsedData2.shareholders[i].passportNumber;
+            //  Update other fields in the formData if needed
+            if (tradeData.companyTradeLicenseNumber) {
+              this.formData.get('companyTradeLicenseNumber')?.setValue(tradeData.TradeLicenseNumber);
             }
-            // Merge other fields if needed, e.g. name, nationalityshareholder, etc.
-            // sh.name = parsedData2.shareholders[i].name || sh.name;
-          }
-        });
+            if (Array.isArray(tradeData.companyTradeLicenseFile) && tradeData.companyTradeLicenseFile.length > 0) {
+              this.companyTradeLicenseFile = tradeData.tradeLicenseFileURL;
+              this.formData.get('companyTradeLicenseFileName')?.setValue(tradeData.companyTradeLicenseFile[0].name);
+            }
+            this.uploadedFileNames = tradeData.uploadedFileNames || {};
+
+            },
+            error: (err:any) => {
+              console.error('Failed to load trade license data:', err);
+              this.toastr.error('Could not load trade license data.', 'Error');
+            }
+          });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load step1 & step2 data', err);
       }
-      this.initializeShareholders(); // Re-initialize after merging passportNumbers
-
-      // Restore company trade license text input
-      if (parsedData2.companyTradeLicenseNumber) {
-        this.formData.get('companyTradeLicenseNumber')?.setValue(parsedData2.companyTradeLicenseNumber);
-      }
-
-      // Restore trade license file info (now as { name: string; url: string }[])
-      this.companyTradeLicenseFile = parsedData2.companyTradeLicenseFile || [];
-
-      if (this.companyTradeLicenseFile.length > 0) {
-        // Set the form control for file name
-        this.formData.get('companyTradeLicenseFileName')?.setValue(this.companyTradeLicenseFile[0].name);
-      }
-
-      // Restore uploaded file names for shareholders
-      this.uploadedFileNames = parsedData2.uploadedFileNames || {};
-    }
+    });
   }
+
+
+  }
+
+
+
 
   get shareholders(): FormArray {
     return this.formData.get('shareholders') as FormArray;
@@ -255,7 +260,7 @@ export class MailsManagement3Component implements OnInit {
       tradeLicenseControl?.setErrors(null);
     }
 
-    this.economicDetailId = localStorage.getItem('economicDetailId');
+    this.economicDetailId = sessionStorage.getItem('economicDetailId');
 
     //check for economicDetailId
     if(!this.economicDetailId){
@@ -282,14 +287,14 @@ export class MailsManagement3Component implements OnInit {
         uploadedFileNames: this.uploadedFileNames
       };
 
-        const mailform = localStorage.getItem('mailform');
-        this.personalInfo = mailform ? JSON.parse(mailform) : {};
+        // const mailform = localStorage.getItem('mailform');
+        // this.personalInfo = mailform ? JSON.parse(mailform) : {};
 
-         const leadResponseRaw = localStorage.getItem('leadResponse');
+         const leadResponseRaw = sessionStorage.getItem('leadResponse');
         this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
-     const mailform2 = localStorage.getItem('mailform1');
-        const mail2 = mailform2 ? JSON.parse(mailform2) : {};
+    //  const mailform2 = localStorage.getItem('mailform1');
+    //     const mail2 = mailform2 ? JSON.parse(mailform2) : {};
   
          // payload for salesforce api
         const insertPayload = {
@@ -297,25 +302,25 @@ export class MailsManagement3Component implements OnInit {
             accountId: this.leadResponse.AccountId,
             serviceName: 'Mail Management',
             // subServiceName: '',
-            firstName: this.personalInfo.firstName,
-            lastName: this.personalInfo.lastName,
-            email: this.personalInfo.email,
-            nationality: this.personalInfo.nationality,
-            phone: this.personalInfo.mobileNumber.number,
-            dob: this.personalInfo.birthday,
+            firstName: this.personalInfo.FirstName,
+            lastName: this.personalInfo.LastName,
+            email: this.personalInfo.Email,
+            nationality: this.personalInfo.Nationality,
+            phone: this.personalInfo.Phone,
+            dob: this.personalInfo.dob,
             economicDetailId: this.economicDetailId,
-            countryCode: this.personalInfo.mobileNumber.dialCode,
+            countryCode: this.personalInfo.Phone,
             // companyLocationUAE: '',
             // employmentType: '',
-            companyName: mail2.CompanyName,
+            companyName: this.personalInfo.Company,
             // salary: '',
             // bankType: '',
-            companyLicensed: mail2.Companylicensed,
-            activityType: mail2.tradelicense,
-           totalShareholders: mail2.shareholdercount ,
+            companyLicensed: this.personalInfo.companyLicensed,
+            activityType: this.personalInfo.activityType,
+           totalShareholders: this.personalInfo.totalShareholders ,
             // companyTurnover: '',
-            companyLocation: mail2.CompanyIncorporated,
-            companyWebsite: mail2.Website,
+            companyLocation: this.personalInfo.companyLocation,
+            companyWebsite: this.personalInfo.companyWebsite,
             tradeLicenseNo: formValues.companyTradeLicenseNumber,
             shareholderfilesnumber: formValues.shareholders?.[0]?.passportNumber || '',
             tradeLicenseFile: this.companyTradeLicenseFile?.[0]?.url || '',
@@ -334,7 +339,7 @@ export class MailsManagement3Component implements OnInit {
           (response) => {
             console.log('API Response:', response);
             this.isLoading = false;
-              localStorage.setItem('mailform2', JSON.stringify(dataToSave));
+         
             this.router.navigate(['/mails-management-details']);
           }
           );

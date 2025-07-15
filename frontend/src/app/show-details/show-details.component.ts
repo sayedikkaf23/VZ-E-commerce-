@@ -77,20 +77,24 @@ shareholders: Shareholder[] = [];
     this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
     // console.log( this.salesforceResponse,"salefoce",this.quoteWithProductDetails)
     // Ensure this code runs only in the browser environment
+   
     if (this.isBrowser) {
-      // Retrieve data from localStorage
-      const step1Data = localStorage.getItem('step1Data');
-      const step2Data = localStorage.getItem('step2Data');
-    
-  
-      // If there is no data in localStorage, navigate away from this page
-      if (!step1Data || !step2Data  ) {
-        // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
-        this.router.navigate(['/home']); // Replace with the correct route
-      } else {
-        // Parse and store data if it exists
-        this.personalInfo = JSON.parse(step1Data);
-        this.bankInfo = JSON.parse(step2Data);
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
+      const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+      const leadId = leadData?.LeadId;
+
+      if (leadId) {
+        this.isLoading = true;
+        this.userService.getStep1(leadId).subscribe({
+          next: (formData) => {
+            this.personalInfo = formData;
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Failed to load step1 data', err);
+            this.isLoading = false;
+          }
+        });
       }
     }
   }
@@ -265,15 +269,15 @@ submitData() {
     const finalData = { ...this.personalInfo, ...this.bankInfo };
     let subTypeId: number | null = null;
 
-    if (finalData.Bank === 'Traditional Personal bank Account Opening') subTypeId = 11;
-    else if (finalData.Bank === 'Digital Personal Bank Account Opening') subTypeId = 12;
-    else if (finalData.Bank === 'Any of the above Bank Account Opening') subTypeId = 11;
+    if (this.personalInfo.bankType === 'Traditional Personal bank Account Opening') subTypeId = 11;
+    else if (this.personalInfo.bankType === 'Digital Personal Bank Account Opening') subTypeId = 12;
+    else if (this.personalInfo.bankType === 'Any of the above Bank Account Opening') subTypeId = 11;
     else throw new Error('Invalid Bank Type Selected ❌');
 
     const servicePayload = {
       ServiceNameCode: 1,
       SubTypeCode: subTypeId,
-      RiskCode: finalData.nationality
+      RiskCode: this.personalInfo.Nationality
     };
 
     this.isLoading = true;
@@ -290,30 +294,31 @@ submitData() {
 
         const serviceProducts = Array.isArray(resp) ? resp : [resp];
         // localStorage.setItem('serviceProducts', JSON.stringify(serviceProducts));
- localStorage.setItem('serviceProducts', JSON.stringify(resp));
- const leadResponseRaw = localStorage.getItem('leadResponse');
+ sessionStorage.setItem('serviceProducts', JSON.stringify(resp));
+ const leadResponseRaw = sessionStorage.getItem('leadResponse');
   const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
   //         // then navigate:
   //         this.router.navigate(['/ShowDetails-2']);
         const paymentPayload = {
-          countryCode:this.personalInfo.mobileNumber.dialCode,
+          countryCode:this.personalInfo.Phone,
           LeadId: leadResponse.LeadId || '',
     AccountId: leadResponse.AccountId || '',
     ContactId: leadResponse.ContactId || '',
-          firstName: this.personalInfo.firstName,
-          lastName: this.personalInfo.lastName,
-          email: this.personalInfo.email,
-          nationality: this.personalInfo.nationality,
-          phone: this.personalInfo.mobileNumber.number,
+          firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
           // countryCode: this.personalInfo.mobileNumber.dialCode,
-          dob: this.personalInfo.birthday,
+          dob: this.personalInfo.dob,
           type: "Bank Account Opening",
           CustomerType: "I",
           subcategory: "personal",
-          companyLocationUAE: this.bankInfo.resident,
-          employmentType: this.bankInfo.working,
-          salary: this.bankInfo.salary,
+          companyLocationUAE: this.personalInfo.companyLocationUAE,
+          bankType: this.personalInfo.bankType,
+          employmentType: this.personalInfo.employmentType,
+          salary: this.personalInfo.salary,
           prodcutNameList: serviceProducts.map(product => ({
             ProductName: product.Product_Name,
             ProductFamily: "Traditional Services",

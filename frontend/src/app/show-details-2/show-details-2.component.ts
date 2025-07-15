@@ -53,30 +53,45 @@ export class ShowDetails2Component implements AfterViewInit {
     this.quoteWithProductDetails = this.matchScoreResponse?.products;
 console.log( this.salesforceResponse, this.quoteWithProductDetails)
     // Check if the salesforceResponse is empty or null
+
+    const storedProductData = sessionStorage.getItem('serviceProducts');
+      if (storedProductData) {
+        const productData = JSON.parse(storedProductData);
+        // If the data is an object, wrap it in an array
+        this.serviceProducts = Array.isArray(productData)
+          ? productData
+          : [productData];
+        console.log(
+          'Retrieved Products from localStorage: ',
+          this.serviceProducts
+        );
+      } else {
+        console.log('No products found in localStorage.');
+      }
    
    if(this.isBrowser) {
-      const step1Data = localStorage.getItem('step1Data');
-      const step2Data = localStorage.getItem('step2Data');
- 
-      if (!step1Data || !step2Data) {
-        this.router.navigate(['/home']);  // Navigate to home if there's no data
-      } else {
-        this.personalInfo = JSON.parse(step1Data);
-        this.bankInfo = JSON.parse(step2Data);
- 
-        // Prevent back navigation
-        // this.preventBackNavigation();
-      }
- 
-      const raw = localStorage.getItem('serviceProducts');
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        // ensure it’s always an array
-        this.serviceProducts = Array.isArray(parsed) ? parsed : [parsed];
-      }
-     
-    }
+     const leadDataRaw = sessionStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+  const leadId = leadData?.LeadId;
+
+  if (leadId) {
+    this.isLoading = true;
+    this.userService.getStep1(leadId).subscribe({
+      next: (storedData) => {
+        this.isLoading = false;
+        // storedData contains all step1 + step2 fields if you saved them
+
+        //  patch step1 form
+        this.personalInfo = storedData; 
+         },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load step1 & step2 data', err);
+      },
+    });
   }
+  }
+}
  
   ngAfterViewInit(): void {
     if (this.isBrowser) {
@@ -143,7 +158,6 @@ console.log( this.salesforceResponse, this.quoteWithProductDetails)
  
     const finalData = {
       ...this.personalInfo,
-      ...this.bankInfo,
       LeadId
     };
  
@@ -254,7 +268,7 @@ submitPaymentOpportunity() {
   );
 }
 
- 
+
  
  
 }

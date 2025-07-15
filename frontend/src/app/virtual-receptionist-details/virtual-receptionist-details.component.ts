@@ -70,53 +70,58 @@ export class VirtualReceptionistDetailsComponent {
 
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
-    const mailform = localStorage.getItem('virtualdata');
-    const mailform2 = localStorage.getItem('virtualdata1');
-    const mailform3 = localStorage.getItem('virtualdata2');
+    
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
     // Redirect if either mailform or mailform2 is missing
-    if (!mailform || !mailform2) {
-      this.router.navigate(['/home']);
-    } else {
-      // Parse data from localStorage
-      this.personalInfo = JSON.parse(mailform);
-      this.companyInfo = JSON.parse(mailform2);
+    const leadDataRaw = localStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+   const leadId = leadData?.LeadId;
+   if (leadId) {
+  // 1) getStep1 → personalInfo
+  this.userService.getStep1(leadId).subscribe({
+    next: (personalInfo: any) => {
+      this.personalInfo = personalInfo;
+if(!personalInfo.Company){
+  this.router.navigate(['/virtual-receptionist-1']);
+}
+        // 3) getTradeLicenseandShareholder → tradeLicenseFile etc.
+          this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+            next: (tradeData: any) => {
+              this.tradeLicenseFile = tradeData || {};
+console.log("Trade License Data:", tradeData);
+              this.shareholders = tradeData.shareholders || []; 
+               this.tradeLicenseFile = tradeData || {};
 
-      // Extract shareholders from mailform2 in case mailform3 is missing
-      let shareholdersFromMailform2 = this.companyInfo.shareholders || [];
-      this.tradeLicenseFile = mailform3 ? JSON.parse(mailform3) : {};
-      // Parse mailform3 only if it exists
-      const additionalShareholderInfo = mailform3
-        ? JSON.parse(mailform3)
-        : { companyTradeLicense: '', shareholders: [] };
+            // Save shareholders
+            this.shareholders = Array.isArray(tradeData.shareholders) ? tradeData.shareholders : [];
 
-      // Use shareholders from mailform3 if available, otherwise fallback to mailform2
-      const mergedShareholders =
-        additionalShareholderInfo.shareholders.length > 0
-          ? additionalShareholderInfo.shareholders
-          : shareholdersFromMailform2;
+            // Default to first 5 shareholders
+            this.displayShareholders = this.shareholders.slice(0, 5);
 
-      // Merge all data into a single object
-      const mergedData = {
-        ...this.personalInfo,
-        ...this.companyInfo,
-        companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-        shareholders: mergedShareholders,
-        ...this.tradeLicenseFile,
-      };
+            // Trade license file URL
+            this.tradeLicenseFileurl = Array.isArray(tradeData.companyTradeLicenseFile) && tradeData.companyTradeLicenseFile.length > 0
+              ? tradeData.companyTradeLicenseFile[0].url
+              : '';
 
-      // Store merged data in localStorage for the final step
-      localStorage.setItem('mergedData', JSON.stringify(mergedData));
+            this.cdRef.detectChanges();
+            
+            },
+            error: (err:any) => {
+              console.error('Failed to load trade license data:', err);
+              this.toastr.error('Could not load trade license data.', 'Error');
+            }
+          });
 
-      // Assign displayShareholders
-      this.displayShareholders = Array.isArray(mergedData.shareholders)
-        ? mergedData.shareholders
-        : Object.values(mergedData.shareholders || []);
+        },
+    
+    error: (err) => {
+      console.error('Failed to load step1/personal data:', err);
+      this.toastr.error('Could not load personal data.', 'Error');
+    }
+  });
 
-      this.tradeLicenseFileurl =
-        additionalShareholderInfo.companyTradeLicenseFile[0].url;
 
       // console.log("Merged Data:", mergedData, this.displayShareholders);
     }
@@ -421,10 +426,7 @@ export class VirtualReceptionistDetailsComponent {
           switchMap((serviceResponse: any) => {
             if (!serviceResponse) return of(null);
 
-            localStorage.setItem(
-              'finalDataVirtual',
-              JSON.stringify(mergedData)
-            );
+           
             localStorage.setItem(
               'VirtualServiceProducts',
               JSON.stringify(serviceResponse)
@@ -441,39 +443,36 @@ export class VirtualReceptionistDetailsComponent {
             const leadResponse = leadResponseRaw
               ? JSON.parse(leadResponseRaw)
               : {};
-              const mailform2 = localStorage.getItem('virtualdata1');
-            const mail2 = mailform2 ? JSON.parse(mailform2) : {};
-            const mailform3 = localStorage.getItem('virtualdata2');
-            const mail3 = mailform3 ? JSON.parse(mailform3) : {};
+           
             const paymentPayload = {
               LeadId: leadResponse.LeadId || '',
               isLead: true,
               AccountId: leadResponse.AccountId || '',
               ContactId: leadResponse.ContactId || '',
-              firstName: this.personalInfo.firstName,
-              lastName: this.personalInfo.lastName,
-              email: this.personalInfo.email,
-               companyName: mail2.CompanyName,
-                companyLicensed: mail2.Companylicensed,
-                activityType: mail2.tradelicense,
-              totalShareholders: mail2.shareholdercount ,
+              firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.Phone,
+          dob: this.personalInfo.dob,
+           companyName: this.personalInfo.Company,
+            companyLicensed: this.personalInfo.companyLicensed,
+            activityType: this.personalInfo.activityType,
+           totalShareholders: this.personalInfo.totalShareholders ,
 
-            companyLocation: mail2.CompanyIncorporated,
-            companyWebsite: mail2.Website,
-            tradeLicenseFile: this.tradeLicenseFile
-              ?.companyTradeLicenseFile
-              ?. [0] ?? null,
-
-                 tradeLicenseNo: this.tradeLicenseFile.companyTradeLicense || '',
-                 tradeLicenseFileUrl:
-                Array.isArray(this.tradeLicenseFile?.companyTradeLicenseFile) &&
-                this.tradeLicenseFile.companyTradeLicenseFile.length > 0
-                  ? this.tradeLicenseFile.companyTradeLicenseFile[0].url
-                  : '',
-              nationality: this.personalInfo.nationality,
-              phone: this.personalInfo.mobileNumber.number,
-              countryCode: this.personalInfo.mobileNumber.dialCode,
-              dob: this.personalInfo.birthday,
+            companyLocation: this.personalInfo.companyLocation,
+            companyWebsite: this.personalInfo.companyWebsite,
+             tradeLicenseFile:[
+            {
+              License_no: this.tradeLicenseFile.tradeLicenseNo || '',
+              url: this.tradeLicenseFile.tradeLicenseFileUrl || '',
+                AccountId: leadResponse.AccountId || '',
+            }
+          ],
+            tradeLicenseNo: this.tradeLicenseFile.tradeLicenseNo || '',
+            tradeLicenseFileUrl: this.tradeLicenseFile.tradeLicenseFileUrl,
+          
               type: 'Virtual Receptionist',
               CustomerType: 'C',
               uploadedFileNames,
@@ -488,27 +487,10 @@ export class VirtualReceptionistDetailsComponent {
                 vat: product.vat,
                 ProductId: product.Product_Id,
               })),
-              shareholdersfiles: Object.values(mail3.uploadedFileNames || {})
-            .flat()
+              shareholdersfiles: (this.shareholders || [])
+            .flatMap((s: any) => Array.isArray(s.files) ? s.files : [])
             .map((f: any) => f.url)
             .filter(Boolean)[0] || '',
-              shareholders: shareholdersData.map(
-                (s: {
-                  name: any;
-                  shareholderPercentage: any;
-                  dob: any;
-                  nationalityshareholder: any;
-                  countryRisk: any;
-                  files: any;
-                }) => ({
-                  name: s.name,
-                  shareholderPercentage: s.shareholderPercentage,
-                  dob: s.dob,
-                  nationalityshareholder: s.nationalityshareholder,
-                  countryRisk: s.countryRisk,
-                  files: s.files || [],
-                })
-              ),
             };
 
             return this.userService.createPaymentOpportunity(paymentPayload);
@@ -561,12 +543,8 @@ export class VirtualReceptionistDetailsComponent {
               serviceName: 'Virtual Receptionist',
               tradelicense: [
                 {
-                  License_no: this.tradeLicenseFile.companyTradeLicense,
-                url:
-  Array.isArray(this.tradeLicenseFile?.companyTradeLicenseFile) &&
-  this.tradeLicenseFile.companyTradeLicenseFile.length > 0
-    ? this.tradeLicenseFile.companyTradeLicenseFile[0].url
-    : '',
+                  License_no: this.tradeLicenseFile.tradeLicenseNo || '',
+              url: this.tradeLicenseFile.tradeLicenseFileURL || '',
                   AccountId: leadResponse.AccountId || '',
                 },
               ],

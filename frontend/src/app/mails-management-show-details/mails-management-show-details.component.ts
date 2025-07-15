@@ -39,6 +39,7 @@ export class MailsManagementShowDetailsComponent {
  shareholders :any= [];
  uploadedFiles: File[][] = []; // Initialize as an empty array
 i: any;
+leadId: any;
 
   tradeLicenseFileurl: any;
   serviceProducts: any[] | undefined;
@@ -70,57 +71,55 @@ i: any;
     
     this.cdRef.detectChanges(); // Trigger change detection to update the view
   });
-    const mailform = localStorage.getItem('mailform');
-    const mailform2 = localStorage.getItem('mailform1');
-    const mailform3 = localStorage.getItem('mailform2') ;
-
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-    // Redirect if either mailform or mailform2 is missing
-    if (!mailform || !mailform2) {
-      this.router.navigate(['/home']);
-    } else {
-      // Parse data from localStorage
-      this.personalInfo = JSON.parse(mailform);
-      this.companyInfo = JSON.parse(mailform2);
-      this.tradeLicenseFile = mailform3 ? JSON.parse(mailform3) : {};
+     const leadDataRaw = sessionStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+   this.leadId = leadData?.LeadId;
+   if (this.leadId) {
+  // 1) getStep1 → personalInfo
+  this.userService.getStep1(this.leadId).subscribe({
+    next: (personalInfo: any) => {
+      this.personalInfo = personalInfo;
 
-  
-  
-      // Extract shareholders from mailform2 in case mailform3 is missing
-      let shareholdersFromMailform2 = this.companyInfo.shareholders || [];
-  
-      // Parse mailform3 only if it exists
-      const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
-  // console.log(additionalShareholderInfo,"additionalShareholderInfo")
-      // Use shareholders from mailform3 if available, otherwise fallback to mailform2
-      const mergedShareholders = additionalShareholderInfo.shareholders.length > 0 
-        ? additionalShareholderInfo.shareholders 
-        : shareholdersFromMailform2;
-  
-      // Merge all data into a single object
-      const mergedData = {
-        ...this.personalInfo,
-        ...this.companyInfo,
-        companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-        shareholders: mergedShareholders,
-        ...this.tradeLicenseFile
-      };
-  
-      // Store merged data in localStorage for the final step
-      localStorage.setItem('mergedData', JSON.stringify(mergedData));
-  
-      // Assign displayShareholders
-      this.displayShareholders = Array.isArray(mergedData.shareholders)
-        ? mergedData.shareholders
-        : Object.values(mergedData.shareholders || []);
-  
-      // console.log("Merged Data:", mergedData, this.displayShareholders);
+        // 3) getTradeLicenseandShareholder → tradeLicenseFile etc.
+          this.userService.getTradeLicenseAndShareholders(this.leadId).subscribe({
+            next: (tradeData: any) => {
+              this.tradeLicenseFile = tradeData || {};
+console.log("Trade License Data:", tradeData);
+              this.shareholders = tradeData.shareholders || []; 
+               this.tradeLicenseFile = tradeData || {};
+
+            // Save shareholders
+            this.shareholders = Array.isArray(tradeData.shareholders) ? tradeData.shareholders : [];
+
+            // Default to first 5 shareholders
+            this.displayShareholders = this.shareholders.slice(0, 5);
+
+            // Trade license file URL
+            this.tradeLicenseFileurl = Array.isArray(tradeData.companyTradeLicenseFile) && tradeData.companyTradeLicenseFile.length > 0
+              ? tradeData.companyTradeLicenseFile[0].url
+              : '';
+
+            this.cdRef.detectChanges();
+            
+            },
+            error: (err:any) => {
+              console.error('Failed to load trade license data:', err);
+              this.toastr.error('Could not load trade license data.', 'Error');
+            }
+          });
+
+        },
+    
+    error: (err) => {
+      console.error('Failed to load step1/personal data:', err);
+      this.toastr.error('Could not load personal data.', 'Error');
+    }
+  });
 
 
-      //  const tradeLicenseFile = this.companyInfo.companyTradeLicenseFile || [];
-       this.tradeLicenseFileurl  = additionalShareholderInfo.companyTradeLicenseFile[0].url;
   
     // if (tradeLicenseFile.length > 0) {
     //   // Assuming you need the first file
@@ -204,71 +203,16 @@ i: any;
     const scrollPosition = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
     return scrollPosition > 100 ? 'toast-bottom-right' : 'toast-bottom-left'; // Adjust based on scroll
   }
-  // submitData() {
-  //   const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
-  //   const formData = new FormData();
-  
-  //   // Append general data fields, excluding shareholders
-  //   for (const key in mergedData) {
-  //     if (mergedData.hasOwnProperty(key) && key !== 'shareholders') {
-  //       const value = mergedData[key];
-  //       formData.append(key, typeof value === 'object' ? JSON.stringify(value) : value);
-  //     }
-  //   }
-  
-  //   // Append each shareholder's data and their actual File objects
-  //   mergedData.shareholders.forEach((shareholder: any, index: number) => {
-  //     // Append shareholder metadata fields, excluding files
-  //     for (const field in shareholder) {
-  //       if (field !== 'files') {
-  //         formData.append(`shareholders[${index}][${field}]`, shareholder[field]);
-  //       }
-  //     }
-  
-  //     // Retrieve actual files from `fileStorageService`
-  //     const files = this.fileStorageService.getFiles(index);
-  //     if (files.length > 0) {
-  //       files.forEach((file: File, fileIndex: number) => {
-  //         formData.append(`shareholders[${index}][files][${fileIndex}]`, file);
-  //       });
-  //     } else {
-  //       console.warn(`No files found for shareholder index ${index}`);
-  //     }
-  //   });
-  
-  //   // Log FormData to verify structure
-  //   formData.forEach((value, key) => {
-  //     console.log(`${key}:`, value);
-  //   });
-  
-  //   // Send the data to backend
-  //   this.userService.virtualform(formData).subscribe(
-  //     response => {
-  //       console.log('Data submitted successfully:', response);
-  //       localStorage.clear();
-  //       this.toastr.success('Data submitted successfully', 'Success');
-  //     },
-  //     error => {
-  //       console.error('Error submitting data:', error);
-  //       this.showError(error.error.message || 'An error occurred');
-  //     }
-  //   );
-  // }
-  
-  
-  
-  
-// VirtualReceptionist2Component.ts
 
 
  
 submitData() {
-  const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+
   const uploadedFileNames = this.uploadedFiles || [];
   const shareholdersData = this.shareholders || [];
 
   
-console.log("object",mergedData,   this.tradeLicenseFile)
+
   Swal.fire({
     title: 'Confirm Your Data',
     text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
@@ -280,7 +224,7 @@ console.log("object",mergedData,   this.tradeLicenseFile)
   }).then((result) => {
     if (!result.isConfirmed) return;
 
-    const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
+    const appliedRiskData = JSON.parse(sessionStorage.getItem('appliedRisk') || '{}');
     const riskCode = appliedRiskData.appliedRisk === 'Low' ? 1 :
                      appliedRiskData.appliedRisk === 'Medium' ? 2 :
                      appliedRiskData.appliedRisk === 'High' ? 3 : 0;
@@ -311,46 +255,48 @@ console.log("object",mergedData,   this.tradeLicenseFile)
       switchMap((serviceResponse: any) => {
         if (!serviceResponse) return of(null);
 
-        localStorage.setItem('finalDataMail', JSON.stringify(mergedData));
-        localStorage.setItem('MailServiceProducts', JSON.stringify(serviceResponse));
+
+        sessionStorage.setItem('MailServiceProducts', JSON.stringify(serviceResponse));
         this.matchScoreStorageService.setMatchScoreResponse(serviceResponse);
 
         const serviceProducts = Array.isArray(serviceResponse) ? serviceResponse : [serviceResponse];
         this.serviceProducts = serviceProducts;
-         const leadResponseRaw = localStorage.getItem('leadResponse');
+         const leadResponseRaw = sessionStorage.getItem('leadResponse');
         const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
-         const mailform2 = localStorage.getItem('mailform1');
-        const mail2 = mailform2 ? JSON.parse(mailform2) : {};
-         const mailform3 = localStorage.getItem('mailform2');
-        const mail3 = mailform3 ? JSON.parse(mailform3) : {};
+
         const paymentPayload = {
           LeadId: leadResponse.LeadId || '',
           isLead: true,
           AccountId: leadResponse.AccountId || '',
           ContactId: leadResponse.ContactId || '',
-          firstName: this.personalInfo.firstName,
-          lastName: this.personalInfo.lastName,
-          email: this.personalInfo.email,
-          nationality: this.personalInfo.nationality,
-          phone: this.personalInfo.mobileNumber.number,
-          countryCode: this.personalInfo.mobileNumber.dialCode,
-          dob: this.personalInfo.birthday,
-           companyName: mail2.CompanyName,
-            companyLicensed: mail2.Companylicensed,
-            activityType: mail2.tradelicense,
-           totalShareholders: mail2.shareholdercount ,
+          firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.Phone,
+          dob: this.personalInfo.dob,
+           companyName: this.personalInfo.Company,
+            companyLicensed: this.personalInfo.companyLicensed,
+            activityType: this.personalInfo.activityType,
+           totalShareholders: this.personalInfo.totalShareholders ,
 
-            companyLocation: mail2.CompanyIncorporated,
-            companyWebsite: mail2.Website,
-                   tradeLicenseFile: this.tradeLicenseFile
-              ?.companyTradeLicenseFile
-              ?. [0] ?? null,
-            tradeLicenseNo: this.tradeLicenseFile?.companyTradeLicenseNumber || '',
-            tradeLicenseFileUrl: this.tradeLicenseFile?.companyTradeLicenseFile?.[0]?.url ?? '',
-           shareholdersfiles: Object.values(mail3.uploadedFileNames || {})
-            .flat()
+            companyLocation: this.personalInfo.companyLocation,
+            companyWebsite: this.personalInfo.companyWebsite,
+             tradeLicenseFile:[
+            {
+              License_no: this.tradeLicenseFile.tradeLicenseNo || '',
+              url: this.tradeLicenseFile.tradeLicenseFileUrl || '',
+                AccountId: leadResponse.AccountId || '',
+            }
+          ],
+            tradeLicenseNo: this.tradeLicenseFile.tradeLicenseNo || '',
+            tradeLicenseFileUrl: this.tradeLicenseFile.tradeLicenseFileUrl,
+           shareholdersfiles: (this.shareholders || [])
+            .flatMap((s: any) => Array.isArray(s.files) ? s.files : [])
             .map((f: any) => f.url)
             .filter(Boolean)[0] || '',
+
           type: "Mail Management",
           CustomerType: "C",
           uploadedFileNames,
@@ -366,7 +312,7 @@ console.log("object",mergedData,   this.tradeLicenseFile)
             ProductId: product.Product_Id,  
 
           })),
-          shareholders: (mergedData.shareholders || []).map((s: any) => ({
+          shareholders: (this.shareholders || []).map((s: any) => ({
             name: s.name,
             shareholderPercentage: s.shareholderPercentage,
             dob: s.dob,
@@ -414,8 +360,8 @@ console.log("object",mergedData,   this.tradeLicenseFile)
         const uploadedFilesArray = Array.isArray(this.tradeLicenseFile.uploadedFileNames)
           ? this.tradeLicenseFile.uploadedFileNames
           : Object.values(this.tradeLicenseFile.uploadedFileNames || {}).flat();
-          const accountId = localStorage.getItem('accountId');
-          const leadResponseRaw = localStorage.getItem('leadResponse');
+          const accountId = sessionStorage.getItem('accountId');
+          const leadResponseRaw = sessionStorage.getItem('leadResponse');
             const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
         const documentPayload = {
           quotePaymentId,
@@ -423,8 +369,8 @@ console.log("object",mergedData,   this.tradeLicenseFile)
           serviceName: 'Mail Management',
           tradelicense: [
             {
-              License_no: this.tradeLicenseFile.companyTradeLicenseNumber || '',
-              url: uploadedFilesArray.length > 0 ? uploadedFilesArray[0].url : '',
+              License_no: this.tradeLicenseFile.tradeLicenseNo || '',
+              url: this.tradeLicenseFile.tradeLicenseFileURL || '',
                 AccountId: leadResponse.AccountId || '',
             }
           ],
@@ -447,7 +393,7 @@ console.log("object",mergedData,   this.tradeLicenseFile)
             }).pipe(
               tap(statusRes => {
                 if (statusRes?.data?.CustomerStatus === 'Auto Approved') {
-                  localStorage.setItem('quotePaymentId', documentPayload.quotePaymentId);
+                  sessionStorage.setItem('quotePaymentId', documentPayload.quotePaymentId);
                   this.router.navigate(['/mails-summary']);
                 } else {
                   alert('Your request has been submitted successfully. You will receive an email when your application is approved.');

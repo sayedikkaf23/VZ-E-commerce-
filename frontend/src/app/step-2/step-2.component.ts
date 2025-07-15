@@ -40,7 +40,7 @@ export class Step2Component implements AfterViewInit, OnInit {
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
   leadResponse: any;
-
+  isLoading = false;
   constructor(
     private formDataService: FormDataService,
     private http: HttpClient,
@@ -59,32 +59,43 @@ export class Step2Component implements AfterViewInit, OnInit {
   }
 
   ngOnInit(): void {
-    // Retrieve Step 2 data from localStorage
-    const storedStep2Data = localStorage.getItem('step2Data');
-    if (storedStep2Data) {
-      this.formData = JSON.parse(storedStep2Data);
-      this.cdRef.detectChanges();
+    // // Retrieve Step 2 data from localStorage
+    // const storedStep2Data = localStorage.getItem('step2Data');
+    // if (storedStep2Data) {
+    //   this.formData = JSON.parse(storedStep2Data);
+    //   this.cdRef.detectChanges();
 
-      const phoneNumberWithCountryCode =
-        this.formData?.mobileNumber?.e164Number || '';
-      console.log(
-        'Phone number with country code:',
-        phoneNumberWithCountryCode
-      );
-      // console.log(  this.formData.working)
-    }
+    //   const phoneNumberWithCountryCode =
+    //     this.formData?.mobileNumber?.e164Number || '';
+    //   console.log(
+    //     'Phone number with country code:',
+    //     phoneNumberWithCountryCode
+    //   );
+    //   // console.log(  this.formData.working)
+    // }
     // first try your separate leadId key
-    const savedLeadId = localStorage.getItem('leadId');
-    if (savedLeadId) {
-      this.formData.leadId = savedLeadId;
-    } else {
       // fallback: parse out of full response
-      const raw = localStorage.getItem('leadResponse');
+      const raw = sessionStorage.getItem('leadResponse');
       if (raw) {
         const leadData = JSON.parse(raw);
         this.formData.leadId = leadData.LeadId ?? '';
       }
-    }
+    
+
+
+    if (this.formData.leadId) {
+        this.isLoading = true;
+        this.userService.getStep1(this.formData.leadId).subscribe({
+          next: (res) => {
+            this.formData = res;
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Failed to load step1 data', err);
+            this.isLoading = false;
+          }
+        });
+      }
   }
 
   // Handle file input changes
@@ -149,12 +160,12 @@ export class Step2Component implements AfterViewInit, OnInit {
     const getValue = (value: any, fallback = '') =>
       value === null || value === undefined ? fallback : value;
 
-    const leadResponseRaw = localStorage.getItem('leadResponse');
+    const leadResponseRaw = sessionStorage.getItem('leadResponse');
     this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
-    const mailform = localStorage.getItem('step1Data');
-    this.personalInfo = mailform ? JSON.parse(mailform) : {};
-    const economicDetailId = localStorage.getItem('economicDetailId') || '';
+    // const mailform = localStorage.getItem('step1Data');
+    // this.personalInfo = mailform ? JSON.parse(mailform) : {};
+    const economicDetailId = sessionStorage.getItem('economicDetailId') || '';
     const phoneString = this.personalInfo?.mobileNumber?.e164Number || '';
 
     const payload = {
@@ -181,23 +192,23 @@ export class Step2Component implements AfterViewInit, OnInit {
       subServiceName: 'Personal Bank Account Opening',
 
       // Optional fields
-      firstName: this.personalInfo.firstName,
-      lastName: this.personalInfo.lastName,
-      email: this.personalInfo.email,
-      nationality: this.personalInfo.nationality,
+      firstName: this.formData.FirstName,
+      lastName: this.formData.LastName,
+      email: this.formData.Email,
+      nationality: this.formData.Nationality,
       // phone: this.personalInfo.mobileNumber.number,
-      phone: phoneString,
-      dob: this.personalInfo.birthday,
+      phone: this.formData.Phone,
+      dob: this.formData.dob,
       companyLicensed: getValue(this.formData.companyLicensed),
       activityType: getValue(this.formData.activityType),
       totalShareholders: getValue(this.formData.totalShareholders),
       companyTurnover: getValue(this.formData.companyTurnover),
       companyLocation: getValue(this.formData.companyLocation),
       companyWebsite: getValue(this.formData.companyWebsite),
-      tradeLicenseNo: getValue(this.formData.tradeLicenseNo),
-      shareholderfilesnumber: getValue(this.formData.shareholderfilesnumber),
-      tradeLicenseFile: getValue(this.formData.tradeLicenseFile),
-      shareholdersfiles: getValue(this.formData.shareholdersfiles),
+      // tradeLicenseNo: getValue(this.formData.tradeLicenseNo),
+      // shareholderfilesnumber: getValue(this.formData.shareholderfilesnumber),
+      // tradeLicenseFile: getValue(this.formData.tradeLicenseFile),
+      // shareholdersfiles: getValue(this.formData.shareholdersfiles),
 
       // Use [] instead of "" for array field
       shareholders: Array.isArray(this.formData.shareholders)
@@ -205,12 +216,10 @@ export class Step2Component implements AfterViewInit, OnInit {
         : [],
     };
 
-    localStorage.setItem('step2Data', JSON.stringify(this.formData));
-
     this.adminAuthService.insertEconomicDetails(payload).subscribe({
       next: (res: any) => {
         const economicDetailId = res.data ? res.data.economicDetailId : '';
-        localStorage.setItem('economicDetailId', economicDetailId);
+        sessionStorage.setItem('economicDetailId', economicDetailId);
 
         console.log('Economic details saved', res);
         this.router.navigate(['/ShowDetails']);

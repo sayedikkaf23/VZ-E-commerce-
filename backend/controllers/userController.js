@@ -1665,3 +1665,54 @@ exports.updateKycStatus = async (req, res) => {
 
 
 
+exports.getTradeLicenseAndShareholders = async (req, res) => {
+  try {
+    const leadId = req.query.leadId;
+    if (!leadId) {
+      return res.status(400).json({ message: 'leadId query param is required' });
+    }
+
+    // Find the document
+    const doc = await Pidata.findOne({ "leadWithDetails.LeadId": leadId });
+
+    if (!doc) {
+      return res.status(404).json({ message: 'Data not found for the given leadId' });
+    }
+
+    // Prepare the response with only needed fields
+    const response = {
+      tradeLicenseFileUrl: doc.tradeLicenseFileUrl || null,
+      tradeLicenseNo: doc.tradeLicenseNo || null,
+      shareholdersfiles: doc.shareholdersfiles || null,
+      shareholderfilesnumber: doc.shareholderfilesnumber || null,
+      shareholders: doc.shareholders || []
+    };
+
+    return res.json(response);
+
+  } catch (err) {
+    console.error('Error getting trade license and shareholders data:', err);
+    res.status(500).json({ message: 'Failed to get data' });
+  }
+};
+
+
+exports.getStep1 = async (req, res) => {
+  try {
+    const leadId = req.query.leadId;
+    if (!leadId) {
+      return res.status(400).json({ message: 'leadId query param is required' });
+    }
+
+    const doc = await Pidata.findOne({ "leadWithDetails.LeadId": leadId });
+
+    if (!doc) {
+      return res.status(404).json({ message: 'Data not found for the given leadId' });
+    }
+
+    return res.json(doc.leadWithDetails);
+  } catch (err) {
+    console.error('Error getting step1 data:', err);
+    res.status(500).json({ message: 'Failed to get step1 data' });
+  }
+};

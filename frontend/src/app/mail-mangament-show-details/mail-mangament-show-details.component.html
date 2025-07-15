@@ -28,27 +28,27 @@
               <tbody>
                 <tr>
                   <th>First Name :</th>
-                  <td>{{ personalInfo.firstName }}</td>
+                  <td>{{ personalInfo.FirstName }}</td>
                 </tr>
                 <tr>
                   <th>Last Name :</th>
-                  <td>{{ personalInfo.lastName }}</td>
+                  <td>{{ personalInfo.LastName }}</td>
                 </tr>
                 <tr>
                   <th>Email ID :</th>
-                  <td>{{ personalInfo.email }}</td>
+                  <td>{{ personalInfo.Email }}</td>
                 </tr>
                 <tr>
                   <th>Nationality :</th>
-                  <td>{{ personalInfo.nationality }}</td>
+                  <td>{{ personalInfo.Nationality }}</td>
                 </tr>
                 <tr>
                   <th>Date of Birth :</th>
-                  <td>{{ personalInfo.birthday | date:'dd-MM-yyyy' }}</td>
+                  <td>{{ personalInfo.dob | date:'dd-MM-yyyy' }}</td>
                 </tr>
                 <tr>
                   <th>Phone No :</th>
-                  <td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td>
+                  <td>{{ personalInfo.Phone || 'N/A' }}</td>
                 </tr>
                 <tr>
                   <th style="border: none;"></th>
@@ -78,7 +78,7 @@
                 </tr>
               </thead>
               <tbody>
-                <ng-container *ngFor="let shareholder of displayShareholders">
+                <ng-container *ngFor="let shareholder of shareholders">
                   <tr>
                     <td>{{ shareholder.name }}</td>
                     <td>{{ shareholder.shareholderPercentage }}%</td>
@@ -106,15 +106,15 @@
               <tbody>
                 <tr>
                   <th> Is Your Company located in the UAE? :</th>
-                  <td>{{ companyInfo.companylocation }}</td>
+                  <td>{{ personalInfo.companyLocationUAE }}</td>
                 </tr>
-                <tr *ngIf="companyInfo.companylocation === 'Yes'">
+                <tr *ngIf="personalInfo.companyLocationUAE === 'Yes'">
                   <th>Where is your Company licensed? :</th>
-                  <td>{{ companyInfo.Companylicensed }}</td>
+                  <td>{{ personalInfo.companyLicensed }}</td>
                 </tr>
-                <tr *ngIf="companyInfo.companylocation === 'Yes'">
+                <tr *ngIf="personalInfo.companyLocationUAE === 'Yes'">
                   <th>What are the type of activities mentioned on your trade license? :</th>
-                  <td>{{ companyInfo.tradelicense }}</td>
+                  <td>{{ personalInfo.activityType }}</td>
                 </tr>
                
                 <!-- <tr>
@@ -123,15 +123,15 @@
                 </tr> -->
                 <tr>
                   <th> How many shareholder does your company have? :</th>
-                  <td>{{ companyInfo.shareholdercount }}</td>
+                  <td>{{ personalInfo.totalShareholders }}</td>
                 </tr>
                 <tr>
                   <th> Turnover of the company (Annually)? :</th>
-                  <td>{{ companyInfo.Turnover }}</td>
+                  <td>{{ personalInfo.companyTurnover }}</td>
                 </tr>
                 <tr>
                   <th> Do you wish to apply for? :</th>
-                  <td>{{ companyInfo.Bank }}</td>
+                  <td>{{ personalInfo.bankType }}</td>
                 </tr>
               </tbody>
             </table>
