@@ -75,12 +75,14 @@ export class AppComponent implements OnInit, OnDestroy {
           const currentModule = sessionStorage.getItem('currentModule'); 
 
           // Mail Management
-          if (url.includes('mails-') && currentModule !== 'mailManagement') {
+          if ((url.includes('mails-')||
+              url.includes('home')) && currentModule !== 'mailManagement') {
             sessionStorage.removeItem('leadResponse');
             sessionStorage.setItem('currentModule', 'mailManagement');
           }
           // Virtual Receptionist
-          else if (url.includes('virtual-') && currentModule !== 'virtualReceptionist') {
+          else if ((url.includes('virtual-')||
+              url.includes('home')) && currentModule !== 'virtualReceptionist') {
             sessionStorage.removeItem('leadResponse');
             sessionStorage.setItem('currentModule', 'virtualReceptionist');
           }
@@ -94,7 +96,8 @@ export class AppComponent implements OnInit, OnDestroy {
               url.includes('ShowDetails-2') ||
               url.includes('BusinessBankform') ||
               url.includes('BusinessBankShowDetails') ||
-              url.includes('bussiness-show-details')
+              url.includes('bussiness-show-details')||
+              url.includes('home')
             ) 
             && currentModule !== 'bankOpening'
           ) {
