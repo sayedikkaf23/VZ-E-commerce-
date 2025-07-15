@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { Router, NavigationEnd } from '@angular/router';
+import { Router, NavigationEnd, NavigationStart } from '@angular/router';
 import { filter } from 'rxjs/operators';
  
 @Component({
@@ -67,6 +67,43 @@ export class AppComponent implements OnInit, OnDestroy {
         this.currentRoute = event.urlAfterRedirects;
         this.loadAssets();
       });
+
+      
+      this.router.events.subscribe(event => {
+        if (event instanceof NavigationStart) {
+          const url = event.url;
+          const currentModule = sessionStorage.getItem('currentModule'); 
+
+          // Mail Management
+          if (url.includes('mails-') && currentModule !== 'mailManagement') {
+            sessionStorage.removeItem('leadResponse');
+            sessionStorage.setItem('currentModule', 'mailManagement');
+          }
+          // Virtual Receptionist
+          else if (url.includes('virtual-') && currentModule !== 'virtualReceptionist') {
+            sessionStorage.removeItem('leadResponse');
+            sessionStorage.setItem('currentModule', 'virtualReceptionist');
+          }
+          // Bank Account Opening
+          else if (
+            (
+              url.includes('step-1') ||
+              url.includes('step-2') ||
+              url.includes('account-type') ||
+              url.includes('ShowDetails') ||
+              url.includes('ShowDetails-2') ||
+              url.includes('BusinessBankform') ||
+              url.includes('BusinessBankShowDetails') ||
+              url.includes('bussiness-show-details')
+            ) 
+            && currentModule !== 'bankOpening'
+          ) {
+            sessionStorage.removeItem('leadResponse');
+            sessionStorage.setItem('currentModule', 'bankOpening');
+          }
+        }
+      });
+
   }
  
   ngOnDestroy(): void {
