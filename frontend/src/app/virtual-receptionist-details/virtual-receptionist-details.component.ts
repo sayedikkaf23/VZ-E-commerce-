@@ -384,7 +384,18 @@ console.log("Trade License Data:", tradeData);
       cancelButtonText: 'Review Data',
     }).then((result) => {
       if (!result.isConfirmed) return;
-
+ const quotePaymentId = sessionStorage.getItem('quotePaymentId');
+    const leadPayload = {
+        firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
+          dob: this.personalInfo.dob,
+          leadId: '',
+          service_id: 1
+      }
       this.isLoading = true;
 
       const appliedRiskData = JSON.parse(
@@ -405,9 +416,22 @@ console.log("Trade License Data:", tradeData);
         RiskCode: riskCode,
       };
 
-      this.virtualManagementService
-        .getServiceProducts(productRequestPayload)
-        .pipe(
+      of(quotePaymentId).pipe(
+      switchMap(id => {
+        if (id) {
+          return this.userService.createLeadOnly(leadPayload).pipe(
+            tap(res => {
+              if (this.isBrowser && res?.data) {
+                sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+              }
+            })
+          );
+        } else {
+          return of(null);
+        }
+      }),
+      switchMap(() =>this.virtualManagementService
+        .getServiceProducts(productRequestPayload)),
           catchError((error) => {
             this.isLoading = false;
             console.error(error);

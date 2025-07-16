@@ -266,6 +266,19 @@ submitData() {
   }).then(result => {
     if (!result.isConfirmed) return;
 
+    const quotePaymentId = sessionStorage.getItem('quotePaymentId');
+    const payload = {
+        firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
+          dob: this.personalInfo.dob,
+          leadId: '',
+          service_id: 1
+      }
+
     const finalData = { ...this.personalInfo, ...this.bankInfo };
     let subTypeId: number | null = null;
 
@@ -281,8 +294,22 @@ submitData() {
     };
 
     this.isLoading = true;
-
-    this.userService.getServiceProducts(servicePayload).pipe(
+    
+    of(quotePaymentId).pipe(
+      switchMap(id => {
+        if (id) {
+          return this.userService.createLeadOnly(payload).pipe(
+            tap(res => {
+              if (this.isBrowser && res?.data) {
+                sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+              }
+            })
+          );
+        } else {
+          return of(null);
+        }
+      }),
+      switchMap(() =>this.userService.getServiceProducts(servicePayload)),
       catchError(err => {
         console.error(err);
         this.isLoading = false;
@@ -312,7 +339,8 @@ submitData() {
           phone: this.personalInfo.Phone,
           // countryCode: this.personalInfo.mobileNumber.dialCode,
           dob: this.personalInfo.dob,
-          type: "Bank Account Opening",
+           serviceName: 'Bank Account Opening',
+           subServiceName: 'Personal Bank Account Opening',
           CustomerType: "I",
           subcategory: "personal",
           companyLocationUAE: this.personalInfo.companyLocationUAE,

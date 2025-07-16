@@ -351,7 +351,18 @@ console.log("Trade License Data:", tradeData);
     cancelButtonText: 'Review Data'
   }).then((result) => {
     if (!result.isConfirmed) return;
-
+ const quotePaymentId = sessionStorage.getItem('quotePaymentId');
+    const payload = {
+        firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
+          dob: this.personalInfo.dob,
+          leadId: '',
+          service_id: 1
+      }
    
     const appliedRiskData = JSON.parse(sessionStorage.getItem('appliedRisk') || '{}');
     let subTypeId = this.personalInfo.bankType === 'Traditional Corporate Bank Account Opening' ? 13 : 
@@ -372,7 +383,21 @@ console.log("Trade License Data:", tradeData);
 
     this.isLoading = true;
 
-    this.userService.getServiceProducts(servicePayload).pipe(
+     of(quotePaymentId).pipe(
+      switchMap(id => {
+        if (id) {
+          return this.userService.createLeadOnly(payload).pipe(
+            tap(res => {
+              if (this.isBrowser && res?.data) {
+                sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+              }
+            })
+          );
+        } else {
+          return of(null);
+        }
+      }),
+      switchMap(() =>this.userService.getServiceProducts(servicePayload)),
       catchError(err => {
         console.error(err);
         this.isLoading = false;

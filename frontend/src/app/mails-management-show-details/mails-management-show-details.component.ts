@@ -224,6 +224,19 @@ submitData() {
   }).then((result) => {
     if (!result.isConfirmed) return;
 
+    const quotePaymentId = sessionStorage.getItem('quotePaymentId');
+    const leadPayload = {
+        firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
+          dob: this.personalInfo.dob,
+          leadId: '',
+          service_id: 1
+      }
+
     const appliedRiskData = JSON.parse(sessionStorage.getItem('appliedRisk') || '{}');
     const riskCode = appliedRiskData.appliedRisk === 'Low' ? 1 :
                      appliedRiskData.appliedRisk === 'Medium' ? 2 :
@@ -237,7 +250,21 @@ submitData() {
 
     this.isLoading = true;
 
-    this.mailManagementService.getServiceProducts(payload).pipe(
+    of(quotePaymentId).pipe(
+      switchMap(id => {
+        if (id) {
+          return this.userService.createLeadOnly(leadPayload).pipe(
+            tap(res => {
+              if (this.isBrowser && res?.data) {
+                sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+              }
+            })
+          );
+        } else {
+          return of(null);
+        }
+      }),
+      switchMap(() =>this.mailManagementService.getServiceProducts(payload)),
       catchError(error => {
         this.isLoading = false;
         Swal.fire({

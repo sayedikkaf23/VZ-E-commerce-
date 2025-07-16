@@ -75,15 +75,15 @@ export class AppComponent implements OnInit, OnDestroy {
           const currentModule = sessionStorage.getItem('currentModule'); 
 
           // Mail Management
-          if ((url.includes('mails-')||
-              url.includes('home')) && currentModule !== 'mailManagement') {
+          if (url.includes('mails-') && currentModule !== 'mailManagement') {
             sessionStorage.removeItem('leadResponse');
+            sessionStorage.removeItem('quotePaymentId');
             sessionStorage.setItem('currentModule', 'mailManagement');
           }
           // Virtual Receptionist
-          else if ((url.includes('virtual-')||
-              url.includes('home')) && currentModule !== 'virtualReceptionist') {
+          else if (url.includes('virtual-') && currentModule !== 'virtualReceptionist') {
             sessionStorage.removeItem('leadResponse');
+            sessionStorage.removeItem('quotePaymentId');
             sessionStorage.setItem('currentModule', 'virtualReceptionist');
           }
           // Bank Account Opening
@@ -96,12 +96,12 @@ export class AppComponent implements OnInit, OnDestroy {
               url.includes('ShowDetails-2') ||
               url.includes('BusinessBankform') ||
               url.includes('BusinessBankShowDetails') ||
-              url.includes('bussiness-show-details')||
-              url.includes('home')
+              url.includes('bussiness-show-details')
             ) 
             && currentModule !== 'bankOpening'
           ) {
             sessionStorage.removeItem('leadResponse');
+            sessionStorage.removeItem('quotePaymentId');
             sessionStorage.setItem('currentModule', 'bankOpening');
           }
         }
