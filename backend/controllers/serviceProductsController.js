@@ -259,71 +259,59 @@ exports.createPaymentOpportunity = async (req, res) => {
       { "leadWithDetails.LeadId": LeadId }, // Match by LeadId from initial step
       {
         $set: {
-      leadWithDetails: {
-        FirstName: firstName,
-        LastName: lastName,
-        Email: email,
-        Nationality: nationality,
-        Phone: cleanedPhone,
-        countryCode: countryCode,
-        Origin__c: "Website", // or whatever source you want
-        Status: "Created",
-        dob: dob,
-        ServiceName: type,
-        LeadId: salesforceResponse.data?.LeadId ?? LeadId,
-         companyLocationUAE,
-        employmentType,
-        Company: companyName,
-        salary,
-        bankType,
-        companyLicensed,
-        activityType,
-        totalShareholders,
-        companyTurnover,
-        companyLocation,
-        companyWebsite,
-        isLead,
-      },
-      quotePaymentWithDetails: {
-        QuotePaymentId: salesforceResponse.data?.QuotePaymentId,
-      },
-      quoteWithProductDetails: {
-        quoteEmail: email,
-        quoteName: firstName + " " + lastName,
-        // QuotePaymentName: salesforceResponse.data?.QuotePaymentName,
-        quotePaymentId: salesforceResponse.data?.QuotePaymentId,
-        totalIncludingVAT: totalPrice,
-        subTotal: subTotal,
-        totalPrice: totalPrice,
-        product: req.body.prodcutNameList, // store the whole array
-      },
-     salesPersonDetails: {
-    salesPersonName: salesPersonDetails.salesPersonName || null,
-    salesPersonEmail: salesPersonDetails.salesPersonEmail || null,
-    salesPersonMobile: salesPersonDetails.salesPersonMobile || null,
-  },
-      // salesforceResponseMatchScreening: {
+          "leadWithDetails.FirstName": firstName,
+          "leadWithDetails.LastName": lastName,
+          "leadWithDetails.Email": email,
+          "leadWithDetails.Nationality": nationality,
+          "leadWithDetails.Phone": cleanedPhone,
+          "leadWithDetails.countryCode": countryCode,
+          "leadWithDetails.Origin__c": "Website",
+          "leadWithDetails.Status": "Created",
+          "leadWithDetails.dob": dob,
+          "leadWithDetails.ServiceName": type,
+          "leadWithDetails.LeadId": salesforceResponse.data?.LeadId ?? LeadId,
+          "leadWithDetails.companyLocationUAE": companyLocationUAE,
+          "leadWithDetails.employmentType": employmentType,
+          "leadWithDetails.Company": companyName,
+          "leadWithDetails.salary": salary,
+          "leadWithDetails.bankType": bankType,
+          "leadWithDetails.companyLicensed": companyLicensed,
+          "leadWithDetails.activityType": activityType,
+          "leadWithDetails.totalShareholders": totalShareholders,
+          "leadWithDetails.companyTurnover": companyTurnover,
+          "leadWithDetails.companyLocation": companyLocation,
+          "leadWithDetails.companyWebsite": companyWebsite,
+          "leadWithDetails.isLead": isLead,
 
-          //   leadId:         sfResp.data?.LeadId         ?? null,
+          "quotePaymentWithDetails.QuotePaymentId": salesforceResponse.data?.QuotePaymentId,
+
+          "quoteWithProductDetails.quoteEmail": email,
+          "quoteWithProductDetails.quoteName": firstName + " " + lastName,
+          "quoteWithProductDetails.quotePaymentId": salesforceResponse.data?.QuotePaymentId,
+          "quoteWithProductDetails.totalIncludingVAT": totalPrice,
+          "quoteWithProductDetails.subTotal": subTotal,
+          "quoteWithProductDetails.totalPrice": totalPrice,
+          "quoteWithProductDetails.product": req.body.prodcutNameList,
+
+          "salesPersonDetails.salesPersonName": salesPersonDetails.salesPersonName || null,
+          "salesPersonDetails.salesPersonEmail": salesPersonDetails.salesPersonEmail || null,
+          "salesPersonDetails.salesPersonMobile": salesPersonDetails.salesPersonMobile || null,
+
           accountId: salesforceResponse.data?.AccountId ?? AccountId,
-          // opportunityId:  salesforceResponse.data?.OpportunityId  ?? null,
           ContactId: salesforceResponse.data?.ContactId ?? ContactId,
-          //   quoteId:        sfResp.data?.QuoteId        ?? null,
-          //   quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
-          //   message:        sfResp.data?.Message        ?? ''
-          // },
           ProductId: ProductId,
           tradeLicenseFile,
           uploadedFileNames,
           planname: type,
           subServiceName: subcategory,
-          tradeLicenseFileUrl: tradeLicenseFileUrl,
+          tradeLicenseFileUrl,
           shareholdersfiles,
           shareholders,
           tradeLicenseNo,
           shareholderfilesnumber,
-          customerType: CustomerType,
-        },
+          customerType: CustomerType
+        }
+
       },
       { new: true } // Return the updated document
     );
@@ -664,7 +652,7 @@ exports.insertEconomicDetails = async (req, res) => {
         LeadId: leadId,
 
         ServiceName: serviceName,
-
+        subServiceName,
         FirstName: firstName,
         LastName: lastName,
         Email: email,

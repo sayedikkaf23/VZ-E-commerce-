@@ -386,7 +386,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     this.selectedaddAdditionalFile = addAdditionalFile;
     this.uploadedFileNames = uploadedFileNames;
     const shareholderFile = this.selectedShareholders.flat();
-    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(this.uploadedFileNames || []), ...(shareholderFile || []), ...(tradeLicenseFile || [])];
+    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(shareholderFile || []), ...(tradeLicenseFile || [])];
     console.log("shareholders-",shareholderFile);
     this.showModal = true;
   }

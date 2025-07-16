@@ -70,6 +70,7 @@ const pidataSchema = new mongoose.Schema(
       LeadId: String,
       isLead:{type:Boolean, default:false},
       ServiceName: String,
+      subServiceName: String,
       companyLocationUAE: String,    // Added companyLocationUAE
       employmentType: String,        // Added employmentType
       salary: String,                // Added salary

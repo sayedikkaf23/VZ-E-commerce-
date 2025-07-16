@@ -93,7 +93,7 @@ if(!personalInfo.Company){
 console.log("Trade License Data:", tradeData);
               this.shareholders = tradeData.shareholders || []; 
                this.tradeLicenseFile = tradeData || {};
-
+             this.uploadedFiles = tradeData.uploadedFileNames || [];
             // Save shareholders
             this.shareholders = Array.isArray(tradeData.shareholders) ? tradeData.shareholders : [];
 

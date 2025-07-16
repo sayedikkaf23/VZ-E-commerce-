@@ -89,8 +89,8 @@ leadId: any;
               this.tradeLicenseFile = tradeData || {};
 console.log("Trade License Data:", tradeData);
               this.shareholders = tradeData.shareholders || []; 
-               this.tradeLicenseFile = tradeData || {};
-
+             
+           this.uploadedFiles = tradeData.uploadedFileNames || []; // Initialize uploadedFiles with the data from tradeData
             // Save shareholders
             this.shareholders = Array.isArray(tradeData.shareholders) ? tradeData.shareholders : [];
 
@@ -312,6 +312,8 @@ submitData() {
             companyWebsite: this.personalInfo.companyWebsite,
              tradeLicenseFile:[
             {
+              name: this.tradeLicenseFile.tradeLicenseFile.name || '',
+              type: this.tradeLicenseFile.tradeLicenseFile.type || '',
               License_no: this.tradeLicenseFile.tradeLicenseNo || '',
               url: this.tradeLicenseFile.tradeLicenseFileUrl || '',
                 AccountId: leadResponse.AccountId || '',
