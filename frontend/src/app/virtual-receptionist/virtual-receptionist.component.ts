@@ -262,9 +262,12 @@ const countryCode = values.mobileNumber?.dialCode || '';
         const previousNationality = (this.previousStep1Data?.Nationality || '').trim();
         const currentNationality = (values.nationality || '').trim();
 
+        const previousEmail = (this.previousStep1Data?.Email || '').trim();
+        const currentEmail = (values.email || '').trim();
+
         // now replicate your original routing logic:
         if (this.isBrowser) {
-         if (previousNationality !== currentNationality) {
+         if ((previousNationality !== currentNationality) || (previousEmail !== currentEmail)) {
           this.router.navigate(['/virtual-receptionist-1']);
         } else if (this.previousStep1Data.Company) {
           this.router.navigate(['/virtual-receptionist-details']);
