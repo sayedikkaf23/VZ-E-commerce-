@@ -867,7 +867,7 @@ exports.getPersonalBank = async (req, res) => {
     // 2) Build Aggregation Pipeline (No more userdetails lookup)
     const pipeline = [
       // Match only the subcategory = 'personal'
-      { $match: { subcategory: 'Personal Bank Account Opening' } }, 
+      { $match: { 'leadWithDetails.subServiceName' : 'Personal Bank Account Opening' } }, 
 
 
       // Now we use $facet to get total count & the paginated docs in one go
@@ -961,7 +961,7 @@ exports.getBusinessBank = async (req, res) => {
     // 2) Build Aggregation Pipeline (No more userdetails lookup)
     const pipeline = [
       // Match only the subcategory = 'business'
-      { $match: { subcategory: 'business' } },
+      { $match: { 'leadWithDetails.subServiceName' : 'Business Bank Account Opening' } },
 
       // Use $facet to get total count and paginated docs in one shot
       {

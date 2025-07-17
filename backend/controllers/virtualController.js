@@ -369,11 +369,17 @@ exports.getVirtualDetails = async (req, res) => {
     const skip = (page - 1) * limit;
  
     // 2) Count how many documents match planname: "Virtual Receptionist"
-    const totalRecords = await Pidata.countDocuments({ planname: "Virtual Receptionist" });
+    const totalRecords = await Pidata.countDocuments({ $or: [
+    { 'leadWithDetails.ServiceName': "Virtual Receptionist" },
+    { 'planname': "Virtual Receptionist" }
+  ] });
     const totalPages = Math.ceil(totalRecords / limit);
  
     // 3) Fetch only that slice of data (skip, limit)
-    const VirtualDetailsSubmissions = await Pidata.find({ planname: "Virtual Receptionist" })
+    const VirtualDetailsSubmissions = await Pidata.find({$or: [
+    { 'leadWithDetails.ServiceName': "Virtual Receptionist" },
+    { 'planname': "Virtual Receptionist" }
+  ] })
       .skip(skip)
       .limit(limit);
  
