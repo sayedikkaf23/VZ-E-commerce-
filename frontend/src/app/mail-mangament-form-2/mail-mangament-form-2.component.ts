@@ -47,7 +47,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   //   }
   // }
  
- 
+ isLoading = false;
   isValidSalary = true;
   files: { passport?: File; salaryStatements?: File[] } = {};
   step1Data: any = {}; // To store Step 1 data
@@ -399,7 +399,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     totalCusotmerSelected: this.shareholders.length + 2
   };
      
- 
+  this.isLoading = true;
  
   this.userService.getProductsByCategoryAndCountryRisk(riskPayload)
     .subscribe({
@@ -479,16 +479,16 @@ const economicDetailId = sessionStorage.getItem('economicDetailId') || "";
         };
  
         // persist step2 JSON
-       
+      
  
         // call insertEconomicDetails
         this.adminAuthService.insertEconomicDetails(payload2)
           .subscribe({
             next: res2 => {
-              console.log('Economic details saved', res2);
+              
                     const economicDetailId = res2.data ? res2.data.economicDetailId : "";
       sessionStorage.setItem('economicDetailId', economicDetailId);
- 
+ this.isLoading = false;
                         this.router.navigate(['/BusinessBankShowDetails']);
  
             },

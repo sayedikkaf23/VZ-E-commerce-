@@ -237,7 +237,7 @@ export class Step2Component implements AfterViewInit, OnInit {
         const economicDetailId = res.data ? res.data.economicDetailId : '';
         sessionStorage.setItem('economicDetailId', economicDetailId);
         this.isLoading = false;
-        console.log('Economic details saved', res);
+
         this.router.navigate(['/ShowDetails']);
       },
       error: (err: any) => {
