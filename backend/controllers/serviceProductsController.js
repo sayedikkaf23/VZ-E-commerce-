@@ -4,7 +4,6 @@ const Nationality = require("../models/nationalityModel");
 const Pidata = require("../models/pidata");
 require("dotenv").config();
 const axios = require("axios");
-const CommondbSalesforceLog = require("../models/commondbsalesforcelogs"); // adjust path as needed
 
 exports.getServiceProducts = async (req, res) => {
   try {
@@ -418,12 +417,28 @@ exports.createLeadOnly = async (req, res) => {
       service_id,
       leadId,
       countryCode,
+      // subServiceName,
+      // companyLocationUAE,
+      // employmentType,
+      // companyName,
+      // salary,
+      // bankType,
+      // companyLicensed,
+      // activityType,
+      // totalShareholders,
+      // companyTurnover,
+      // companyLocation,
+      // companyWebsite,
+      // tradeLicenseNo,
+      // shareholderfilesnumber,
+      // tradeLicenseFile,
+      // shareholdersfiles,
+      // shareholders,
     } = req.body;
 
     if (!firstName || !lastName || !email || !nationality || !phone || !dob) {
       return res.status(400).json({ message: "Missing required fields" });
     }
-
     const nationalityData = await Nationality.findOne({ Country: nationality });
 
     if (!nationalityData) {
@@ -431,17 +446,20 @@ exports.createLeadOnly = async (req, res) => {
         message: "Invalid country provided. Nationality not found.",
       });
     }
+    // console.log("nationlity",nationalityData)
 
-    const nationalitys = nationalityData.Value;
-
-    // Get Salesforce Token
+    // Now we have the nationality value from the Nationality model
+    const nationalitys = nationalityData.Value; // Assuming `Value` field stores the nationality
+    // Step 1: Get Salesforce token
     const tokenResp = await axios.post(
       `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
       null,
       {
         params: {
-          client_id: "3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip",
-          client_secret: "0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1",
+          client_id:
+            "3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip",
+          client_secret:
+            "0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1",
           grant_type: "password",
           username: "vzpaymentapi@vz.ae.vzfullcopy",
           password: "Virtuzone@1234",
@@ -452,21 +470,19 @@ exports.createLeadOnly = async (req, res) => {
     const accessToken = tokenResp.data.access_token;
     const salesforceUrl = tokenResp.data.instance_url;
 
-    const leadRequestPayload = {
-      firstName,
-      lastName,
-      email,
-      nationality: nationalitys,
-      phone,
-      dob,
-      service_id,
-      leadId,
-    };
-
-    // Send lead to Salesforce
+    // Step 2: Call the CreateLeadOnly API
     const leadResp = await axios.post(
       `${salesforceUrl}/services/apexrest/VZAR_CreateLeadOnly/`,
-      leadRequestPayload,
+      {
+        firstName,
+        lastName,
+        email,
+        nationality: nationalitys,
+        phone,
+        dob,
+        service_id,
+        leadId,
+      },
       {
         headers: {
           "Content-Type": "application/json",
@@ -475,40 +491,33 @@ exports.createLeadOnly = async (req, res) => {
       }
     );
 
-    // ✅ Log successful Salesforce request/response
-    await CommondbSalesforceLog.create({
-      unique_id: leadResp.data?.LeadId || "N/A",
-      request: {
-        url: `${salesforceUrl}/services/apexrest/VZAR_CreateLeadOnly/`,
-        body: leadRequestPayload,
-      },
-      response: leadResp.data,
-    });
+    const cleanedPhone = phone.replace(/\s+/g, ""); // Example cleanup
+   
 
-    const cleanedPhone = phone.replace(/\s+/g, "");
+    
+    const existingDoc = await Pidata.findOne({ "leadWithDetails.LeadId": leadResp.data?.LeadId });
 
-    const existingDoc = await Pidata.findOne({
-      "leadWithDetails.LeadId": leadResp.data?.LeadId,
-    });
-
-    const updatedLeadWithDetails = {
-      ...(existingDoc?.leadWithDetails || {}),
-      FirstName: firstName,
-      LastName: lastName,
-      Email: email,
-      Nationality: nationality,
-      Phone: cleanedPhone,
-      countryCode: countryCode,
-      Origin__c: "Website",
-      Status: "Created",
-      dob: dob,
-      LeadId: leadResp.data?.LeadId || null,
+    let updatedLeadWithDetails = {
+      ...(existingDoc?.leadWithDetails || {}), // keep existing
+      ...{
+        FirstName: firstName,
+        LastName: lastName,
+        Email: email,
+        Nationality: nationality,
+        Phone: cleanedPhone,
+        countryCode: countryCode,
+        Origin__c: "Website",
+        Status: "Created",
+        dob: dob,
+        LeadId: leadResp.data?.LeadId || null,
+      }
     };
 
-    await Pidata.findOneAndUpdate(
-      { "leadWithDetails.LeadId": leadResp.data?.LeadId },
-      { $set: { leadWithDetails: updatedLeadWithDetails } },
-      { upsert: true, new: true }
+    //  If leadId exists, update the record, else create a new one
+    const pidataDoc = await Pidata.findOneAndUpdate(
+      { "leadWithDetails.LeadId": leadResp.data?.LeadId }, // condition
+      { $set:  { leadWithDetails: updatedLeadWithDetails } },
+      { upsert: true, new: true } // upsert = create if not exists
     );
 
     return res.status(200).json({
@@ -517,25 +526,6 @@ exports.createLeadOnly = async (req, res) => {
     });
   } catch (err) {
     console.error("createLeadOnly error:", err);
-
-    // 🐞 Log failed Salesforce call (only if request was built)
-    if (err.config?.url?.includes("VZAR_CreateLeadOnly")) {
-      try {
-        await CommondbSalesforceLog.create({
-          unique_id: err.response?.data?.LeadId || "ERROR",
-          request: {
-            url: err.config?.url || "Unknown URL",
-            body: err.config?.data ? JSON.parse(err.config.data) : {},
-          },
-          response: err.response?.data || {
-            error: err.message,
-          },
-        });
-      } catch (logErr) {
-        console.error("Failed to log Salesforce error:", logErr);
-      }
-    }
-
     return res.status(500).json({
       message: "Failed to create lead",
       error: err.response?.data || err.toString(),
