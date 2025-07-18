@@ -23,6 +23,8 @@ export class VirtualManagementComponent implements OnInit {
   itemsPerPage: number = 10; // Adjust as needed
   totalRecords: number = 0;
   totalPages: number = 0;
+ showCompanyModal: boolean = false; 
+   selectedMailComapny: any;
  
   constructor(private virtualManagementService: VirtualManagementService) { }
  
@@ -97,6 +99,13 @@ export class VirtualManagementComponent implements OnInit {
       }
     );
   }
+
+    openMailDetails(details: any): void {
+    this.selectedMailComapny = details; // Assign selected mail details
+    console.log("Mail details = ",this.selectedMailComapny)
+    this.showCompanyModal = true; // Open the modal for shareholders
+  }
+ 
  
   openClientDetails(shareholders: any[]): void {
     // console.log(shareholders)
@@ -106,6 +115,7 @@ export class VirtualManagementComponent implements OnInit {
  
   closeModal(): void {
     this.showModal = false; // Close the modal
+        this.showCompanyModal = false;
   }
   openFileModal(files: any[]): void {
     if (files && files.length > 0) {

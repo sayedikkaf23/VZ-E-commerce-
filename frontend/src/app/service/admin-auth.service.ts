@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+// import { timeout, catchError } from 'rxjs/operators';
+// import { of } from 'rxjs';
 interface MenuItem {
   name: string;
   link: string;
@@ -35,7 +37,38 @@ export class AdminAuthService {
   }
   getPersonalBank(page: number, limit: number): Observable<any> {
     const params = { page: page.toString(), limit: limit.toString() };
-    return this.http.get<any>( `${this.url}/user/getPersonalBank`, { params });
+    return this.http.get<any>( `${this.url}/user/getPersonalBank`, { params })
+    // .pipe(
+    //   timeout(60000), // ⏱️ 60 seconds timeout
+    //   catchError(error => {
+    //     console.error('Request timed out or failed', error);
+    //     return of([]); // Handle error or return fallback
+    //   })
+    // );
+    // Adjust path as needed for your route
+  }
+
+  getSearchedPersonalBank(page: number, limit: number,search: string): Observable<any> {
+    const params = { page: page.toString(), limit: limit.toString(), search:search };
+    return this.http.get<any>( `${this.url}/user/getSearchedPersonalBank`, { params });
+    // Adjust path as needed for your route
+  }
+
+  getSearchedBusinessBank(page: number, limit: number,search: string): Observable<any> {
+    const params = { page: page.toString(), limit: limit.toString(), search:search };
+    return this.http.get<any>( `${this.url}/user/getSearchedBank`, { params });
+    // Adjust path as needed for your route
+  }
+
+  getDateFilteredPersonalBank(page: number, limit: number,fromDate: string, toDate: string): Observable<any> {
+    const params = { page: page.toString(), limit: limit.toString(), fromDate, toDate };
+    return this.http.get<any>( `${this.url}/user/getDateFilteredPersonalBank`, { params });
+    // Adjust path as needed for your route
+  }
+
+  getDateFilteredBusinessBank(page: number, limit: number,fromDate: string, toDate: string): Observable<any> {
+    const params = { page: page.toString(), limit: limit.toString(), fromDate, toDate };
+    return this.http.get<any>( `${this.url}/user/getDateFilteredBusinessBank`, { params });
     // Adjust path as needed for your route
   }
 
@@ -163,6 +196,8 @@ getFilteredProductsByCountry(data: {
 }) {
   return this.http.post<any>(`${this.url}/api/customer/get-by-country-risk`, data);
 }
-
+insertEconomicDetails(data: any) {
+    return this.http.post<any>(`${this.url}/service/insertEconomicDetails`, data);
+  }
 
 }

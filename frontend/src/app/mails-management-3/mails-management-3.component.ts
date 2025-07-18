@@ -22,8 +22,11 @@ export class MailsManagement3Component implements OnInit {
 
   // Instead of File[], we'll store the trade license file info as { name: string; url: string }[]
   companyTradeLicenseFile: { name: string; url: string, type: string }[] = [];
-
+  personalInfo: any;
+  leadResponse: any;
   isLoading = false;
+  economicDetailId: any;
+  tradeLicenseFile: any;
 
   constructor(
     private fb: FormBuilder,
@@ -46,56 +49,65 @@ export class MailsManagement3Component implements OnInit {
       window.scrollTo(0, 0);
     }
 
-    const savedData1 = localStorage.getItem('mailform1');
-    const savedData2 = localStorage.getItem('mailform2');
+              
+  const leadDataRaw = sessionStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+  const leadId = leadData?.LeadId;
 
-    let parsedData1: any = {};
-    let parsedData2: any = {};
-
-    if (savedData1) {
-      parsedData1 = JSON.parse(savedData1);
-    }
-
-    // Initialize shareholders from mailform1 data
-    this.shareholdersData = parsedData1.shareholders || [];
-    this.initializeShareholders();
-
-    if (savedData2) {
-      parsedData2 = JSON.parse(savedData2);
-
-      // Merge passportNumber if counts match
-      if (parsedData2.shareholders) {
-        // Loop through all shareholders in `this.shareholdersData`
-        this.shareholdersData.forEach((sh, i) => {
-          // If a corresponding shareholder in parsedData2 exists, merge it
-          if (parsedData2.shareholders[i]) {
-            if (parsedData2.shareholders[i].passportNumber) {
-              sh.passportNumber = parsedData2.shareholders[i].passportNumber;
-            }
-            // Merge other fields if needed, e.g. name, nationalityshareholder, etc.
-            // sh.name = parsedData2.shareholders[i].name || sh.name;
-          }
-        });
+  if (leadId) {
+    this.isLoading = true;
+    this.userService.getStep1(leadId).subscribe({
+      next: (storedData) => {
+        this.isLoading = false;
+        this.personalInfo = storedData; 
+        
+         // Fetch trade license & shareholder details
+      this.loadTradeLicenseAndShareholders(leadId);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load step1 & step2 data', err);
       }
-      this.initializeShareholders(); // Re-initialize after merging passportNumbers
-
-      // Restore company trade license text input
-      if (parsedData2.companyTradeLicenseNumber) {
-        this.formData.get('companyTradeLicenseNumber')?.setValue(parsedData2.companyTradeLicenseNumber);
-      }
-
-      // Restore trade license file info (now as { name: string; url: string }[])
-      this.companyTradeLicenseFile = parsedData2.companyTradeLicenseFile || [];
-
-      if (this.companyTradeLicenseFile.length > 0) {
-        // Set the form control for file name
-        this.formData.get('companyTradeLicenseFileName')?.setValue(this.companyTradeLicenseFile[0].name);
-      }
-
-      // Restore uploaded file names for shareholders
-      this.uploadedFileNames = parsedData2.uploadedFileNames || {};
-    }
+    });
   }
+  }
+
+    private loadTradeLicenseAndShareholders(leadId: string): void {
+      this.isLoading = true;
+
+      this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+        next: (tradeData: any) => {
+          this.isLoading = false;
+          console.log('Trade License Data:', tradeData);
+
+            this.tradeLicenseFile = tradeData.tradeLicenseFile || {};
+      this.shareholdersData = tradeData.shareholders || [];
+      // You’d need to map per shareholder
+this.uploadedFileNames = (tradeData.shareholders || []).map((s: any) => s.files || []);
+
+
+      // Auto-fill trade license number if available
+      if (tradeData.tradeLicenseNo) {
+        this.formData.get('companyTradeLicenseNumber')?.setValue(tradeData.tradeLicenseNo);
+      }
+
+      // Auto-fill uploaded trade license file name & URL
+      if (Array.isArray(tradeData.tradeLicenseFile) && tradeData.tradeLicenseFile.length > 0) {
+        this.companyTradeLicenseFile = tradeData.tradeLicenseFile || [];
+        this.formData.get('companyTradeLicenseFileName')?.setValue(tradeData.tradeLicenseFile[0].name);
+      }
+
+          // Initialize shareholders form array
+          this.initializeShareholders();
+        },
+        error: err => {
+          this.isLoading = false;
+          console.error('Failed to load trade license and shareholder data:', err);
+          this.toastr.error('Could not load trade license or shareholder details.', 'Error');
+        }
+      });
+    }
+
 
   get shareholders(): FormArray {
     return this.formData.get('shareholders') as FormArray;
@@ -159,10 +171,10 @@ export class MailsManagement3Component implements OnInit {
 
           // Angular’s HttpClient typically puts the server’s JSON under error.error
           // e.g., error.error = { error: "File size cannot exceed 1MB" }
-          const errorMsg = error.error?.error || 'An error occurred while getting URL';
+          // const errorMsg = error.error?.error || 'An error occurred while getting URL';
   
-          // Show it in a toast (using ngx-toastr for example)
-          this.toastr.error(errorMsg, 'Error');
+          // // Show it in a toast (using ngx-toastr for example)
+          // this.toastr.error(errorMsg, 'Error');
           this.isLoading = false;
         }
       );
@@ -252,6 +264,14 @@ export class MailsManagement3Component implements OnInit {
     } else {
       tradeLicenseControl?.setErrors(null);
     }
+
+    this.economicDetailId = sessionStorage.getItem('economicDetailId');
+
+    //check for economicDetailId
+    if(!this.economicDetailId){
+       alert("economicDetailId not found");
+        this.router.navigate(['/mails-management']);
+    }
   
     // Now proceed if form is valid
     if (this.formData.valid) {
@@ -271,9 +291,67 @@ export class MailsManagement3Component implements OnInit {
         // Keep track of all uploaded file names
         uploadedFileNames: this.uploadedFileNames
       };
+
+        // const mailform = localStorage.getItem('mailform');
+        // this.personalInfo = mailform ? JSON.parse(mailform) : {};
+
+         const leadResponseRaw = sessionStorage.getItem('leadResponse');
+        this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+
+    //  const mailform2 = localStorage.getItem('mailform1');
+    //     const mail2 = mailform2 ? JSON.parse(mailform2) : {};
   
-      localStorage.setItem('mailform2', JSON.stringify(dataToSave));
-      this.router.navigate(['/mails-management-details']);
+         // payload for salesforce api
+        const insertPayload = {
+            leadId: this.leadResponse.LeadId,
+            accountId: this.leadResponse.AccountId,
+            serviceName: 'Mail Management',
+            // subServiceName: '',
+            firstName: this.personalInfo.FirstName,
+            lastName: this.personalInfo.LastName,
+            email: this.personalInfo.Email,
+            nationality: this.personalInfo.Nationality,
+            phone: this.personalInfo.Phone,
+            dob: this.personalInfo.dob,
+            economicDetailId: this.economicDetailId,
+            countryCode: this.personalInfo.countryCode,
+            // companyLocationUAE: '',
+            // employmentType: '',
+            companyName: this.personalInfo.Company,
+            // salary: '',
+            // bankType: '',
+            companyLicensed: this.personalInfo.companyLicensed,
+            activityType: this.personalInfo.activityType,
+           totalShareholders: this.personalInfo.totalShareholders ,
+            // companyTurnover: '',
+            companyLocation: this.personalInfo.companyLocation,
+            companyWebsite: this.personalInfo.companyWebsite,
+            tradeLicenseNo: formValues.companyTradeLicenseNumber,
+            shareholderfilesnumber: formValues.shareholders?.[0]?.passportNumber || '',
+            tradeLicenseFileUrl: this.companyTradeLicenseFile?.[0]?.url || '',
+            uploadedFileNames: Object.values(this.uploadedFileNames).flat(),
+            tradeLicenseFile: this.companyTradeLicenseFile,
+            shareholdersfiles: Object.values(this.uploadedFileNames || {})
+            .flat()
+            .map((f: any) => f.url)
+            .filter(Boolean)[0] || '',
+            shareholders: this.shareholders.value.map((shareholder: any, idx: number) => ({
+              ...shareholder,
+              files: this.uploadedFileNames[idx] || []
+            })),
+          };
+            console.log(insertPayload);
+           this.isLoading = true;
+          this.userService.insertEconomicDetails(insertPayload).subscribe(
+          (response) => {
+            console.log('API Response:', response);
+            this.isLoading = false;
+         
+            this.router.navigate(['/mails-management-details']);
+          }
+          );
+    
+      
     } else {
       // console.log('Please fill all required fields');
       // You can also log the form to see exactly which control is invalid

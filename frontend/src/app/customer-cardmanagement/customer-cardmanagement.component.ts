@@ -386,7 +386,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     this.selectedaddAdditionalFile = addAdditionalFile;
     this.uploadedFileNames = uploadedFileNames;
     const shareholderFile = this.selectedShareholders.flat();
-    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(this.uploadedFileNames || []), ...(shareholderFile || []), ...(tradeLicenseFile || [])];
+    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(shareholderFile || []), ...(tradeLicenseFile || [])];
     console.log("shareholders-",shareholderFile);
     this.showModal = true;
   }
@@ -539,48 +539,114 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   }
   
 
-  submitDocuments(): void {
-
-    if (!this.uploadedFiles || this.uploadedFiles.length === 0) {
-      this.toastr.error('Please upload at least one document before submitting.', 'Validation Error');
-      return;
-    }
-    const payload = {
-      someId: this.selectedRecord._id,
-      files: this.uploadedFiles,
-    };
-
-    // console.log('Submitting documents:', payload);
-    document.querySelector('.app-wrapper')?.classList.remove('blur-background'); //clears the background blur
-
-    // Make a call to your backend to save file info
-    // or do any other processing you need here.
-    this.userService.updateAdditionalUploadedFiles(payload).subscribe(
-      (response) => {
-        // console.log('Documents submitted successfully!', response);
-        const email = localStorage.getItem('userEmail') ?? '';
-        this.fetchUserServices(email);
-
-        this.uploadedFiles = [];
-        const modalElement = document.getElementById('uploadDetailsModal');
-        if (modalElement) {
-          modalElement.classList.remove('show'); // Remove Bootstrap's "show" class
-          modalElement.style.display = 'none'; // Hide the modal
-          modalElement.setAttribute('aria-hidden', 'true'); // Update accessibility
-          document.body.classList.remove('modal-open'); // Remove modal-open class from body
-          const backdrop = document.querySelector('.modal-backdrop');
-          if (backdrop) {
-            backdrop.remove(); // Remove the backdrop manually if it exists
-          }
-        }
-
-        // Optionally close the modal or reset the form
-      },
-      (error) => {
-        console.error('Error submitting documents', error);
-      }
-    );
+submitDocuments(): void {
+  if (!this.uploadedFiles || this.uploadedFiles.length === 0) {
+    this.toastr.error('Please upload at least one document before submitting.', 'Validation Error');
+    return;
   }
+
+  const payload = {
+    someId: this.selectedRecord._id,
+    files: this.uploadedFiles,
+  };
+
+  document.querySelector('.app-wrapper')?.classList.remove('blur-background');
+
+  this.userService.updateAdditionalUploadedFiles(payload).subscribe(
+    (response) => {
+      const email = localStorage.getItem('userEmail') ?? '';
+      this.fetchUserServices(email);
+
+
+      // Hide modal
+      const modalElement = document.getElementById('uploadDetailsModal');
+      if (modalElement) {
+        modalElement.classList.remove('show');
+        modalElement.style.display = 'none';
+        modalElement.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('modal-open');
+        const backdrop = document.querySelector('.modal-backdrop');
+        if (backdrop) backdrop.remove();
+      }
+
+      // Prepare payload2 from response.record
+      const record = response?.record ?? {};
+      const lead = record.leadWithDetails ?? {};
+      const getValue = (val: any) => val !== undefined && val !== null ? val : '';
+
+const additionalShareholderWithFile = {
+  name: '',
+  shareholderPercentage: null,
+  dob: '',
+  nationalityshareholder: '',
+  files: Array.isArray(this.uploadedFiles)
+    ? this.uploadedFiles.map(file => ({
+        name: file.name,
+        url: file.url,
+        type: file.type || 'Shareholder doc'
+      }))
+    : []
+};
+
+
+
+      const payload2 = {
+        companyLicensed: getValue(lead.companyLicensed),
+        Bank: getValue(record.Bank),
+        type: getValue(record.type),
+        companyLocationUAE: getValue(lead.companyLocation),
+        bankType: getValue(record.Bank),
+        leadId: getValue(lead.LeadId),
+        accountId: getValue(record.accountId),
+        economicDetailId: getValue(record._id),
+        serviceName: getValue(lead.ServiceName),
+        subServiceName: getValue(record.planname),
+        firstName: getValue(lead.FirstName),
+        lastName: getValue(lead.LastName),
+        email: getValue(lead.Email),
+        nationality: getValue(lead.Nationality),
+        phone: `${getValue(lead.countryCode)}${getValue(lead.Phone)}`,
+        dob: getValue(lead.dob),
+        activityType: getValue(lead.activityType),
+        totalShareholders: getValue(lead.totalShareholders),
+        companyTurnover: getValue(record.companyTurnover),
+        companyLocation: getValue(lead.companyLocation),
+         shareholders: [
+    ...(Array.isArray(record.shareholders)
+      ? record.shareholders.map((s: any) => ({
+          name: getValue(s.name),
+          shareholderPercentage: getValue(s.shareholderPercentage),
+          dob: getValue(s.dob),
+          nationalityshareholder: getValue(s.nationalityshareholder),
+          files: Array.isArray(s.files) ? s.files : []
+        }))
+      : []),
+
+    // ✅ Add the additional file-only shareholder
+    additionalShareholderWithFile
+  ]
+
+      };
+
+      this.userService.insertEconomicDetails(payload2).subscribe(
+        (res) => {
+          this.toastr.success('Documents and economic details submitted successfully!');
+          
+      this.uploadedFiles = [];
+        },
+        (err) => {
+          console.error('Error submitting economic details', err);
+          this.toastr.error('Error submitting economic details.');
+        }
+      );
+    },
+    (error) => {
+      console.error('Error submitting documents', error);
+      this.toastr.error('Error uploading documents.');
+    }
+  );
+}
+
 
   closeModal(): void {
     this.showModal = false;

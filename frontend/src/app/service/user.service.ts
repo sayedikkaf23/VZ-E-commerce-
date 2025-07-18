@@ -123,6 +123,10 @@ export class UserService {  // Changed the service name to UserService
     return this.http.post(`${this.url}/service/create-opportunity`, payload); 
   }
 
+    insertEconomicDetails(payload: any): Observable<any> {
+    return this.http.post(`${this.url}/service/insertEconomicDetails`, payload); 
+  }
+
 
   insertShareholderDocuments(quotePaymentId: any,AccountId:any, serviceName: any,tradelicense:any, shareholders: any): Observable<any> {
   const body = {
@@ -151,6 +155,14 @@ createLeadOnly(payload: {
     payload,
     { headers: { 'Content-Type': 'application/json' } }
   );
+}
+
+getTradeLicenseAndShareholders(leadId: string): Observable<any> {
+  return this.http.get<any>(`${this.url}/user/getTradeLicenseAndShareholders?leadId=${leadId}`);
+}
+
+getStep1(leadId: string): Observable<any> {
+  return this.http.get<any>(`${this.url}/user/get-step1?leadId=${leadId}`);
 }
 
 

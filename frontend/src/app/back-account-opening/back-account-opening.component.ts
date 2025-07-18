@@ -20,9 +20,11 @@ export class BackAccountOpeningComponent implements OnInit {
   isLoading:boolean=false
   totalRecords: number = 0;
   totalPages: number = 0;
+  searching: boolean = false;
+  dateFiltering: boolean = false;
  
  
-  constructor(private adminAuthService: AdminAuthService) {}
+  constructor(private adminAuthService: AdminAuthService,private toastr: ToastrService) {}
  
   ngOnInit(): void {
     this.fetchUserDetails(this.currentPage, this.itemsPerPage);
@@ -58,23 +60,74 @@ export class BackAccountOpeningComponent implements OnInit {
   }
   
   nextPage(): void {
-    if (this.currentPage < this.totalPages && !this.isLoading) {
+    console.log(this.dateFiltering)
+    if(this.searching){
+      if (this.currentPage < this.totalPages && !this.isLoading) {
+      this.Search(this.currentPage + 1, this.itemsPerPage, this.searchTerm)
+    }
+    }
+    else if(this.dateFiltering){
+      if (this.currentPage < this.totalPages && !this.isLoading) {
+      this.DateFilter(this.currentPage + 1, this.itemsPerPage, this.fromDate, this.toDate )
+    }
+    }
+    else {
+      if (this.currentPage < this.totalPages && !this.isLoading) {
       this.fetchUserDetails(this.currentPage + 1, this.itemsPerPage);
     }
+    } 
   }
  
   previousPage(): void {
-    if (this.currentPage > 1 && !this.isLoading) {
+      if(this.searching){
+      if (this.currentPage < this.totalPages && !this.isLoading) {
+      this.Search(this.currentPage + 1, this.itemsPerPage, this.searchTerm)
+    }
+    }
+    else if(this.dateFiltering){
+      if (this.currentPage < this.totalPages && !this.isLoading) {
+      this.DateFilter(this.currentPage + 1, this.itemsPerPage, this.fromDate, this.toDate )
+    }
+    }
+    else {
+      if (this.currentPage > 1 && !this.isLoading) {
       this.fetchUserDetails(this.currentPage - 1, this.itemsPerPage);
+    }
     }
   }
  
   goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages && !this.isLoading) {
+    if(this.searching){
+      if (page >= 1 && page <= this.totalPages && !this.isLoading) {
+      this.Search(this.currentPage + 1, this.itemsPerPage, this.searchTerm)
+    }
+    }
+    else if(this.dateFiltering){
+      if (page >= 1 && page <= this.totalPages && !this.isLoading) {
+      this.DateFilter(page, this.itemsPerPage, this.fromDate, this.toDate )
+    }
+    }
+    else {
+      if (page >= 1 && page <= this.totalPages && !this.isLoading) {
       this.fetchUserDetails(page, this.itemsPerPage);
     }
+    } 
+    
   }
- 
+showCompanyModal = false;
+selectedCompanyDetails: any = null;
+
+openCompanyModal(leadDetails: any) {
+  this.selectedCompanyDetails = leadDetails;
+  this.showCompanyModal = true;
+}
+
+closeCompanyModal() {
+  this.selectedCompanyDetails = null;
+  this.showCompanyModal = false;
+}
+
+
   salesforceResponseMatchScreening: any = {}; // Declare this at the top
  
  
@@ -128,34 +181,97 @@ export class BackAccountOpeningComponent implements OnInit {
     this.showDocumentModal = false;
     this.selectedDocuments = [];
   }
- 
-  onSearch(): void {
-    this.searchTerm = this.searchTerm.trim().toLowerCase();
-    if (this.searchTerm) {
-      this.filteredUserList = this.userList.filter(user =>
-        (user?.leadWithDetails?.FirstName || '').toLowerCase().includes(this.searchTerm) ||
-        (user?.leadWithDetails?.LastName || '').toLowerCase().includes(this.searchTerm)
-      );
-    } else {
-      this.filteredUserList = [...this.userList];
-    }
+
+  onSearch(){
     this.currentPage = 1;
+    if(this.searchTerm === ''){
+      this.searching = false;
+      this.toastr.warning('Invalid Search');
+    }
+    else {
+    this.searching = true;
+    this.searchTerm = this.searchTerm.trim();
+    this.Search(this.currentPage, this.itemsPerPage, this.searchTerm)
+    }
   }
-  fromDate: string = '';
-toDate: string = '';
  
-onDateFilter(): void {
-  if (this.fromDate && this.toDate) {
-    this.filteredUserList = this.userList.filter((user) => {
-      const createdDate = new Date(user.createdAt);
-      const startDate = new Date(this.fromDate);
-      const endDate = new Date(this.toDate);
-      return createdDate >= startDate && createdDate <= endDate;
+  Search(page:number, limit:number, search: string): void {
+    this.isLoading = true;
+    this.adminAuthService.getSearchedPersonalBank(page, limit,search).subscribe({
+      next: (response) => {
+        // 1) sort descending by createdAt (newest first)
+        const sortedData = (response.data as any[])
+          .sort((a: any, b: any) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+  
+        // 2) assign both userList & filteredUserList
+        this.userList = sortedData;
+        this.filteredUserList = [...sortedData];
+  
+        // 3) pagination
+        this.totalRecords = response.totalRecords;
+        this.totalPages   = response.totalPages;
+        this.currentPage  = response.currentPage;
+        this.searching = response.searching;
+      },
+      error: (error) => {
+        console.error('Error fetching searched user details:', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
     });
-  } else {
-    this.filteredUserList = [...this.userList];
+
   }
-  this.currentPage = 1; // Reset Pagination
+
+
+fromDate: string = '';
+toDate: string = '';
+
+ onDateFilter(){
+  this.currentPage = 1;
+    if(this.fromDate === '' || this.toDate === ''){
+      this.dateFiltering = false;
+      this.toastr.warning('Invalid Dates');
+    }
+    else {
+      this.dateFiltering = true;
+      console.log(this.fromDate);
+      console.log(this.toDate);
+      this.DateFilter(this.currentPage, this.itemsPerPage, this.fromDate, this.toDate )
+    }
+  }
+
+DateFilter(page:number, limit:number, fromDate: string, toDate: string): void {
+  this.isLoading = true;
+    this.adminAuthService.getDateFilteredPersonalBank(page, limit,fromDate,toDate).subscribe({
+      next: (response) => {
+        console.log(response);
+        // 1) sort descending by updatedAt (newest first)
+        const sortedData = (response.data as any[])
+          .sort((a: any, b: any) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+  
+        // 2) assign both userList & filteredUserList
+        this.userList = sortedData;
+        this.filteredUserList = [...sortedData];
+  
+        // 3) pagination
+        this.totalRecords = response.totalRecords;
+        this.totalPages   = response.totalPages;
+        this.currentPage  = response.currentPage;
+        this.dateFiltering = response.datefiltering
+        console.log( response.datefiltering)
+      },
+      error: (error:any) => {
+        console.error('Error fetching searched user details:', error);
+      },
+      complete: () => {
+        this.isLoading = false;
+      }
+    });
 }
  
 }

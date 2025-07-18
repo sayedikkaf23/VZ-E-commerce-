@@ -46,8 +46,12 @@
           <th scope="col">Quote Payment ID</th>
           <th scope="col">Compliance Score</th>
           <th scope="col">Compliance Status</th>
+          <th scope="col">Created Date</th>
+          <th scope="col">Updated Date</th>
           <th scope="col">View Product</th>
           <th scope="col">View Document</th>
+          <th scope="col">View Company</th>
+
         </tr>
       </thead>
       <tbody>
@@ -69,6 +73,8 @@
           <td>{{ user.quotePaymentWithDetails?.QuotePaymentId }}</td>
           <td>{{ user.screeningDetails?.matchScore }}</td>
           <td>{{ user.kycStatus }}</td>
+          <td>{{ user.createdAt | slice:0:10 }}</td>
+          <td>{{ user.updatedAt | slice:0:10 }}</td>
           <td>
             <button class="green-button" (click)="openProductModal(user)">
               View Products
@@ -79,6 +85,13 @@
               View Documents
             </button>
           </td>
+        <td>
+  <button class="green-button" (click)="openCompanyModal(user.leadWithDetails)">
+    View Company
+  </button>
+</td>
+
+
         </tr>
       </tbody>
     </table>
@@ -173,8 +186,27 @@
       </div>
     </div>
   </div>
- 
- 
+<!-- Company Details Modal -->
+<div *ngIf="showCompanyModal" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 class="modal-title">Company Details</h3>
+      <span class="close-btn" (click)="closeCompanyModal()">&times;</span>
+    </div>
+    <div class="modal-body">
+      <ul class="company-details">
+        <li><strong>Company Location (UAE):</strong> {{ selectedCompanyDetails?.companyLocationUAE || 'N/A' }}</li>
+        <li><strong>Employment Type:</strong> {{ selectedCompanyDetails?.employmentType || 'N/A' }}</li>
+        <li><strong>Salary Range:</strong> {{ selectedCompanyDetails?.salary || 'N/A' }}</li>
+      </ul>
+    </div>
+    <div class="modal-footer">
+      <button class="green-button" (click)="closeCompanyModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+
   <!-- Pagination Controls -->
  
  

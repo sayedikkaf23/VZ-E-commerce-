@@ -17,18 +17,19 @@ export class VirtualReceptionist2Component implements OnInit {
   // Our main form group
   formData: FormGroup;
 
-  // We’ll load shareholders data from localStorage (virtualdata1, virtualdata2)
+  // We’ll load shareholders data from sessionStorage (virtualdata1, virtualdata2)
   shareholdersData: any[] = [];
-
+  economicDetailId: any;
   // For storing uploaded files & file names
   uploadedFiles: File[][] = [];
   uploadedFileNames: { [key: number]: { name: string; url: string; type: string;}[] } = {};
 
   // For the company trade license, we store an array of { name, url }
   companyTradeLicenseFile: { name: string; url: string; type: string;}[] = [];
-
+  personalInfo: any;
+  leadResponse: any;
   isLoading = false;
-
+ tradeLicenseFile: any;
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -56,70 +57,63 @@ export class VirtualReceptionist2Component implements OnInit {
       window.scrollTo(0, 0);
     }
 
-    // Read localStorage
-    const savedData1 = localStorage.getItem('virtualdata1');
-    const savedData2 = localStorage.getItem('virtualdata2');
+     const leadDataRaw = sessionStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+  const leadId = leadData?.LeadId;
 
-    let parsedData1: any = {};
-    let parsedData2: any = {};
-
-    // Parse the JSON from virtualdata1
-    if (savedData1) {
-      parsedData1 = JSON.parse(savedData1);
-    }
-
-    // Start with shareholders from `virtualdata1`
-    this.shareholdersData = parsedData1.shareholders || [];
-    this.initializeShareholders();
-
-    // Parse the JSON from virtualdata2
-    if (savedData2) {
-      parsedData2 = JSON.parse(savedData2);
-
-      // Merge any existing shareholder data (including passportNumber, name, etc.)
-      if (parsedData2.shareholders) {
-        this.shareholdersData.forEach((sh, i) => {
-          if (parsedData2.shareholders[i]) {
-            // Merge passportNumber if it exists
-            if (parsedData2.shareholders[i].passportNumber) {
-              sh.passportNumber = parsedData2.shareholders[i].passportNumber;
-            }
-            // Merge name, DOB, nationality, etc. if you wish:
-            if (parsedData2.shareholders[i].name) {
-              sh.name = parsedData2.shareholders[i].name;
-            }
-            if (parsedData2.shareholders[i].shareholderPercentage) {
-              sh.shareholderPercentage = parsedData2.shareholders[i].shareholderPercentage;
-            }
-            if (parsedData2.shareholders[i].dob) {
-              sh.dob = parsedData2.shareholders[i].dob;
-            }
-            if (parsedData2.shareholders[i].nationalityshareholder) {
-              sh.nationalityshareholder = parsedData2.shareholders[i].nationalityshareholder;
-            }
-          }
-        });
+  if (leadId) {
+    this.isLoading = true;
+    this.userService.getStep1(leadId).subscribe({
+      next: (storedData) => {
+        this.isLoading = false;
+        this.personalInfo = storedData; 
+        
+         this.loadTradeLicenseAndShareholders(leadId);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load step1 & step2 data', err);
       }
-      // Re-initialize the form array with merged data
-      this.initializeShareholders();
-
-      // Restore the company trade license text (the "number" or label) from parsedData2
-      if (parsedData2.companyTradeLicense) {
-        this.formData.get('companyTradeLicense')?.setValue(parsedData2.companyTradeLicense);
-      }
-
-      // Restore the uploaded license file info
-      this.companyTradeLicenseFile = parsedData2.companyTradeLicenseFile || [];
-
-      if (this.companyTradeLicenseFile.length > 0) {
-        // Update the form control to show we have a license file uploaded
-        this.formData.get('companyTradeLicenseFile')?.setValue(this.companyTradeLicenseFile[0].name);
-      }
-
-      // Restore the uploaded file names for shareholders
-      this.uploadedFileNames = parsedData2.uploadedFileNames || {};
-    }
+    });
   }
+
+  }
+
+   private loadTradeLicenseAndShareholders(leadId: string): void {
+      this.isLoading = true;
+
+      this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+        next: (tradeData: any) => {
+          this.isLoading = false;
+          console.log('Trade License Data:', tradeData);
+
+            this.tradeLicenseFile = tradeData.tradeLicenseFile || {};
+      this.shareholdersData = tradeData.shareholders || [];
+      // You’d need to map per shareholder
+this.uploadedFileNames = (tradeData.shareholders || []).map((s: any) => s.files || []);
+
+
+      // Auto-fill trade license number if available
+      if (tradeData.tradeLicenseNo) {
+        this.formData.get('companyTradeLicense')?.setValue(tradeData.tradeLicenseNo);
+      }
+
+      // Auto-fill uploaded trade license file name & URL
+      if (Array.isArray(tradeData.tradeLicenseFile) && tradeData.tradeLicenseFile.length > 0) {
+        this.companyTradeLicenseFile = tradeData.tradeLicenseFile || [];
+        this.formData.get('companyTradeLicenseFile')?.setValue(tradeData.tradeLicenseFile[0].name);
+      }
+
+          // Initialize shareholders form array
+          this.initializeShareholders();
+        },
+        error: err => {
+          this.isLoading = false;
+          console.error('Failed to load trade license and shareholder data:', err);
+          this.toastr.error('Could not load trade license or shareholder details.', 'Error');
+        }
+      });
+    }
 
   // Helper to get the shareholders FormArray
   get shareholders(): FormArray {
@@ -197,10 +191,10 @@ export class VirtualReceptionist2Component implements OnInit {
 
           // Angular’s HttpClient typically puts the server’s JSON under error.error
           // e.g., error.error = { error: "File size cannot exceed 1MB" }
-          const errorMsg = error.error?.error || 'An error occurred while getting URL';
+          // const errorMsg = error.error?.error || 'An error occurred while getting URL';
   
-          // Show it in a toast (using ngx-toastr for example)
-          this.toastr.error(errorMsg, 'Error');
+          // // Show it in a toast (using ngx-toastr for example)
+          // this.toastr.error(errorMsg, 'Error');
           this.isLoading = false;
         }
       );
@@ -295,11 +289,19 @@ export class VirtualReceptionist2Component implements OnInit {
       tradeLicenseControl?.setErrors(null);
     }
 
+      this.economicDetailId = sessionStorage.getItem('economicDetailId');
+
+    //check for economicDetailId
+    if(!this.economicDetailId){
+       alert("economicDetailId not found");
+        this.router.navigate(['/mails-management']);
+    }
+
     // If everything is valid, proceed
     if (this.formData.valid) {
       const formValues = this.formData.value;
 
-      // Build an object to store in localStorage
+      // Build an object to store in sessionStorage
       const dataToSave = {
         ...formValues,  // includes { companyTradeLicense, companyTradeLicenseFile, shareholders }
         companyTradeLicenseFile: this.companyTradeLicenseFile,
@@ -311,12 +313,68 @@ export class VirtualReceptionist2Component implements OnInit {
         uploadedFileNames: this.uploadedFileNames
 
       };
+       
 
-      // Save to localStorage for retrieval later
-      localStorage.setItem('virtualdata2', JSON.stringify(dataToSave));
+         const leadResponseRaw = sessionStorage.getItem('leadResponse');
+        this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+
+    
+  
+         // payload for salesforce api
+        const insertPayload = {
+            leadId: this.leadResponse.LeadId,
+            accountId: this.leadResponse.AccountId,
+            serviceName: 'Virtual Receptionist',
+            // subServiceName: '',
+           firstName: this.personalInfo.FirstName,
+            lastName: this.personalInfo.LastName,
+            email: this.personalInfo.Email,
+            nationality: this.personalInfo.Nationality,
+            phone: this.personalInfo.Phone,
+            dob: this.personalInfo.dob,
+            // companyLocationUAE: '',
+            // employmentType: '',
+             companyName: this.personalInfo.Company,
+            // salary: '',
+            // bankType: '',
+             companyLicensed: this.personalInfo.companyLicensed,
+            activityType: this.personalInfo.activityType,
+           totalShareholders: this.personalInfo.totalShareholders ,
+             economicDetailId: this.economicDetailId,
+             countryCode: this.personalInfo.countryCode,
+            // companyTurnover: '',
+            companyLocation: this.personalInfo.companyLocation,
+            companyWebsite: this.personalInfo.companyWebsite,
+            tradeLicenseNo: formValues.companyTradeLicense,
+            shareholderfilesnumber: formValues.shareholders?.[0]?.passportNumber || '',
+            tradeLicenseFileUrl: this.companyTradeLicenseFile?.[0]?.url || '',
+            uploadedFileNames: Object.values(this.uploadedFileNames).flat(),
+            tradeLicenseFile: this.companyTradeLicenseFile,
+            shareholdersfiles: Object.values(this.uploadedFileNames || {})
+            .flat()
+            .map((f: any) => f.url)
+            .filter(Boolean)[0] || '',
+            shareholders: this.shareholders.value.map((shareholder: any, idx: number) => ({
+              ...shareholder,
+              files: this.uploadedFileNames[idx] || []
+            })),
+
+          };
+            console.log(insertPayload);
+           this.isLoading = true;
+          this.userService.insertEconomicDetails(insertPayload).subscribe(
+          (response) => {
+            console.log('API Response:', response);
+            this.isLoading = false;
+             // Save to sessionStorage for retrieval later
+      sessionStorage.setItem('virtualdata2', JSON.stringify(dataToSave));
 
       // Navigate to the next page
       this.router.navigate(['/virtual-receptionist-details']);
+          }
+          );
+
+     
     } else {
       // console.log('Please fill all required fields');
       // Optionally log the form to see which control is invalid:

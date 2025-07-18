@@ -48,6 +48,8 @@
  
             <th scope="col">Compliance Score</th>
             <th scope="col">Compliance Status</th>
+            <th scope="col">Created Date</th>
+            <th scope="col">Updated Date</th>
             <th scope="col">View Products</th>
             <th scope="col">View Documents</th>
             <th scope="col">Action</th>
@@ -65,6 +67,8 @@
             <!-- <td>{{ user.salesPersonDetails?.salesPersonName }}</td> -->
             <td>{{ user.screeningDetails?.matchScore }}</td>
             <td>{{ user.kycStatus }}</td>
+            <td>{{ user.createdAt | slice:0:10 }}</td>
+            <td>{{ user.updatedAt | slice:0:10 }}</td>
             <td>
               <button class="green-button" (click)="openProductModal(user)">View Products</button>
              

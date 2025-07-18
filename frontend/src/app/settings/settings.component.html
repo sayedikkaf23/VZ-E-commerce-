@@ -57,6 +57,7 @@
                 role="switch"
                 id="status_{{ service._id }}"
                 [checked]="service.isActive"
+               (change)="onStatusChange(service, $event)"
               />
             </div>
           </td>

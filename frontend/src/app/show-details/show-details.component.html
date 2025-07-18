@@ -28,28 +28,28 @@
               <tbody>
                 <tr>
                   <th>First Name :</th>
-                  <td>{{ personalInfo.firstName }}</td>
+                  <td>{{ personalInfo.FirstName }}</td>
                 </tr>
                 <tr>
                   <th>Last Name :</th>
-                  <td>{{ personalInfo.lastName }}</td>
+                  <td>{{ personalInfo.LastName }}</td>
                 </tr>
                 <tr>
                   <th>Email ID :</th>
-                  <td>{{ personalInfo.email }}</td>
+                  <td>{{ personalInfo.Email }}</td>
                 </tr>
                 <tr>
                   <th>Nationality :</th>
-                  <td>{{ personalInfo.nationality }}</td>
+                  <td>{{ personalInfo.Nationality }}</td>
                 </tr>
                 <tr>
                   <th>Date of Birth:</th>
-                  <td>{{ personalInfo.birthday | date:'dd-MM-yyyy' }}</td>
+                  <td>{{ personalInfo.dob | date:'dd-MM-yyyy' }}</td>
                 </tr>
                 
                 <tr>
                   <th>Phone No :</th>
-                  <td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td>
+                  <td>{{ personalInfo.Phone || 'N/A' }}</td>
                 </tr>
                 <tr>
                   <th style="border: none;"></th>
@@ -71,23 +71,23 @@
               <tbody>
                 <tr>
                   <th >Are you a resident of UAE? :</th>
-                  <td>{{ bankInfo.resident }}</td>
+                  <td>{{ personalInfo.companyLocationUAE }}</td>
                 </tr>
                 <tr>
                   <th>Are you Salaried or Self Employed? :</th>
-                  <td>{{ bankInfo.working }}</td>
+                  <td>{{ personalInfo.employmentType }}</td>
                 </tr>
-                <tr *ngIf="bankInfo.working === 'Salaried'">
+                <tr *ngIf="personalInfo.employmentType === 'Salaried'">
                   <th>Salary :</th>
-                  <td>{{ bankInfo.salary }}</td>
+                  <td>{{ personalInfo.salary }}</td>
                 </tr>
-                <tr *ngIf="bankInfo.working === 'Self Employed'">
+                <tr *ngIf="personalInfo.employmentType === 'Self Employed'">
                   <th>Company Name :</th>
-                  <td>{{ bankInfo.companyname }}</td>
+                  <td>{{ personalInfo.Company }}</td>
                 </tr>
                 <tr>
                   <th >Do you wish to apply for? :</th>
-                  <td>{{ bankInfo.Bank }}</td>
+                  <td>{{ personalInfo.bankType }}</td>
                 </tr>
               </tbody>
             </table>

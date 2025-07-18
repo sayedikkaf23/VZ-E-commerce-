@@ -374,11 +374,11 @@ exports.getMailDetails = async (req, res) => {
     const skip = (page - 1) * limit;
  
     // 2) Count total to calculate totalPages
-    const totalRecords = await Pidata.countDocuments({ planname: "Mail Management" });
+    const totalRecords = await Pidata.countDocuments({ $or: [{ 'leadWithDetails.ServiceName': "Mail Management" },{ 'planname': "Mail Management" } ] });
     const totalPages = Math.ceil(totalRecords / limit);
  
     // 3) Fetch only a slice (the current page) of Pidata documents
-    const MailDetailsSubmissions = await Pidata.find({ planname: "Mail Management" })
+    const MailDetailsSubmissions = await Pidata.find({ $or: [{ 'leadWithDetails.ServiceName': "Mail Management" },{ 'planname': "Mail Management" } ] })
       .skip(skip)
       .limit(limit);
  
