@@ -1446,6 +1446,27 @@ async function payNowSaleforce(req, res) {
     const username = paynowdata.customerDetails.name;
     const Amount = paynowdata.transactionDetails.amount;
     const planName = PiDataCheck?.planname || "";
+    const serviceName = PiDataCheck?.leadWithDetails?.ServiceName || "";
+    const subType = PiDataCheck?.leadWithDetails?.subServiceName || "";
+
+    let redirectPath = ""; // default fallback
+
+    if (serviceName === "Bank Account Opening") {
+      if(subType === "Personal Bank Account Opening") {
+        redirectPath = "/showDetails-2";
+      } else {
+        redirectPath = "/business-show-details";
+      }
+    } else if (serviceName === "Mail Management") {
+        redirectPath = "/mails-summary";
+    } else if (serviceName === "Virtual Receptionist") {
+        redirectPath = "/virtual-summary";
+    } else {
+        // Optional: fallback page if planName doesn't match known plans
+        redirectPath = "/"; 
+    }
+
+    const fullUrl = `https://ecommerce.yeepeey.com${redirectPath}`;
 
     console.log(planName, "planName................", PiDataCheck);
 
@@ -1595,9 +1616,9 @@ async function payNowSaleforce(req, res) {
     </ul>
     <p>
   Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br>
-  <a href="https://ecommerce.yeepeey.com" target="_blank" style="text-decoration: none; display: inline-block; margin-bottom: 15px;">
-    https://ecommerce.yeepeey.com
-  </a>
+  <a href="${fullUrl}" target="_blank" style="text-decoration: none; display: inline-block; margin-bottom: 15px;">
+  Continue your application
+</a>
 </p>
 
 <p style="margin-top: 0;">
