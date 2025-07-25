@@ -987,28 +987,44 @@ exports.getPersonalBank = async (req, res) => {
     // 1) Extract page & limit from query (fallback to page=1, limit=10)
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
+    // 2) Build Aggregation Pipeline
     const skip = (page - 1) * limit;
- 
-    // 2) Build Aggregation Pipeline (No more userdetails lookup)
+
     const pipeline = [
-      // Match only the subcategory = 'personal'
-      { $match: { 'leadWithDetails.subServiceName' : 'Personal Bank Account Opening' } }, 
+      { $match: { 'leadWithDetails.subServiceName' : 'Personal Bank Account Opening' } },
 
+      { $addFields: { dateKey: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } } },
 
-      // Now we use $facet to get total count & the paginated docs in one go
+      { $sort: { createdAt: -1 } },
+
+      { $group: { _id: "$dateKey", items: { $push: "$$ROOT" } } },
+
+      { $addFields: { items: { $reverseArray: "$items" } } },
+
+      { $sort: { _id: -1 } },
+
+      { $unwind: "$items" },
+
+      { $replaceRoot: { newRoot: "$items" } },
+
+      { $skip: skip },
+      { $limit: limit }
+    ];
+
+    const finalPipeline = [
       {
         $facet: {
-          metadata: [ { $count: 'total' } ], // Count how many docs after above steps
-          data: [
-            { $skip: skip },
-            { $limit: limit }
-          ]
+          metadata: [ 
+            { $match: { 'leadWithDetails.subServiceName' : 'Personal Bank Account Opening' } },
+            { $count: "total" }
+          ],
+          data: pipeline
         }
       }
     ];
- 
-    // 3) Execute the aggregation
-    const aggResult = await Pidata.aggregate(pipeline);
+
+    const aggResult = await Pidata.aggregate(finalPipeline);
+
    
     const meta = aggResult[0]?.metadata?.[0] || {};
     const totalRecords = meta.total || 0; // If none found, total will be 0
@@ -1090,27 +1106,44 @@ exports.getBusinessBank = async (req, res) => {
     // 1) Extract page & limit from query (fallback to page=1, limit=10)
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
+   // 2) Build Aggregation Pipeline
     const skip = (page - 1) * limit;
- 
-    // 2) Build Aggregation Pipeline (No more userdetails lookup)
+
     const pipeline = [
-      // Match only the subcategory = 'business'
       { $match: { 'leadWithDetails.subServiceName' : 'Business Bank Account Opening' } },
 
-      // Use $facet to get total count and paginated docs in one shot
+      { $addFields: { dateKey: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } } },
+
+      { $sort: { createdAt: -1 } },
+
+      { $group: { _id: "$dateKey", items: { $push: "$$ROOT" } } },
+
+      { $addFields: { items: { $reverseArray: "$items" } } },
+
+      { $sort: { _id: -1 } },
+
+      { $unwind: "$items" },
+
+      { $replaceRoot: { newRoot: "$items" } },
+
+      { $skip: skip },
+      { $limit: limit }
+    ];
+
+    const finalPipeline = [
       {
         $facet: {
-          metadata: [{ $count: 'total' }], // This counts all matching docs
-          data: [
-            { $skip: skip },
-            { $limit: limit }
-          ]
+          metadata: [ 
+            { $match: { 'leadWithDetails.subServiceName' : 'Business Bank Account Opening' } },
+            { $count: "total" }
+          ],
+          data: pipeline
         }
       }
     ];
- 
-    // 3) Execute the aggregation
-    const aggResult = await Pidata.aggregate(pipeline);
+
+    const aggResult = await Pidata.aggregate(finalPipeline);
+
    
     // Structure of aggResult[0]
     const meta = aggResult[0]?.metadata?.[0] || {};
