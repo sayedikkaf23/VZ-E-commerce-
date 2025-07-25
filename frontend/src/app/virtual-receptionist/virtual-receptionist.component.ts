@@ -202,8 +202,10 @@ onSubmit() {
     const phoneString = values.mobileNumber?.number || '';
       const leadDataRaw = sessionStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
-const countryCode = values.mobileNumber?.dialCode || '';
+    const countryCode = values.mobileNumber?.dialCode || '';
 
+    const quoteDataRaw = sessionStorage.getItem('quotePaymentId');
+    const quoteData = quoteDataRaw ? JSON.parse(quoteDataRaw) : null;
      let payload: any;
 
      
@@ -211,7 +213,7 @@ const countryCode = values.mobileNumber?.dialCode || '';
     const storedEmail = this.previousStep1Data.Email;
     const currentEmail = values.email;
 
-    if (storedEmail !== currentEmail) {
+    if (storedEmail !== currentEmail || !quoteData) {
       // Email changed, create a new lead with an empty leadId
       payload = {
         firstName: values.firstName,
