@@ -202,7 +202,7 @@ onSubmit() {
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
     const quoteDataRaw = sessionStorage.getItem('quotePaymentId');
-    const quoteData = quoteDataRaw ? JSON.parse(quoteDataRaw) : null;
+
  
       const leadId = leadData?.LeadId;
          this.isLoading = true;
@@ -210,7 +210,7 @@ onSubmit() {
                 // Check for email change
     const storedEmail = this.previousStep1Data.Email;
     const currentEmail = values.email;
-              if (storedEmail !== currentEmail || !quoteData) {
+              if (storedEmail !== currentEmail || !quoteDataRaw) {
                 // Email changed → create new lead with empty leadId
                 payload = {
                   firstName: values.firstName,
