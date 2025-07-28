@@ -375,13 +375,68 @@ exports.getVirtualDetails = async (req, res) => {
   ] });
     const totalPages = Math.ceil(totalRecords / limit);
  
-    // 3) Fetch only that slice of data (skip, limit)
-    const VirtualDetailsSubmissions = await Pidata.find({$or: [
-    { 'leadWithDetails.ServiceName': "Virtual Receptionist" },
-    { 'planname': "Virtual Receptionist" }
-  ] })
-      .skip(skip)
-      .limit(limit);
+    const pipeline = [
+  { 
+    $match: { 
+      $or: [
+        { 'leadWithDetails.ServiceName': "Virtual Receptionist" },
+        { 'planname': "Virtual Receptionist" }
+      ] 
+    }
+  },
+
+  // Add a dateKey: yyyy-MM-dd
+  { 
+    $addFields: { 
+      dateKey: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }
+    }
+  },
+
+  // Sort by createdAt descending (newest items first)
+  { 
+    $sort: { createdAt: -1 }
+  },
+
+  // Group by dateKey
+  { 
+    $group: {
+      _id: "$dateKey",
+      items: { $push: "$$ROOT" }
+    }
+  },
+
+  // Reverse each group’s items (oldest first within today)
+  { 
+    $addFields: { 
+      items: { $reverseArray: "$items" }
+    }
+  },
+
+  // Sort groups by date descending (today first)
+  { 
+    $sort: { _id: -1 }
+  },
+
+  // Flatten
+  { 
+    $unwind: "$items"
+  },
+
+  { 
+    $replaceRoot: { newRoot: "$items" }
+  },
+
+  // Paginate
+  { 
+    $skip: skip
+  },
+  { 
+    $limit: limit
+  }
+];
+
+const VirtualDetailsSubmissions = await Pidata.aggregate(pipeline);
+
  
     // 4) Call authenticate once for the KYC status
     // const authResponse = await axios.post(

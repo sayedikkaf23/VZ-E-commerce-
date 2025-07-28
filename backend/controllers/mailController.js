@@ -377,10 +377,68 @@ exports.getMailDetails = async (req, res) => {
     const totalRecords = await Pidata.countDocuments({ $or: [{ 'leadWithDetails.ServiceName': "Mail Management" },{ 'planname': "Mail Management" } ] });
     const totalPages = Math.ceil(totalRecords / limit);
  
-    // 3) Fetch only a slice (the current page) of Pidata documents
-    const MailDetailsSubmissions = await Pidata.find({ $or: [{ 'leadWithDetails.ServiceName': "Mail Management" },{ 'planname': "Mail Management" } ] })
-      .skip(skip)
-      .limit(limit);
+    const pipeline = [
+  { 
+    $match: { 
+      $or: [
+        { 'leadWithDetails.ServiceName': "Mail Management" },
+        { 'planname': "Mail Management" }
+      ] 
+    }
+  },
+
+  // Add a dateKey: yyyy-MM-dd
+  { 
+    $addFields: { 
+      dateKey: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }
+    }
+  },
+
+  // Sort by createdAt descending (newest items first)
+  { 
+    $sort: { createdAt: -1 }
+  },
+
+  // Group by dateKey
+  { 
+    $group: {
+      _id: "$dateKey",
+      items: { $push: "$$ROOT" }
+    }
+  },
+
+  // Reverse each group’s items (oldest first within today)
+  { 
+    $addFields: { 
+      items: { $reverseArray: "$items" }
+    }
+  },
+
+  // Sort groups by date descending (today first)
+  { 
+    $sort: { _id: -1 }
+  },
+
+  // Flatten
+  { 
+    $unwind: "$items"
+  },
+
+  { 
+    $replaceRoot: { newRoot: "$items" }
+  },
+
+  // Paginate
+  { 
+    $skip: skip
+  },
+  { 
+    $limit: limit
+  }
+];
+
+const MailDetailsSubmissions = await Pidata.aggregate(pipeline);
+
  
     // 4) Authenticate once for KYC status calls
     // const authResponse = await axios.post(
@@ -461,6 +519,7 @@ exports.getMailDetails = async (req, res) => {
  
     // 7) Return up to 10 docs, each with userDetails or null
     // plus your pagination metadata
+    
     res.status(200).json({
       data: MailDetailsSubmissions,     // This will have the same count as MailDetailsSubmissions
       totalRecords,
