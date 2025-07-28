@@ -351,7 +351,7 @@ serviceProducts: any[] = [];
 submitData() {
   this.isLoading = true;
 
-  const quotePaymentId = localStorage.getItem("quotePaymentId");
+  const quotePaymentId = sessionStorage.getItem("quotePaymentId");
 
   if (quotePaymentId) {
     this.callActivePaymentMethod(quotePaymentId);
