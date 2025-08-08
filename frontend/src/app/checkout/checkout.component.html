@@ -1,0 +1,17 @@
+<body>
+
+  <!-- 1) script tag – include checkoutId + integrity from your backend -->
+  <script
+    src="https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId={{checkoutId}}"
+    integrity="{{integrity}}"
+    crossorigin="anonymous">
+  </script>
+
+  <!-- 2) form that the widget will replace -->
+  <form
+    action="/checkout/result"      
+    class="paymentWidgets"
+    data-brands="VISA MASTER">     <!-- show only the brands you allow -->
+  </form>
+
+</body>

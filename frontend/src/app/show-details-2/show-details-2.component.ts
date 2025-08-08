@@ -259,6 +259,9 @@ submitPaymentOpportunity() {
             () => Swal.fire('Error', 'Failed to redirect to TotalPay', 'error')
           );
           break;
+          case 'afs':
+           this.router.navigate(['/checkout', quotePaymentId]); 
+          break;
 
         default:
           Swal.fire('Error', 'Unsupported payment method', 'error');

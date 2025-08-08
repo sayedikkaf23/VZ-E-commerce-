@@ -17,6 +17,8 @@ const CashDeposit = require("../models/CashDeposit");
 const BankTransfer = require("../models/BankTransferModel");
 const Decimal = require("decimal.js"); // Install the library if needed
 const ChequeDesposit = require("../models/ChequeDeposit");
+const qs     = require("querystring");
+
 
 require("dotenv").config();
 //  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
@@ -588,6 +590,9 @@ async function payNow(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+
+
 
 exports.getTotalPayRedirectUrl = async (quoteId) =>  {
  
@@ -4008,9 +4013,54 @@ const AddChequeDeposit = async (req, res) => {
   }
 };
 
+
+const initCheckout = async (req, res) => {
+  try {
+    const { quoteId } = req.params;
+
+    /* ––– look up the quote (optional) ––– */
+    const data = await PiData.findOne({
+    $or: [
+      { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+      { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+    ],
+  });
+    if (!data) return res.status(404).json({ message: "Quote not found." });
+
+    /* ––– build the /v1/checkouts payload ––– */
+    const payload = {
+      entityId: process.env.ENTITY_ID,        // ← usually DIFFERENT from Pay-by-Link entity
+      amount:   Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(2),
+      currency: process.env.CURRENCY || "AED",
+      paymentType: "DB",
+      integrity: "true"                                // required for Copy&Pay
+    };
+
+    const { data: checkout } = await axios.post(
+      "https://eu-test.oppwa.com/v1/checkouts",
+      qs.stringify(payload),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${process.env.ACCESS_TOKEN}` // ← token for that entity
+        },
+        timeout: 10000
+      }
+    );
+
+    /* HyperPay returns: { id: "<checkoutId>", result: { code, description } } */
+    return res.status(200).json(checkout);
+  } catch (err) {
+    console.error("Checkout-ID error →", err?.response?.data || err.message);
+    return res.status(500).json({ message: "Failed to create checkout" });
+  }
+};
+
+
 exports.AddBankTransfer = AddBankTransfer;
 exports.convertCurrency = convertCurrency;
 exports.payNow = payNow;
+exports.initCheckout = initCheckout;
 exports.payNowSaleforce = payNowSaleforce;
 exports.payNowByStripe = payNowByStripe;
 exports.payNowByTelr = payNowByTelr;
