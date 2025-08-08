@@ -1842,11 +1842,11 @@ exports.getallUserSerive = async (req, res) => {
       }
     }
 const updatedUserData = await Pidata.find({ "leadWithDetails.Email": email });
-    await CommondbSalesforceLog.create({
-          unique_id: email,
-          request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
-          response: updatedUserData
-        });
+    // await CommondbSalesforceLog.create({
+    //       unique_id: email,
+    //       request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
+    //       response: updatedUserData
+    //     });
     // After all done, send success response
     res.status(200).json({
       message: "User data fetched and updated successfully",
@@ -1854,11 +1854,11 @@ const updatedUserData = await Pidata.find({ "leadWithDetails.Email": email });
     });
   } catch (error) {
     console.error("Error fetching/updating user data:", error);
-    await CommondbSalesforceLog.create({
-        unique_id: email,
-        request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
-        response: { error: error?.response?.data || error.toString(), stack: error.stack }
-      });
+    // await CommondbSalesforceLog.create({
+    //     unique_id: email,
+    //     request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
+    //     response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    //   });
 
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
@@ -1894,19 +1894,19 @@ exports.updateAdditionalUploadedFiles = async (req, res) => {
 
     // Save the record
     await record.save();
-    await CommondbSalesforceLog.create({
-      unique_id: someId || 'unknown',
-      request: { api: 'updateAdditionalUploadedFiles', body: req.body, url: req.originalUrl },
-      response: record
-    });
+    // await CommondbSalesforceLog.create({
+    //   unique_id: someId || 'unknown',
+    //   request: { api: 'updateAdditionalUploadedFiles', body: req.body, url: req.originalUrl },
+    //   response: record
+    // });
     return res.status(200).json({ message: "Files updated successfully", record });
   } catch (err) {
     console.error("Error updating files:", err.message || err);
-    await CommondbSalesforceLog.create({
-      unique_id: someId || 'unknown',
-      request: { api: 'updateAdditionalUploadedFiles', body: req.body, url: req.originalUrl },
-      response: { error: err?.response?.data || err.toString(), stack: err.stack }
-    });
+    // await CommondbSalesforceLog.create({
+    //   unique_id: someId || 'unknown',
+    //   request: { api: 'updateAdditionalUploadedFiles', body: req.body, url: req.originalUrl },
+    //   response: { error: err?.response?.data || err.toString(), stack: err.stack }
+    // });
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -1934,19 +1934,19 @@ exports.updateUserFiles = async (req, res) => {
     record.shareholders = shareholders || [];
 
     await record.save();
-    await CommondbSalesforceLog.create({
-    unique_id: someId || 'unknown',
-    request: { api: 'updateUserFiles', body: req.body, url: req.originalUrl },
-    response: record
-  });
+  //   await CommondbSalesforceLog.create({
+  //   unique_id: someId || 'unknown',
+  //   request: { api: 'updateUserFiles', body: req.body, url: req.originalUrl },
+  //   response: record
+  // });
     return res.status(200).json({ message: "Files updated successfully", record });
   } catch (error) {
     console.error("Error updating files:", error);
-    await CommondbSalesforceLog.create({
-      unique_id: someId || 'unknown',
-      request: { api: 'updateUserFiles', body: req.body, url: req.originalUrl },
-      response: { error: error?.response?.data || error.toString(), stack: error.stack }
-    });
+    // await CommondbSalesforceLog.create({
+    //   unique_id: someId || 'unknown',
+    //   request: { api: 'updateUserFiles', body: req.body, url: req.originalUrl },
+    //   response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    // });
     return res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
@@ -1977,18 +1977,18 @@ exports.dashboard = async (req, res) => {
 
     // Sum the user counts
     const totalUser = userCount + virtualDetailsCount + mailDetailsCount;
-    await CommondbSalesforceLog.create({
-      unique_id: 'dashboard',
-      request: { api: 'dashboard', url: req.originalUrl },
-      response: {
-        virtualReceptionCount,
-        mailManagementCount,
-        bankOpeningCount,
-        personalCount,
-        businessCount,
-        totalUser
-      }
-    });
+    // await CommondbSalesforceLog.create({
+    //   unique_id: 'dashboard',
+    //   request: { api: 'dashboard', url: req.originalUrl },
+    //   response: {
+    //     virtualReceptionCount,
+    //     mailManagementCount,
+    //     bankOpeningCount,
+    //     personalCount,
+    //     businessCount,
+    //     totalUser
+    //   }
+    // });
     // Return the counts + the totalUser in a single response
     return res.json({
       // Pidata-based counts
@@ -2006,11 +2006,11 @@ exports.dashboard = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    await CommondbSalesforceLog.create({
-      unique_id: 'dashboard',
-      request: { api: 'dashboard', url: req.originalUrl },
-      response: { error: error?.response?.data || error.toString(), stack: error.stack }
-    });
+    // await CommondbSalesforceLog.create({
+    //   unique_id: 'dashboard',
+    //   request: { api: 'dashboard', url: req.originalUrl },
+    //   response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    // });
     return res.status(500).json({
       message: 'Something went wrong',
       error: error.message
@@ -2041,36 +2041,36 @@ exports.updateKycStatus = async (req, res) => {
       return res.status(404).json({ error: "Record not found" });
     }
  
-    await CommondbSalesforceLog.create({
-      unique_id: id,
-      request: {
-        api: 'updateKycStatus',
-        url: '/api/user/updateKycStatus',
-        body: { id, kycStatus }
-      },
-      response: {
-        message: `KYC status updated successfully to ${kycStatus}`,
-        updatedDocument
-      }
-    });
+    // await CommondbSalesforceLog.create({
+    //   unique_id: id,
+    //   request: {
+    //     api: 'updateKycStatus',
+    //     url: '/api/user/updateKycStatus',
+    //     body: { id, kycStatus }
+    //   },
+    //   response: {
+    //     message: `KYC status updated successfully to ${kycStatus}`,
+    //     updatedDocument
+    //   }
+    // });
     res.status(200).json({
       message: `KYC status updated successfully to ${kycStatus}`,
       data: updatedDocument,
     });
   } catch (error) {
     console.error("Error updating KYC status:", error);
-     await CommondbSalesforceLog.create({
-      unique_id: req.body?.id || 'unknown',
-      request: {
-        api: 'updateKycStatus',
-        url: '/api/user/updateKycStatus',
-        body: req.body
-      },
-      response: {
-        error: error.message,
-        stack: error.stack
-      }
-    });
+    //  await CommondbSalesforceLog.create({
+    //   unique_id: req.body?.id || 'unknown',
+    //   request: {
+    //     api: 'updateKycStatus',
+    //     url: '/api/user/updateKycStatus',
+    //     body: req.body
+    //   },
+    //   response: {
+    //     error: error.message,
+    //     stack: error.stack
+    //   }
+    // });
     res.status(500).json({
       error: "Error updating KYC status",
       details: error.message,
@@ -2104,20 +2104,20 @@ exports.getTradeLicenseAndShareholders = async (req, res) => {
       tradeLicenseFile: doc.tradeLicenseFile || [],
       uploadedFileNames: doc.uploadedFileNames || [],
     };
-    await CommondbSalesforceLog.create({
-      unique_id: leadId || 'unknown',
-      request: { api: 'getTradeLicenseAndShareholders', query: req.query, url: req.originalUrl },
-      response
-    });
+    // await CommondbSalesforceLog.create({
+    //   unique_id: leadId || 'unknown',
+    //   request: { api: 'getTradeLicenseAndShareholders', query: req.query, url: req.originalUrl },
+    //   response
+    // });
 
     return res.json(response);
 
   } catch (err) {
-    await CommondbSalesforceLog.create({
-      unique_id: leadId || 'unknown',
-      request: { api: 'getTradeLicenseAndShareholders', query: req.query , url: req.originalUrl },
-      response: { error: err?.response?.data || err.toString(), stack: err.stack }
-    });
+    // await CommondbSalesforceLog.create({
+    //   unique_id: leadId || 'unknown',
+    //   request: { api: 'getTradeLicenseAndShareholders', query: req.query , url: req.originalUrl },
+    //   response: { error: err?.response?.data || err.toString(), stack: err.stack }
+    // });
     console.error('Error getting trade license and shareholders data:', err);
     res.status(500).json({ message: 'Failed to get data' });
   }
@@ -2136,19 +2136,19 @@ exports.getStep1 = async (req, res) => {
     if (!doc) {
       return res.status(404).json({ message: 'Data not found for the given leadId' });
     }
-    await CommondbSalesforceLog.create({
-        unique_id: leadId || 'unknown',
-        request: { api: 'getStep1', query: req.query, url: req.originalUrl },
-        response: doc.leadWithDetails
-      });
+    // await CommondbSalesforceLog.create({
+    //     unique_id: leadId || 'unknown',
+    //     request: { api: 'getStep1', query: req.query, url: req.originalUrl },
+    //     response: doc.leadWithDetails
+    //   });
     return res.json(doc.leadWithDetails);
   } catch (err) {
     console.error('Error getting step1 data:', err);
-    await CommondbSalesforceLog.create({
-      unique_id: leadId || 'unknown',
-      request: { api: 'getStep1', query: req.query, url: req.originalUrl },
-      response: { error: err?.response?.data || err.toString(), stack: err.stack }
-    });
+    // await CommondbSalesforceLog.create({
+    //   unique_id: leadId || 'unknown',
+    //   request: { api: 'getStep1', query: req.query, url: req.originalUrl },
+    //   response: { error: err?.response?.data || err.toString(), stack: err.stack }
+    // });
     res.status(500).json({ message: 'Failed to get step1 data' });
   }
 };
