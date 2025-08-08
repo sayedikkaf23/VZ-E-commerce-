@@ -1611,7 +1611,7 @@ async function payNowSaleforce(req, res) {
     <p>
       Hi ${username},<br><br>
       Welcome to Virtuzone!<br>
-      We noticed you've started filling out your details – that’s a great first step. Now, it’s time to complete your journey and access everything for your business to run seamlessly.<br><br>
+      We noticed you’ve started filling out your details — that’s a great first step. Now it’s time to take things forward so you can access everything you need for your business to run seamlessly.<br><br>
       With Virtuzone, you'll get:<br>
     </p>
     <ul style="padding-left: 20px; font-size: 16px;">
@@ -1620,10 +1620,8 @@ async function payNowSaleforce(req, res) {
       <li style="margin-bottom: 8px;">A dedicated team ready to help you succeed</li>
     </ul>
     <p>
-  Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br>
-  <a href="${fullUrl}" target="_blank" style="text-decoration: none; display: inline-block; margin-bottom: 15px;">
-  Continue your application
-</a>
+  We’re here to support you in bringing your business vision to life, whenever you’re ready.<br>
+
 </p>
 
 <p style="margin-top: 0;">
