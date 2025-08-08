@@ -436,6 +436,9 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
             () => Swal.fire('Error', 'Failed to redirect to TotalPay', 'error')
           );
           break;
+          case 'afs':
+           this.router.navigate(['/checkout', quotePaymentId]); // use the ID to navigat
+          break;
  
         default:
           Swal.fire('Error', 'Unsupported payment method', 'error');

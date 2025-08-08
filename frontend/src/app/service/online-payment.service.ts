@@ -19,6 +19,13 @@ export class OnlinePaymentService {
     return this.http.get(apiUrl);
   }
 
+  payCheckout(quoteId: string) {
+  return this.http.post<{ id: string; integrity: string }>(
+    `${environment.apiUrl}/payment/initCheckout/${encodeURIComponent(quoteId)}`,
+    {}
+  );
+}
+
   // Fix: Add parentheses to define getPaymentMethod as a function returning an Observable
   getPaymentMethods(): Observable<any[]> {
     const apiUrl = `${environment.apiUrl}/online/getpayment`;
