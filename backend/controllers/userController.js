@@ -20,6 +20,14 @@ const OnlinePayment = require("../models/OnlinePaymentModel");
 const MenuItem=require('../models/MenuItem');
 const pidata = require("../models/pidata");
 const { url } = require("inspector");
+const safeLog = async (logData) => {
+  try {
+    CommondbSalesforceLog.create(logData);
+  } catch (logErr) {
+    console.error("Log Error (ignored):", logErr?.message || logErr);
+  }
+};
+
 
 // Handle form submission and file uploads
 
@@ -117,7 +125,7 @@ console.log(LeadId,"LeadId")
 
     await userDetails.save();
 
-        await CommondbSalesforceLog.create({
+        safeLog({
       unique_id: LeadId,
       request: {
         api: 'submit',
@@ -129,7 +137,7 @@ console.log(LeadId,"LeadId")
     res.status(201).json({ message: "Details submitted successfully", userDetails });
   } catch (error) {
     console.error(error);
-     await CommondbSalesforceLog.create({
+     safeLog({
       unique_id: req.body?.LeadId || 'unknown',
       request: {
         api: 'submit',
@@ -517,7 +525,7 @@ console.log(screeningResponse,"screeningResponse")
     );
     
     //  Save log to CommondbSalesforceLog
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: CustomerId,
       request: {
         api: 'callSalesforceEndpoint',
@@ -534,7 +542,7 @@ console.log(screeningResponse,"screeningResponse")
   } catch (error) {
     console.error('Error calling Salesforce endpoint:', error);
 
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: CustomerId,
       request: {
         api: 'callSalesforceEndpoint',
@@ -710,7 +718,7 @@ const totalPrice = subTotal;
       subcategory:CustomerType,
     });
  
-    await CommondbSalesforceLog.create({
+    safeLog({
   unique_id: sfResp.data?.LeadId || 'N/A',
   request: {
     api: 'createOpportunity',
@@ -730,7 +738,7 @@ const totalPrice = subTotal;
   } catch (error) {
     console.error('createOpportunity error:', error?.response?.data || error);
     // Log the error to CommondbSalesforceLog
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: req.body?.email || 'unknown',  // fallback unique id
       request: {
         api: 'createOpportunity',
@@ -791,7 +799,7 @@ exports.callSalesforceQuoteService = async (req, res) => {
         }
       }
     );
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: quotePaymentId || 'N/A',
       request: {
         api: 'callSalesforceQuoteService',
@@ -810,7 +818,7 @@ exports.callSalesforceQuoteService = async (req, res) => {
     // Step 6: Send a success response
     res.status(200).json({ message: "Data sent successfully to Salesforce", data: responseData });
   } catch (error) {
-     await CommondbSalesforceLog.create({
+     safeLog({
         unique_id: req.body?.quotePaymentId || 'unknown',
         request: {
           api: 'callSalesforceQuoteService',
@@ -882,7 +890,7 @@ exports.MatchScoreProductService = async (req, res) => {
     const salesforceResponse = await axios.request(config);
 
     const responseData = salesforceResponse.data;
-     await CommondbSalesforceLog.create({
+     safeLog({
       unique_id: quotePaymentId || 'N/A',
       request: {
         api: 'MatchScoreProductService',
@@ -900,7 +908,7 @@ exports.MatchScoreProductService = async (req, res) => {
     // Step 6: Send a success response
     res.status(200).json({ message: "Data sent successfully to Salesforce", data: responseData });
   } catch (error) {
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: req.body?.quotePaymentId || 'unknown',
       request: {
         api: 'MatchScoreProductService',
@@ -952,7 +960,7 @@ exports.getAllSubmissions = async (req, res) => {
     // 5) Count how many match the same filter (for total pages)
     const totalRecords = await Pidata.countDocuments(filter);
     const totalPages = Math.ceil(totalRecords / limit);
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'getAllSubmissions',
       request: { api: 'getAllSubmissions', query: req.query, url: req.originalUrl },
       response: { data: pidata, totalRecords, totalPages, currentPage: page, pageSize: limit }
@@ -967,7 +975,7 @@ exports.getAllSubmissions = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching submissions with search:', error);
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'getAllSubmissions',
       request: { api: 'getAllSubmissions', query: req.query },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1071,7 +1079,7 @@ exports.getPersonalBank = async (req, res) => {
 
       mergedResults.push(doc);
     }
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'getPersonalBank',
       request: { api: 'getPersonalBank', query: req.query, url: req.originalUrl },
       response: { data: mergedResults, totalRecords, totalPages, currentPage: page, pageSize: limit }
@@ -1085,7 +1093,7 @@ exports.getPersonalBank = async (req, res) => {
       pageSize: limit
     });
   } catch (error) {
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'getPersonalBank',
       request: { api: 'getPersonalBank', query: req.query, url: req.originalUrl },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1155,7 +1163,7 @@ exports.getBusinessBank = async (req, res) => {
  
     // 4) Optionally perform any other additional logic (e.g., KYC status) if required
 
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'getBusinessBank',
       request: { api: 'getBusinessBank', query: req.query,url: req.originalUrl },
       response: { data, totalRecords, totalPages, currentPage: page, pageSize: limit }
@@ -1171,7 +1179,7 @@ exports.getBusinessBank = async (req, res) => {
  
   } catch (error) {
     console.error("Error fetching business bank submissions:", error);
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'getBusinessBank',
       request: { api: 'getBusinessBank', query: req.query, url: req.originalUrl },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1213,7 +1221,7 @@ exports.submitService = async (req, res) => {
     });
 
     const savedService = await newService.save();
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'submitService',
       request: { api: 'submitService', body: req.body, url: req.originalUrl },
       response: savedService
@@ -1222,7 +1230,7 @@ exports.submitService = async (req, res) => {
       .status(201)
       .json({ message: "Service created successfully", service: savedService });
   } catch (error) {
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'submitService',
       request: { api: 'submitService', body: req.body, url: req.originalUrl },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1237,7 +1245,7 @@ exports.submitService = async (req, res) => {
 exports.getAllServices = async (req, res) => {
   try {
     const services = await Service.find(); // Fetch all services from the database
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'getAllServices',
       request: { api: 'getAllServices', url: req.originalUrl },
       response: services
@@ -1245,7 +1253,7 @@ exports.getAllServices = async (req, res) => {
 
     res.status(200).json(services); // Send back all services as JSON
   } catch (error) {
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'getAllServices',
       request: { api: 'getAllServices', url: req.originalUrl },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1274,14 +1282,14 @@ exports.createService = async (req, res) => {
     });
 
     const savedService = await newService.save();
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'createService',
       request: { api: 'createService', body: req.body, url: req.originalUrl },
       response: savedService
     });
     res.status(201).json(savedService);
   } catch (error) {
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'createService',
       request: { api: 'createService', body: req.body , url: req.originalUrl },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1314,7 +1322,7 @@ exports.loginAdmin = async (req, res) => {
       "mykey",
       { expiresIn: "10h" }
     );
-    await CommondbSalesforceLog.create({
+    safeLog({
           unique_id: admin._id.toString(),
           request: {
             api: 'loginAdmin',
@@ -1335,7 +1343,7 @@ exports.loginAdmin = async (req, res) => {
     });
   } catch (error) {
     console.error("Error during admin login:", error);
-     await CommondbSalesforceLog.create({
+     safeLog({
       unique_id: email || 'unknown',
       request: {
         api: 'loginAdmin',
@@ -1377,7 +1385,7 @@ exports.updateService = async (req, res) => {
       // Save the updated service
       const updatedService = await service.save();
 
-        await CommondbSalesforceLog.create({
+        safeLog({
           unique_id: serviceId,
           request: {
             api: 'updateService',
@@ -1390,7 +1398,7 @@ exports.updateService = async (req, res) => {
         });
       res.status(200).json({ message: 'Service updated successfully', service: updatedService });
   } catch (error) {
-      await CommondbSalesforceLog.create({
+      safeLog({
         unique_id: serviceId,
         request: {
           api: 'updateService',
@@ -1475,7 +1483,7 @@ exports.updateService = async (req, res) => {
 
     const stripeResponseData = stripeResponse;
 
-     await CommondbSalesforceLog.create({
+     safeLog({
       unique_id: order_number,
       request: {
         api: 'payNowByStripe',
@@ -1504,7 +1512,7 @@ exports.updateService = async (req, res) => {
       "Error creating checkout session:",
       error.response.data.error
     );
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: order_number,
       request: {
         api: 'payNowByStripe',
@@ -1540,7 +1548,7 @@ console.log(req.body)
     if (mobileNumberExists) {
       return res.status(400).json({ message: 'Mobile number already exists' });
     }
-      await CommondbSalesforceLog.create({
+      safeLog({
         unique_id: email,
         request: { api: 'checkUser', body: req.body, url: req.originalUrl },
         response: { message: 'Email and mobile number are available' }
@@ -1549,7 +1557,7 @@ console.log(req.body)
     res.status(200).json({ message: 'Email and mobile number are available' });
   } catch (error) {
     console.error(error);
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: email,
       request: { api: 'checkUser', body: req.body, url: req.originalUrl },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1569,7 +1577,7 @@ exports.deleteService = async (req, res) => {
       if (!deletedService) {
           return res.status(404).json({ message: 'Service not found' });
       }
-      await CommondbSalesforceLog.create({
+      safeLog({
           unique_id: 'deleteService',
           request: { api: 'deleteService', params: req.params, url: req.originalUrl },
           response: { message: 'Service deleted successfully', service: deletedService }
@@ -1578,7 +1586,7 @@ exports.deleteService = async (req, res) => {
       res.status(200).json({ message: 'Service deleted successfully', service: deletedService });
   } catch (error) {
 
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'deleteService',
       request: { api: 'deleteService', params: req.params , url: req.originalUrl },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1592,14 +1600,14 @@ exports.deleteService = async (req, res) => {
 exports.getMenuItems = async (req, res) => {
   try {
     const menuItems = await MenuItem.find();
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'getMenuItems',
       request: { api: 'getMenuItems', url: req.originalUrl }, 
       response: menuItems
     });
     res.json(menuItems); // Send submenu items as JSON
   } catch (error) {
-    await CommondbSalesforceLog.create({
+    safeLog({
         unique_id: 'getMenuItems',
         request: { api: 'getMenuItems', url: req.originalUrl },
         response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1615,14 +1623,14 @@ exports.addMenuItems = async (req, res) => {
   try {
     // Bulk insert all menu items
     const newMenuItems = await MenuItem.insertMany(menuItems);
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'addMenuItems',
       request: { api: 'addMenuItems', body: req.body },
       response: newMenuItems
     });
     res.status(201).json({ message: 'Menu items created successfully', menuItems: newMenuItems });
   } catch (error) {
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'addMenuItems',
       request: { api: 'addMenuItems', body: req.body },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1686,7 +1694,7 @@ exports.checkStatus = async (req, res) => {
     // Save the updated record
     await pidata.save();
  
-      await CommondbSalesforceLog.create({
+      safeLog({
       unique_id: CustomerId || 'unknown',
       request: {
         api: 'checkStatus',
@@ -1706,7 +1714,7 @@ exports.checkStatus = async (req, res) => {
  
   } catch (error) {
     console.error('Error retrieving or updating status:', error);
-     await CommondbSalesforceLog.create({
+     safeLog({
       unique_id: CustomerId || 'unknown',
       request: {
         api: 'checkStatus',
@@ -1842,7 +1850,7 @@ exports.getallUserSerive = async (req, res) => {
       }
     }
 const updatedUserData = await Pidata.find({ "leadWithDetails.Email": email });
-    await CommondbSalesforceLog.create({
+    safeLog({
           unique_id: email,
           request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
           response: updatedUserData
@@ -1854,7 +1862,7 @@ const updatedUserData = await Pidata.find({ "leadWithDetails.Email": email });
     });
   } catch (error) {
     console.error("Error fetching/updating user data:", error);
-    await CommondbSalesforceLog.create({
+    safeLog({
         unique_id: email,
         request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
         response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1894,7 +1902,7 @@ exports.updateAdditionalUploadedFiles = async (req, res) => {
 
     // Save the record
     await record.save();
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: someId || 'unknown',
       request: { api: 'updateAdditionalUploadedFiles', body: req.body, url: req.originalUrl },
       response: record
@@ -1902,7 +1910,7 @@ exports.updateAdditionalUploadedFiles = async (req, res) => {
     return res.status(200).json({ message: "Files updated successfully", record });
   } catch (err) {
     console.error("Error updating files:", err.message || err);
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: someId || 'unknown',
       request: { api: 'updateAdditionalUploadedFiles', body: req.body, url: req.originalUrl },
       response: { error: err?.response?.data || err.toString(), stack: err.stack }
@@ -1934,7 +1942,7 @@ exports.updateUserFiles = async (req, res) => {
     record.shareholders = shareholders || [];
 
     await record.save();
-    await CommondbSalesforceLog.create({
+    safeLog({
     unique_id: someId || 'unknown',
     request: { api: 'updateUserFiles', body: req.body, url: req.originalUrl },
     response: record
@@ -1942,7 +1950,7 @@ exports.updateUserFiles = async (req, res) => {
     return res.status(200).json({ message: "Files updated successfully", record });
   } catch (error) {
     console.error("Error updating files:", error);
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: someId || 'unknown',
       request: { api: 'updateUserFiles', body: req.body, url: req.originalUrl },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -1977,7 +1985,7 @@ exports.dashboard = async (req, res) => {
 
     // Sum the user counts
     const totalUser = userCount + virtualDetailsCount + mailDetailsCount;
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'dashboard',
       request: { api: 'dashboard', url: req.originalUrl },
       response: {
@@ -2006,7 +2014,7 @@ exports.dashboard = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: 'dashboard',
       request: { api: 'dashboard', url: req.originalUrl },
       response: { error: error?.response?.data || error.toString(), stack: error.stack }
@@ -2041,7 +2049,7 @@ exports.updateKycStatus = async (req, res) => {
       return res.status(404).json({ error: "Record not found" });
     }
  
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: id,
       request: {
         api: 'updateKycStatus',
@@ -2059,7 +2067,7 @@ exports.updateKycStatus = async (req, res) => {
     });
   } catch (error) {
     console.error("Error updating KYC status:", error);
-     await CommondbSalesforceLog.create({
+     safeLog({
       unique_id: req.body?.id || 'unknown',
       request: {
         api: 'updateKycStatus',
@@ -2104,7 +2112,7 @@ exports.getTradeLicenseAndShareholders = async (req, res) => {
       tradeLicenseFile: doc.tradeLicenseFile || [],
       uploadedFileNames: doc.uploadedFileNames || [],
     };
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: leadId || 'unknown',
       request: { api: 'getTradeLicenseAndShareholders', query: req.query, url: req.originalUrl },
       response
@@ -2113,7 +2121,7 @@ exports.getTradeLicenseAndShareholders = async (req, res) => {
     return res.json(response);
 
   } catch (err) {
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: leadId || 'unknown',
       request: { api: 'getTradeLicenseAndShareholders', query: req.query , url: req.originalUrl },
       response: { error: err?.response?.data || err.toString(), stack: err.stack }
@@ -2136,7 +2144,7 @@ exports.getStep1 = async (req, res) => {
     if (!doc) {
       return res.status(404).json({ message: 'Data not found for the given leadId' });
     }
-    await CommondbSalesforceLog.create({
+    safeLog({
         unique_id: leadId || 'unknown',
         request: { api: 'getStep1', query: req.query, url: req.originalUrl },
         response: doc.leadWithDetails
@@ -2144,7 +2152,7 @@ exports.getStep1 = async (req, res) => {
     return res.json(doc.leadWithDetails);
   } catch (err) {
     console.error('Error getting step1 data:', err);
-    await CommondbSalesforceLog.create({
+    safeLog({
       unique_id: leadId || 'unknown',
       request: { api: 'getStep1', query: req.query, url: req.originalUrl },
       response: { error: err?.response?.data || err.toString(), stack: err.stack }
