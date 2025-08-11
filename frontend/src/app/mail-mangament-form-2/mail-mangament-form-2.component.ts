@@ -32,6 +32,8 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     Bank:'',
     Turnover: '',
     shareholdercount:'',
+    subServiceName:'Bank Account Opening',
+    serviceName:'Business Bank Account Opening',
 
     type: 'Business Bank',
     CustomerType: 'C',
@@ -378,8 +380,8 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
   formDataToSend.append('Turnover', this.formData.Turnover);
   formDataToSend.append('CustomerType', this.formData.CustomerType);
   
-      formDataToSend.append('serviceName','Bank Account Opening');
-      formDataToSend.append('subServiceName', 'Business Bank Account Opening');
+      formDataToSend.append('serviceName', this.formData.CustomerType);
+      formDataToSend.append('subServiceName', this.formData.subServiceName);
   formDataToSend.append('BusinessActivityRisk', this.formData.BusinessActivityRisk);
   this.shareholders.forEach((sh, i) =>
     formDataToSend.append(`shareholders[${i}]`, JSON.stringify(sh))
