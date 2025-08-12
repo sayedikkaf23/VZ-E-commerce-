@@ -355,8 +355,8 @@ submitData() {
             ProductUnitprice: product.price,
             ProductQuantity: 1,
             ProductDiscount: 0,
-              vat: product.vat,
-                ProductId: product.Product_Id,  
+            vat: product.vat,
+            ProductId: product.Product_Id,  
 
           })),
           shareholders: this.shareholders.map((shareholder: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; countryRisk: any; }) => ({

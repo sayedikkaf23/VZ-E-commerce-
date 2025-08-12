@@ -444,7 +444,9 @@ console.log("Trade License Data:", tradeData);
             ProductUnitprice: product.price,
             ProductQuantity: 1,
             vat: product.VAT,
-            ProductDiscount: 0
+            ProductDiscount: 0,
+            ProductId: product.Product_Id,
+
           })),
           shareholders: this.shareholders.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; countryRisk: any; }) => ({
             name: s.name,

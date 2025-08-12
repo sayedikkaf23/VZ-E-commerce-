@@ -484,7 +484,7 @@ console.log("Trade License Data:", tradeData);
             companyLicensed: this.personalInfo.companyLicensed,
             activityType: this.personalInfo.activityType,
            totalShareholders: this.personalInfo.totalShareholders ,
-    serviceName: 'Virtual Receptionist',
+           serviceName: 'Virtual Receptionist',
            subServiceName: 'Virtual Receptionist',
             companyLocation: this.personalInfo.companyLocation,
             companyWebsite: this.personalInfo.companyWebsite,
