@@ -307,7 +307,8 @@ submitData() {
             companyLicensed: this.personalInfo.companyLicensed,
             activityType: this.personalInfo.activityType,
            totalShareholders: this.personalInfo.totalShareholders ,
-
+           serviceName: 'Mail Management',
+           subServiceName: 'Mail Management',
             companyLocation: this.personalInfo.companyLocation,
             companyWebsite: this.personalInfo.companyWebsite,
              tradeLicenseFile:[
