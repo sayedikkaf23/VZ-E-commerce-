@@ -603,7 +603,7 @@ exports.insertEconomicDetails = async (req, res) => {
     if (shareholderfilesnumber)
       payload.shareholderfilesnumber = shareholderfilesnumber;
     if (tradeLicenseFile && Array.isArray(tradeLicenseFile))
-      payload.tradeLicenseFile = tradeLicenseFile;
+      payload.tradeLicenseFile = tradeLicenseFileUrl;
     if (uploadedFileNames && Array.isArray(uploadedFileNames))
       payload.uploadedFileNames = uploadedFileNames;
     if (tradeLicenseFileUrl) payload.tradeLicenseFileUrl = tradeLicenseFileUrl;
@@ -633,7 +633,7 @@ exports.insertEconomicDetails = async (req, res) => {
 
     const accessToken = tokenResp.data.access_token;
     const salesforceUrl = tokenResp.data.instance_url;
-    console.log("Salesforce payload: ", payload);
+    console.log("Salesforce payload insertEconomicDetails: ", payload);
     // Step 2: Call the InsertEconomicDetails API with dynamic payload
     const economicDetailsResp = await axios.post(
       `${salesforceUrl}/services/apexrest/insertEconomicDetails`,
