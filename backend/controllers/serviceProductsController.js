@@ -155,6 +155,9 @@ exports.createPaymentOpportunity = async (req, res) => {
       uploadedFileNames = [],
       shareholders = [],
       shareholdersfiles,
+      subServiceName,
+      serviceName
+      
     } = req.body;
     // console.log(req.body)
     // Log the RiskCode to ensure it's what you expect
@@ -205,6 +208,8 @@ exports.createPaymentOpportunity = async (req, res) => {
       // countryCode: countryCode,
       // phone: cleanedPhone,
       // dob: dob,
+      serviceName: serviceName,
+      subServiceName: subServiceName,
       prodcutNameList: cleanedProductList,
     };
     console.log(requestBody, "requestBody");

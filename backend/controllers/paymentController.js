@@ -4045,7 +4045,30 @@ const initCheckout = async (req, res) => {
         timeout: 10000
       }
     );
+  const newOnlinePayForm = new OnlinePayment({
+    transactionDetails: {
+      amount: data.quoteWithProductDetails.totalIncludingVAT,
+      quotePaymentId: quoteId,
+      //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
 
+      // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+      // toCurrency: currency_convertingto,
+      proformaInvoiceNumber: data.leadWithDetails.LeadId,
+      currencyPaid: "AED",
+      // amountPaid:existingUser.totalIncludingVAT,
+    },
+    customerDetails: {
+      name: data.leadWithDetails.FirstName,
+      id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
+    },
+
+    paymentType: "Online",
+    status: "Paid",
+    quoteId: data.quoteWithProductDetails.oppurtunityId,
+    // Default status
+  });
+
+  await newOnlinePayForm.save();
     /* HyperPay returns: { id: "<checkoutId>", result: { code, description } } */
     return res.status(200).json(checkout);
   } catch (err) {

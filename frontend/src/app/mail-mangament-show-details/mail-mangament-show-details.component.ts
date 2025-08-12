@@ -425,6 +425,8 @@ console.log("Trade License Data:", tradeData);
           phone: this.personalInfo.Phone,
           countryCode: this.personalInfo.countryCode,
           dob: this.personalInfo.dob,
+           serviceName: 'Business Bank Account Opening',
+           subServiceName: 'Bank Account Opening',
           type: "Bank Account Opening",
           CustomerType: "C",
           subcategory: "business",
