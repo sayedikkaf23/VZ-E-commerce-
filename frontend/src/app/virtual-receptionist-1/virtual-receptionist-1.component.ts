@@ -453,7 +453,7 @@ onShareholderInput(event: any, index: number) {
 
           const tradeLicenseUrl = this.companyInfo.tradeLicenseFileUrl;
           if (tradeLicenseUrl) {
-            insertPayload.tradeLicenseFile = tradeLicenseUrl;
+            insertPayload.tradeLicenseFileUrl = tradeLicenseUrl;
           }
 
           const allShareholderFiles = Object.values(this.companyInfo.shareholders || {})
