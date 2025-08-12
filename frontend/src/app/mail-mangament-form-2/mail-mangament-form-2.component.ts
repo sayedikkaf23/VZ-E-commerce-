@@ -450,8 +450,8 @@ const economicDetailId = sessionStorage.getItem('economicDetailId') || "";
           leadId: getValue(this.leadResponse.LeadId),
           accountId: getValue(this.leadResponse.AccountId),
           economicDetailId:economicDetailId,
-          serviceName: 'Bank Account Opening',
-          subServiceName: 'Business Bank Account Opening',
+          serviceName: 'Business Bank Account Opening',
+          subServiceName: 'Bank Account Opening',
  
           firstName: this.personalInfo.FirstName,
           lastName: this.personalInfo.LastName,
