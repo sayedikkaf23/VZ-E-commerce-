@@ -32,7 +32,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     Bank:'',
     Turnover: '',
     shareholdercount:'',
-    subServiceName:'Bank Account Opening',
+    subServiceName:'Business Bank Account Opening',
     serviceName:'Business Bank Account Opening',
 
     type: 'Business Bank',
