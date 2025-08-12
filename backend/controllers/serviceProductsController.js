@@ -157,7 +157,6 @@ exports.createPaymentOpportunity = async (req, res) => {
       shareholdersfiles,
       subServiceName,
       serviceName
-
     } = req.body;
     // console.log(req.body)
     // Log the RiskCode to ensure it's what you expect

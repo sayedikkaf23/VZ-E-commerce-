@@ -187,7 +187,7 @@ isLoading = false;
     this.userService.getAllBusinessCategories().subscribe(
       (response) => {
         // Log for debugging
-        console.log('Categories response:', response);
+        // console.log('Categories response:', response);
 
        
         this.businessCategories = response.data.sort(
@@ -455,7 +455,7 @@ onShareholderInput(event: any, index: number) {
 
           const tradeLicenseUrl = this.tradeLicenseFile.tradeLicenseFileUrl;
           if (tradeLicenseUrl) {
-            insertPayload.tradeLicenseFile = tradeLicenseUrl;
+            insertPayload.tradeLicenseFileUrl = tradeLicenseUrl;
           }
 
           const allShareholderFiles = Object.values(this.shareholders || {})
