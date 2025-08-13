@@ -243,7 +243,7 @@ onSubmit() {
         const previousEmail = (this.previousStep1Data?.Email || '').trim();
         const currentEmail = (values.email || '').trim();
 
-        if ((previousNationality !== currentNationality) || (previousEmail !== currentEmail)) {
+        if ((previousNationality !== currentNationality) || (previousEmail !== currentEmail) || !quoteDataRaw) {
           this.router.navigate(['/mails-management-2']);
         } else if (this.previousStep1Data.Company) {
           this.router.navigate(['/mails-management-details']);

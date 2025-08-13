@@ -490,6 +490,8 @@ console.log("Trade License Data:", tradeData);
             companyWebsite: this.personalInfo.companyWebsite,
              tradeLicenseFile:[
             {
+              name: this.tradeLicenseFile.tradeLicenseFile?.[0]?.name || '',
+              type: this.tradeLicenseFile.tradeLicenseFile?.[0]?.type || '',
               License_no: this.tradeLicenseFile.tradeLicenseNo || '',
               url: this.tradeLicenseFile.tradeLicenseFileUrl || '',
                 AccountId: leadResponse.AccountId || '',
@@ -516,6 +518,15 @@ console.log("Trade License Data:", tradeData);
             .flatMap((s: any) => Array.isArray(s.files) ? s.files : [])
             .map((f: any) => f.url)
             .filter(Boolean)[0] || '',
+              shareholders: (this.shareholders || []).map((s: any) => ({
+            name: s.name,
+            shareholderPercentage: s.shareholderPercentage,
+            dob: s.dob,
+            passportNumber: s.passportNumber,
+            nationalityshareholder: s.nationalityshareholder,
+            countryRisk: s.countryRisk,
+            files: s.files || []
+          }))
             };
 
             return this.userService.createPaymentOpportunity(paymentPayload);
@@ -534,6 +545,7 @@ console.log("Trade License Data:", tradeData);
       name: s.name,
       shareholderPercentage: s.shareholderPercentage,
       dob: s.dob,
+      passportNumber: s.passportNumber,
       nationalityshareholder: s.nationalityshareholder,
       files: (s.files || []).map((f: any) => ({
         name: f.name,
@@ -568,9 +580,11 @@ console.log("Trade License Data:", tradeData);
               serviceName: 'Virtual Receptionist',
               tradelicense: [
                 {
-                  License_no: this.tradeLicenseFile.tradeLicenseNo || '',
+                   name: this.tradeLicenseFile.tradeLicenseFile?.[0]?.name || '',
+              type: this.tradeLicenseFile.tradeLicenseFile?.[0]?.type || '',
+              License_no: this.tradeLicenseFile.tradeLicenseNo || '',
               url: this.tradeLicenseFile.tradeLicenseFileURL || '',
-                  AccountId: leadResponse.AccountId || '',
+                AccountId: leadResponse.AccountId || '',
                 },
               ],
              shareholders,

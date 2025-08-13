@@ -269,7 +269,7 @@ onSubmit() {
 
         // now replicate your original routing logic:
         if (this.isBrowser) {
-         if ((previousNationality !== currentNationality) || (previousEmail !== currentEmail)) {
+         if ((previousNationality !== currentNationality) || (previousEmail !== currentEmail) || !quoteDataRaw) {
           this.router.navigate(['/virtual-receptionist-1']);
         } else if (this.previousStep1Data.Company) {
           this.router.navigate(['/virtual-receptionist-details']);
