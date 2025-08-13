@@ -443,7 +443,7 @@ console.log("Trade License Data:", tradeData);
             ProductCurrencyName: product.Currency_Code,
             ProductUnitprice: product.price,
             ProductQuantity: 1,
-            vat: product.VAT,
+            vat: product.vat || 0,
             ProductDiscount: 0,
             ProductId: product.Product_Id,
 
