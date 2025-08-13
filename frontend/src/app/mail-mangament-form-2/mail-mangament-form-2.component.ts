@@ -32,8 +32,8 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     Bank:'',
     Turnover: '',
     shareholdercount:'',
-    subServiceName:'Bank Account Opening',
-    serviceName:'Business Bank Account Opening',
+    subServiceName:'Business Bank Account Opening',
+    serviceName:'Bank Account Opening',
 
     type: 'Business Bank',
     CustomerType: 'C',
@@ -450,8 +450,8 @@ const economicDetailId = sessionStorage.getItem('economicDetailId') || "";
           leadId: getValue(this.leadResponse.LeadId),
           accountId: getValue(this.leadResponse.AccountId),
           economicDetailId:economicDetailId,
-          serviceName: 'Business Bank Account Opening',
-          subServiceName: 'Bank Account Opening',
+          serviceName: 'Bank Account Opening',
+          subServiceName: 'Business Bank Account Opening',
  
           firstName: this.personalInfo.FirstName,
           lastName: this.personalInfo.LastName,
