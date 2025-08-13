@@ -3,9 +3,9 @@
 <div class="payu-style-container">
   <!-- Header -->
   <div class="payu-header">
-    <img src="../../assets/payment_assets/images/main-logo.svg" class="payu-logo" alt="Virtuzone Logo" />
+    <img src="assets/images/vz_logo.png" class="payu-logo" alt="Virtuzone Logo" />
     <div class="payu-summary">
-      <div class="payu-amount">Amount: <b>AED {{ piData.partPayment | number: '1.2-2' }}</b></div>
+      <div class="payu-amount">Amount: <b>AED {{ piData.quoteWithProductDetails.totalPrice | number: '1.2-2' }}</b></div>
 
     </div>
   </div>
