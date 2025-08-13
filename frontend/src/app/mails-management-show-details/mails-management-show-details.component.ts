@@ -312,8 +312,8 @@ submitData() {
             companyWebsite: this.personalInfo.companyWebsite,
              tradeLicenseFile:[
             {
-              name: this.tradeLicenseFile.tradeLicenseFile.name || '',
-              type: this.tradeLicenseFile.tradeLicenseFile.type || '',
+              name: this.tradeLicenseFile.tradeLicenseFile?.[0]?.name || '',
+              type: this.tradeLicenseFile.tradeLicenseFile?.[0]?.type || '',
               License_no: this.tradeLicenseFile.tradeLicenseNo || '',
               url: this.tradeLicenseFile.tradeLicenseFileUrl || '',
                 AccountId: leadResponse.AccountId || '',
@@ -345,6 +345,7 @@ submitData() {
             name: s.name,
             shareholderPercentage: s.shareholderPercentage,
             dob: s.dob,
+            passportNumber: s.passportNumber,
             nationalityshareholder: s.nationalityshareholder,
             countryRisk: s.countryRisk,
             files: s.files || []
@@ -365,6 +366,7 @@ submitData() {
       shareholderPercentage: s.shareholderPercentage,
       dob: s.dob,
       nationalityshareholder: s.nationalityshareholder,
+      passportNumber: s.passportNumber,
       files: (s.files || []).map((f: any) => ({
         name: f.name,
         url: f.url,
@@ -398,6 +400,8 @@ submitData() {
           serviceName: 'Mail Management',
           tradelicense: [
             {
+               name: this.tradeLicenseFile.tradeLicenseFile?.[0]?.name || '',
+              type: this.tradeLicenseFile.tradeLicenseFile?.[0]?.type || '',
               License_no: this.tradeLicenseFile.tradeLicenseNo || '',
               url: this.tradeLicenseFile.tradeLicenseFileURL || '',
                 AccountId: leadResponse.AccountId || '',
