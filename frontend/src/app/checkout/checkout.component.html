@@ -1,17 +1,29 @@
-<body>
+<div *ngIf="loading" class="spinner">Loading payment form…</div>
+<div class="payment-wrapper">
+<div class="payu-style-container">
+  <!-- Header -->
+  <div class="payu-header">
+    <img src="../../assets/payment_assets/images/main-logo.svg" class="payu-logo" alt="Virtuzone Logo" />
+    <div class="payu-summary">
+      <div class="payu-amount">Amount: <b>AED {{ piData.partPayment | number: '1.2-2' }}</b></div>
 
-  <!-- 1) script tag – include checkoutId + integrity from your backend -->
-  <script
-    src="https://eu-test.oppwa.com/v1/paymentWidgets.js?checkoutId={{checkoutId}}"
-    integrity="{{integrity}}"
-    crossorigin="anonymous">
-  </script>
+    </div>
+  </div>
 
-  <!-- 2) form that the widget will replace -->
-  <form
-    action="/checkout/result"      
-    class="paymentWidgets"
-    data-brands="VISA MASTER">     <!-- show only the brands you allow -->
-  </form>
+  <div class="payu-body">
+    <!-- Left Tabs (for visual mimic only) -->
+    
 
-</body>
+    <!-- Right Payment Section -->
+    <div class="payu-form-box">
+      <!-- <div class="payu-form-header">
+        <span>Enter your Card details</span>
+      </div> -->
+      <div id="widgetHost"></div> <!-- Your actual injected card form -->
+      <!-- <div class="payu-note">
+        <span class="note-label">Note:</span> In the next step, you will be redirected to your bank’s website to verify yourself.
+      </div> -->
+    </div>
+  </div>
+</div>
+</div>

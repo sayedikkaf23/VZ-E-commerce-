@@ -1,0 +1,140 @@
+html, body{
+    padding-left: 0px;
+    background-color: #F8E8E9;
+}
+.payment-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Full page height */
+  padding: 1rem 2rem; /* Optional spacing for small screens */
+  box-sizing: border-box;
+}
+
+.payu-style-container {
+  font-family: 'Segoe UI', sans-serif;
+  max-width: 960px;
+   /* Center horizontally */
+  width: 50%;
+  border: 2px solid #dee2e6; /* Make border darker and more visible */
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+.payu-style-container {
+  background: linear-gradient(to bottom right, #ffffff, #f8faff);
+  border: 2px solid #dee2e6; /* Make border darker and more visible */
+  border-radius: 12px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  
+}
+
+.payu-style-container {
+  transition: box-shadow 0.3s ease;
+}
+
+.payu-style-container:hover {
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+}
+
+.payu-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #f8f9fa;
+  border-bottom: 1px solid #ddd;
+}
+
+.payu-logo {
+  height: 40px;
+  margin-right: 20px;
+}
+
+.payu-summary {
+  font-size: 1rem;
+  color: #333;
+}
+
+.payu-summary b {
+  font-weight: 600;
+}
+
+.payu-amount {
+  font-size: 1.1rem;
+  color: #020000;
+  margin-bottom: 4px;
+}
+
+.payu-body {
+  display: flex;
+  flex-direction: row;
+}
+
+.payu-tabs {
+  width: 200px;
+  border-right: 1px solid #ddd;
+  background: #f7f7f7;
+}
+
+.payu-tab {
+  padding: 12px 16px;
+  border-bottom: 1px solid #ddd;
+  cursor: not-allowed;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.payu-tab.active {
+  background: #fff;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.payu-form-box {
+  flex-grow: 1;
+  padding: 1.5rem;
+}
+
+.payu-form-header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #333;
+}
+
+.payu-note {
+  font-size: 0.9rem;
+  margin-top: 1rem;
+  color: #555;
+}
+
+.note-label {
+  color: #007bff;
+  font-weight: 600;
+}
+
+.spinner {
+  text-align: center;
+  font-size: 1rem;
+  padding: 1.5rem;
+  color: #888;
+}
+
+.wpwl-button-pay{
+    background-color: #CF3339;
+    border: 1px solid #9a0000; 
+}
+
+.wpwl-button-pay:hover{
+    background-color: #ef3d3d;
+    border: 1px solid #bb0000; 
+}
+
+
+@media(max-width: 756px){
+    .payu-style-container {
+
+  width: 96%;
+    }
+}

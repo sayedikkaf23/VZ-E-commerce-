@@ -1,19 +1,16 @@
 // checkout.component.ts
 import {
-  Component, OnInit, OnDestroy, ElementRef, Renderer2, AfterViewInit
+  Component, OnInit, OnDestroy, ElementRef, Renderer2, AfterViewInit , ViewEncapsulation
 } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
  import { OnlinePaymentService } from '../service/online-payment.service';
 
 @Component({
   selector: 'app-checkout',
-  template: `
-    <div id="widgetHost"></div>
-
-    <!-- The form will be injected here after the script loads -->
-    <div *ngIf="loading" class="spinner">Loading payment form…</div>
-  `
+ templateUrl: './checkout.component.html',
+  styleUrls: ['./checkout.component.css'],
+  encapsulation: ViewEncapsulation.None
 })
 export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
   loading = true;
@@ -22,10 +19,12 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
   private integrity  = '';
   private quoteId = '';
 
+  piData: any;
   constructor(
     private route: ActivatedRoute,
     private paySvc: OnlinePaymentService,
     private rnd: Renderer2,
+    private router: Router,
     private host: ElementRef<HTMLElement>
   ) {}
 
@@ -39,6 +38,20 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       error: () => alert('Failed to initialise checkout')
     });
+     this.fetchPiData(this.quoteId);
+  }
+
+    fetchPiData(sfId: string): void {
+    this.paySvc.getPiDataById(sfId).subscribe(
+      (response) => {
+        console.log('Fetched Pi Data:', response);
+        this.piData = response; // Assign the fetched data to the piData property
+      },
+      (error) => {
+        console.error('Error fetching Pi Data:', error);
+        // Handle error, show error message, etc.
+      }
+    );
   }
 
   injectScript() {
