@@ -261,7 +261,7 @@ onSubmit() {
                         const isPersonalAccount = localStorage.getItem('step2Data') !== null;
               
                         if (this.isBrowser) {
-                        if (storedEmail !== currentEmail) {
+                        if (storedEmail !== currentEmail || !quoteDataRaw) {
                 // Remove localStorage items
                 localStorage.removeItem('step2Data');
                 localStorage.removeItem('mailform2');
