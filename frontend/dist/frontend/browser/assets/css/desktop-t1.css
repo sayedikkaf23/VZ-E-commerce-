@@ -1,0 +1,331 @@
+/* screen - desktop-t1 */
+
+.desktop-t1 {
+  align-items: flex-start;
+  background-color: var(--white);
+  display: flex;
+  width: 1920px;
+}
+
+.desktop-t1 .overlap-group2 {
+  align-items: flex-start;
+  background-image: url(../img/mask-group-1.png);
+  background-size: 100% 100%;
+  display: flex;
+  gap: 960px;
+  height: 968px;
+  min-width: 1920px;
+  padding: 112px 97px;
+}
+
+.desktop-t1 .be-your-own-boss {
+  align-self: flex-end;
+  color: var(--white);
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  height: 116px;
+  letter-spacing: 3.60px;
+  line-height: 58px;
+  margin-bottom: 56px;
+  min-width: 305px;
+  text-shadow: -3px 4px 5px #000000;
+}
+
+.desktop-t1 .group-container {
+  height: 626px;
+  position: relative;
+  width: 397px;
+}
+
+.desktop-t1 .group-371 {
+  align-items: flex-start;
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  min-height: 626px;
+  position: absolute;
+  top: 0;
+  width: 397px;
+}
+
+.desktop-t1 .frame-459 {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 29px;
+  position: relative;
+  width: 384px;
+}
+
+.desktop-t1 .vector {
+  height: 77px;
+  position: relative;
+  width: 307px;
+}
+
+.desktop-t1 .frame-458 {
+  align-items: flex-start;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 196px;
+  position: relative;
+}
+
+.desktop-t1 .sign-in-to-your-account {
+  align-self: stretch;
+  color: var(--black);
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-l);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 52.5px;
+  margin-top: -1.00px;
+  position: relative;
+}
+
+.desktop-t1 .welcome-back-sign-i {
+  align-self: stretch;
+  color: var(--black);
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-m);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 24px;
+  position: relative;
+}
+
+.desktop-t1 .span0 {
+  font-weight: 500;
+}
+
+.desktop-t1 .frame-460 {
+  align-items: center;
+  background-color: #d9d9d9;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 58px;
+  overflow: hidden;
+  padding: 5px 18px;
+  position: relative;
+  width: 393px;
+}
+
+.desktop-t1 .email-address {
+  background-color: transparent;
+  border: 0;
+  color: var(--black-2);
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-m);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 24px;
+  margin-top: -1.00px;
+  padding: 0;
+  position: relative;
+  width: 357px;
+}
+
+.desktop-t1 .email-address::placeholder {
+  color: #0000004c;
+}
+
+.desktop-t1 .frame-461 {
+  align-items: center;
+  background-color: #d9d9d9;
+  border-radius: 10px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 17px;
+  overflow: hidden;
+  padding: 6px 18px;
+  position: relative;
+  width: 393px;
+}
+
+.desktop-t1 .password {
+  background-color: transparent;
+  border: 0;
+  color: var(--black-2);
+  flex: 1;
+  flex-grow: 1;
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-m);
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 24px;
+  margin-top: -1.00px;
+  padding: 0;
+  position: relative;
+}
+
+.desktop-t1 .password::placeholder {
+  color: #0000004c;
+}
+
+.desktop-t1 .flex-row {
+  align-items: flex-start;
+  display: flex;
+  gap: 165px;
+  margin-top: 17px;
+  min-width: 391px;
+}
+
+.desktop-t1 .group-369 {
+  display: flex;
+  gap: 9px;
+  justify-content: flex-end;
+  width: 129px;
+}
+
+.desktop-t1 .rectangle-5240 {
+  border: 1px solid;
+  border-color: var(--black-2);
+  border-radius: 2px;
+  height: 12px;
+  margin-top: 6px;
+  width: 12px;
+}
+
+.desktop-t1 .keep-me-logged-in {
+  height: 24px;
+  letter-spacing: 0;
+  line-height: 24px;
+  margin-right: 2px;
+  width: 106px;
+}
+
+.desktop-t1 .forgot-password {
+  color: #cf3339;
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-s);
+  font-weight: 500;
+  height: 24px;
+  letter-spacing: 0;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.desktop-t1 .overlap-group {
+  height: 63px;
+  margin-top: 17px;
+  position: relative;
+  width: 393px;
+}
+
+.desktop-t1 .frame-464 {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  left: 0;
+  padding: 10px;
+  position: absolute;
+  top: 0;
+  width: 393px;
+}
+
+.desktop-t1 .rectangle-5280 {
+  background-color: #cf3339;
+  border-radius: 10px;
+  height: 43px;
+  margin-left: -9.00px;
+  margin-right: -9.00px;
+  position: relative;
+  width: 391px;
+}
+
+.desktop-t1 .login {
+  color: var(--white);
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-m);
+  font-weight: 500;
+  height: 24px;
+  left: 173px;
+  letter-spacing: 0;
+  line-height: 24px;
+  position: absolute;
+  top: 21px;
+  white-space: nowrap;
+}
+
+.desktop-t1 .line-33 {
+  height: 1px;
+  margin-top: 17px;
+  width: 392px;
+}
+
+.desktop-t1 .group-370 {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
+  width: 395px;
+}
+
+.desktop-t1 .dont-have-an-account-yet-sign-up {
+  height: 24px;
+  letter-spacing: 0;
+  line-height: 24px;
+  margin-right: 2px;
+  text-align: center;
+  width: 393px;
+}
+
+.desktop-t1 .span1 {
+  color: var(--black);
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-s);
+  font-weight: 500;
+}
+
+.desktop-t1 .group-373 {
+  display: flex;
+  gap: 17px;
+  height: 24px;
+  left: 0;
+  position: absolute;
+  top: 319px;
+  width: 393px;
+}
+
+.desktop-t1 .line-49 {
+  height: 1px;
+  margin-top: 11px;
+  width: 120px;
+}
+
+.desktop-t1 .group-372 {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  min-width: 256px;
+}
+
+.desktop-t1 .group-368 {
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  width: 121px;
+}
+
+.desktop-t1 .login-with-email {
+  color: var(--black-2);
+  font-family: var(--font-family-inter);
+  font-size: var(--font-size-s);
+  font-weight: 400;
+  height: 24px;
+  letter-spacing: 0.42px;
+  line-height: 24px;
+  margin-right: 2px;
+  width: 119px;
+}
+
+.desktop-t1 .line-48 {
+  height: 1px;
+  width: 123px;
+}
