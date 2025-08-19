@@ -262,17 +262,21 @@ html, body{
   margin-bottom: 15px;
 }
 
+
 @media (max-width: 768px) {
   .payment-widget-container {
-    padding: 10px;
+    padding: 5px;
   }
   
-  .card-body {
-    padding: 20px !important;
-  }
+    .card {
+    padding: 5px !important;
+}
+ .card-body {
+    padding: 5px !important;
+}
   
   .payment-summary,
   .payment-gateway-section {
-    padding: 15px;
+    padding: 5px;
   }
 }
