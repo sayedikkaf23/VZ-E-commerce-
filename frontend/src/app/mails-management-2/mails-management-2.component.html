@@ -150,9 +150,9 @@
                   <div class="form-field">
                     <label class="shareholder-label">Shareholder %<span class="required">*</span></label>
                     <!-- Apply new class here -->
-                    <input type="number" [(ngModel)]="shareholder.shareholderPercentage"
-                      [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100"
-                      style="padding: 25px" (input)="onShareholderInput($event, 0)" />
+                  <input type="number" [(ngModel)]="shareholder.shareholderPercentage"
+  [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100" 
+  (input)="onShareholderInput($event, i)" style="padding: 20px"  />
                   </div>
                   <div class="form-field">
                     <label class="shareholder-label">Date of Birth<span class="required">*</span></label>
