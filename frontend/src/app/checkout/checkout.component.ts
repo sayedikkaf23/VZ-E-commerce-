@@ -50,7 +50,7 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /* 2. <form action="…" class="paymentWidgets" data-brands="VISA MASTER"> */
     const formEl = this.rnd.createElement('form');
-    formEl.action = `https://ecommerce.yeepeey.com/successful/${this.quoteId}`;   // shopperResultUrl
+    formEl.action = `https://ecommerce.virtuzone.com/successful/${this.quoteId}`;   // shopperResultUrl
     formEl.className = 'paymentWidgets';
     formEl.setAttribute('data-brands', 'VISA MASTER');           // only show card brands you need
 
