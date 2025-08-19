@@ -20,6 +20,7 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
   private quoteId = '';
 
   piData: any;
+  paymentDetails: any;
   constructor(
     private route: ActivatedRoute,
     private paySvc: OnlinePaymentService,
@@ -83,6 +84,48 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
   ngAfterViewInit() {
     /* If script loads before form, widget auto-initialises.
        If not, paymentWidgets.js will watch DOM and initialise after load. */
+  }
+
+    onPaymentSuccess(): void {
+    console.log('Payment successful');
+    
+    // Redirect to the shopper result URL if available
+    if (this.paymentDetails?.checkoutId) {
+      // Use the actual result URL pattern from your API
+      const resultUrl = `https://vzatnew.yeepeey.com/payment-result?id=${this.paymentDetails.checkoutId}&quotepaymentId=${this.paymentDetails.quotepaymentId}`;
+      window.location.href = resultUrl;
+    } else {
+      // Fallback to local result page
+      this.router.navigate(['/payment/result'], {
+        queryParams: {
+          status: 'success',
+          paymentId: this.paymentDetails?.paymentId,
+          amount: this.paymentDetails?.amount,
+          quotepaymentId: this.paymentDetails?.quotepaymentId
+        }
+      });
+    }
+  }
+
+  onPaymentFailure(): void {
+    console.log('Payment failed');
+    this.router.navigate(['/payment/result'], {
+      queryParams: {
+        status: 'failure',
+        paymentId: this.paymentDetails?.paymentId,
+        quotepaymentId: this.paymentDetails?.quotepaymentId
+      }
+    });
+  }
+
+  onPaymentCancel(): void {
+    console.log('Payment cancelled');
+    // Return to payment schedule
+    if (this.paymentDetails?.quotepaymentId) {
+      this.router.navigate(['/paymentSchedule', this.paymentDetails.quotepaymentId]);
+    } else {
+      this.router.navigate(['/paymentSchedule']);
+    }
   }
 
   ngOnDestroy() {

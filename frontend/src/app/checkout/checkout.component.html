@@ -1,21 +1,39 @@
 <div *ngIf="loading" class="spinner">Loading payment form…</div>
-<div class="payment-wrapper">
-<div class="payu-style-container">
-  <!-- Header -->
-  <div class="payu-header">
-    <img src="assets/images/vz_logo.png" class="payu-logo" alt="Virtuzone Logo" />
-    <div class="payu-summary">
-      <div class="payu-amount">Amount: <b>AED {{ piData.quoteWithProductDetails.totalPrice | number: '1.2-2' }}</b></div>
 
-    </div>
-  </div>
+ <div class="payment-details-container">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+          <div class="card shadow">
+            <!-- Virtuzone Logo -->
+            <div class="card-header bg-white text-center py-4">
+              <img src="assets/images/vz_logo.png" alt="Virtuzone" class="logo mb-3" style="max-height: 60px; max-width: 200px;">
+            </div>
+            <div class="card-header bg-primary text-white text-center">
+              <h4 class="mb-0">Secure Payment</h4>
+            </div>
+            <div class="card-body p-4">
+              <!-- Payment Summary -->
+              <div class="payment-summary mb-4">
+                <h5>Payment Details</h5>
+                
+                <div class="row">
+                  <div class="col-6">
+                    <strong>Amount:</strong>
+                  </div>
+                  <div class="col-6 text-end">
+                    <h5 class="text-primary mb-0">AED {{ piData.quoteWithProductDetails.totalPrice | number: '1.2-2' }}</h5>
+                  </div>
+                </div>
+              </div>
 
-  <div class="payu-body">
-    <!-- Left Tabs (for visual mimic only) -->
-    
+              <hr>
 
-    <!-- Right Payment Section -->
-    <div class="payu-form-box">
+              <!-- AFS Payment Gateway Integration -->
+              <div class="payment-gateway-section">
+                <h6 class="mb-3">Choose Payment Method</h6>
+                
+                 <div class="payu-form-box">
       <!-- <div class="payu-form-header">
         <span>Enter your Card details</span>
       </div> -->
@@ -24,6 +42,18 @@
         <span class="note-label">Note:</span> In the next step, you will be redirected to your bank’s website to verify yourself.
       </div> -->
     </div>
+              </div>
+
+              <!-- Security Info -->
+              <div class="security-info mt-4 text-center">
+                <small class="text-muted">
+                  <i class="fas fa-shield-alt me-1"></i>
+                  Your payment is secured with 256-bit SSL encryption
+                </small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-</div>
