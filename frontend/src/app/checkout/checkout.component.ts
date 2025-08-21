@@ -29,9 +29,17 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
     private host: ElementRef<HTMLElement>
   ) {}
 
-  ngOnInit() {
+   ngOnInit() {
      this.quoteId = this.route.snapshot.paramMap.get('id')!;
-    this.paySvc.payCheckout(this.quoteId).subscribe({
+   this.route.queryParams.subscribe(params => {
+    const checkoutId = params['id'];
+    const resourcePath = params['resourcePath'];
+
+    if (checkoutId && resourcePath) {
+      // User came back from HyperPay → check status
+      this.checkPaymentStatus(resourcePath);
+    } else {
+     this.paySvc.payCheckout(this.quoteId).subscribe({
       next: ({ id, integrity }) => {
         this.checkoutId = id;
         this.integrity  = integrity;
@@ -39,7 +47,9 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
       },
       error: () => alert('Failed to initialise checkout')
     });
-     this.fetchPiData(this.quoteId);
+    }
+  });
+    this.fetchPiData(this.quoteId);
   }
 
     fetchPiData(sfId: string): void {
