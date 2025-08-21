@@ -2160,3 +2160,6 @@ exports.getStep1 = async (req, res) => {
     res.status(500).json({ message: 'Failed to get step1 data' });
   }
 };
+
+
+

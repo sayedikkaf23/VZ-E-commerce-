@@ -13,7 +13,8 @@ const {
     AddBankTransfer,
     AddChequeDeposit,
     sendWaitingEmail,
-    initCheckout
+    initCheckout,
+    getPaymentStatus
 } = require("../controllers/paymentController");
  
 // const {upload} = require("../middleware/fileUpload");
@@ -44,6 +45,8 @@ router.post("/magnatiTransactionStatus", MagnatiTransactionStatus);
 router.get("/paynow/:quoteId", payNow);
 router.get("/payNowByStripe/:quoteId", payNowByStripe);
 router.post("/initCheckout/:quoteId", initCheckout);
+router.get('/getPaymentStatus', getPaymentStatus);
+
 router.get("/payNowByTelr/:quoteId", payNowByTelr);
 router.post(
   "/addChequeDeposit/:quoteId",

@@ -64,7 +64,7 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
 
     /* 2. <form action="…" class="paymentWidgets" data-brands="VISA MASTER"> */
     const formEl = this.rnd.createElement('form');
-    formEl.action = `https://ecommerce.virtuzone.com/successful/${this.quoteId}`;   // shopperResultUrl
+    formEl.action = `https://ecommerce.virtuzone.com/checkout/${this.quoteId}`;   // shopperResultUrl
     formEl.className = 'paymentWidgets';
     formEl.setAttribute('data-brands', 'VISA MASTER');           // only show card brands you need
 
@@ -86,26 +86,31 @@ export class CheckoutComponent implements OnInit, OnDestroy, AfterViewInit {
        If not, paymentWidgets.js will watch DOM and initialise after load. */
   }
 
-    onPaymentSuccess(): void {
-    console.log('Payment successful');
-    
-    // Redirect to the shopper result URL if available
-    if (this.paymentDetails?.checkoutId) {
-      // Use the actual result URL pattern from your API
-      const resultUrl = `https://vzatnew.yeepeey.com/payment-result?id=${this.paymentDetails.checkoutId}&quotepaymentId=${this.paymentDetails.quotepaymentId}`;
-      window.location.href = resultUrl;
-    } else {
-      // Fallback to local result page
-      this.router.navigate(['/payment/result'], {
-        queryParams: {
-          status: 'success',
-          paymentId: this.paymentDetails?.paymentId,
-          amount: this.paymentDetails?.amount,
-          quotepaymentId: this.paymentDetails?.quotepaymentId
-        }
+checkPaymentStatus(resourcePath: string) {
+  this.paySvc.getPaymentStatus(resourcePath).subscribe({
+    next: (status) => {
+      console.log("Payment Status:", status);
+
+      const code = status?.result?.code;
+
+      if (code?.startsWith("000.000.") || code === "000.100.110") {
+        this.router.navigate([`successful/${this.quoteId}`], {
+          queryParams: { status: "success", paymentId: status.id, amount: status.amount, quotepaymentId: this.quoteId }
+        });
+      } else {
+        this.router.navigate([`/failure/${this.quoteId}`], {
+          queryParams: { status: "failure", reason: status?.result?.description, quotepaymentId: this.quoteId }
+        });
+      }
+    },
+    error: (err: any) => {
+      console.error("Error checking payment status:", err);
+      this.router.navigate([`/failure/${this.quoteId}`], {
+        queryParams: { status: "failure", reason: "Unable to verify payment", quotepaymentId: this.quoteId }
       });
     }
-  }
+  });
+}
 
   onPaymentFailure(): void {
     console.log('Payment failed');

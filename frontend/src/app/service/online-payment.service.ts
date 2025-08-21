@@ -79,6 +79,11 @@ export class OnlinePaymentService {
     return this.http.get<any[]>(apiUrl);
   }
 
+  getPaymentStatus(resourcePath: string) {
+  return this.http.get<any>(`${environment.apiUrl}/payment/getPaymentStatus?resourcePath=${encodeURIComponent(resourcePath)}`);
+}
+
+
   sendWaitingMail(email: string): Observable<any>  {
     const body = {email};
     const apiUrl = `${environment.apiUrl}/payment/waitingMail`;

@@ -21,6 +21,22 @@ export class SuccessComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    this.route.queryParams.subscribe(params => {
+      const status = params['status'];
+
+      // Only reload once
+      if (status === 'success' && !sessionStorage.getItem('reloadedSuccess')) {
+        sessionStorage.setItem('reloadedSuccess', 'true');
+
+        // Full page reload
+        window.location.reload();
+      } else {
+        // After reload, remove the flag
+        sessionStorage.removeItem('reloadedSuccess');
+      }
+    });
+
     this.route.params.subscribe((params) => {
       this.quoteId = params['id'];
       this.amount = params['amount'];

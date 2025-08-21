@@ -4077,6 +4077,31 @@ const initCheckout = async (req, res) => {
   }
 };
 
+exports.getPaymentStatus = async (req, res) => {
+  try {
+    const { resourcePath } = req.query; // comes encoded in URL
+
+    if (!resourcePath) {
+      return res.status(400).json({ message: "resourcePath is required" });
+    }
+
+    const url = `https://eu-test.oppwa.com${resourcePath}`;
+
+    const { data } = await axios.get(url, {
+      params: { entityId: process.env.ENTITY_ID },
+      headers: {
+        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      },
+      timeout: 10000,
+    });
+
+    return res.status(200).json(data);
+  } catch (err) {
+    console.error("Payment status error →", err?.response?.data || err.message);
+    return res.status(500).json({ message: "Failed to fetch payment status" });
+  }
+};
+
 
 exports.AddBankTransfer = AddBankTransfer;
 exports.convertCurrency = convertCurrency;
