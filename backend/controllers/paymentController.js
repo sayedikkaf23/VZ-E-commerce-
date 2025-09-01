@@ -4077,6 +4077,76 @@ const initCheckout = async (req, res) => {
   }
 };
 
+const sendSuccessEmail = async (req, res) => {
+  if (!req.body || typeof req.body !== "object") {
+    return res
+      .status(400)
+      .json({ message: "Invalid request format. Expected JSON." });
+  }
+
+  const { email } = req.body; // added username for personalization
+
+  if (!email) {
+    return res
+      .status(400)
+      .json({ message: "Email is required", body: req.body });
+  }
+
+  const data = {
+    from: "mishalnunu@gmail.com",
+    to: email,
+    cc: "dev.tech@vz.ae",
+    subject: "Payment Successful - Welcome to Virtuzone!",
+    html: `<!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Payment Success</title>
+        </head>
+        <body style="background-color:#ffffff; margin:0; padding:0; font-family: Arial, sans-serif; line-height:1.6; color:#333;">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:600px; margin:auto;">
+            <tr>
+              <td style="padding:20px;">
+                <p style="font-size:16px; color:#000;">
+                  Hi there,
+                </p>
+                <p style="font-size:16px; color:#000;">
+                   Congratulations! Your payment was successful.
+                </p>
+                <p style="font-size:16px; color:#000;">
+                  Welcome to Virtuzone – your journey to simplifying business setup has officially begun.
+                </p>
+                <p style="font-size:16px; color:#000;">
+                  Our team will be in touch with you shortly to help you with the next steps.
+                </p>
+                <br/>
+                <p style="font-size:16px; color:#000;">
+                  Cheers,<br/>
+                  <strong>The Virtuzone Team</strong>
+                </p>
+                <div style="margin-top:30px; text-align:center;">
+                  <a href="https://www.vz.ae" target="_blank">
+                    <img src="assets/images/vz_logo.png" width="180" style="border:0;" alt="Virtuzone Logo"/>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>`,
+  };
+
+  try {
+    await mailTransporter.sendMail(data);
+    res.status(200).json({ message: "Success email sent successfully!" });
+  } catch (error) {
+    console.error("Error sending success email:", error);
+    res.status(500).json({ message: "Error sending success email", error });
+  }
+};
+
+
 
 exports.AddBankTransfer = AddBankTransfer;
 exports.convertCurrency = convertCurrency;
@@ -4092,3 +4162,4 @@ exports.AddCashCounter = AddCashCounter;
 exports.AddCashDeposit = AddCashDeposit;
 exports.AddChequeDeposit = AddChequeDeposit;
 exports.sendWaitingEmail = sendWaitingEmail;
+exports.sendSuccessEmail = sendSuccessEmail;

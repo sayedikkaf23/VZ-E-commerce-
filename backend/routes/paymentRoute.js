@@ -13,6 +13,7 @@ const {
     AddBankTransfer,
     AddChequeDeposit,
     sendWaitingEmail,
+    sendSuccessEmail,
     initCheckout
 } = require("../controllers/paymentController");
  
@@ -52,5 +53,6 @@ router.post(
 );
 router.post("/convert-currency", convertCurrency);
 router.post("/waitingMail", sendWaitingEmail);
+router.post("/successMail", sendSuccessEmail);
  
 module.exports = router;
