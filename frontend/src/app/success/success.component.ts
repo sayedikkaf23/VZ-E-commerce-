@@ -49,6 +49,7 @@ export class SuccessComponent implements OnInit {
 
     // Fetch Pi Data
     this.fetchPiData(this.quoteId);
+    
     if (this.type !== 'manual') {
       this.callPayNowSaleforce(this.quoteId);
     }
@@ -60,7 +61,22 @@ export class SuccessComponent implements OnInit {
 
   fetchPiData(quoteId: string): void {
     this.onlinePaymentService.getPiDataById(quoteId).subscribe(
-      (res: any) => {
+       (res: any) => {
+     console.log('Pi Data Response:', res); // <-- debug log
+
+      // Safely pick an email if available
+      const email =
+        res?.leadWithDetails?.Email ||
+        null;
+
+      if (email) {
+        this.onlinePaymentService.sendSuccessEmail(email).subscribe({
+          next: (response) => console.log('Email sent:', response),
+          error: (err) => console.error('Email failed:', err),
+        });
+      } else {
+        console.warn(' No email found in API response, skipping email send.');
+      }
         if (this.type === 'manual') {
           this.piData = {
             _id: res._id,

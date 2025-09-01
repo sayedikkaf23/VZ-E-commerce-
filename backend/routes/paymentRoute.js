@@ -55,5 +55,6 @@ router.post(
 );
 router.post("/convert-currency", convertCurrency);
 router.post("/waitingMail", sendWaitingEmail);
+router.post("/successMail", sendSuccessEmail);
  
 module.exports = router;

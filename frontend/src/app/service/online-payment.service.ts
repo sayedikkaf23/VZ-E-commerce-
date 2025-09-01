@@ -90,4 +90,12 @@ export class OnlinePaymentService {
     return this.http.post(apiUrl, body, {
       headers: { "Content-Type": "application/json" },});
   }
+
+
+  sendSuccessEmail(email: string): Observable<any> {
+    const body = {email};
+    const apiUrl = `${environment.apiUrl}/payment/successMail`;
+    return this.http.post(apiUrl, body, {
+      headers: { "Content-Type": "application/json" },});
+    }
 }

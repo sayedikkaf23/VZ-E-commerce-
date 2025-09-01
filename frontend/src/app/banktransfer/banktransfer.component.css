@@ -2,3 +2,18 @@
     visibility: visible !important;
   }
   
+  @media (max-width: 768px) {
+  .pmnotes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* stack content vertically if more elements added later */
+    text-align: center;     /* keep text centered */
+      width: 90%;                /* responsive width */
+    max-width: 350px;          /* prevent it from being too wide */
+    margin: 20px auto 0 auto;  /* center horizontally */
+    padding: 8px;              /* adjust padding */
+    background-color: #fff;    /* white background */
+    border-radius: 8px;       
+  }
+}

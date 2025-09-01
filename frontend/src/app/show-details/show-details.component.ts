@@ -258,7 +258,7 @@ shareholders: Shareholder[] = [];
 submitData() {
   Swal.fire({
     title: 'Confirm Your Data',
-    text: "Once you move forward, you won't be able to edit your information.",
+    text: "I, the undersigned hereby undertake full responsibility to advise Virtuzone UAE FZ LLC of any change in the above information and accept that any misrepresentation or inaccurate information is a violation of applicable laws to Virtuzone UAE FZ LLC and take full responsibility for any legal consequences.",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Yes, I confirm',

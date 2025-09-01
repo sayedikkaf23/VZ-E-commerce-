@@ -4117,3 +4117,4 @@ exports.AddCashCounter = AddCashCounter;
 exports.AddCashDeposit = AddCashDeposit;
 exports.AddChequeDeposit = AddChequeDeposit;
 exports.sendWaitingEmail = sendWaitingEmail;
+exports.sendSuccessEmail = sendSuccessEmail;

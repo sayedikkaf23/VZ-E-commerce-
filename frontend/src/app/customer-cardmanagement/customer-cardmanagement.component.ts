@@ -503,7 +503,6 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     const shareholderFile = this.selectedShareholders.flat();
     this.combinedFiles = [
       ...(this.selectedaddAdditionalFile || []),
-      ...(this.uploadedFileNames || []),
       ...(shareholderFile || []),
     ];
   
