@@ -14,7 +14,8 @@ const {
     AddChequeDeposit,
     sendWaitingEmail,
     initCheckout,
-    getPaymentStatus
+    getPaymentStatus,
+    sendSuccessEmail
 } = require("../controllers/paymentController");
  
 // const {upload} = require("../middleware/fileUpload");
