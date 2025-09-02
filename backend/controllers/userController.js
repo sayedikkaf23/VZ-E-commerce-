@@ -1739,8 +1739,12 @@ exports.getallUserSerive = async (req, res) => {
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
     }
- 
-    const userData = await Pidata.find({ "leadWithDetails.Email": email });
+
+      const userData = await Pidata.find({
+      "leadWithDetails.Email": email,
+      "quoteWithProductDetails.product.0": { $exists: true }
+    });
+
     if (!userData || userData.length === 0) {
       return res.status(404).json({ message: "No data found for this user" });
     }
@@ -1765,26 +1769,26 @@ exports.getallUserSerive = async (req, res) => {
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     };
- 
+
     // Helper function to process each quoteDetail
     async function processQuoteDetail(quoteDetail) {
       const quotePaymentId = quoteDetail.QuotePaymentId;
       if (!quotePaymentId) {
         console.log("No QuotePaymentId found, skipping this quoteDetail");
-        return;
+        return null;
       }
- 
+
       const paynowdata = await OnlinePayment.findOne({
         "transactionDetails.quotePaymentId": quotePaymentId,
       });
- 
+
       if (!paynowdata) {
         console.log("No payment data found for quotePaymentId:", quotePaymentId);
-        return;
+        return null;
       }
- 
+
       console.log("Found payment data, making Salesforce API call for quotePaymentId:", quotePaymentId);
- 
+
       try {
         const response = await axios.put(
           `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}`,
@@ -1805,72 +1809,68 @@ exports.getallUserSerive = async (req, res) => {
           },
           { headers }
         );
- 
+
         console.log("Salesforce API response data:", response.data);
- 
         const { invoiceDate, invoiceNumber } = response.data;
-        
-        // Update Pidata record if found
-        const piDataCheck = await Pidata.findOne({ "quotePaymentWithDetails.QuotePaymentId": quotePaymentId });
-        if (piDataCheck) {
-          await Pidata.updateOne(
-            { _id: piDataCheck._id },
-            {
-              $set: {
-                invoiceDate,
-                invoiceNumber,
-                payment_status: "Paid",
-              },
-            }
-          );
-        }
+
+        // Update Pidata (only fields, no duplicates)
+        await Pidata.updateOne(
+          { "quotePaymentWithDetails.QuotePaymentId": quotePaymentId },
+          {
+            $set: {
+              invoiceDate,
+              invoiceNumber,
+              payment_status: "Paid",
+            },
+          }
+        );
+
+        return response.data;
       } catch (err) {
         console.error(`Failed to update Salesforce for quotePaymentId ${quotePaymentId}:`, err.message);
+        return null;
       }
     }
- 
-    // Process each user record
+
+    // Filter user records based on quoteWithProductDetails?.totalIncludingVAT
+    const filteredUserData = [];
+
     for (const userRecord of userData) {
       console.log("Processing userRecord with _id:", userRecord._id);
- 
+
       const quoteDetails = userRecord.quotePaymentWithDetails;
- 
+
       if (quoteDetails) {
-        if (Array.isArray(quoteDetails)) {
-          for (const quoteDetail of quoteDetails) {
+        const quotesArray = Array.isArray(quoteDetails) ? quoteDetails : [quoteDetails];
+
+        for (const quoteDetail of quotesArray) {
+          // Only push if totalIncludingVAT is null or not present
+          if (
+            !quoteDetail?.quoteWithProductDetails ||
+            quoteDetail?.quoteWithProductDetails?.totalIncludingVAT == null
+          ) {
             await processQuoteDetail(quoteDetail);
+            filteredUserData.push(userRecord);
+            break; // include record only once
           }
-        } else if (typeof quoteDetails === "object") {
-          await processQuoteDetail(quoteDetails);
-        } else {
-          console.log("quotePaymentWithDetails is neither an array nor an object.");
         }
-      } else {
-        console.log("No quotePaymentWithDetails found on this user record.");
       }
     }
-const updatedUserData = await Pidata.find({ "leadWithDetails.Email": email });
-    // await CommondbSalesforceLog.create({
-    //       unique_id: email,
-    //       request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
-    //       response: updatedUserData
-    //     });
-    // After all done, send success response
+
+    if (filteredUserData.length === 0) {
+      return res.status(404).json({ message: "No data with null/missing totalIncludingVAT found" });
+    }
+
     res.status(200).json({
       message: "User data fetched and updated successfully",
-      data: updatedUserData,
+      data: filteredUserData,
     });
   } catch (error) {
     console.error("Error fetching/updating user data:", error);
-    // await CommondbSalesforceLog.create({
-    //     unique_id: email,
-    //     request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
-    //     response: { error: error?.response?.data || error.toString(), stack: error.stack }
-    //   });
-
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
+
 
 exports.updateAdditionalUploadedFiles = async (req, res) => {
   try {

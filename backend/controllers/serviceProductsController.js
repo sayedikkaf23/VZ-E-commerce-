@@ -259,67 +259,72 @@ exports.createPaymentOpportunity = async (req, res) => {
     const salesPersonDetails = salesforceData?.salesPersonDetails || {};
 
     //  Update existing piData document by LeadId
-    const pidataDoc = await Pidata.findOneAndUpdate(
-      { "leadWithDetails.LeadId": LeadId }, // Match by LeadId from initial step
-      {
-        $set: {
-          "leadWithDetails.FirstName": firstName,
-          "leadWithDetails.LastName": lastName,
-          "leadWithDetails.Email": email,
-          "leadWithDetails.Nationality": nationality,
-          "leadWithDetails.Phone": cleanedPhone,
-          "leadWithDetails.countryCode": countryCode,
-          "leadWithDetails.Origin__c": "Website",
-          "leadWithDetails.Status": "Created",
-          "leadWithDetails.dob": dob,
-          "leadWithDetails.ServiceName": type,
-          "leadWithDetails.LeadId": salesforceResponse.data?.LeadId ?? LeadId,
-          "leadWithDetails.companyLocationUAE": companyLocationUAE,
-          "leadWithDetails.employmentType": employmentType,
-          "leadWithDetails.Company": companyName,
-          "leadWithDetails.salary": salary,
-          "leadWithDetails.bankType": bankType,
-          "leadWithDetails.companyLicensed": companyLicensed,
-          "leadWithDetails.activityType": activityType,
-          "leadWithDetails.totalShareholders": totalShareholders,
-          "leadWithDetails.companyTurnover": companyTurnover,
-          "leadWithDetails.companyLocation": companyLocation,
-          "leadWithDetails.companyWebsite": companyWebsite,
-          "leadWithDetails.isLead": isLead,
+    // Build $set object dynamically
+const updateFields = {
+  "leadWithDetails.FirstName": firstName,
+  "leadWithDetails.LastName": lastName,
+  "leadWithDetails.Email": email,
+  "leadWithDetails.Nationality": nationality,
+  "leadWithDetails.Phone": cleanedPhone,
+  "leadWithDetails.countryCode": countryCode,
+  "leadWithDetails.Origin__c": "Website",
+  "leadWithDetails.Status": "Created",
+  "leadWithDetails.dob": dob,
+  "leadWithDetails.ServiceName": type,
+  "leadWithDetails.subServiceName": subServiceName,
+  "leadWithDetails.LeadId": salesforceResponse.data?.LeadId ?? LeadId,
+  "leadWithDetails.companyLocationUAE": companyLocationUAE,
+  "leadWithDetails.employmentType": employmentType,
+  "leadWithDetails.Company": companyName,
+  "leadWithDetails.salary": salary,
+  "leadWithDetails.bankType": bankType,
+  "leadWithDetails.companyLicensed": companyLicensed,
+  "leadWithDetails.activityType": activityType,
+  "leadWithDetails.totalShareholders": totalShareholders,
+  "leadWithDetails.companyTurnover": companyTurnover,
+  "leadWithDetails.companyLocation": companyLocation,
+  "leadWithDetails.companyWebsite": companyWebsite,
+  "leadWithDetails.isLead": isLead,
 
-          "quotePaymentWithDetails.QuotePaymentId": salesforceResponse.data?.QuotePaymentId,
+  "quotePaymentWithDetails.QuotePaymentId": salesforceResponse.data?.QuotePaymentId,
 
-          "quoteWithProductDetails.quoteEmail": email,
-          "quoteWithProductDetails.quoteName": firstName + " " + lastName,
-          "quoteWithProductDetails.quotePaymentId": salesforceResponse.data?.QuotePaymentId,
-          "quoteWithProductDetails.totalIncludingVAT": totalPrice,
-          "quoteWithProductDetails.subTotal": subTotal,
-          "quoteWithProductDetails.totalPrice": totalPrice,
-          "quoteWithProductDetails.product": req.body.prodcutNameList,
+  "quoteWithProductDetails.quoteEmail": email,
+  "quoteWithProductDetails.quoteName": firstName + " " + lastName,
+  "quoteWithProductDetails.quotePaymentId": salesforceResponse.data?.QuotePaymentId,
+  "quoteWithProductDetails.totalIncludingVAT": totalPrice,
+  "quoteWithProductDetails.subTotal": subTotal,
+  "quoteWithProductDetails.totalPrice": totalPrice,
+  "quoteWithProductDetails.product": req.body.prodcutNameList,
 
-          "salesPersonDetails.salesPersonName": salesPersonDetails.salesPersonName || null,
-          "salesPersonDetails.salesPersonEmail": salesPersonDetails.salesPersonEmail || null,
-          "salesPersonDetails.salesPersonMobile": salesPersonDetails.salesPersonMobile || null,
+  "salesPersonDetails.salesPersonName": salesPersonDetails.salesPersonName || null,
+  "salesPersonDetails.salesPersonEmail": salesPersonDetails.salesPersonEmail || null,
+  "salesPersonDetails.salesPersonMobile": salesPersonDetails.salesPersonMobile || null,
 
-          accountId: salesforceResponse.data?.AccountId ?? AccountId,
-          ContactId: salesforceResponse.data?.ContactId ?? ContactId,
-          ProductId: ProductId,
-          tradeLicenseFile,
-          uploadedFileNames,
-          planname: type,
-          subcategory: subcategory,
-          tradeLicenseFileUrl,
-          shareholdersfiles,
-          shareholders,
-          tradeLicenseNo,
-          shareholderfilesnumber,
-          customerType: CustomerType
+  accountId: salesforceResponse.data?.AccountId ?? AccountId,
+  ContactId: salesforceResponse.data?.ContactId ?? ContactId,
+  ProductId: ProductId,
+  uploadedFileNames,
+  planname: type,
+  subcategory: subcategory,
+  tradeLicenseFileUrl,
+  shareholdersfiles,
+  shareholders,
+  tradeLicenseNo,
+  shareholderfilesnumber,
+  customerType: CustomerType
+};
 
-        }
+//  Only add tradeLicenseFile if url exists
+if (tradeLicenseFile?.url) {
+  updateFields.tradeLicenseFile = tradeLicenseFile;
+}
 
-      },
-      { new: true } // Return the updated document
-    );
+const pidataDoc = await Pidata.findOneAndUpdate(
+  { "leadWithDetails.LeadId": LeadId },
+  { $set: updateFields },
+  { new: true }
+);
+
 
     if (!pidataDoc) {
       return res
