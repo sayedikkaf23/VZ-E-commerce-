@@ -307,13 +307,14 @@ exports.createPaymentOpportunity = async (req, res) => {
           tradeLicenseFile,
           uploadedFileNames,
           planname: type,
-          subServiceName: subcategory,
+          subcategory: subcategory,
           tradeLicenseFileUrl,
           shareholdersfiles,
           shareholders,
           tradeLicenseNo,
           shareholderfilesnumber,
           customerType: CustomerType
+
         }
 
       },
