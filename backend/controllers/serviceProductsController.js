@@ -156,7 +156,6 @@ exports.createPaymentOpportunity = async (req, res) => {
       uploadedFileNames = [],
       shareholders = [],
       shareholdersfiles,
-      subServiceName,
       serviceName
     } = req.body;
     // console.log(req.body)
