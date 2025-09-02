@@ -29,7 +29,7 @@ export class MailsManagement1Component {
   isBrowser: boolean;
   isLoading = false;
   maxDate: string | undefined;
-
+  previousStep1Data: any = {}; 
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -52,7 +52,7 @@ export class MailsManagement1Component {
       nationality: ['', Validators.required],
       mobileNumber: ['', Validators.required],
       birthday: ['', Validators.required],
-      countryRisk: ['', Validators.required]
+
     });
   }
 
@@ -88,11 +88,40 @@ export class MailsManagement1Component {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
-    if (this.isBrowser) {
-      const storedData = localStorage.getItem('mailform');
-      if (storedData) {
-        const formData = JSON.parse(storedData);
-        this.personalDetailsForm.patchValue(formData);
+    // if (this.isBrowser) {
+    //   const storedData = localStorage.getItem('mailform');
+    //   if (storedData) {
+    //     const formData = JSON.parse(storedData);
+    //     this.personalDetailsForm.patchValue(formData);
+    //   }
+    // }
+      if (this.isBrowser) {
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
+      const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+      const leadId = leadData?.LeadId;
+
+      if (leadId) {
+        this.isLoading = true;
+        this.userService.getStep1(leadId).subscribe({
+          next: (formData) => {
+             if (formData && Object.keys(formData).length > 0) {
+        this.personalDetailsForm.patchValue({
+          firstName: formData.FirstName || '',
+          lastName: formData.LastName || '',
+          email: formData.Email || '',
+          nationality: formData.Nationality || '',
+          mobileNumber: formData.Phone ? { number: formData.Phone } : '', 
+          birthday: formData.dob || ''
+        });
+             this.previousStep1Data = formData; 
+      }
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Failed to load step1 data', err);
+            this.isLoading = false;
+          }
+        });
       }
     }
     this.adminAuthService.getCountryRisks().subscribe((data) => {
@@ -110,59 +139,92 @@ export class MailsManagement1Component {
   const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
 
   if (selectedNationality) {
-    this.personalDetailsForm.patchValue({
-      countryRisk: selectedNationality.RiskRating
-    });
+      // Save risk rating in localStorage instead of form
+    if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', selectedNationality.RiskRating);
+    }
   } else {
-    this.personalDetailsForm.patchValue({
-      countryRisk: ''
-    });
+    // Remove or reset in localStorage if no risk found
+    if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', '');
+    }
   }
 }
 onSubmit() {
   const currentFormValue = this.personalDetailsForm.value;
 
-  // Always update localStorage with the current form values
-  if (this.isBrowser) {
-    const previousMailform = localStorage.getItem('mailform');
-    const mailform1 = localStorage.getItem('mailform1');
+    let isChanged = true;
 
-    if (previousMailform && mailform1) {
-      const previousData = JSON.parse(previousMailform);
-
-      const updatedMailForm = {
-        ...previousData,
-        ...currentFormValue
-      };
-      localStorage.setItem('mailform', JSON.stringify(updatedMailForm));
-
-      // Compare nationalities
-      const previousCountry = (previousData?.nationality || '').trim();
-      const currentCountry = (currentFormValue?.nationality || '').trim();
-
-      if (previousCountry !== currentCountry) {
-        this.router.navigate(['/mails-management-2']);
-      } else {
-        this.router.navigate(['/mails-management-details']);
-      }
-      return; // Exit early — no need to call API again
-    }
+  if (this.previousStep1Data) {
+    isChanged = Object.keys(currentFormValue).some((key) => {
+      const currentVal = (currentFormValue[key] || '').toString().trim();
+      const previousVal = (this.previousStep1Data[key] || '').toString().trim();
+      return currentVal !== previousVal;
+    });
   }
 
-  // Proceed with API call if no existing localStorage entry or it's the first submission
+    // If no changes, navigate based on nationality and mailform1
+    if (!isChanged) {
+      if (this.previousStep1Data.Company) {
+        this.router.navigate(['/mails-management-details']);
+      } else {
+        this.router.navigate(['/mails-management-2']);
+      }
+      return;
+    }
+  
+
+  // Proceed with API call since data changed or it's first submission
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
-    const phoneString = values.mobileNumber?.e164Number || '';
+    const phoneString = values.mobileNumber?.number || '';
+    const countryCode = values.mobileNumber?.dialCode || '';
+   
+    const leadDataRaw = sessionStorage.getItem('leadResponse');
+    const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+      const leadId = leadData?.LeadId;
+   
+      const quoteDataRaw = sessionStorage.getItem('quotePaymentId');
+   
+  
+    let payload: any;
 
-    const payload = {
-      firstName:   values.firstName,
-      lastName:    values.lastName,
-      email:       values.email,
-      nationality: values.nationality,
-      phone:       phoneString,
-      dob:         values.birthday, // yyyy-mm-dd format
-       service_name:"Mail Management",
-    };
+     
+    // Check for email change
+    const storedEmail = this.previousStep1Data.Email;
+    const currentEmail = values.email;
+
+    if (storedEmail !== currentEmail || !quoteDataRaw) {
+      // Email changed, create a new lead with an empty leadId
+      payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: currentEmail,
+        nationality: values.nationality,
+        phone: phoneString,
+        countryCode: countryCode,
+        dob: values.birthday, // yyyy-mm-dd
+        service_id: 2,
+        leadId: '' // Empty leadId when email is changed
+      };
+
+      localStorage.removeItem('mailform1');
+      localStorage.removeItem('mailform2');
+    } else {
+      // Email didn't change, use the same leadId
+      payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        nationality: values.nationality,
+        phone: phoneString,
+        countryCode: countryCode,
+        dob: values.birthday, // yyyy-mm-dd
+        service_id: 2,
+        leadId: leadData?.LeadId || '' // Use existing leadId
+      };
+    }
+
 
     this.isLoading = true;
     this.userService.createLeadOnly(payload).subscribe({
@@ -170,17 +232,23 @@ onSubmit() {
         this.isLoading = false;
 
         if (this.isBrowser) {
-          localStorage.setItem('mailform', JSON.stringify(values));
-          localStorage.setItem('leadResponse', JSON.stringify(res.data));
+          sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
         }
 
-        // Navigate based on localStorage state
-        if (this.isBrowser) {
-          if (localStorage.getItem('mailform2')) {
-            this.router.navigate(['/mails-management-details']);
-          } else {
-            this.router.navigate(['/mails-management-2']);
-          }
+        // After successful API, navigate based on mailform1 and nationality change
+       
+        const previousNationality = (this.previousStep1Data?.Nationality || '').trim();
+        const currentNationality = (values.nationality || '').trim();
+
+        const previousEmail = (this.previousStep1Data?.Email || '').trim();
+        const currentEmail = (values.email || '').trim();
+
+        if ((previousNationality !== currentNationality) || (previousEmail !== currentEmail) || !quoteDataRaw) {
+          this.router.navigate(['/mails-management-2']);
+        } else if (this.previousStep1Data.Company) {
+          this.router.navigate(['/mails-management-details']);
+        } else {
+          this.router.navigate(['/mails-management-2']);
         }
       },
       error: (err) => {
@@ -201,6 +269,7 @@ onSubmit() {
     this.showSingleValidationError(this.personalDetailsForm);
   }
 }
+
 
 
 

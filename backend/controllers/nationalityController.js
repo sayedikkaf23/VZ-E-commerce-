@@ -191,7 +191,7 @@ exports.addNationalities = async (req, res) => {
       const nationalities = await Nationality.find();
       
       // Log each document to check if Country exists
-      nationalities.forEach(item => console.log("Document:", item));
+    //   nationalities.forEach(item => console.log("Document:", item));
   
       const transformedNationalities = nationalities.map(item => ({
         name: {

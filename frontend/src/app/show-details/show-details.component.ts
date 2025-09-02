@@ -77,20 +77,24 @@ shareholders: Shareholder[] = [];
     this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
     // console.log( this.salesforceResponse,"salefoce",this.quoteWithProductDetails)
     // Ensure this code runs only in the browser environment
+   
     if (this.isBrowser) {
-      // Retrieve data from localStorage
-      const step1Data = localStorage.getItem('step1Data');
-      const step2Data = localStorage.getItem('step2Data');
-    
-  
-      // If there is no data in localStorage, navigate away from this page
-      if (!step1Data || !step2Data  ) {
-        // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
-        this.router.navigate(['/home']); // Replace with the correct route
-      } else {
-        // Parse and store data if it exists
-        this.personalInfo = JSON.parse(step1Data);
-        this.bankInfo = JSON.parse(step2Data);
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
+      const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+      const leadId = leadData?.LeadId;
+
+      if (leadId) {
+        this.isLoading = true;
+        this.userService.getStep1(leadId).subscribe({
+          next: (formData) => {
+            this.personalInfo = formData;
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Failed to load step1 data', err);
+            this.isLoading = false;
+          }
+        });
       }
     }
   }
@@ -254,7 +258,7 @@ shareholders: Shareholder[] = [];
 submitData() {
   Swal.fire({
     title: 'Confirm Your Data',
-    text: "Once you move forward, you won't be able to edit your information.",
+    text: "I, the undersigned hereby undertake full responsibility to advise Virtuzone UAE FZ LLC of any change in the above information and accept that any misrepresentation or inaccurate information is a violation of applicable laws to Virtuzone UAE FZ LLC and take full responsibility for any legal consequences.",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonText: 'Yes, I confirm',
@@ -262,23 +266,50 @@ submitData() {
   }).then(result => {
     if (!result.isConfirmed) return;
 
+    const quotePaymentId = sessionStorage.getItem('quotePaymentId');
+    const payload = {
+        firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
+          dob: this.personalInfo.dob,
+          leadId: '',
+          service_id: 1
+      }
+
     const finalData = { ...this.personalInfo, ...this.bankInfo };
     let subTypeId: number | null = null;
 
-    if (finalData.Bank === 'Traditional Personal bank Account Opening') subTypeId = 11;
-    else if (finalData.Bank === 'Digital Personal Bank Account Opening') subTypeId = 12;
-    else if (finalData.Bank === 'Any of the above Bank Account Opening') subTypeId = 11;
+    if (this.personalInfo.bankType === 'Traditional Personal bank Account Opening') subTypeId = 11;
+    else if (this.personalInfo.bankType === 'Digital Personal Bank Account Opening') subTypeId = 12;
+    else if (this.personalInfo.bankType === 'Any of the above Bank Account Opening') subTypeId = 11;
     else throw new Error('Invalid Bank Type Selected ❌');
 
     const servicePayload = {
       ServiceNameCode: 1,
       SubTypeCode: subTypeId,
-      RiskCode: finalData.nationality
+      RiskCode: this.personalInfo.Nationality
     };
 
     this.isLoading = true;
-
-    this.userService.getServiceProducts(servicePayload).pipe(
+    
+    of(quotePaymentId).pipe(
+      switchMap(id => {
+        if (id) {
+          return this.userService.createLeadOnly(payload).pipe(
+            tap(res => {
+              if (this.isBrowser && res?.data) {
+                sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+              }
+            })
+          );
+        } else {
+          return of(null);
+        }
+      }),
+      switchMap(() =>this.userService.getServiceProducts(servicePayload)),
       catchError(err => {
         console.error(err);
         this.isLoading = false;
@@ -290,27 +321,32 @@ submitData() {
 
         const serviceProducts = Array.isArray(resp) ? resp : [resp];
         // localStorage.setItem('serviceProducts', JSON.stringify(serviceProducts));
- localStorage.setItem('serviceProducts', JSON.stringify(resp));
- const leadResponseRaw = localStorage.getItem('leadResponse');
+ sessionStorage.setItem('serviceProducts', JSON.stringify(resp));
+ const leadResponseRaw = sessionStorage.getItem('leadResponse');
   const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
   //         // then navigate:
   //         this.router.navigate(['/ShowDetails-2']);
         const paymentPayload = {
-          countryCode:this.personalInfo.mobileNumber.dialCode,
+          countryCode:this.personalInfo.countryCode,
           LeadId: leadResponse.LeadId || '',
     AccountId: leadResponse.AccountId || '',
     ContactId: leadResponse.ContactId || '',
-          firstName: this.personalInfo.firstName,
-          lastName: this.personalInfo.lastName,
-          email: this.personalInfo.email,
-          nationality: this.personalInfo.nationality,
-          phone: this.personalInfo.mobileNumber.number,
+          firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
           // countryCode: this.personalInfo.mobileNumber.dialCode,
-          dob: this.personalInfo.birthday,
-          type: "Bank Account Opening",
+          dob: this.personalInfo.dob,
+           serviceName: 'Personal Bank Account Opening',
+           subServiceName: 'Bank Account Opening',
           CustomerType: "I",
           subcategory: "personal",
+          companyLocationUAE: this.personalInfo.companyLocationUAE,
+          bankType: this.personalInfo.bankType,
+          employmentType: this.personalInfo.employmentType,
+          salary: this.personalInfo.salary,
           prodcutNameList: serviceProducts.map(product => ({
             ProductName: product.Product_Name,
             ProductFamily: "Traditional Services",
@@ -319,8 +355,8 @@ submitData() {
             ProductUnitprice: product.price,
             ProductQuantity: 1,
             ProductDiscount: 0,
-              vat: product.vat,
-                ProductId: product.Product_Id,  
+            vat: product.vat,
+            ProductId: product.Product_Id,  
 
           })),
           shareholders: this.shareholders.map((shareholder: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; countryRisk: any; }) => ({
@@ -362,7 +398,7 @@ submitData() {
         return this.userService.checkStatus(checkStatusData).pipe(
           tap((checkStatusResponse: { data: { CustomerStatus: string } }) => {
             if (checkStatusResponse.data.CustomerStatus === 'Auto Approved') {
-              localStorage.setItem(  "quotePaymentId",quotePaymentId)
+              sessionStorage.setItem(  "quotePaymentId",quotePaymentId)
                this.router.navigate(['/ShowDetails-2']);
             } else {
               window.alert('Your request has been submitted successfully. You will receive an email when your application is approved.');

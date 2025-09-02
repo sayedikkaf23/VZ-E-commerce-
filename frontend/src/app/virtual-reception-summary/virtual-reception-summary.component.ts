@@ -51,7 +51,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
-      const storedProductData = localStorage.getItem('VirtualServiceProducts');
+      const storedProductData = sessionStorage.getItem('VirtualServiceProducts');
       if (storedProductData) {
         const productData = JSON.parse(storedProductData);
         // If the data is an object, wrap it in an array
@@ -59,11 +59,11 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
           ? productData
           : [productData];
         console.log(
-          'Retrieved Products from localStorage: ',
+          'Retrieved Products from sessionStorage: ',
           this.serviceProducts
         );
       } else {
-        console.log('No products found in localStorage.');
+        console.log('No products found in sessionStorage.');
       }
     }
     // this.preventBackNavigation(); // Prevent back navigation on this page
@@ -129,7 +129,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
           ...this.tradeLicense
         };
  
-        localStorage.setItem('mergedData', JSON.stringify(mergedData));
+        sessionStorage.setItem('mergedData', JSON.stringify(mergedData));
         this.displayShareholders = Array.isArray(mergedData.shareholders)
           ? mergedData.shareholders
           : Object.values(mergedData.shareholders || []);
@@ -340,7 +340,7 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
  submitData() {
   this.isLoading = true;
 
-  const quotePaymentId = localStorage.getItem("quotePaymentId");
+  const quotePaymentId = sessionStorage.getItem("quotePaymentId");
 
   if (quotePaymentId) {
     this.callActivePaymentMethod(quotePaymentId);
@@ -435,6 +435,9 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
             (res: any) => window.location.href = res.totalpayData.redirect_url,
             () => Swal.fire('Error', 'Failed to redirect to TotalPay', 'error')
           );
+          break;
+          case 'afs':
+           this.router.navigate(['/checkout', quotePaymentId]); // use the ID to navigat
           break;
  
         default:

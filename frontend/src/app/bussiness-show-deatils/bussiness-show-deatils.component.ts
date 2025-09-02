@@ -61,7 +61,7 @@ serviceProducts: any[] = [];
  
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      const raw = localStorage.getItem('BussinessServiceProducts');
+      const raw = sessionStorage.getItem('BussinessServiceProducts');
       if (raw) {
         const parsed = JSON.parse(raw);
         // ensure it’s always an array
@@ -351,7 +351,7 @@ serviceProducts: any[] = [];
 submitData() {
   this.isLoading = true;
 
-  const quotePaymentId = localStorage.getItem("quotePaymentId");
+  const quotePaymentId = sessionStorage.getItem("quotePaymentId");
 
   if (quotePaymentId) {
     this.callActivePaymentMethod(quotePaymentId);
@@ -400,6 +400,9 @@ submitData() {
             (res: any) => window.location.href = res.totalpayData.redirect_url,
             () => Swal.fire('Error', 'Failed to redirect to TotalPay', 'error')
           );
+          break;
+        case 'afs':
+           this.router.navigate(['/checkout', quotePaymentId]); // use the ID to navigat
           break;
 
         default:

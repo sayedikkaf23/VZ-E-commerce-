@@ -7,5 +7,6 @@ router.post('/service-products', serviceProductsController.getServiceProducts);
 router.post('/insertDocumentsFromShareholders', serviceProductsController.insertDocumentsFromShareholders);
 router.post('/create-opportunity', serviceProductsController.createPaymentOpportunity);
 router.post('/createLeadOnly', serviceProductsController.createLeadOnly);
+router.post('/insertEconomicDetails', serviceProductsController.insertEconomicDetails);
 
 module.exports = router;

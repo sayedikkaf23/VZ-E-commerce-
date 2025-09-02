@@ -67,7 +67,7 @@ const sendEmail = (email,username, redirectUrl) => {
                     <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
                         <td style="padding-bottom: 20px; text-align: center;">
-                          <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
+                          <img src="assets/images/vz_logo.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
                         </td>
                       </tr>
                     </table>
@@ -249,7 +249,7 @@ Don’t worry – we’ve saved all your details so you can pick up right where 
                     <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
                         <td style="padding-bottom: 20px; text-align: center;">
-                          <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
+                          <img src="assets/images/vz_logo.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
                         </td>
                       </tr>
                     </table>

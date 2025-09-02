@@ -17,6 +17,8 @@ const CashDeposit = require("../models/CashDeposit");
 const BankTransfer = require("../models/BankTransferModel");
 const Decimal = require("decimal.js"); // Install the library if needed
 const ChequeDesposit = require("../models/ChequeDeposit");
+const qs     = require("querystring");
+
 
 require("dotenv").config();
 //  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
@@ -588,6 +590,9 @@ async function payNow(req, res) {
     res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+
+
 
 exports.getTotalPayRedirectUrl = async (quoteId) =>  {
  
@@ -1273,6 +1278,7 @@ async function payNowSaleforce(req, res) {
   );
 
   const accessToken = TokenResponse.data.access_token;
+  let response2 = null; // Declare response2 in a higher scope and initialize it
 
   try {
     const paynowdata = await OnlinePayment.findOne({
@@ -1414,7 +1420,7 @@ async function payNowSaleforce(req, res) {
 
       console.log(requestBodySalesforce2, "requestBodySalesforce2");
       // Making the second API call
-      const response2 = await axios.put(endpointUrl2, requestBodySalesforce2, {
+       response2 = await axios.put(endpointUrl2, requestBodySalesforce2, {
         headers,
       });
       console.log(response2, "response 2 data");
@@ -1445,6 +1451,27 @@ async function payNowSaleforce(req, res) {
     const username = paynowdata.customerDetails.name;
     const Amount = paynowdata.transactionDetails.amount;
     const planName = PiDataCheck?.planname || "";
+    const serviceName = PiDataCheck?.leadWithDetails?.ServiceName || "";
+    const subType = PiDataCheck?.leadWithDetails?.subServiceName || "";
+
+    let redirectPath = ""; // default fallback
+
+    if (serviceName === "Bank Account Opening") {
+      if(subType === "Personal Bank Account Opening") {
+        redirectPath = "/showDetails-2";
+      } else {
+        redirectPath = "/business-show-details";
+      }
+    } else if (serviceName === "Mail Management") {
+        redirectPath = "/mails-summary";
+    } else if (serviceName === "Virtual Receptionist") {
+        redirectPath = "/virtual-summary";
+    } else {
+        // Optional: fallback page if planName doesn't match known plans
+        redirectPath = "/"; 
+    }
+
+    const fullUrl = `https://ecommerce.virtuzone.com${redirectPath}`;
 
     console.log(planName, "planName................", PiDataCheck);
 
@@ -1514,7 +1541,7 @@ async function payNowSaleforce(req, res) {
                     <tr>
                       <td style="padding-bottom:20px; text-align:center;">
                         <!-- swap this src for your new logo -->
-                        <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png"
+                        <img src="assets/images/vz_logo.png"
                              alt="Virtuzone Logo"
                              style="max-width:183px; width:100%; height:auto; border:0;">
                       </td>
@@ -1584,7 +1611,7 @@ async function payNowSaleforce(req, res) {
     <p>
       Hi ${username},<br><br>
       Welcome to Virtuzone!<br>
-      We noticed you've started filling out your details – that’s a great first step. Now, it’s time to complete your journey and access everything for your business to run seamlessly.<br><br>
+      We noticed you’ve started filling out your details — that’s a great first step. Now it’s time to take things forward so you can access everything you need for your business to run seamlessly.<br><br>
       With Virtuzone, you'll get:<br>
     </p>
     <ul style="padding-left: 20px; font-size: 16px;">
@@ -1593,10 +1620,8 @@ async function payNowSaleforce(req, res) {
       <li style="margin-bottom: 8px;">A dedicated team ready to help you succeed</li>
     </ul>
     <p>
-  Click below to pick up right where you left off and unlock the tools you need to bring your business dreams to life.<br>
-  <a href="https://ecommerce.virtuzone.com" target="_blank" style="text-decoration: none; display: inline-block; margin-bottom: 15px;">
-   https://ecommerce.virtuzone.com/
-  </a>
+  We’re here to support you in bringing your business vision to life, whenever you’re ready.<br>
+
 </p>
 
 <p style="margin-top: 0;">
@@ -1617,7 +1642,7 @@ async function payNowSaleforce(req, res) {
                     <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
                         <td style="padding-bottom: 20px; text-align: center;">
-                          <img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
+                          <img src="assets/images/vz_logo.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
                         </td>
                       </tr>
                     </table>
@@ -2500,8 +2525,8 @@ async function sendEmail(opportunityName, to, name, opportunityOwnerEmail) {
                               <table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
                                 <tr>
                                   <td class="pad" style="padding-bottom:20px;width:100%;padding-right:0px;padding-left:0px;">
-                                    <div class="alignment" align="center" style="line-height:10px">
-                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
+                                    <div class="alignment" align="center" style="line-height:10px">assets/images/vz_logo.png
+                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
                                     </div>
                                   </td>
                                 </tr>
@@ -2739,7 +2764,7 @@ const sendWaitingEmail = async (req, res) => {
                                 <tr>
                                   <td class="pad" style="padding-bottom:20px;width:100%;padding-right:0px;padding-left:0px;">
                                     <div class="alignment" align="center" style="line-height:10px">
-                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="https://res.cloudinary.com/dotkngkpl/image/upload/v1739944226/thumbnail_vz-ascentium_1_yrtbkn.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
+                                      <div style="max-width: 183px;"><a href="https://www.vz.ae" target="_blank" style="outline:none" tabindex="-1"><img src="assets/images/vz_logo.png" style="display: block; height: auto; border: 0; width: 100%;" width="183"></a></div>
                                     </div>
                                   </td>
                                 </tr>
@@ -3986,9 +4011,171 @@ const AddChequeDeposit = async (req, res) => {
   }
 };
 
+
+const initCheckout = async (req, res) => {
+  try {
+    const { quoteId } = req.params;
+
+    /* ––– look up the quote (optional) ––– */
+    const data = await PiData.findOne({
+    $or: [
+      { "quoteWithProductDetails.quoteId": quoteId }, // Matches quoteId
+      { "quotePaymentWithDetails.QuotePaymentId": quoteId }, // Matches QuotePaymentId
+    ],
+  });
+    if (!data) return res.status(404).json({ message: "Quote not found." });
+
+    /* ––– build the /v1/checkouts payload ––– */
+    const payload = {
+      entityId: process.env.ENTITY_ID,        // ← usually DIFFERENT from Pay-by-Link entity
+      amount:   Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(2),
+      currency: process.env.CURRENCY || "AED",
+      paymentType: "DB",
+      integrity: "true"                                // required for Copy&Pay
+    };
+
+    const { data: checkout } = await axios.post(
+      "https://eu-test.oppwa.com/v1/checkouts",
+      qs.stringify(payload),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+          Authorization: `Bearer ${process.env.ACCESS_TOKEN}` // ← token for that entity
+        },
+        timeout: 10000
+      }
+    );
+  const newOnlinePayForm = new OnlinePayment({
+    transactionDetails: {
+      amount: data.quoteWithProductDetails.totalIncludingVAT,
+      quotePaymentId: quoteId,
+      //   totalIncludingVAT: data.quoteWithProductDetails.totalIncludingVAT,
+
+      // fromCurrency: currency_convertingfrom, // Assuming currency_converting has 'from' and 'to' properties
+      // toCurrency: currency_convertingto,
+      proformaInvoiceNumber: data.leadWithDetails.LeadId,
+      currencyPaid: "AED",
+      // amountPaid:existingUser.totalIncludingVAT,
+    },
+    customerDetails: {
+      name: data.leadWithDetails.FirstName,
+      id: data.quoteWithProductDetails.quoteEmail, // Assuming this is the desired ID
+    },
+
+    paymentType: "Online",
+    status: "Paid",
+    quoteId: data.quoteWithProductDetails.oppurtunityId,
+    // Default status
+  });
+
+  await newOnlinePayForm.save();
+    /* HyperPay returns: { id: "<checkoutId>", result: { code, description } } */
+    return res.status(200).json(checkout);
+  } catch (err) {
+    console.error("Checkout-ID error →", err?.response?.data || err.message);
+    return res.status(500).json({ message: "Failed to create checkout" });
+  }
+};
+
+exports.getPaymentStatus = async (req, res) => {
+  try {
+    const { resourcePath } = req.query; // comes encoded in URL
+
+    if (!resourcePath) {
+      return res.status(400).json({ message: "resourcePath is required" });
+    }
+
+    const url = `https://eu-test.oppwa.com${resourcePath}`;
+
+    const { data } = await axios.get(url, {
+      params: { entityId: process.env.ENTITY_ID },
+      headers: {
+        Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
+      },
+      timeout: 10000,
+    });
+
+    return res.status(200).json(data);
+  } catch (err) {
+    console.error("Payment status error →", err?.response?.data || err.message);
+    return res.status(500).json({ message: "Failed to fetch payment status" });
+  }
+};
+
+const sendSuccessEmail = async (req, res) => {
+  if (!req.body || typeof req.body !== "object") {
+    return res
+      .status(400)
+      .json({ message: "Invalid request format. Expected JSON." });
+  }
+
+  const { email } = req.body; // added username for personalization
+
+  if (!email) {
+    return res
+      .status(400)
+      .json({ message: "Email is required", body: req.body });
+  }
+
+  const data = {
+    from: "mishalnunu@gmail.com",
+    to: email,
+    cc: "dev.tech@vz.ae",
+    subject: "Payment Successful - Welcome to Virtuzone!",
+    html: `<!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Payment Success</title>
+        </head>
+        <body style="background-color:#ffffff; margin:0; padding:0; font-family: Arial, sans-serif; line-height:1.6; color:#333;">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:600px; margin:auto;">
+            <tr>
+              <td style="padding:20px;">
+                <p style="font-size:16px; color:#000;">
+                  Hi there,
+                </p>
+                <p style="font-size:16px; color:#000;">
+                   Congratulations! Your payment was successful.
+                </p>
+                <p style="font-size:16px; color:#000;">
+                  Welcome to Virtuzone – your journey to simplifying business setup has officially begun.
+                </p>
+                <p style="font-size:16px; color:#000;">
+                  Our team will be in touch with you shortly to help you with the next steps.
+                </p>
+                <br/>
+                <p style="font-size:16px; color:#000;">
+                  Cheers,<br/>
+                  <strong>The Virtuzone Team</strong>
+                </p>
+                <div style="margin-top:30px; text-align:center;">
+                  <a href="https://www.vz.ae" target="_blank">
+                    <img src="assets/images/vz_logo.png" width="180" style="border:0;" alt="Virtuzone Logo"/>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>`,
+  };
+
+  try {
+    await mailTransporter.sendMail(data);
+    res.status(200).json({ message: "Success email sent successfully!" });
+  } catch (error) {
+    console.error("Error sending success email:", error);
+    res.status(500).json({ message: "Error sending success email", error });
+  }
+};
+
+
 exports.AddBankTransfer = AddBankTransfer;
 exports.convertCurrency = convertCurrency;
 exports.payNow = payNow;
+exports.initCheckout = initCheckout;
 exports.payNowSaleforce = payNowSaleforce;
 exports.payNowByStripe = payNowByStripe;
 exports.payNowByTelr = payNowByTelr;
@@ -3999,3 +4186,4 @@ exports.AddCashCounter = AddCashCounter;
 exports.AddCashDeposit = AddCashDeposit;
 exports.AddChequeDeposit = AddChequeDeposit;
 exports.sendWaitingEmail = sendWaitingEmail;
+exports.sendSuccessEmail = sendSuccessEmail;

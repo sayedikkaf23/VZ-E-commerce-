@@ -68,6 +68,21 @@ const pidataSchema = new mongoose.Schema(
       LastName: String,
       FirstName: String,
       LeadId: String,
+      isLead:{type:Boolean, default:false},
+      ServiceName: String,
+      subServiceName: String,
+      companyLocationUAE: String,    // Added companyLocationUAE
+      employmentType: String,        // Added employmentType
+      salary: String,                // Added salary
+      bankType: String,              // Added bankType
+      companyLicensed: String,       // Added companyLicensed
+      activityType: String,          // Added activityType
+      totalShareholders: String,     // Added totalShareholders
+      companyTurnover: String,       // Added companyTurnover
+      companyLocation: String,       // Added companyLocation
+      companyWebsite: String,        // Added companyWebsite
+      // shareholderfilesnumber: String, // Added shareholderfilesnumber
+      // shareholdersfiles: String,     // Added shareholdersfiles
     },
     quotePaymentWithDetails: {
       Currency: String,
@@ -141,10 +156,11 @@ const pidataSchema = new mongoose.Schema(
       type: String,
       default: "unpaid"
     },
-    
+   
     invoiceNumber: { type: String },
     kycStatus: { type: String ,default: 'Pending'},
     shareholders: [shareholderSchema],
+    economicDetailId: { type: String },
     salesPersonDetails: {
       salesPersonEmail: { type: String },
       salesPersonMobile: { type: String },
@@ -164,8 +180,10 @@ const pidataSchema = new mongoose.Schema(
         type: { type: String },
       }
     ],
+    shareholdersfiles: String,
+    shareholderfilesnumber: String,
   },
-  
+ 
   {
     timestamps: true, // <<--- This adds createdAt and updatedAt
   }

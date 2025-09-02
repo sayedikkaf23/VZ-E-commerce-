@@ -30,6 +30,7 @@ export class _HomeComponent {
       window.scrollTo(0, 0);
     }
      this.checkScreenSize();
+sessionStorage.removeItem('economicDetailId');
 
     // Remove specific items from localStorage
     const keysToRemove = [
@@ -41,7 +42,10 @@ export class _HomeComponent {
       'mergedData',
       'virtualdata',
       'virtualdata2',
-      'virtualdata1'
+      'virtualdata1',
+      'economicDetailId',
+      'leadResponse',
+      'economicDetailId',
     ];
  
     const anyKeyExists = keysToRemove.some((key) => localStorage.getItem(key) !== null);

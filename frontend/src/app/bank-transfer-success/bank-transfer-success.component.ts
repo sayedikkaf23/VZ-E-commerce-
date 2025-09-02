@@ -11,7 +11,8 @@ import { Location } from '@angular/common';
 })
 export class BankTransferSuccessComponent implements OnInit {
   quoteId: string = '';
-
+piData: any;
+type: string = '';
   constructor(
     private onlinePaymentService: OnlinePaymentService,
     private route: ActivatedRoute,
@@ -24,9 +25,74 @@ export class BankTransferSuccessComponent implements OnInit {
       this.quoteId = params['id'];
       // console.log(this.quoteId);
     });
-
+   this.fetchPiData(this.quoteId);
     // Disable back button
     this.disableBackButton();
+  }
+
+   fetchPiData(quoteId: string): void {
+    this.onlinePaymentService.getPiDataById(quoteId).subscribe(
+      (res: any) => {
+         console.log('Pi Data Response:', res); // <-- debug log
+
+      // Safely pick an email if available
+      const email =
+        res?.leadWithDetails?.Email ||
+        null;
+
+      if (email) {
+        this.onlinePaymentService.sendSuccessEmail(email).subscribe({
+          next: (response) => console.log('Email sent:', response),
+          error: (err) => console.error('Email failed:', err),
+        });
+      } else {
+        console.warn(' No email found in API response, skipping email send.');
+      }
+        if (this.type === 'manual') {
+          this.piData = {
+            _id: res._id,
+            totalPrice: res.totalAmount,
+            totalIncludingVAT: res.totalAmount,
+            partPayment: res.totalAmount,
+            subTotal: res.totalAmount,
+            status: res.status,
+            quotePaymentId: res.accountId,
+            payment_status: res.status,
+            sendToPaymentGateway: false,
+            quoteName: '',
+            quoteEmail: '',
+            product: res.items,
+            ownerId: '',
+            oppurtunityId: '',
+            mobile: res.salesPersonMobile,
+            invoiceNumber: res.invoiceNumber,
+            invoiceDate: '',
+            invoiceCurrency: null,
+            Discount: res.discount,
+            AccountName: '',
+            quote_createddate: '',
+            quoteNumber: res.invoiceNumber,
+            userName: '',
+            userEmailId: '',
+            userPhone: null,
+            quotePaymentName: '',
+            opportunityOwnerName: '',
+            contactEmail: '',
+            contactName: res.billTo,
+            position: '',
+            opportunityOwnerPhone: null,
+            opportunityName: res.salesPersonName,
+            opportunityOwnerEmail: res.salesPersonEmail,
+          };
+          // console.log('this.piData: ', this.piData);
+        } else {
+          this.piData = res;
+        }
+      },
+      (error) => {
+        console.error('Error fetching Pi Data:', error);
+      }
+    );
   }
 
   // Function to disable the back button

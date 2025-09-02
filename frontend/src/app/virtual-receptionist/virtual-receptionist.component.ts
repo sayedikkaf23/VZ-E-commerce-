@@ -29,7 +29,7 @@ export class VirtualReceptionistComponent {
   isBrowser: boolean;
   isLoading = false;
   maxDate: string | undefined;
-
+previousStep1Data: any = {}; 
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -52,7 +52,7 @@ export class VirtualReceptionistComponent {
       nationality: ['', Validators.required],
       mobileNumber: ['', Validators.required],
       birthday: ['', Validators.required],
-      countryRisk: ['', Validators.required]
+
     });
   }
 
@@ -93,10 +93,32 @@ export class VirtualReceptionistComponent {
     // });
     // Check if we are in the browser before accessing localStorage
     if (this.isBrowser) {
-      const storedData = localStorage.getItem('virtualdata');
-      if (storedData) {
-        const formData = JSON.parse(storedData);
-        this.personalDetailsForm.patchValue(formData);
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
+      const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+      const leadId = leadData?.LeadId;
+
+      if (leadId) {
+        this.isLoading = true;
+        this.userService.getStep1(leadId).subscribe({
+          next: (formData) => {
+             if (formData && Object.keys(formData).length > 0) {
+        this.personalDetailsForm.patchValue({
+          firstName: formData.FirstName || '',
+          lastName: formData.LastName || '',
+          email: formData.Email || '',
+          nationality: formData.Nationality || '',
+          mobileNumber: formData.Phone ? { number: formData.Phone } : '', 
+          birthday: formData.dob || ''
+        });
+             this.previousStep1Data = formData; 
+      }
+            this.isLoading = false;
+          },
+          error: (err) => {
+            console.error('Failed to load step1 data', err);
+            this.isLoading = false;
+          }
+        });
       }
     }
 
@@ -133,13 +155,13 @@ export class VirtualReceptionistComponent {
     const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
   
     if (selectedNationality) {
-      this.personalDetailsForm.patchValue({
-        countryRisk: selectedNationality.RiskRating
-      });
+      if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', selectedNationality.RiskRating);
+    }
     } else {
-      this.personalDetailsForm.patchValue({
-        countryRisk: ''
-      });
+      if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', '');
+    }
     }
   }
 
@@ -152,49 +174,75 @@ export class VirtualReceptionistComponent {
     input.showPicker(); // Explicitly trigger the date picker
   }
 onSubmit() {
-  // 1) If both virtualdata and virtualdata1 exist, just update + navigate (no API call here)
-  if (this.isBrowser) {
-    const virtualdata = localStorage.getItem('virtualdata');
-    const virtualdata1 = localStorage.getItem('virtualdata1');
-    const currentFormValue = this.personalDetailsForm.value;
-
-    if (virtualdata && virtualdata1) {
-      const previousData = JSON.parse(virtualdata);
-      // merge new values into virtualdata
-      const updatedVirtualForm = {
-        ...previousData,
-        ...currentFormValue
-      };
-      localStorage.setItem('virtualdata', JSON.stringify(updatedVirtualForm));
-
-      // compare countries
-      const previousCountry = (previousData?.nationality || '').trim();
-      const currentCountry = (currentFormValue?.nationality || '').trim();
-
-      if (previousCountry !== currentCountry) {
-        this.router.navigate(['/virtual-receptionist-1']);
-      } else {
-        this.router.navigate(['/virtual-receptionist-details']);
-      }
-      return; // exit early (no API call)
-    }
+  const currentFormValue = this.personalDetailsForm.value;
+   
+    let isChanged = true;
+    if (this.previousStep1Data) {
+    isChanged = Object.keys(currentFormValue).some((key) => {
+      const currentVal = (currentFormValue[key] || '').toString().trim();
+      const previousVal = (this.previousStep1Data[key] || '').toString().trim();
+      return currentVal !== previousVal;
+    });
   }
+
+    // If no changes, navigate based on virtualdata1
+    if (!isChanged) {
+      if (this.previousStep1Data.Company) {
+        this.router.navigate(['/virtual-receptionist-details']);
+      } else {
+        this.router.navigate(['/virtual-receptionist-1']);
+      }
+      return;
+    }
 
   // 2) If form is valid, build payload & call createLeadOnly
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
     // extract only the phone string
-    const phoneString = values.mobileNumber?.e164Number || '';
+    const phoneString = values.mobileNumber?.number || '';
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
+    const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+    const countryCode = values.mobileNumber?.dialCode || '';
 
-    const payload = {
-      firstName:   values.firstName,
-      lastName:    values.lastName,
-      email:       values.email,
-      nationality: values.nationality,
-      phone:       phoneString,
-      dob:         values.birthday,
-      service_name: 'Virtual Receptionist',
-    };
+    const quoteDataRaw = sessionStorage.getItem('quotePaymentId');
+    
+     let payload: any;
+
+     
+    // Check for email change
+    const storedEmail = this.previousStep1Data.Email;
+    const currentEmail = values.email;
+
+    if (storedEmail !== currentEmail || !quoteDataRaw) {
+      // Email changed, create a new lead with an empty leadId
+      payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: currentEmail,
+        nationality: values.nationality,
+        phone: phoneString,
+        countryCode: countryCode,
+        dob: values.birthday, // yyyy-mm-dd
+        service_id: 3,
+        leadId: '' // Empty leadId when email is changed
+      };
+      // erase previous form values if exists
+      localStorage.removeItem('virtualdata1');
+      localStorage.removeItem('virtualdata2');
+    } else {
+      // Email didn't change, use the same leadId
+      payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: currentEmail,
+        nationality: values.nationality,
+        phone: phoneString,
+        countryCode: countryCode,
+        dob: values.birthday, // yyyy-mm-dd
+        service_id: 3,
+        leadId: leadData?.LeadId || '' // Use existing leadId
+      };
+    }
 
     this.isLoading = true;
     this.userService.createLeadOnly(payload).subscribe({
@@ -203,24 +251,31 @@ onSubmit() {
 
         // save form data to localStorage for next step
         if (this.isBrowser) {
-          localStorage.setItem('virtualdata', JSON.stringify(values));
+          
           
         }
 
           if (this.isBrowser && res?.data) {
-    localStorage.setItem('leadResponse', JSON.stringify(res.data));
+    sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
   }
         // this.toastr.success('Lead created successfully!');
+         // After successful API, navigate based on mailform1 and nationality change
+        
+        const previousNationality = (this.previousStep1Data?.Nationality || '').trim();
+        const currentNationality = (values.nationality || '').trim();
+
+        const previousEmail = (this.previousStep1Data?.Email || '').trim();
+        const currentEmail = (values.email || '').trim();
 
         // now replicate your original routing logic:
         if (this.isBrowser) {
-          if (localStorage.getItem('virtualdata2')) {
-            this.router.navigate(['/virtual-receptionist-details']);
-          } else if (localStorage.getItem('step2Data')) {
-            this.router.navigate(['/virtual-receptionist-1']);
-          } else {
-            this.router.navigate(['/virtual-receptionist-1']);
-          }
+         if ((previousNationality !== currentNationality) || (previousEmail !== currentEmail) || !quoteDataRaw) {
+          this.router.navigate(['/virtual-receptionist-1']);
+        } else if (this.previousStep1Data.Company) {
+          this.router.navigate(['/virtual-receptionist-details']);
+        } else {
+          this.router.navigate(['/virtual-receptionist-1']);
+        }
         }
       },
       error: (err) => {

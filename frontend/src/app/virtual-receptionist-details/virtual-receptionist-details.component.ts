@@ -70,53 +70,58 @@ export class VirtualReceptionistDetailsComponent {
 
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
-    const mailform = localStorage.getItem('virtualdata');
-    const mailform2 = localStorage.getItem('virtualdata1');
-    const mailform3 = localStorage.getItem('virtualdata2');
+    
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
     }
     // Redirect if either mailform or mailform2 is missing
-    if (!mailform || !mailform2) {
-      this.router.navigate(['/home']);
-    } else {
-      // Parse data from localStorage
-      this.personalInfo = JSON.parse(mailform);
-      this.companyInfo = JSON.parse(mailform2);
+    const leadDataRaw = sessionStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+   const leadId = leadData?.LeadId;
+   if (leadId) {
+  // 1) getStep1 → personalInfo
+  this.userService.getStep1(leadId).subscribe({
+    next: (personalInfo: any) => {
+      this.personalInfo = personalInfo;
+if(!personalInfo.Company){
+  this.router.navigate(['/virtual-receptionist-1']);
+}
+        // 3) getTradeLicenseandShareholder → tradeLicenseFile etc.
+          this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+            next: (tradeData: any) => {
+              this.tradeLicenseFile = tradeData || {};
+console.log("Trade License Data:", tradeData);
+              this.shareholders = tradeData.shareholders || []; 
+               this.tradeLicenseFile = tradeData || {};
+             this.uploadedFiles = tradeData.uploadedFileNames || [];
+            // Save shareholders
+            this.shareholders = Array.isArray(tradeData.shareholders) ? tradeData.shareholders : [];
 
-      // Extract shareholders from mailform2 in case mailform3 is missing
-      let shareholdersFromMailform2 = this.companyInfo.shareholders || [];
-      this.tradeLicenseFile = mailform3 ? JSON.parse(mailform3) : {};
-      // Parse mailform3 only if it exists
-      const additionalShareholderInfo = mailform3
-        ? JSON.parse(mailform3)
-        : { companyTradeLicense: '', shareholders: [] };
+            // Default to first 5 shareholders
+            this.displayShareholders = this.shareholders.slice(0, 5);
 
-      // Use shareholders from mailform3 if available, otherwise fallback to mailform2
-      const mergedShareholders =
-        additionalShareholderInfo.shareholders.length > 0
-          ? additionalShareholderInfo.shareholders
-          : shareholdersFromMailform2;
+            // Trade license file URL
+            this.tradeLicenseFileurl = Array.isArray(tradeData.companyTradeLicenseFile) && tradeData.companyTradeLicenseFile.length > 0
+              ? tradeData.companyTradeLicenseFile[0].url
+              : '';
 
-      // Merge all data into a single object
-      const mergedData = {
-        ...this.personalInfo,
-        ...this.companyInfo,
-        companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-        shareholders: mergedShareholders,
-        ...this.tradeLicenseFile,
-      };
+            this.cdRef.detectChanges();
+            
+            },
+            error: (err:any) => {
+              console.error('Failed to load trade license data:', err);
+              this.toastr.error('Could not load trade license data.', 'Error');
+            }
+          });
 
-      // Store merged data in localStorage for the final step
-      localStorage.setItem('mergedData', JSON.stringify(mergedData));
+        },
+    
+    error: (err) => {
+      console.error('Failed to load step1/personal data:', err);
+      this.toastr.error('Could not load personal data.', 'Error');
+    }
+  });
 
-      // Assign displayShareholders
-      this.displayShareholders = Array.isArray(mergedData.shareholders)
-        ? mergedData.shareholders
-        : Object.values(mergedData.shareholders || []);
-
-      this.tradeLicenseFileurl =
-        additionalShareholderInfo.companyTradeLicenseFile[0].url;
 
       // console.log("Merged Data:", mergedData, this.displayShareholders);
     }
@@ -365,13 +370,13 @@ export class VirtualReceptionistDetailsComponent {
   // }
 
   submitData() {
-    const mergedData = JSON.parse(localStorage.getItem('mergedData') || '{}');
+    const mergedData = JSON.parse(sessionStorage.getItem('mergedData') || '{}');
     const uploadedFileNames = this.tradeLicenseFile?.uploadedFileNames || [];
     const shareholdersData = mergedData?.shareholders || [];
     console.log(mergedData, 'mergedData', this.tradeLicenseFile);
     Swal.fire({
       title: 'Confirm Your Data',
-      text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
+      text: "I, the undersigned hereby undertake full responsibility to advise Virtuzone UAE FZ LLC of any change in the above information and accept that any misrepresentation or inaccurate information is a violation of applicable laws to Virtuzone UAE FZ LLC and take full responsibility for any legal consequences.",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#FA2E52',
@@ -379,11 +384,22 @@ export class VirtualReceptionistDetailsComponent {
       cancelButtonText: 'Review Data',
     }).then((result) => {
       if (!result.isConfirmed) return;
-
+ const quotePaymentId = sessionStorage.getItem('quotePaymentId');
+    const leadPayload = {
+        firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
+          dob: this.personalInfo.dob,
+          leadId: '',
+          service_id: 1
+      }
       this.isLoading = true;
 
       const appliedRiskData = JSON.parse(
-        localStorage.getItem('appliedRisk') || '{}'
+        sessionStorage.getItem('appliedRisk') || '{}'
       );
       const riskCode =
         appliedRiskData.appliedRisk === 'Low'
@@ -400,9 +416,22 @@ export class VirtualReceptionistDetailsComponent {
         RiskCode: riskCode,
       };
 
-      this.virtualManagementService
-        .getServiceProducts(productRequestPayload)
-        .pipe(
+      of(quotePaymentId).pipe(
+      switchMap(id => {
+        if (id) {
+          return this.userService.createLeadOnly(leadPayload).pipe(
+            tap(res => {
+              if (this.isBrowser && res?.data) {
+                sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+              }
+            })
+          );
+        } else {
+          return of(null);
+        }
+      }),
+      switchMap(() =>this.virtualManagementService
+        .getServiceProducts(productRequestPayload)),
           catchError((error) => {
             this.isLoading = false;
             console.error(error);
@@ -421,11 +450,8 @@ export class VirtualReceptionistDetailsComponent {
           switchMap((serviceResponse: any) => {
             if (!serviceResponse) return of(null);
 
-            localStorage.setItem(
-              'finalDataVirtual',
-              JSON.stringify(mergedData)
-            );
-            localStorage.setItem(
+           
+            sessionStorage.setItem(
               'VirtualServiceProducts',
               JSON.stringify(serviceResponse)
             );
@@ -437,31 +463,43 @@ export class VirtualReceptionistDetailsComponent {
               ? serviceResponse
               : [serviceResponse];
             this.serviceProducts = serviceProducts;
-            const leadResponseRaw = localStorage.getItem('leadResponse');
+            const leadResponseRaw = sessionStorage.getItem('leadResponse');
             const leadResponse = leadResponseRaw
               ? JSON.parse(leadResponseRaw)
               : {};
+           
             const paymentPayload = {
               LeadId: leadResponse.LeadId || '',
+              isLead: true,
               AccountId: leadResponse.AccountId || '',
               ContactId: leadResponse.ContactId || '',
-              firstName: this.personalInfo.firstName,
-              lastName: this.personalInfo.lastName,
-              email: this.personalInfo.email,
-         tradeLicenseFile: this.tradeLicenseFile
-  ?.companyTradeLicenseFile
-  ?. [0] ?? null,
-
-                 tradeLicenseNo: this.tradeLicenseFile.companyTradeLicense || '',
-                 tradeLicenseFileUrl:
-  Array.isArray(this.tradeLicenseFile?.companyTradeLicenseFile) &&
-  this.tradeLicenseFile.companyTradeLicenseFile.length > 0
-    ? this.tradeLicenseFile.companyTradeLicenseFile[0].url
-    : '',
-              nationality: this.personalInfo.nationality,
-              phone: this.personalInfo.mobileNumber.number,
-              countryCode: this.personalInfo.mobileNumber.dialCode,
-              dob: this.personalInfo.birthday,
+              firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
+          dob: this.personalInfo.dob,
+           companyName: this.personalInfo.Company,
+            companyLicensed: this.personalInfo.companyLicensed,
+            activityType: this.personalInfo.activityType,
+           totalShareholders: this.personalInfo.totalShareholders ,
+           serviceName: 'Virtual Receptionist',
+           subServiceName: 'Virtual Receptionist',
+            companyLocation: this.personalInfo.companyLocation,
+            companyWebsite: this.personalInfo.companyWebsite,
+             tradeLicenseFile:[
+            {
+              name: this.tradeLicenseFile.tradeLicenseFile?.[0]?.name || '',
+              type: this.tradeLicenseFile.tradeLicenseFile?.[0]?.type || '',
+              License_no: this.tradeLicenseFile.tradeLicenseNo || '',
+              url: this.tradeLicenseFile.tradeLicenseFileUrl || '',
+                AccountId: leadResponse.AccountId || '',
+            }
+          ],
+            tradeLicenseNo: this.tradeLicenseFile.tradeLicenseNo || '',
+            tradeLicenseFileUrl: this.tradeLicenseFile.tradeLicenseFileUrl,
+          
               type: 'Virtual Receptionist',
               CustomerType: 'C',
               uploadedFileNames,
@@ -476,23 +514,19 @@ export class VirtualReceptionistDetailsComponent {
                 vat: product.vat,
                 ProductId: product.Product_Id,
               })),
-              shareholders: shareholdersData.map(
-                (s: {
-                  name: any;
-                  shareholderPercentage: any;
-                  dob: any;
-                  nationalityshareholder: any;
-                  countryRisk: any;
-                  files: any;
-                }) => ({
-                  name: s.name,
-                  shareholderPercentage: s.shareholderPercentage,
-                  dob: s.dob,
-                  nationalityshareholder: s.nationalityshareholder,
-                  countryRisk: s.countryRisk,
-                  files: s.files || [],
-                })
-              ),
+              shareholdersfiles: (this.shareholders || [])
+            .flatMap((s: any) => Array.isArray(s.files) ? s.files : [])
+            .map((f: any) => f.url)
+            .filter(Boolean)[0] || '',
+              shareholders: (this.shareholders || []).map((s: any) => ({
+            name: s.name,
+            shareholderPercentage: s.shareholderPercentage,
+            dob: s.dob,
+            passportNumber: s.passportNumber,
+            nationalityshareholder: s.nationalityshareholder,
+            countryRisk: s.countryRisk,
+            files: s.files || []
+          }))
             };
 
             return this.userService.createPaymentOpportunity(paymentPayload);
@@ -511,6 +545,7 @@ export class VirtualReceptionistDetailsComponent {
       name: s.name,
       shareholderPercentage: s.shareholderPercentage,
       dob: s.dob,
+      passportNumber: s.passportNumber,
       nationalityshareholder: s.nationalityshareholder,
       files: (s.files || []).map((f: any) => ({
         name: f.name,
@@ -535,7 +570,7 @@ export class VirtualReceptionistDetailsComponent {
           }),
           switchMap(({ quotePaymentId, leadId ,shareholders}) => {
             if (!leadId) throw new Error('Missing LeadId from digicomplice');
-            const leadResponseRaw = localStorage.getItem('leadResponse');
+            const leadResponseRaw = sessionStorage.getItem('leadResponse');
             const leadResponse = leadResponseRaw
               ? JSON.parse(leadResponseRaw)
               : {};
@@ -545,13 +580,11 @@ export class VirtualReceptionistDetailsComponent {
               serviceName: 'Virtual Receptionist',
               tradelicense: [
                 {
-                  License_no: this.tradeLicenseFile.companyTradeLicense,
-                url:
-  Array.isArray(this.tradeLicenseFile?.companyTradeLicenseFile) &&
-  this.tradeLicenseFile.companyTradeLicenseFile.length > 0
-    ? this.tradeLicenseFile.companyTradeLicenseFile[0].url
-    : '',
-                  AccountId: leadResponse.AccountId || '',
+                   name: this.tradeLicenseFile.tradeLicenseFile?.[0]?.name || '',
+              type: this.tradeLicenseFile.tradeLicenseFile?.[0]?.type || '',
+              License_no: this.tradeLicenseFile.tradeLicenseNo || '',
+              url: this.tradeLicenseFile.tradeLicenseFileURL || '',
+                AccountId: leadResponse.AccountId || '',
                 },
               ],
              shareholders,
@@ -578,7 +611,7 @@ export class VirtualReceptionistDetailsComponent {
                         if (
                           statusRes?.data?.CustomerStatus === 'Auto Approved'
                         ) {
-                          localStorage.setItem(
+                          sessionStorage.setItem(
                             'quotePaymentId',
                             documentPayload.quotePaymentId
                           );

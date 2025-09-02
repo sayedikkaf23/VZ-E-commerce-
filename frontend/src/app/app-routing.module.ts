@@ -57,7 +57,7 @@ import { CountryRiskManagementComponent } from './country-risk-management/countr
 import { ProductRiskManagementComponent } from './product-risk-management/product-risk-management.component';
 import { RiskComponent } from './risk/risk.component';
 import { PaymentFailureComponent } from './payment-failure/payment-failure.component';
-
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes: Routes = [
 
@@ -260,6 +260,11 @@ const routes: Routes = [
   {
     path: 'admin/login',
     component: AdminLoginComponent,
+   
+  },
+  {
+    path: 'checkout/:id',
+    component: CheckoutComponent,
    
   },
   // {

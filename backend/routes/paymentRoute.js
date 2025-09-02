@@ -12,7 +12,10 @@ const {
     convertCurrency,
     AddBankTransfer,
     AddChequeDeposit,
-    sendWaitingEmail
+    sendWaitingEmail,
+    initCheckout,
+    getPaymentStatus,
+    sendSuccessEmail
 } = require("../controllers/paymentController");
  
 // const {upload} = require("../middleware/fileUpload");
@@ -42,6 +45,9 @@ router.get("/payNowByFiserv/:quoteId", payNowByFiserv);
 router.post("/magnatiTransactionStatus", MagnatiTransactionStatus);
 router.get("/paynow/:quoteId", payNow);
 router.get("/payNowByStripe/:quoteId", payNowByStripe);
+router.post("/initCheckout/:quoteId", initCheckout);
+router.get('/getPaymentStatus', getPaymentStatus);
+
 router.get("/payNowByTelr/:quoteId", payNowByTelr);
 router.post(
   "/addChequeDeposit/:quoteId",
@@ -50,5 +56,6 @@ router.post(
 );
 router.post("/convert-currency", convertCurrency);
 router.post("/waitingMail", sendWaitingEmail);
+router.post("/successMail", sendSuccessEmail);
  
 module.exports = router;

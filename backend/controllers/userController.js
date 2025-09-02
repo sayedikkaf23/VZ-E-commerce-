@@ -10,6 +10,7 @@ const crypto = require('crypto');
 const axios = require("axios");
 const VirtualDetails = require('../models/virtualReceptionist'); // Import the model
 const MailDetails = require('../models/mailManagement'); // Import the model
+const CommondbSalesforceLog = require('../models/commondbsalesforcelogs'); // Import the model
 require('dotenv').config(); 
 
 const OnlinePayment = require("../models/OnlinePaymentModel");
@@ -18,6 +19,15 @@ const OnlinePayment = require("../models/OnlinePaymentModel");
  const stripe = require("stripe")("sk_test_tR3PYbcVNZZ796tH88S4VQ2u");
 const MenuItem=require('../models/MenuItem');
 const pidata = require("../models/pidata");
+const { url } = require("inspector");
+const safeLog = async (logData) => {
+  try {
+    CommondbSalesforceLog.create(logData);
+  } catch (logErr) {
+    console.error("Log Error (ignored):", logErr?.message || logErr);
+  }
+};
+
 
 // Handle form submission and file uploads
 
@@ -114,9 +124,31 @@ console.log(LeadId,"LeadId")
     });
 
     await userDetails.save();
+
+        safeLog({
+      unique_id: LeadId,
+      request: {
+        api: 'submit',
+        url: 'http://localhost:3000/api/user/submit',
+        body: req.body
+      },
+      response: userDetails
+    });
     res.status(201).json({ message: "Details submitted successfully", userDetails });
   } catch (error) {
     console.error(error);
+     safeLog({
+      unique_id: req.body?.LeadId || 'unknown',
+      request: {
+        api: 'submit',
+        body: req.body,
+        url: 'http://localhost:3000/api/user/submit',
+      },
+      response: {
+        error: error?.response?.data || error.toString(),
+        stack: error.stack
+      }
+    });
     res.status(500).json({ error: "Error saving details", details: error.message });
   }
 };
@@ -492,6 +524,16 @@ console.log(screeningResponse,"screeningResponse")
       }
     );
     
+    //  Save log to CommondbSalesforceLog
+    safeLog({
+      unique_id: CustomerId,
+      request: {
+        api: 'callSalesforceEndpoint',
+        body: req.body,
+        url: `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/Screening`,
+      },
+      response: screeningResponse.data
+    });
 
     
 
@@ -499,6 +541,21 @@ console.log(screeningResponse,"screeningResponse")
     res.status(200).json({ message: 'Data saved successfully' ,screeningmatchScore:screeningResponse.data});
   } catch (error) {
     console.error('Error calling Salesforce endpoint:', error);
+
+    safeLog({
+      unique_id: CustomerId,
+      request: {
+        api: 'callSalesforceEndpoint',
+        body: req.body,
+        url: `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/Screening`,
+      },
+      response: {
+        error: error.message,
+        stack: error.stack,
+        details: error.response?.data || null
+      }
+    });
+
     res.status(500).json({ message: 'Error calling Salesforce endpoint', details: error.message });
   }
 };
@@ -661,6 +718,16 @@ const totalPrice = subTotal;
       subcategory:CustomerType,
     });
  
+    safeLog({
+  unique_id: sfResp.data?.LeadId || 'N/A',
+  request: {
+    api: 'createOpportunity',
+    body: req.body,
+    url: `${salesforceUrl}/services/apexrest/VZAR_CreateOpportunity/`
+  },
+  response: sfResp.data
+});
+
     /*───────────────────────────── 4. reply to client ───────────────────────*/
     return res.status(200).json({
       message: 'Opportunity created & stored',
@@ -670,6 +737,20 @@ const totalPrice = subTotal;
  
   } catch (error) {
     console.error('createOpportunity error:', error?.response?.data || error);
+    // Log the error to CommondbSalesforceLog
+    safeLog({
+      unique_id: req.body?.email || 'unknown',  // fallback unique id
+      request: {
+        api: 'createOpportunity',
+        body: req.body,
+        url: `${process.env.EXTERNAL_API_SERVISE_URL}/services/apexrest/VZAR_CreateOpportunity/`
+      },
+      response: {
+        error: error.message,
+        stack: error.stack,
+        details: error?.response?.data || null
+      }
+    });
     return res.status(500).json({
       message: 'Failed to create opportunity',
       error: error?.response?.data || error.toString()
@@ -718,7 +799,15 @@ exports.callSalesforceQuoteService = async (req, res) => {
         }
       }
     );
-
+    safeLog({
+      unique_id: quotePaymentId || 'N/A',
+      request: {
+        api: 'callSalesforceQuoteService',
+        body: requestBody,
+        url: `${salesforceUrl}/services/apexrest/piQuoteService/`
+      },
+      response: salesforceResponse.data
+    });
     const responseData = salesforceResponse.data;
     // console.log("Salesforce Response:", responseData);
 
@@ -729,6 +818,19 @@ exports.callSalesforceQuoteService = async (req, res) => {
     // Step 6: Send a success response
     res.status(200).json({ message: "Data sent successfully to Salesforce", data: responseData });
   } catch (error) {
+     safeLog({
+        unique_id: req.body?.quotePaymentId || 'unknown',
+        request: {
+          api: 'callSalesforceQuoteService',
+          body: req.body,
+          url: `${process.env.EXTERNAL_API_SERVISE_URL}/services/apexrest/piQuoteService/`
+        },
+        response: {
+          error: error.message,
+          stack: error.stack,
+          details: error?.response?.data || null
+        }
+      });
     console.error("Error calling Salesforce endpoint:", error);
     res.status(500).json({ message: "Error calling Salesforce endpoint", details: error.message });
   }
@@ -788,6 +890,15 @@ exports.MatchScoreProductService = async (req, res) => {
     const salesforceResponse = await axios.request(config);
 
     const responseData = salesforceResponse.data;
+     safeLog({
+      unique_id: quotePaymentId || 'N/A',
+      request: {
+        api: 'MatchScoreProductService',
+        url: `${salesforceUrl}/services/apexrest/MatchScoreProductService/`,
+        body: requestBody
+      },
+      response: responseData
+    });
     console.log("Salesforce Response:", responseData);
 
     // Optional Step 5: Update the database document with the Salesforce response data (if needed)
@@ -797,6 +908,19 @@ exports.MatchScoreProductService = async (req, res) => {
     // Step 6: Send a success response
     res.status(200).json({ message: "Data sent successfully to Salesforce", data: responseData });
   } catch (error) {
+    safeLog({
+      unique_id: req.body?.quotePaymentId || 'unknown',
+      request: {
+        api: 'MatchScoreProductService',
+        url: `${process.env.EXTERNAL_API_SERVISE_URL}/services/apexrest/MatchScoreProductService/`,
+        body: req.body
+      },
+      response: {
+        error: error.message,
+        stack: error.stack,
+        details: error?.response?.data || null
+      }
+    });
     console.error("Error calling Salesforce endpoint:", error);
     res.status(500).json({ message: "Error calling Salesforce endpoint", details: error.message });
   }
@@ -836,7 +960,11 @@ exports.getAllSubmissions = async (req, res) => {
     // 5) Count how many match the same filter (for total pages)
     const totalRecords = await Pidata.countDocuments(filter);
     const totalPages = Math.ceil(totalRecords / limit);
- 
+    safeLog({
+      unique_id: 'getAllSubmissions',
+      request: { api: 'getAllSubmissions', query: req.query, url: req.originalUrl },
+      response: { data: pidata, totalRecords, totalPages, currentPage: page, pageSize: limit }
+    });
     // 6) Return the results
     res.status(200).json({
       data: pidata,
@@ -847,6 +975,11 @@ exports.getAllSubmissions = async (req, res) => {
     });
   } catch (error) {
     console.error('Error fetching submissions with search:', error);
+    safeLog({
+      unique_id: 'getAllSubmissions',
+      request: { api: 'getAllSubmissions', query: req.query },
+      response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    });
     res.status(500).json({
       error: 'Error fetching submissions with search',
       details: error.message,
@@ -862,27 +995,44 @@ exports.getPersonalBank = async (req, res) => {
     // 1) Extract page & limit from query (fallback to page=1, limit=10)
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
+    // 2) Build Aggregation Pipeline
     const skip = (page - 1) * limit;
- 
-    // 2) Build Aggregation Pipeline (No more userdetails lookup)
-    const pipeline = [
-      // Match only the subcategory = 'personal'
-      { $match: { subcategory: 'personal' } },
 
-      // Now we use $facet to get total count & the paginated docs in one go
+    const pipeline = [
+      { $match: { 'leadWithDetails.subServiceName' : 'Personal Bank Account Opening' } },
+
+      { $addFields: { dateKey: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } } },
+
+      { $sort: { createdAt: -1 } },
+
+      { $group: { _id: "$dateKey", items: { $push: "$$ROOT" } } },
+
+      { $addFields: { items: { $reverseArray: "$items" } } },
+
+      { $sort: { _id: -1 } },
+
+      { $unwind: "$items" },
+
+      { $replaceRoot: { newRoot: "$items" } },
+
+      { $skip: skip },
+      { $limit: limit }
+    ];
+
+    const finalPipeline = [
       {
         $facet: {
-          metadata: [ { $count: 'total' } ], // Count how many docs after above steps
-          data: [
-            { $skip: skip },
-            { $limit: limit }
-          ]
+          metadata: [ 
+            { $match: { 'leadWithDetails.subServiceName' : 'Personal Bank Account Opening' } },
+            { $count: "total" }
+          ],
+          data: pipeline
         }
       }
     ];
- 
-    // 3) Execute the aggregation
-    const aggResult = await Pidata.aggregate(pipeline);
+
+    const aggResult = await Pidata.aggregate(finalPipeline);
+
    
     const meta = aggResult[0]?.metadata?.[0] || {};
     const totalRecords = meta.total || 0; // If none found, total will be 0
@@ -929,7 +1079,11 @@ exports.getPersonalBank = async (req, res) => {
 
       mergedResults.push(doc);
     }
- 
+    safeLog({
+      unique_id: 'getPersonalBank',
+      request: { api: 'getPersonalBank', query: req.query, url: req.originalUrl },
+      response: { data: mergedResults, totalRecords, totalPages, currentPage: page, pageSize: limit }
+    });
     // 6) Return the final array with paginated results and KYC status
     res.status(200).json({
       data: mergedResults, // Up to 'limit' docs with KYC status
@@ -939,6 +1093,11 @@ exports.getPersonalBank = async (req, res) => {
       pageSize: limit
     });
   } catch (error) {
+    safeLog({
+      unique_id: 'getPersonalBank',
+      request: { api: 'getPersonalBank', query: req.query, url: req.originalUrl },
+      response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    });
     console.error('Error fetching personal bank submissions:', error);
     res.status(500).json({
       error: 'Error fetching personal bank submissions',
@@ -955,27 +1114,44 @@ exports.getBusinessBank = async (req, res) => {
     // 1) Extract page & limit from query (fallback to page=1, limit=10)
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
+   // 2) Build Aggregation Pipeline
     const skip = (page - 1) * limit;
- 
-    // 2) Build Aggregation Pipeline (No more userdetails lookup)
-    const pipeline = [
-      // Match only the subcategory = 'business'
-      { $match: { subcategory: 'business' } },
 
-      // Use $facet to get total count and paginated docs in one shot
+    const pipeline = [
+      { $match: { 'leadWithDetails.subServiceName' : 'Business Bank Account Opening' } },
+
+      { $addFields: { dateKey: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } } },
+
+      { $sort: { createdAt: -1 } },
+
+      { $group: { _id: "$dateKey", items: { $push: "$$ROOT" } } },
+
+      { $addFields: { items: { $reverseArray: "$items" } } },
+
+      { $sort: { _id: -1 } },
+
+      { $unwind: "$items" },
+
+      { $replaceRoot: { newRoot: "$items" } },
+
+      { $skip: skip },
+      { $limit: limit }
+    ];
+
+    const finalPipeline = [
       {
         $facet: {
-          metadata: [{ $count: 'total' }], // This counts all matching docs
-          data: [
-            { $skip: skip },
-            { $limit: limit }
-          ]
+          metadata: [ 
+            { $match: { 'leadWithDetails.subServiceName' : 'Business Bank Account Opening' } },
+            { $count: "total" }
+          ],
+          data: pipeline
         }
       }
     ];
- 
-    // 3) Execute the aggregation
-    const aggResult = await Pidata.aggregate(pipeline);
+
+    const aggResult = await Pidata.aggregate(finalPipeline);
+
    
     // Structure of aggResult[0]
     const meta = aggResult[0]?.metadata?.[0] || {};
@@ -987,6 +1163,11 @@ exports.getBusinessBank = async (req, res) => {
  
     // 4) Optionally perform any other additional logic (e.g., KYC status) if required
 
+    safeLog({
+      unique_id: 'getBusinessBank',
+      request: { api: 'getBusinessBank', query: req.query,url: req.originalUrl },
+      response: { data, totalRecords, totalPages, currentPage: page, pageSize: limit }
+    });
     // 5) Return the final array + pagination info
     res.status(200).json({
       data: data, // Paginated data from the business category
@@ -998,6 +1179,11 @@ exports.getBusinessBank = async (req, res) => {
  
   } catch (error) {
     console.error("Error fetching business bank submissions:", error);
+    safeLog({
+      unique_id: 'getBusinessBank',
+      request: { api: 'getBusinessBank', query: req.query, url: req.originalUrl },
+      response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    });
     res.status(500).json({
       error: "Error fetching business bank submissions",
       details: error.message,
@@ -1035,10 +1221,20 @@ exports.submitService = async (req, res) => {
     });
 
     const savedService = await newService.save();
+    safeLog({
+      unique_id: 'submitService',
+      request: { api: 'submitService', body: req.body, url: req.originalUrl },
+      response: savedService
+    });
     res
       .status(201)
       .json({ message: "Service created successfully", service: savedService });
   } catch (error) {
+    safeLog({
+      unique_id: 'submitService',
+      request: { api: 'submitService', body: req.body, url: req.originalUrl },
+      response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    });
     res
       .status(500)
       .json({ error: "Error creating service", details: error.message });
@@ -1049,8 +1245,19 @@ exports.submitService = async (req, res) => {
 exports.getAllServices = async (req, res) => {
   try {
     const services = await Service.find(); // Fetch all services from the database
+    safeLog({
+      unique_id: 'getAllServices',
+      request: { api: 'getAllServices', url: req.originalUrl },
+      response: services
+    });
+
     res.status(200).json(services); // Send back all services as JSON
   } catch (error) {
+    safeLog({
+      unique_id: 'getAllServices',
+      request: { api: 'getAllServices', url: req.originalUrl },
+      response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    });
     res
       .status(500)
       .json({ error: "Error fetching services", details: error.message });
@@ -1075,8 +1282,18 @@ exports.createService = async (req, res) => {
     });
 
     const savedService = await newService.save();
+    safeLog({
+      unique_id: 'createService',
+      request: { api: 'createService', body: req.body, url: req.originalUrl },
+      response: savedService
+    });
     res.status(201).json(savedService);
   } catch (error) {
+    safeLog({
+      unique_id: 'createService',
+      request: { api: 'createService', body: req.body , url: req.originalUrl },
+      response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    });
     res.status(500).json({ error: "Error creating service", details: error.message });
   }
 };
@@ -1105,7 +1322,19 @@ exports.loginAdmin = async (req, res) => {
       "mykey",
       { expiresIn: "10h" }
     );
-
+    safeLog({
+          unique_id: admin._id.toString(),
+          request: {
+            api: 'loginAdmin',
+            url: '/api/admin/login',
+            body: { email } 
+          },
+          response: {
+            message: "Login successful",
+            token,
+            admin: { id: admin._id, username: admin.username, email: admin.email }
+          }
+        });
     // Send back the token and admin info
     res.status(200).json({
       message: "Login successful",
@@ -1113,6 +1342,19 @@ exports.loginAdmin = async (req, res) => {
       admin: { id: admin._id, username: admin.username, email: admin.email },
     });
   } catch (error) {
+    console.error("Error during admin login:", error);
+     safeLog({
+      unique_id: email || 'unknown',
+      request: {
+        api: 'loginAdmin',
+        body: { email },
+        url: '/api/admin/login'
+      },
+      response: {
+        error: error.message,
+        stack: error.stack
+      }
+    });
     res.status(500).json({ error: "Server error", details: error.message });
   };
 
@@ -1142,8 +1384,34 @@ exports.updateService = async (req, res) => {
 
       // Save the updated service
       const updatedService = await service.save();
+
+        safeLog({
+          unique_id: serviceId,
+          request: {
+            api: 'updateService',
+            url: `/api/services/${serviceId}`,
+            params: req.params,
+            body: req.body,
+            file: req.file ? req.file.path : null
+          },
+          response: updatedService
+        });
       res.status(200).json({ message: 'Service updated successfully', service: updatedService });
   } catch (error) {
+      safeLog({
+        unique_id: serviceId,
+        request: {
+          api: 'updateService',
+          params: req.params,
+          body: req.body,
+          file: req.file ? req.file.path : null,
+          url: `/api/services/${serviceId}`
+        },
+        response: {
+          error: error?.response?.data || error.toString(),
+          stack: error.stack
+        }
+      });
       res.status(500).json({ error: 'Error updating service', details: error.message });
   }
 };
@@ -1215,6 +1483,16 @@ exports.updateService = async (req, res) => {
 
     const stripeResponseData = stripeResponse;
 
+     safeLog({
+      unique_id: order_number,
+      request: {
+        api: 'payNowByStripe',
+        body: req.body,
+        url: 'https://api.stripe.com/v1/checkout/sessions',
+        hash: sha1Hash,
+      },
+      response: stripeResponseData
+    });
     const combinedResponse = {
       // message: "Online Payment",
       // GL_code: "1352 - Payment Gateway",
@@ -1234,6 +1512,19 @@ exports.updateService = async (req, res) => {
       "Error creating checkout session:",
       error.response.data.error
     );
+    safeLog({
+      unique_id: order_number,
+      request: {
+        api: 'payNowByStripe',
+        body: req.body,
+        hash: sha1Hash,
+        url: 'https://api.stripe.com/v1/checkout/sessions'
+      },
+      response: {
+        error: error?.response?.data || error.toString(),
+        stack: error.stack
+      }
+    });
     res.status(500).send("Error creating checkout session");
   }
 }
@@ -1257,11 +1548,20 @@ console.log(req.body)
     if (mobileNumberExists) {
       return res.status(400).json({ message: 'Mobile number already exists' });
     }
-
+      safeLog({
+        unique_id: email,
+        request: { api: 'checkUser', body: req.body, url: req.originalUrl },
+        response: { message: 'Email and mobile number are available' }
+      });
     // If neither exists, send a success response
     res.status(200).json({ message: 'Email and mobile number are available' });
   } catch (error) {
     console.error(error);
+    safeLog({
+      unique_id: email,
+      request: { api: 'checkUser', body: req.body, url: req.originalUrl },
+      response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    });
     res.status(500).json({ message: 'Server error' });
   }
 
@@ -1277,9 +1577,20 @@ exports.deleteService = async (req, res) => {
       if (!deletedService) {
           return res.status(404).json({ message: 'Service not found' });
       }
+      safeLog({
+          unique_id: 'deleteService',
+          request: { api: 'deleteService', params: req.params, url: req.originalUrl },
+          response: { message: 'Service deleted successfully', service: deletedService }
+        });
 
       res.status(200).json({ message: 'Service deleted successfully', service: deletedService });
   } catch (error) {
+
+    safeLog({
+      unique_id: 'deleteService',
+      request: { api: 'deleteService', params: req.params , url: req.originalUrl },
+      response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    });
       res.status(500).json({ error: 'Error deleting service', details: error.message });
   }
 
@@ -1289,8 +1600,18 @@ exports.deleteService = async (req, res) => {
 exports.getMenuItems = async (req, res) => {
   try {
     const menuItems = await MenuItem.find();
+    safeLog({
+      unique_id: 'getMenuItems',
+      request: { api: 'getMenuItems', url: req.originalUrl }, 
+      response: menuItems
+    });
     res.json(menuItems); // Send submenu items as JSON
   } catch (error) {
+    safeLog({
+        unique_id: 'getMenuItems',
+        request: { api: 'getMenuItems', url: req.originalUrl },
+        response: { error: error?.response?.data || error.toString(), stack: error.stack }
+      });
     res.status(500).json({ error: 'Error fetching menu items' });
   }
 };
@@ -1302,8 +1623,18 @@ exports.addMenuItems = async (req, res) => {
   try {
     // Bulk insert all menu items
     const newMenuItems = await MenuItem.insertMany(menuItems);
+    safeLog({
+      unique_id: 'addMenuItems',
+      request: { api: 'addMenuItems', body: req.body },
+      response: newMenuItems
+    });
     res.status(201).json({ message: 'Menu items created successfully', menuItems: newMenuItems });
   } catch (error) {
+    safeLog({
+      unique_id: 'addMenuItems',
+      request: { api: 'addMenuItems', body: req.body },
+      response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    });
     res.status(500).json({ error: 'Error creating menu items', details: error.message });
   }
 };
@@ -1348,6 +1679,7 @@ exports.checkStatus = async (req, res) => {
  
     // Extract response data from the status API
     const statusData = statusResponse.data;
+    
  
     // Step 3: Find the Pidata entry using the LeadId in leadWithDetails to match CustomerId
     const pidata = await Pidata.findOne({ 'leadWithDetails.LeadId': CustomerId });
@@ -1362,6 +1694,18 @@ exports.checkStatus = async (req, res) => {
     // Save the updated record
     await pidata.save();
  
+      safeLog({
+      unique_id: CustomerId || 'unknown',
+      request: {
+        api: 'checkStatus',
+        body: { CustomerId, CompanyName },
+        url: `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`
+      },
+      response: {
+        message: 'Status retrieved and Pidata updated successfully',
+        data: statusData
+      }
+    });
     // Send a success response with status data
     res.status(200).json({
       message: 'Status retrieved and Pidata updated successfully',
@@ -1370,6 +1714,18 @@ exports.checkStatus = async (req, res) => {
  
   } catch (error) {
     console.error('Error retrieving or updating status:', error);
+     safeLog({
+      unique_id: CustomerId || 'unknown',
+      request: {
+        api: 'checkStatus',
+        url: `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
+        body: { CustomerId, CompanyName }
+      },
+      response: {
+        error: error.message,
+        stack: error.stack
+      }
+    });
     res.status(500).json({
       error: 'Error retrieving or updating status',
       details: error.message,
@@ -1453,7 +1809,7 @@ exports.getallUserSerive = async (req, res) => {
         console.log("Salesforce API response data:", response.data);
  
         const { invoiceDate, invoiceNumber } = response.data;
- 
+        
         // Update Pidata record if found
         const piDataCheck = await Pidata.findOne({ "quotePaymentWithDetails.QuotePaymentId": quotePaymentId });
         if (piDataCheck) {
@@ -1494,7 +1850,11 @@ exports.getallUserSerive = async (req, res) => {
       }
     }
 const updatedUserData = await Pidata.find({ "leadWithDetails.Email": email });
- 
+    // await CommondbSalesforceLog.create({
+    //       unique_id: email,
+    //       request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
+    //       response: updatedUserData
+    //     });
     // After all done, send success response
     res.status(200).json({
       message: "User data fetched and updated successfully",
@@ -1502,6 +1862,12 @@ const updatedUserData = await Pidata.find({ "leadWithDetails.Email": email });
     });
   } catch (error) {
     console.error("Error fetching/updating user data:", error);
+    // await CommondbSalesforceLog.create({
+    //     unique_id: email,
+    //     request: { api: 'getallUserSerive', body: req.body, url: `${process.env.SALESFORCE_API_URL}/services/apexrest/VZAR_ProformaInvoiceUpdate/${quotePaymentId}` },
+    //     response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    //   });
+
     res.status(500).json({ message: "Internal Server Error", error: error.message });
   }
 };
@@ -1536,10 +1902,19 @@ exports.updateAdditionalUploadedFiles = async (req, res) => {
 
     // Save the record
     await record.save();
-
+    // await CommondbSalesforceLog.create({
+    //   unique_id: someId || 'unknown',
+    //   request: { api: 'updateAdditionalUploadedFiles', body: req.body, url: req.originalUrl },
+    //   response: record
+    // });
     return res.status(200).json({ message: "Files updated successfully", record });
   } catch (err) {
     console.error("Error updating files:", err.message || err);
+    // await CommondbSalesforceLog.create({
+    //   unique_id: someId || 'unknown',
+    //   request: { api: 'updateAdditionalUploadedFiles', body: req.body, url: req.originalUrl },
+    //   response: { error: err?.response?.data || err.toString(), stack: err.stack }
+    // });
     return res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -1567,10 +1942,19 @@ exports.updateUserFiles = async (req, res) => {
     record.shareholders = shareholders || [];
 
     await record.save();
-
+  //   await CommondbSalesforceLog.create({
+  //   unique_id: someId || 'unknown',
+  //   request: { api: 'updateUserFiles', body: req.body, url: req.originalUrl },
+  //   response: record
+  // });
     return res.status(200).json({ message: "Files updated successfully", record });
   } catch (error) {
     console.error("Error updating files:", error);
+    // await CommondbSalesforceLog.create({
+    //   unique_id: someId || 'unknown',
+    //   request: { api: 'updateUserFiles', body: req.body, url: req.originalUrl },
+    //   response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    // });
     return res.status(500).json({ error: "Internal Server Error", details: error.message });
   }
 };
@@ -1601,7 +1985,18 @@ exports.dashboard = async (req, res) => {
 
     // Sum the user counts
     const totalUser = userCount + virtualDetailsCount + mailDetailsCount;
-
+    // await CommondbSalesforceLog.create({
+    //   unique_id: 'dashboard',
+    //   request: { api: 'dashboard', url: req.originalUrl },
+    //   response: {
+    //     virtualReceptionCount,
+    //     mailManagementCount,
+    //     bankOpeningCount,
+    //     personalCount,
+    //     businessCount,
+    //     totalUser
+    //   }
+    // });
     // Return the counts + the totalUser in a single response
     return res.json({
       // Pidata-based counts
@@ -1619,6 +2014,11 @@ exports.dashboard = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+    // await CommondbSalesforceLog.create({
+    //   unique_id: 'dashboard',
+    //   request: { api: 'dashboard', url: req.originalUrl },
+    //   response: { error: error?.response?.data || error.toString(), stack: error.stack }
+    // });
     return res.status(500).json({
       message: 'Something went wrong',
       error: error.message
@@ -1649,16 +2049,115 @@ exports.updateKycStatus = async (req, res) => {
       return res.status(404).json({ error: "Record not found" });
     }
  
+    // await CommondbSalesforceLog.create({
+    //   unique_id: id,
+    //   request: {
+    //     api: 'updateKycStatus',
+    //     url: '/api/user/updateKycStatus',
+    //     body: { id, kycStatus }
+    //   },
+    //   response: {
+    //     message: `KYC status updated successfully to ${kycStatus}`,
+    //     updatedDocument
+    //   }
+    // });
     res.status(200).json({
       message: `KYC status updated successfully to ${kycStatus}`,
       data: updatedDocument,
     });
   } catch (error) {
     console.error("Error updating KYC status:", error);
+    //  await CommondbSalesforceLog.create({
+    //   unique_id: req.body?.id || 'unknown',
+    //   request: {
+    //     api: 'updateKycStatus',
+    //     url: '/api/user/updateKycStatus',
+    //     body: req.body
+    //   },
+    //   response: {
+    //     error: error.message,
+    //     stack: error.stack
+    //   }
+    // });
     res.status(500).json({
       error: "Error updating KYC status",
       details: error.message,
     });
+  }
+};
+
+
+
+exports.getTradeLicenseAndShareholders = async (req, res) => {
+  try {
+    const leadId = req.query.leadId;
+    if (!leadId) {
+      return res.status(400).json({ message: 'leadId query param is required' });
+    }
+
+    // Find the document
+    const doc = await Pidata.findOne({ "leadWithDetails.LeadId": leadId });
+
+    if (!doc) {
+      return res.status(404).json({ message: 'Data not found for the given leadId' });
+    }
+
+    // Prepare the response with only needed fields
+    const response = {
+      tradeLicenseFileUrl: doc.tradeLicenseFileUrl || null,
+      tradeLicenseNo: doc.tradeLicenseNo || null,
+      shareholdersfiles: doc.shareholdersfiles || null,
+      shareholderfilesnumber: doc.shareholderfilesnumber || null,
+      shareholders: doc.shareholders || [],
+      tradeLicenseFile: doc.tradeLicenseFile || [],
+      uploadedFileNames: doc.uploadedFileNames || [],
+    };
+    // await CommondbSalesforceLog.create({
+    //   unique_id: leadId || 'unknown',
+    //   request: { api: 'getTradeLicenseAndShareholders', query: req.query, url: req.originalUrl },
+    //   response
+    // });
+
+    return res.json(response);
+
+  } catch (err) {
+    // await CommondbSalesforceLog.create({
+    //   unique_id: leadId || 'unknown',
+    //   request: { api: 'getTradeLicenseAndShareholders', query: req.query , url: req.originalUrl },
+    //   response: { error: err?.response?.data || err.toString(), stack: err.stack }
+    // });
+    console.error('Error getting trade license and shareholders data:', err);
+    res.status(500).json({ message: 'Failed to get data' });
+  }
+};
+
+
+exports.getStep1 = async (req, res) => {
+  try {
+    const leadId = req.query.leadId;
+    if (!leadId) {
+      return res.status(400).json({ message: 'leadId query param is required' });
+    }
+
+    const doc = await Pidata.findOne({ "leadWithDetails.LeadId": leadId });
+
+    if (!doc) {
+      return res.status(404).json({ message: 'Data not found for the given leadId' });
+    }
+    // await CommondbSalesforceLog.create({
+    //     unique_id: leadId || 'unknown',
+    //     request: { api: 'getStep1', query: req.query, url: req.originalUrl },
+    //     response: doc.leadWithDetails
+    //   });
+    return res.json(doc.leadWithDetails);
+  } catch (err) {
+    console.error('Error getting step1 data:', err);
+    // await CommondbSalesforceLog.create({
+    //   unique_id: leadId || 'unknown',
+    //   request: { api: 'getStep1', query: req.query, url: req.originalUrl },
+    //   response: { error: err?.response?.data || err.toString(), stack: err.stack }
+    // });
+    res.status(500).json({ message: 'Failed to get step1 data' });
   }
 };
 

@@ -32,6 +32,7 @@ export class MailMangamentShowDetailsComponent {
   companyInfo: any = {}; // To store bank service information (Step 2 data)
   shareholders :any= [];
   serviceProducts: any[] | undefined;
+  tradeLicenseFile: any = {};
  
   constructor(
     private http: HttpClient,
@@ -63,25 +64,43 @@ export class MailMangamentShowDetailsComponent {
     }
  
     // Ensure this code runs only in the browser environment
-    if (this.isBrowser) {
-      // Retrieve data from localStorage
-   
-      const mailform = localStorage.getItem('step1Data');
-      const mailform2 = localStorage.getItem('mailform2');
-  // console.log(mailform2,"sssss")
-      // If there is no data in localStorage, navigate away from this page
-      if ( !mailform || !mailform2 ) {
-        // this.toastr.warning('Required data not found. Please fill out the form first.', 'Warning');
-        this.router.navigate(['/home']); // Replace with the correct route
-      } else {
-        // Parse and store data if it exists
-        this.personalInfo = JSON.parse(mailform);
-        this.companyInfo = JSON.parse(mailform2);
-        this.shareholders=this.companyInfo.shareholders
-        this.displayShareholders = this.shareholders.slice(0, 5);  // Show only 5 initially
-        // console.log(  this.displayShareholders)
- 
+    if(this.isBrowser) {
+             if (this.isBrowser) {
+  const leadDataRaw = sessionStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+  const leadId = leadData?.LeadId;
+
+  if (leadId) {
+    this.isLoading = true;
+    this.userService.getStep1(leadId).subscribe({
+      next: (storedData) => {
+        this.isLoading = false;
+        this.personalInfo = storedData; 
+         // 3) getTradeLicenseandShareholder → tradeLicenseFile etc.
+          this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+            next: (tradeData: any) => {
+              this.tradeLicenseFile = tradeData || {};
+console.log("Trade License Data:", tradeData);
+              this.shareholders = tradeData.shareholders || []; 
+              console.log("Shareholders Data:", this.shareholders);
+             
+
+            
+            },
+            error: (err:any) => {
+              console.error('Failed to load trade license data:', err);
+              this.toastr.error('Could not load trade license data.', 'Error');
+            }
+          });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load step1 & step2 data', err);
       }
+    });
+  }
+}
+     
     }
   }
  
@@ -320,12 +339,11 @@ export class MailMangamentShowDetailsComponent {
 //   }
  
  submitData() {
-  const finalData = { ...this.personalInfo, ...this.companyInfo };
-  console.log(finalData, "finalData");
+
 
   Swal.fire({
     title: 'Confirm Your Data',
-    text: "Once you move forward, you won't be able to edit your information. Please review and confirm your details.",
+    text: "I, the undersigned hereby undertake full responsibility to advise Virtuzone UAE FZ LLC of any change in the above information and accept that any misrepresentation or inaccurate information is a violation of applicable laws to Virtuzone UAE FZ LLC and take full responsibility for any legal consequences.",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#FA2E52',
@@ -333,14 +351,23 @@ export class MailMangamentShowDetailsComponent {
     cancelButtonText: 'Review Data'
   }).then((result) => {
     if (!result.isConfirmed) return;
-
-    const birthday = new Date(finalData.birthday);
-    const formattedBirthday = `${(birthday.getMonth() + 1).toString().padStart(2, '0')}/${birthday.getDate().toString().padStart(2, '0')}/${birthday.getFullYear()}`;
-
-    const appliedRiskData = JSON.parse(localStorage.getItem('appliedRisk') || '{}');
-    let subTypeId = finalData.Bank === 'Traditional Corporate Bank Account Opening' ? 13 : 
-                    finalData.Bank === 'Digital Corporate Bank Account Opening' ? 14 : 
-                    finalData.Bank === 'Any of the above' ? 13 : null;
+ const quotePaymentId = sessionStorage.getItem('quotePaymentId');
+    const payload = {
+        firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
+          dob: this.personalInfo.dob,
+          leadId: '',
+          service_id: 1
+      }
+   
+    const appliedRiskData = JSON.parse(sessionStorage.getItem('appliedRisk') || '{}');
+    let subTypeId = this.personalInfo.bankType === 'Traditional Corporate Bank Account Opening' ? 13 : 
+                    this.personalInfo.bankType === 'Digital Corporate Bank Account Opening' ? 14 : 
+                    this.personalInfo.bankType === 'Any of the above' ? 13 : null;
 
     if (!subTypeId) throw new Error('Invalid Bank Type Selected ❌');
 
@@ -356,7 +383,21 @@ export class MailMangamentShowDetailsComponent {
 
     this.isLoading = true;
 
-    this.userService.getServiceProducts(servicePayload).pipe(
+     of(quotePaymentId).pipe(
+      switchMap(id => {
+        if (id) {
+          return this.userService.createLeadOnly(payload).pipe(
+            tap(res => {
+              if (this.isBrowser && res?.data) {
+                sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+              }
+            })
+          );
+        } else {
+          return of(null);
+        }
+      }),
+      switchMap(() =>this.userService.getServiceProducts(servicePayload)),
       catchError(err => {
         console.error(err);
         this.isLoading = false;
@@ -366,27 +407,35 @@ export class MailMangamentShowDetailsComponent {
       switchMap(resp => {
         if (!resp) return of(null);
         const serviceProducts = Array.isArray(resp) ? resp : [resp];
-        localStorage.setItem('serviceProducts', JSON.stringify(resp));
-        localStorage.setItem('BussinessServiceProducts', JSON.stringify(resp));
-        localStorage.setItem('finalDatabussiness', JSON.stringify(finalData));
+        sessionStorage.setItem('serviceProducts', JSON.stringify(resp));
+        sessionStorage.setItem('BussinessServiceProducts', JSON.stringify(resp));
+
         this.matchScoreStorageService.setMatchScoreResponse(resp);
- const leadResponseRaw = localStorage.getItem('leadResponse');
+ const leadResponseRaw = sessionStorage.getItem('leadResponse');
   const leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
 
         const paymentPayload = {
                    LeadId: leadResponse.LeadId || '',
     AccountId: leadResponse.AccountId || '',
     ContactId: leadResponse.ContactId || '',
-          firstName: this.personalInfo.firstName,
-          lastName: this.personalInfo.lastName,
-          email: this.personalInfo.email,
-          nationality: this.personalInfo.nationality,
-          phone: this.personalInfo.mobileNumber.number,
-          countryCode: this.personalInfo.mobileNumber.dialCode,
-          dob: this.personalInfo.birthday,
+          firstName: this.personalInfo.FirstName,
+          lastName: this.personalInfo.LastName,
+          email: this.personalInfo.Email,
+          nationality: this.personalInfo.Nationality,
+          phone: this.personalInfo.Phone,
+          countryCode: this.personalInfo.countryCode,
+          dob: this.personalInfo.dob,
+           serviceName: 'Business Bank Account Opening',
+           subServiceName: 'Bank Account Opening',
           type: "Bank Account Opening",
           CustomerType: "C",
           subcategory: "business",
+          activityType: this.personalInfo.activeType,
+          totalShareholders: this.personalInfo.totalShareholders,
+          companyTurnover: this.personalInfo.companyTurnover,
+          companyLocationUAE: this.personalInfo.companyLocationUAE,
+          companyLicensed: this.personalInfo.companyLicensed,
+          bankType: this.personalInfo.bankType,
           prodcutNameList: serviceProducts.map(product => ({
             ProductName: product.Product_Name,
             ProductFamily: "Traditional Services",
@@ -394,8 +443,10 @@ export class MailMangamentShowDetailsComponent {
             ProductCurrencyName: product.Currency_Code,
             ProductUnitprice: product.price,
             ProductQuantity: 1,
-            vat: product.VAT,
-            ProductDiscount: 0
+            vat: product.vat || 0,
+            ProductDiscount: 0,
+            ProductId: product.Product_Id,
+
           })),
           shareholders: this.shareholders.map((s: { name: any; shareholderPercentage: any; dob: any; nationalityshareholder: any; countryRisk: any; }) => ({
             name: s.name,
@@ -426,7 +477,7 @@ export class MailMangamentShowDetailsComponent {
         return this.userService.checkStatus(checkStatusData).pipe(
           tap(res => {
             if (res?.data?.CustomerStatus === 'Auto Approved') {
-              localStorage.setItem("quotePaymentId", quotePaymentId);
+              sessionStorage.setItem("quotePaymentId", quotePaymentId);
               this.router.navigate(['/bussiness-show-details']);
             } else {
               alert('Your request has been submitted successfully. You will receive an email when your application is approved.');

@@ -138,10 +138,26 @@ exports.createPaymentOpportunity = async (req, res) => {
       ContactId,
       ProductId,
       tradeLicenseFile = [],
+       isLead,
+      companyLocationUAE,
+      employmentType,
+      companyName,
+      salary,
+      bankType,
+      companyLicensed,
+      activityType,
+      totalShareholders,
+      companyTurnover,
+      companyLocation,
+      companyWebsite,
       tradeLicenseNo,
+      shareholderfilesnumber,
       tradeLicenseFileUrl,
       uploadedFileNames = [],
       shareholders = [],
+      shareholdersfiles,
+      subServiceName,
+      serviceName
     } = req.body;
     // console.log(req.body)
     // Log the RiskCode to ensure it's what you expect
@@ -192,6 +208,8 @@ exports.createPaymentOpportunity = async (req, res) => {
       // countryCode: countryCode,
       // phone: cleanedPhone,
       // dob: dob,
+      subServiceName: subServiceName || null, // Optional, if provided
+      serviceName: serviceName || null, // Optional, if provided
       prodcutNameList: cleanedProductList,
     };
     console.log(requestBody, "requestBody");
@@ -208,17 +226,16 @@ exports.createPaymentOpportunity = async (req, res) => {
     };
 
     const salesforceResponse = await axios.request(config);
-   // ✅ Extract and guard data early
-const salesforceData = salesforceResponse?.data || {};
-const errorText = salesforceData?.error || "";
+    // ✅ Extract and guard data early
+    const salesforceData = salesforceResponse?.data || {};
+    const errorText = salesforceData?.error || "";
 
-const isDuplicate = errorText.includes("DUPLICATE_VALUE");
-const isConvertedLead = errorText.includes("CANNOT_UPDATE_CONVERTED_LEAD");
+    const isDuplicate = errorText.includes("DUPLICATE_VALUE");
+    const isConvertedLead = errorText.includes("CANNOT_UPDATE_CONVERTED_LEAD");
 
-if (errorText && !isDuplicate && !isConvertedLead) {
-  return res.status(400).json({ error: errorText });
-}
-
+    if (errorText && !isDuplicate && !isConvertedLead) {
+      return res.status(400).json({ error: errorText });
+    }
 
     console.log("salesforceResponse", salesforceResponse.data);
     let subTotal = 0;
@@ -240,66 +257,81 @@ if (errorText && !isDuplicate && !isConvertedLead) {
 
     // Here, totalPrice = subTotal, or you can add tax/extra if needed
     totalPrice = subTotal;
-const salesPersonDetails = salesforceData?.salesPersonDetails || {};
+    const salesPersonDetails = salesforceData?.salesPersonDetails || {};
 
-  
-const updateData = {
-  $set: {
-    leadWithDetails: {
-      FirstName: firstName,
-      LastName: lastName,
-      Email: email,
-      Nationality: nationality,
-      Phone: cleanedPhone,
-      countryCode: countryCode,
-      Origin__c: "Website",
-      Status: "Created",
-      dob: dob,
-      LeadId: salesforceResponse.data?.LeadId,
-    },
-    quotePaymentWithDetails: {
-      QuotePaymentId: salesforceResponse.data?.QuotePaymentId,
-    },
-    quoteWithProductDetails: {
-      quoteEmail: email,
-      quoteName: `${firstName} ${lastName}`,
-      quotePaymentId: salesforceResponse.data?.QuotePaymentId,
-      totalIncludingVAT: totalPrice,
-      subTotal: subTotal,
-      totalPrice: totalPrice,
-      product: req.body.prodcutNameList,
-    },
-    salesPersonDetails: {
-      salesPersonName: salesPersonDetails.salesPersonName || null,
-      salesPersonEmail: salesPersonDetails.salesPersonEmail || null,
-      salesPersonMobile: salesPersonDetails.salesPersonMobile || null,
-    },
-    accountId: salesforceResponse.data?.AccountId ?? null,
-    ContactId: salesforceResponse.data?.ContactId ?? null,
-    ProductId: ProductId,
-    shareholders,
-    tradeLicenseFile,
-    uploadedFileNames,
-    planname: type,
-    tradeLicenseNo,
-    tradeLicenseFileUrl,
-    subcategory: subcategory,
-    customerType: CustomerType,
-  },
-};
+    //  Update existing piData document by LeadId
+    const pidataDoc = await Pidata.findOneAndUpdate(
+      { "leadWithDetails.LeadId": LeadId }, // Match by LeadId from initial step
+      {
+        $set: {
+          "leadWithDetails.FirstName": firstName,
+          "leadWithDetails.LastName": lastName,
+          "leadWithDetails.Email": email,
+          "leadWithDetails.Nationality": nationality,
+          "leadWithDetails.Phone": cleanedPhone,
+          "leadWithDetails.countryCode": countryCode,
+          "leadWithDetails.Origin__c": "Website",
+          "leadWithDetails.Status": "Created",
+          "leadWithDetails.dob": dob,
+          "leadWithDetails.ServiceName": type,
+          "leadWithDetails.LeadId": salesforceResponse.data?.LeadId ?? LeadId,
+          "leadWithDetails.companyLocationUAE": companyLocationUAE,
+          "leadWithDetails.employmentType": employmentType,
+          "leadWithDetails.Company": companyName,
+          "leadWithDetails.salary": salary,
+          "leadWithDetails.bankType": bankType,
+          "leadWithDetails.companyLicensed": companyLicensed,
+          "leadWithDetails.activityType": activityType,
+          "leadWithDetails.totalShareholders": totalShareholders,
+          "leadWithDetails.companyTurnover": companyTurnover,
+          "leadWithDetails.companyLocation": companyLocation,
+          "leadWithDetails.companyWebsite": companyWebsite,
+          "leadWithDetails.isLead": isLead,
 
-// find by a unique field (maybe QuotePaymentId or LeadId)
-const pidataDoc = await Pidata.findOneAndUpdate(
-  { "leadWithDetails.LeadId": LeadId }, 
-  updateData,
-  { new: true, upsert: true } // new = return updated, upsert = create if not exists
-);
+          "quotePaymentWithDetails.QuotePaymentId": salesforceResponse.data?.QuotePaymentId,
 
-return res.status(200).json({
-  salesforceResponse: salesforceResponse.data,
-  pidata: pidataDoc
-});
+          "quoteWithProductDetails.quoteEmail": email,
+          "quoteWithProductDetails.quoteName": firstName + " " + lastName,
+          "quoteWithProductDetails.quotePaymentId": salesforceResponse.data?.QuotePaymentId,
+          "quoteWithProductDetails.totalIncludingVAT": totalPrice,
+          "quoteWithProductDetails.subTotal": subTotal,
+          "quoteWithProductDetails.totalPrice": totalPrice,
+          "quoteWithProductDetails.product": req.body.prodcutNameList,
 
+          "salesPersonDetails.salesPersonName": salesPersonDetails.salesPersonName || null,
+          "salesPersonDetails.salesPersonEmail": salesPersonDetails.salesPersonEmail || null,
+          "salesPersonDetails.salesPersonMobile": salesPersonDetails.salesPersonMobile || null,
+
+          accountId: salesforceResponse.data?.AccountId ?? AccountId,
+          ContactId: salesforceResponse.data?.ContactId ?? ContactId,
+          ProductId: ProductId,
+          tradeLicenseFile,
+          uploadedFileNames,
+          planname: type,
+          subServiceName: subcategory,
+          tradeLicenseFileUrl,
+          shareholdersfiles,
+          shareholders,
+          tradeLicenseNo,
+          shareholderfilesnumber,
+          customerType: CustomerType
+        }
+
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!pidataDoc) {
+      return res
+        .status(404)
+        .json({ message: "Pidata record not found for the provided LeadId" });
+    }
+
+    return res.status(200).json({
+      message: "Opportunity created and Pidata updated successfully",
+      salesforceResponse: salesforceResponse.data,
+      pidata: pidataDoc,
+    });
   } catch (err) {
     console.error("createOpportunity error:", err);
     return res.status(500).json({
@@ -380,7 +412,34 @@ exports.insertDocumentsFromShareholders = async (req, res) => {
 
 exports.createLeadOnly = async (req, res) => {
   try {
-    const { firstName, lastName, email, nationality, phone, dob , service_name} = req.body;
+    const {
+      firstName,
+      lastName,
+      email,
+      nationality,
+      phone,
+      dob,
+      service_id,
+      leadId,
+      countryCode,
+      // subServiceName,
+      // companyLocationUAE,
+      // employmentType,
+      // companyName,
+      // salary,
+      // bankType,
+      // companyLicensed,
+      // activityType,
+      // totalShareholders,
+      // companyTurnover,
+      // companyLocation,
+      // companyWebsite,
+      // tradeLicenseNo,
+      // shareholderfilesnumber,
+      // tradeLicenseFile,
+      // shareholdersfiles,
+      // shareholders,
+    } = req.body;
 
     if (!firstName || !lastName || !email || !nationality || !phone || !dob) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -426,7 +485,8 @@ exports.createLeadOnly = async (req, res) => {
         nationality: nationalitys,
         phone,
         dob,
-        service_name
+        service_id,
+        leadId,
       },
       {
         headers: {
@@ -434,6 +494,35 @@ exports.createLeadOnly = async (req, res) => {
           Authorization: `Bearer ${accessToken}`,
         },
       }
+    );
+
+    const cleanedPhone = phone.replace(/\s+/g, ""); // Example cleanup
+   
+
+    
+    const existingDoc = await Pidata.findOne({ "leadWithDetails.LeadId": leadResp.data?.LeadId });
+
+    let updatedLeadWithDetails = {
+      ...(existingDoc?.leadWithDetails || {}), // keep existing
+      ...{
+        FirstName: firstName,
+        LastName: lastName,
+        Email: email,
+        Nationality: nationality,
+        Phone: cleanedPhone,
+        countryCode: countryCode,
+        Origin__c: "Website",
+        Status: "Created",
+        dob: dob,
+        LeadId: leadResp.data?.LeadId || null,
+      }
+    };
+
+    //  If leadId exists, update the record, else create a new one
+    const pidataDoc = await Pidata.findOneAndUpdate(
+      { "leadWithDetails.LeadId": leadResp.data?.LeadId }, // condition
+      { $set:  { leadWithDetails: updatedLeadWithDetails } },
+      { upsert: true, new: true } // upsert = create if not exists
     );
 
     return res.status(200).json({
@@ -444,6 +533,183 @@ exports.createLeadOnly = async (req, res) => {
     console.error("createLeadOnly error:", err);
     return res.status(500).json({
       message: "Failed to create lead",
+      error: err.response?.data || err.toString(),
+    });
+  }
+};
+
+exports.insertEconomicDetails = async (req, res) => {
+  try {
+    const {
+      leadId,
+      accountId,
+      economicDetailId,
+      serviceName,
+      subServiceName,
+      firstName,
+      lastName,
+      email,
+      nationality,
+      phone,
+      countryCode,
+      dob,
+      companyLocationUAE,
+      employmentType,
+      companyName,
+      salary,
+      bankType,
+      companyLicensed,
+      activityType,
+      totalShareholders,
+      companyTurnover,
+      companyLocation,
+      companyWebsite,
+      tradeLicenseNo,
+      shareholderfilesnumber,
+      tradeLicenseFile,
+      tradeLicenseFileUrl,
+      shareholdersfiles,
+      shareholders,
+      uploadedFileNames
+    } = req.body;
+
+    // Construct the payload dynamically, excluding null or undefined fields
+    const payload = {};
+
+    if (leadId) payload.leadId = leadId;
+    if (accountId) payload.accountId = accountId;
+    if (serviceName) payload.serviceName = serviceName;
+    if (subServiceName) payload.subServiceName = subServiceName;
+    if (firstName) payload.FirstName = firstName;
+    if (lastName) payload.LastName = lastName;
+    if (email) payload.Email = email;
+    if (countryCode) payload.countryCode = countryCode;
+    if (nationality) payload.Nationality = nationality;
+    if (phone) payload.Phone = phone;
+    if (dob) payload.dob = dob;
+    if (companyLocationUAE) payload.companyLocationUAE = companyLocationUAE;
+    if (employmentType) payload.employmentType = employmentType;
+    if (companyName) payload.companyName = companyName;
+     if (economicDetailId) payload.economicDetailId = economicDetailId;
+     else payload.economicDetailId = '';
+    if (salary) payload.salary = salary;
+    if (bankType) payload.bankType = bankType;
+    if (companyLicensed) payload.companyLicensed = companyLicensed;
+    if (activityType) payload.activityType = activityType;
+    if (totalShareholders) payload.totalShareholders = totalShareholders;
+    if (companyTurnover) payload.companyTurnover = companyTurnover;
+    if (companyLocation) payload.companyLocation = companyLocation;
+    if (companyWebsite) payload.companyWebsite = companyWebsite;
+    if (tradeLicenseNo) payload.tradeLicenseNo = tradeLicenseNo;
+    if (shareholderfilesnumber)
+      payload.shareholderfilesnumber = shareholderfilesnumber;
+    if (tradeLicenseFile && Array.isArray(tradeLicenseFile))
+      payload.tradeLicenseFile = tradeLicenseFileUrl;
+    if (uploadedFileNames && Array.isArray(uploadedFileNames))
+      payload.uploadedFileNames = uploadedFileNames;
+    if (tradeLicenseFileUrl) payload.tradeLicenseFileUrl = tradeLicenseFileUrl;
+    if (shareholdersfiles) payload.shareholdersfiles = shareholdersfiles;
+    if (shareholders && Array.isArray(shareholders))
+      payload.shareholders = shareholders;
+
+    console.log("Payload before sending to Salesforce:", payload);
+
+
+    // Step 1: Get Salesforce token
+    const tokenResp = await axios.post(
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
+      null,
+      {
+        params: {
+          client_id:
+            "3MVG92u_V3UMpV.iJ_PYoQIn.oBrD2K8M5KXly5UByR5PJScjbzghqvSh4Q1bWn901ksE5yXQ1nCu2jBS20ip",
+          client_secret:
+            "0FF7FF381C10DC1CCCA1479939F21AA2370A640CAAF8730B8E3E90A7793AE6E1",
+          grant_type: "password",
+          username: "vzpaymentapi@vz.ae.vzfullcopy",
+          password: "Virtuzone@1234",
+        },
+      }
+    );
+
+    const accessToken = tokenResp.data.access_token;
+    const salesforceUrl = tokenResp.data.instance_url;
+    console.log("Salesforce payload insertEconomicDetails: ", payload);
+    // Step 2: Call the InsertEconomicDetails API with dynamic payload
+    const economicDetailsResp = await axios.post(
+      `${salesforceUrl}/services/apexrest/insertEconomicDetails`,
+      payload, // Use the dynamically created payload
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    // Clean phone number and generate country code
+    // const cleanedPhone = phone ? phone.replace(/\s+/g, "") : null;
+    // const countryCode = cleanedPhone ? "+" + cleanedPhone.slice(0, 2) : null;
+
+    // Prepare the data for your local database (Pidata, etc.)
+    const economicData = {
+      leadWithDetails: {
+        LeadId: leadId,
+
+        ServiceName: serviceName,
+        subServiceName,
+        FirstName: firstName,
+        LastName: lastName,
+        Email: email,
+        Nationality: nationality,
+        Phone: phone,
+        countryCode,
+        dob,
+        companyLocationUAE,
+        employmentType,
+        Company: companyName,
+        salary,
+        bankType,
+        companyLicensed,
+        activityType,
+        totalShareholders,
+        companyTurnover,
+        companyLocation,
+        companyWebsite,
+      },
+      quotePaymentWithDetails: {
+        AccountId: accountId,
+      },
+      economicDetailId : economicDetailsResp.data?.economicDetailId,
+      subcategory: subServiceName,
+      tradeLicenseFileUrl,
+      tradeLicenseFile,
+      shareholdersfiles,
+      shareholders,
+      uploadedFileNames,
+      tradeLicenseNo,
+      shareholderfilesnumber,
+    };
+
+    // Step 3: Save the data to Pidata (or another local database)
+    const pidataDoc = await Pidata.findOneAndUpdate(
+      { "leadWithDetails.LeadId": leadId },
+      {
+        $set: {
+          ...economicData,
+        },
+      },
+      { upsert: true, new: true }
+    );
+
+    return res.status(200).json({
+      message: "Economic details inserted successfully",
+      data: economicDetailsResp.data,
+    });
+  } catch (err) {
+    console.error("insertEconomicDetails error:", err);
+    return res.status(500).json({
+      message: "Failed to insert economic details",
       error: err.response?.data || err.toString(),
     });
   }

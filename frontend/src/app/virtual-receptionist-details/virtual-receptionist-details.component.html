@@ -28,12 +28,12 @@
               </div>
               <table class="w-100">
                 <tbody>
-                  <tr><th>First Name:</th><td>{{ personalInfo.firstName }}</td></tr>
-                  <tr><th>Last Name:</th><td>{{ personalInfo.lastName }}</td></tr>
-                  <tr><th>Email ID:</th><td>{{ personalInfo.email }}</td></tr>
-                  <tr><th>Nationality:</th><td>{{ personalInfo.nationality }}</td></tr>
-                  <tr><th>Date of Birth:</th><td>{{ personalInfo.birthday  | date:'dd-MM-yyyy' }}</td></tr>
-                  <tr><th>Phone Number:</th><td>{{ personalInfo?.mobileNumber?.internationalNumber || 'N/A' }}</td></tr>
+                 <tr><th>First Name:</th><td>{{ personalInfo.FirstName }}</td></tr>
+                  <tr><th>Last Name:</th><td>{{ personalInfo.LastName }}</td></tr>
+                  <tr><th>Email ID:</th><td>{{ personalInfo.Email }}</td></tr>
+                  <tr><th>Country:</th><td>{{ personalInfo.Nationality }}</td></tr>
+                  <tr><th>Date of Birth:</th><td>{{ personalInfo.dob  | date:'dd-MM-yyyy' }}</td></tr>
+                  <tr><th>Phone Number:</th><td>{{ personalInfo.Phone || 'N/A' }}</td></tr>
                 </tbody>
               </table>
             </div>
@@ -47,12 +47,12 @@
               </div>
               <table class="w-100">
                 <tbody>
-                  <tr><th>Company Name:</th><td>{{ companyInfo.CompanyName }}</td></tr>
-                  <tr><th>Company Incorporated:</th><td>{{ companyInfo.CompanyIncorporated }}</td></tr>
-                  <tr><th>Website:</th><td>{{ companyInfo.Website }}</td></tr>
-                  <tr><th>Trade License Activities:</th><td>{{ companyInfo.tradelicense }}</td></tr>
-                  <tr *ngIf="companyInfo.CompanyIncorporated == 'United Arab Emirates'">
-                    <th>Company Licensed:</th><td>{{ companyInfo.Companylicensed }}</td>
+                   <tr><th>Company Name:</th><td>{{ personalInfo.Company }}</td></tr>
+                  <tr><th>Company Incorporated:</th><td>{{ personalInfo.companyLocation }}</td></tr>
+                  <tr><th>Website:</th><td>{{ personalInfo.companyWebsite }}</td></tr>
+                  <tr><th>Trade License Activities:</th><td>{{ personalInfo.activityType }}</td></tr>
+                  <tr *ngIf="personalInfo.companyLocation == 'United Arab Emirates'">
+                    <th>Company Licensed:</th><td>{{ personalInfo.companyLicensed }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -73,7 +73,7 @@
                   <tr><th>Name</th><th>Shareholder %</th><th>Date of Birth</th><th>Nationality</th></tr>
                 </thead>
                 <tbody>
-                  <ng-container *ngFor="let shareholder of displayShareholders">
+                  <ng-container *ngFor="let shareholder of shareholders">
                     <tr>
                       <td>{{ shareholder.name }}</td>
                       <td>{{ shareholder.shareholderPercentage }}%</td>
@@ -87,7 +87,7 @@
           </div>
 
 
-          <div *ngIf="companyInfo?.CompanyIncorporated === 'United Arab Emirates'" class="col-md-12 mb-4">
+          <div *ngIf="personalInfo.companyLocation === 'United Arab Emirates'" class="col-md-12 mb-4">
             <div class="box-light">
               <div class="d-flex align-items-center justify-content-between">
                 <h4>Trade License Document</h4>
@@ -100,11 +100,13 @@
                 <tbody>
                  
                     <tr>
-                      <td>{{ tradeLicenseFile.companyTradeLicense }}</td>
+                      <td>{{ tradeLicenseFile.tradeLicenseNo }}</td>
                       <td>
                         <ul>
-                          <li *ngFor="let file of tradeLicenseFile.companyTradeLicenseFile">
-                            <a [href]="file.url" target="_blank" rel="noopener noreferrer">View File</a>
+                          <li>
+                            <a  [href]="tradeLicenseFile.tradeLicenseFileUrl"
+                 target="_blank" rel="noopener noreferrer">View File</a>
+
                           </li>
                         </ul>
                       </td>
@@ -115,7 +117,7 @@
             </div>
           </div>
 
-          <div *ngIf="companyInfo?.CompanyIncorporated === 'United Arab Emirates'" class="col-md-12 mb-4">
+          <div *ngIf="personalInfo.companyLocation === 'United Arab Emirates'" class="col-md-12 mb-4">
             <div class="box-light">
               <div class="d-flex align-items-center justify-content-between">
                 <h4>Shareholders Documents</h4>

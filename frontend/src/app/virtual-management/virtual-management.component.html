@@ -9,7 +9,7 @@
       <div class="col-auto">
         <div class="row align-items-center">
           <div class="col-auto mb-2">
-            <h2>Virtual Management</h2>
+            <h2>Virtual Receptionist</h2>
           </div>
           <div class="search-container mt-3">
             <div class="search-container-wrapper">
@@ -48,6 +48,7 @@
           <th scope="col">View Products</th>
           <th scope="col">View Documents</th>
           <th scope="col">Shareholder</th>
+          <th scope="col">Company Details</th>
         </tr>
       </thead>
      
@@ -72,6 +73,11 @@
           <td class="wrap">
             <button class="green-button" (click)="openClientDetails(client.shareholders)">
               View Shareholders
+            </button>
+          </td>
+           <td class="wrap">
+            <button class="green-button" (click)="openMailDetails(client)">
+              View Company
             </button>
           </td>
         </tr>
@@ -236,6 +242,43 @@
     </div>
   </div>
  
+    <!-- Company Details Modal -->
+   <div *ngIf="showCompanyModal" class="modal-overlay">
+    <!-- Refined modal layout -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Company Details</h3>
+        <span class="close-btn" (click)="closeModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Company Name</th>
+              <th>Company Location</th>
+              <th>Activity Type </th>
+              <th *ngIf="selectedMailComapny?.leadWithDetails?.companyLicensed">Company Licensed</th>
+              <th *ngIf="selectedMailComapny?.leadWithDetails?.companyWebsite">Company Website</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="wrap">{{ selectedMailComapny?.leadWithDetails?.Company }}</td>
+              <td class="wrap">{{ selectedMailComapny?.leadWithDetails?.companyLocation }}</td>
+              <td class="wrap">{{ selectedMailComapny?.leadWithDetails?.activityType }}</td>
+              <td *ngIf="selectedMailComapny?.leadWithDetails?.companyLicensed" class="wrap">{{ selectedMailComapny?.leadWithDetails?.companyLicensed }}</td>
+              <td *ngIf="selectedMailComapny?.leadWithDetails?.companyWebsite" class="wrap">{{ selectedMailComapny?.leadWithDetails?.companyWebsite }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div *ngIf="!selectedMailComapny" class="no-files">No Company Details available</div>
+      </div>
+      <div class="modal-footer">
+        <button class="green-button" (click)="closeModal()">Close</button>
+      </div>
+    </div>
+
+  </div>
  
  
 </div>

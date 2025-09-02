@@ -10,12 +10,12 @@ import { UserService } from '../service/user.service';
 // import { GetnationalityService } from '../service/getnationality.service';
 import { DataStorageService } from '../service/data-storage.service';
 import { AdminAuthService } from '../service/admin-auth.service';
-
+ 
 //  interface Nationality {
 //   common: string;
 //   country: string;
 // }
-
+ 
 @Component({
   selector: 'app-step-1',
   templateUrl: './step-1.component.html',
@@ -30,7 +30,7 @@ export class Step1Component implements OnInit {
   isBrowser: boolean;
   isLoading = false;
   maxDate: string | undefined;
-
+ previousStep1Data: any = {}; 
   constructor(
     private router: Router,
     private fb: FormBuilder,
@@ -39,14 +39,14 @@ export class Step1Component implements OnInit {
     private toastr: ToastrService,
     private userService: UserService,
     private adminAuthService: AdminAuthService,
-
+ 
     // private getnationalityService: GetnationalityService,
     private dataStorageService: DataStorageService ,// Inject the service
-
+ 
     @Inject(PLATFORM_ID) private platformId: Object // Inject PLATFORM_ID to detect platform
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId); // Check if the platform is a browser
-
+ 
     this.personalDetailsForm = this.fb.group({
       firstName: ['', [Validators.required, Validators.minLength(2)]],
       lastName: ['', [Validators.required, Validators.minLength(2)]],
@@ -54,33 +54,33 @@ export class Step1Component implements OnInit {
       nationality: ['', Validators.required],
       mobileNumber: ['', Validators.required],
       birthday: ['', Validators.required],
-      countryRisk: ['', Validators.required]
+      // countryRisk: ['', Validators.required]
     });
   }
-
+ 
   ngOnInit(): void {
     // Fetch nationalities using REST Countries API
     // this.http.get<any[]>('https://restcountries.com/v3.1/all').subscribe((data) => {
     //   this.nationalities = data.map((country) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
-
-
+ 
+ 
        this.adminAuthService.getCountryRisks().subscribe((data) => {
       this.nationalities = data.sort((a, b) => a.country.localeCompare(b.country));
        
-      
+     
       this.cdRef.detectChanges(); // Trigger change detection to update the view
        
     });
-
-
+ 
+ 
     const today = new Date();
     const year = today.getFullYear() - 18;
     const month = (today.getMonth() + 1).toString().padStart(2, '0');
     const day = today.getDate().toString().padStart(2, '0');
     this.maxDate = `${year}-${month}-${day}`;
-
+ 
    
   // Automatically convert email to lowercase
   this.personalDetailsForm.get('email')?.valueChanges.subscribe(value => {
@@ -89,24 +89,47 @@ export class Step1Component implements OnInit {
       this.personalDetailsForm.get('email')?.setValue(lowercaseEmail, { emitEvent: false });
     }
   });
-    
-    
+   
+   
     // this.getnationalityService.getCountries().subscribe((data) => {
     //   // Assuming data is an array of country objects
     //   this.nationalities = data.map((country: { name: { common: any; }; }) => country.name.common);
     //   this.cdRef.detectChanges(); // Manually trigger change detection to update the view
     // });
-
-    // Check if we are in the browser before accessing localStorage
+ 
     if (this.isBrowser) {
-      const storedData = localStorage.getItem('step1Data');
-    
-      if (storedData) {
-        const formData = JSON.parse(storedData);
-        this.personalDetailsForm.patchValue(formData);
+      const leadDataRaw = sessionStorage.getItem('leadResponse');
+      const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+      const leadId = leadData?.LeadId;
+
+      if (leadId) {
+        this.isLoading = true;
+        this.userService.getStep1(leadId).subscribe({
+          next: (formData) => {
+            if (formData && Object.keys(formData).length > 0) {
+        this.personalDetailsForm.patchValue({
+          firstName: formData.FirstName || '',
+          lastName: formData.LastName || '',
+          email: formData.Email || '',
+          nationality: formData.Nationality || '',
+          mobileNumber: formData.Phone ? { number: formData.Phone } : '', 
+          birthday: formData.dob || ''
+        });
+        this.previousStep1Data = formData; 
+         }
+      // else: do nothing, keep form empty
+      this.isLoading = false;
+      this.cdRef.detectChanges(); // update view
+          },
+          error: (err) => {
+            console.error('Failed to load step1 data', err);
+            this.isLoading = false;
+          }
+        });
       }
     }
-  console.log('ngOnInit called');
+
+
  if (typeof window !== 'undefined') {
  
     const isMobile = window.innerWidth <= 768;  // adjust breakpoint as needed
@@ -114,12 +137,12 @@ export class Step1Component implements OnInit {
       console.log('Not mobile screen, no reload');
       return;
     }
-
+ 
     let reloadCount = Number(sessionStorage.getItem('pageReloadCount')) || 0;
-
+ 
     console.log('Reload count:', reloadCount);
  this.isLoading = true;
-
+ 
     if (reloadCount <= 1) {
       reloadCount++;
       sessionStorage.setItem('pageReloadCount', reloadCount.toString());
@@ -135,121 +158,134 @@ export class Step1Component implements OnInit {
   }
  
   }
-
-
+ 
+ 
   onNationalitySelect(selectedCountry: string): void {
     this.personalDetailsForm.patchValue({
       nationality: selectedCountry
     });
-  
+ 
     const selectedNationality = this.nationalities.find(n => n.country === selectedCountry);
-  
+ 
     if (selectedNationality) {
-      this.personalDetailsForm.patchValue({
-        countryRisk: selectedNationality.RiskRating
-      });
-    } else {
-      this.personalDetailsForm.patchValue({
-        countryRisk: ''
-      });
+    // Save risk rating in localStorage instead of form
+    if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', selectedNationality.RiskRating);
+    }
+  } else {
+    // Remove or reset in localStorage if no risk found
+    if (this.isBrowser) {
+      sessionStorage.setItem('countryRisk', '');
     }
   }
-
+  }
+ 
   get birthdayControl() {
     return this.personalDetailsForm.get('birthday');
   }
-
+ 
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard
   }
-  
+ 
   openDatePicker(event: Event): void {
     const input = event.target as HTMLInputElement;
     input.showPicker(); // Explicitly trigger the date picker
   }
 onSubmit() {
-  // 1) If both step1Data and step2Data exist, just update + navigate (no API call)
-  if (this.isBrowser) {
-    const step1Data = localStorage.getItem('step1Data');
-    const step2Data = localStorage.getItem('step2Data');
-    const mailform2 = localStorage.getItem('mailform2');
-    const currentFormValue = this.personalDetailsForm.value;
-
-    if (step1Data && step2Data) {
-      // merge current values into step1Data
-      const updatedStep1Data = {
-        ...JSON.parse(step1Data),
-        ...currentFormValue,
-      };
-      localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data));
-      this.router.navigate(['/ShowDetails']);
-      return; // exit early
-    }
-
-    if (step1Data && mailform2) {
-      const previousData = JSON.parse(step1Data);
-      const mailform2Data = JSON.parse(mailform2);
-
-      // merge current values into step1Data
-      const updatedStep1Data = {
-        ...previousData,
-        ...currentFormValue,
-      };
-      localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data));
-
-      // compare old vs new nationality
-      const previousCountry = (previousData?.nationality || '').trim();
-      const currentCountry = (currentFormValue?.nationality || '').trim();
-      if (previousCountry !== currentCountry) {
-        // country changed → clear tradelicense from mailform2
-        mailform2Data.tradelicense = '';
-        localStorage.setItem('mailform2', JSON.stringify(mailform2Data));
-        this.router.navigate(['/BusinessBankform']);
-      } else {
-        this.router.navigate(['/BusinessBankShowDetails']);
-      }
-      return; // exit early
-    }
-  }
-
-  // 2) If form is valid (and none of the above returned), call createLeadOnly first
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
-    // grab only the phone string
     const phoneString = values.mobileNumber?.e164Number || '';
+    const countryCode = values.mobileNumber?.dialCode || '';
+   
+    const leadDataRaw = sessionStorage.getItem('leadResponse');
+    const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
 
-    // build the payload exactly as Salesforce expects
-    const payload = {
-      firstName:   values.firstName,
-      lastName:    values.lastName,
-      email:       values.email,
-      nationality: values.nationality,
-      phone:       phoneString,
-      dob:         values.birthday, // yyyy-mm-dd
-      service_name: 'Bank Account Opening',
-    };
+    const quoteDataRaw = sessionStorage.getItem('quotePaymentId');
 
-    this.isLoading = true;
-    this.userService.createLeadOnly(payload).subscribe({
-      next: (res) => {
-        this.isLoading = false;
-        // on success, save step1Data to localStorage
-        if (this.isBrowser) {
-          localStorage.setItem('step1Data', JSON.stringify(values));
-        }
-        // this.toastr.success('Lead created successfully!');
-
-  if (this.isBrowser && res?.data) {
-    localStorage.setItem('leadResponse', JSON.stringify(res.data));
-  }
-        // now replicate your original navigation logic
-        if (this.isBrowser) {
-          if (localStorage.getItem('step2Data')) {
-            // if step2Data already exists, go straight to ShowDetails
-            this.router.navigate(['/ShowDetails']);
-          } else {
-            // otherwise, go to account-type
-            this.router.navigate(['/account-type']);
+ 
+      const leadId = leadData?.LeadId;
+         this.isLoading = true;
+            let payload: any;
+                // Check for email change
+    const storedEmail = this.previousStep1Data.Email;
+    const currentEmail = values.email;
+              if (storedEmail !== currentEmail || !quoteDataRaw) {
+                // Email changed → create new lead with empty leadId
+                payload = {
+                  firstName: values.firstName,
+                  lastName: values.lastName,
+                  email: currentEmail,
+                  nationality: values.nationality,
+                  phone: phoneString,
+                  dob: values.birthday,
+                  countryCode: countryCode,
+                  service_id: 1,
+                  leadId: '' // empty leadId triggers new lead creation
+                };
+              }
+              else {
+                // Email not changed → keep existing leadId
+                payload = {
+                  firstName: values.firstName,
+                  lastName: values.lastName,
+                  email: values.email,
+                  nationality: values.nationality,
+                  phone: phoneString,
+                  dob: values.birthday,
+                  countryCode: countryCode,
+                  service_id: 1,
+                  leadId: leadId
+                };
+              }
+                  // Call createLeadOnly API
+                  this.userService.createLeadOnly(payload).subscribe({
+                    next: (res) => {
+                      this.isLoading = false;
+              
+                      // Save step 1 data to localStorage
+                      // if (this.isBrowser) {
+                      //   localStorage.setItem('step1Data', JSON.stringify(values));
+                      // }
+              
+                      // Save response data to localStorage (new lead)
+                      if (this.isBrowser && res?.data) {
+                        sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+                      }
+              
+                      // Navigate to the next step based on the email change
+                      if (!this.previousStep1Data.Company) {
+                        this.router.navigate(['/account-type']); // Navigate to Step 2
+                      } else {
+                        const isBusinessAccount = localStorage.getItem('mailform2') !== null;
+                        const isPersonalAccount = localStorage.getItem('step2Data') !== null;
+              
+                        if (this.isBrowser) {
+                        if (storedEmail !== currentEmail || !quoteDataRaw) {
+                // Remove localStorage items
+                localStorage.removeItem('step2Data');
+                localStorage.removeItem('mailform2');
+              
+                // Redirect to account-type page for both cases
+                this.router.navigate(['/account-type']);
+              } else {
+                if (isBusinessAccount) {
+                  // Remove localStorage items for business account
+                  // localStorage.removeItem('step2Data');
+                  // localStorage.removeItem('mailform2');
+                
+                  // Redirect to business details page
+                  this.router.navigate(['/BusinessBankShowDetails']);
+                } else if (isPersonalAccount) {
+                  // Remove localStorage items for personal account
+                  // localStorage.removeItem('step2Data');
+                  // localStorage.removeItem('mailform2');
+                
+                  // Redirect to personal details page
+                  this.router.navigate(['/ShowDetails']);
+                }
+              }
+              
           }
         }
       },
@@ -259,23 +295,16 @@ onSubmit() {
         this.toastr.error(msg, 'Error');
       }
     });
-  }
-  else {
-    // form invalid: show validation toasts
-    const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
-    if (mobileNumberControl?.errors?.['validatePhoneNumber']) {
-      this.toastr.error(
-        'Enter a valid mobile number for the selected country.',
-        'Validation Error'
-      );
-    }
+
+  } else {
     this.showFieldValidationErrors(this.personalDetailsForm);
   }
 }
-
-
+ 
+ 
+ 
 // onSubmit() {
-
+ 
 //     // Check if step-1 and step-2 data exist in localStorage
 //     if (this.isBrowser) {
 //       const step1Data = localStorage.getItem('step1Data');
@@ -283,19 +312,19 @@ onSubmit() {
 //       const mailform2 = localStorage.getItem('mailform2');
 //       const currentFormValue = this.personalDetailsForm.value;
 //       if (step1Data && step2Data) {
-        
+       
 //         // Update step-1 data with current form values
 //         const updatedStep1Data = {
 //           ...JSON.parse(step1Data),
 //           ...this.personalDetailsForm.value,
 //         };
-  
+ 
 //         localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data)); // Save updated step-1 data
-  
+ 
 //       this.router.navigate(['/ShowDetails']);
 //         return; // Exit early to avoid further execution
 //       }
-
+ 
 //       if (step1Data && mailform2) {
 //         const previousData = JSON.parse(step1Data);
 //         const mailform2Data = JSON.parse(mailform2);
@@ -304,9 +333,9 @@ onSubmit() {
 //           ...JSON.parse(step1Data),
 //           ...this.personalDetailsForm.value,
 //         };
-  
+ 
 //         localStorage.setItem('step1Data', JSON.stringify(updatedStep1Data)); // Save updated step-1 data
-  
+ 
 //          // Compare selected country with previously stored country
 //          const previousCountry = (previousData?.nationality || '').trim();
 //          const currentCountry = (currentFormValue?.nationality || '').trim();
@@ -314,42 +343,42 @@ onSubmit() {
 //          if (previousCountry !== currentCountry) {
 //           // Country has changed → clear tradelicence
 //           mailform2Data.tradelicense = '';
-
+ 
 //           // Update mailform2 in localStorage
 //           localStorage.setItem('mailform2', JSON.stringify(mailform2Data));
 //           this.router.navigate(['/BusinessBankform']);
 //        } else {
-//          // Country is same 
+//          // Country is same
 //          this.router.navigate(['/BusinessBankShowDetails']);
 //        }
 //         return; // Exit early to avoid further execution
 //       }
 //     }
-
-
+ 
+ 
 //   if (this.personalDetailsForm.valid) {
 //     const formData = this.personalDetailsForm.value;
-
+ 
  
 //     // Save form data to localStorage only in the browser environment
 //     if (this.isBrowser) {
 //       localStorage.setItem('step1Data', JSON.stringify(formData));
 //     }
-
+ 
 //     this.router.navigate(['/account-type']);
 //   } else {
-
-
+ 
+ 
 //     const mobileNumberControl = this.personalDetailsForm.get('mobileNumber');
 //     if (mobileNumberControl?.errors?.['validatePhoneNumber']) { // Correct key here
 //       this.toastr.error('Enter a valid mobile number for the selected country.', 'Validation Error');
 //     }
-
+ 
 //     // Display validation errors for invalid fields
 //     this.showFieldValidationErrors(this.personalDetailsForm);
 //   }
 // }
-
+ 
   // Show one toaster for all invalid fields
   showFieldValidationErrors(formGroup: FormGroup) {
     for (const field of Object.keys(formGroup.controls)) {
@@ -365,14 +394,20 @@ onSubmit() {
         } else if (control.errors?.['email']) {
           this.toastr.error(`Please provide a valid ${this.getFieldName(field)}.`, 'Validation Error');
           return; // Show error and return
-        }
+        } if (control.errors?.['validatePhoneNumber']) {
+        this.toastr.error(
+          'Enter a valid mobile number for the selected country.',
+          'Validation Error'
+        );
+        return;
+      }
       }
     }
   }
-  
-  
-  
-
+ 
+ 
+ 
+ 
   getFieldName(field: string): string {
     switch (field) {
       case 'firstName':
@@ -391,6 +426,7 @@ onSubmit() {
         return field;
     }
   }
-  
-  
+ 
+ 
 }
+ 

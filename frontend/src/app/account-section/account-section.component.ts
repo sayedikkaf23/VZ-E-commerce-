@@ -57,11 +57,15 @@ export class AccountSectionComponent implements OnInit, AfterViewInit {
     }
   }
 
-  navigateToStep1() {
+   navigateToStep1() {
     this.router.navigate(['/step-2']); // Adjust the route according to your setup
+    localStorage.removeItem('economicDetailId');
+ 
   }
-
+ 
   navigateTomailform() {
     this.router.navigate(['/BusinessBankform']); // Adjust the route according to your setup
+    localStorage.removeItem('economicDetailId');
+ 
   }
 }

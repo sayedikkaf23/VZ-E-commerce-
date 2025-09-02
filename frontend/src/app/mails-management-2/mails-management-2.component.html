@@ -1,3 +1,7 @@
+<div class="loader-container" *ngIf="isLoading">
+  <div class="loader"></div>
+</div>
+
 <div data-aos-easing="ease" data-aos-duration="400" data-aos-delay="0" class="main-container">
   <app-user-header></app-user-header>
 
@@ -146,9 +150,9 @@
                   <div class="form-field">
                     <label class="shareholder-label">Shareholder %<span class="required">*</span></label>
                     <!-- Apply new class here -->
-                    <input type="number" [(ngModel)]="shareholder.shareholderPercentage"
-                      [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100"
-                      style="padding: 25px" (input)="onShareholderInput($event, 0)" />
+                  <input type="number" [(ngModel)]="shareholder.shareholderPercentage"
+  [ngModelOptions]="{ standalone: true }" required placeholder="Shareholder %" min="0" max="100" 
+  (input)="onShareholderInput($event, i)" style="padding: 20px"  />
                   </div>
                   <div class="form-field">
                     <label class="shareholder-label">Date of Birth<span class="required">*</span></label>

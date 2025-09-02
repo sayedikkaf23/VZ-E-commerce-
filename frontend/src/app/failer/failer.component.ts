@@ -18,6 +18,23 @@ export class FailerComponent implements OnInit {
   constructor( private onlinePaymentService: OnlinePaymentService, private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit() {
+
+     this.route.queryParams.subscribe(params => {
+    const status = params['status'];
+
+    // Only reload once
+    if (status === 'failure' && !sessionStorage.getItem('reloaded')) {
+      sessionStorage.setItem('reloaded', 'true');
+
+      // Full page reload
+      window.location.reload();
+    } else {
+      // After reload, remove the flag
+      sessionStorage.removeItem('reloaded');
+    }
+  });
+
+
     this.route.paramMap.subscribe((params) => {
       this.transactionId = params.get('id') ?? '';
     });

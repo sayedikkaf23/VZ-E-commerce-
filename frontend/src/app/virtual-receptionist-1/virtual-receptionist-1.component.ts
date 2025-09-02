@@ -55,7 +55,11 @@ maxDate: string | undefined;
   nationalities: any[] = []; 
   nationalitiesData: string[] = []; 
   personalInfo: any;
-
+  leadResponse: any;
+  isLoading = false;
+  economicDetailId : any;
+isBrowser: boolean;
+  companyInfo: any;
   constructor(
     private formDataService: FormDataService,
     private http: HttpClient,
@@ -67,6 +71,7 @@ maxDate: string | undefined;
     private adminAuthService: AdminAuthService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
+    this.isBrowser = isPlatformBrowser(this.platformId); 
     // Retrieve Step 1 data from the service when Step 2 initializes
     this.step1Data = this.formDataService.getvirtualdata();
     // console.log('Step 1 data:', this.step1Data);
@@ -113,6 +118,62 @@ maxDate: string | undefined;
       this.cdRef.detectChanges(); // Trigger change detection to update the view
     });
 
+      if (this.isBrowser) {
+  const leadDataRaw = sessionStorage.getItem('leadResponse');
+  const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
+  const leadId = leadData?.LeadId;
+
+  if (leadId) {
+    this.isLoading = true;
+    this.userService.getStep1(leadId).subscribe({
+      next: (step1Data) => {
+        this.isLoading = false;
+        // storedData contains all step1 + step2 fields if you saved them
+
+        //  patch step1 form
+        this.personalInfo = step1Data; 
+
+        //  patch step2 form data (your custom object or form)
+     
+        if (step1Data && Object.keys(step1Data).length > 0) {
+          // Safely map fields
+          this.formData.CompanyName = step1Data.Company || '';
+          this.formData.CompanyIncorporated = step1Data.companyLocation || '';
+          this.formData.Website = step1Data.companyWebsite || '';
+          this.formData.shareholdercount = step1Data.totalShareholders || '';
+          this.formData.type = step1Data.type || '';
+          this.formData.Companylicensed = step1Data.companyLicensed || '';
+          this.formData.tradelicense = step1Data.activityType || '';
+
+
+        this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
+      next: (tradeData) => {
+        this.companyInfo = tradeData;
+         if (tradeData.shareholders && Array.isArray(tradeData.shareholders)) {
+            this.shareholders = tradeData.shareholders.map((sh: any) => ({
+              ...sh,
+              dob: sh.dob ? sh.dob.split('T')[0] : ''
+            }));
+          }
+        },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load step1 & step2 data', err);
+      }
+    });
+
+      this.cdRef.detectChanges();
+        }
+        
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Failed to load step1 & step2 data', err);
+      }
+    });
+  }
+}
+
     this.userService.getAllBusinessCategories().subscribe(
       (response) => {
         // Log for debugging
@@ -128,32 +189,8 @@ maxDate: string | undefined;
         console.error('Error fetching business categories:', error);
       }
     );
-    // Retrieve saved data from localStorage
-    const storedStep2Data = localStorage.getItem('virtualdata1');
-    if (storedStep2Data) {
-      const parsedData = JSON.parse(storedStep2Data);
-
-      this.formData = {
-        CompanyName: parsedData.CompanyName,
-        CompanyIncorporated: parsedData.CompanyIncorporated,
-        Website: parsedData.Website,
-        tradelicense: parsedData.tradelicense,
-        shareholdercount: parsedData.shareholdercount,
-        Companylicensed: parsedData.Companylicensed,
-        BusinessActivityRisk: parsedData.BusinessActivityRisk
-      };
-
-      if (parsedData.shareholders) {
-        this.shareholders = parsedData.shareholders;
-      }
-
-      
-
-      // Call updateShareholders() after loading from localStorage
-      this.updateShareholders();
-
-      this.cdRef.detectChanges();
-    }
+    
+  
   }
   onTradeLicenseSelect(selectedActivity: string) {
     this.formData.tradelicense = selectedActivity;
@@ -352,14 +389,95 @@ onShareholderInput(event: any, index: number) {
           shareholders: this.shareholders,
         };
 
-        const mailform = localStorage.getItem('virtualdata');
-        this.personalInfo = mailform ? JSON.parse(mailform) : {};
+       
 
-        // Save Step 2 data to localStorage
-        localStorage.setItem('virtualdata1', JSON.stringify(combinedFormData));
-        // Prepare payload for the API call using Step 1 and Shareholders data
+         const leadResponseRaw = sessionStorage.getItem('leadResponse');
+        this.leadResponse = leadResponseRaw ? JSON.parse(leadResponseRaw) : {};
+
+        const economicDetailId = sessionStorage.getItem('economicDetailId');
+
+      
+
+         // payload for salesforce api
+        const insertPayload: any = {
+            leadId: this.leadResponse.LeadId,
+            accountId: this.leadResponse.AccountId,
+            serviceName: 'Virtual Receptionist',
+            // subServiceName: '',
+             firstName: this.personalInfo.FirstName,
+            lastName: this.personalInfo.LastName,
+            email: this.personalInfo.Email,
+            nationality: this.personalInfo.Nationality,
+            phone: this.personalInfo.Phone,
+            dob: this.personalInfo.dob,
+            countryCode: this.personalInfo.countryCode,
+            // companyLocationUAE: '',
+            // employmentType: '',
+            companyName: this.formData.CompanyName,
+      
+            // salary: '',
+            // bankType: '',
+            companyLicensed: this.formData.Companylicensed,
+            activityType: this.formData.tradelicense,
+           totalShareholders: this.formData.shareholdercount ,
+            // companyTurnover: '',
+            companyLocation: this.formData.CompanyIncorporated,
+            companyWebsite: this.formData.Website,
+            // tradeLicenseNo: mail3.companyTradeLicenseNumber,
+            // shareholderfilesnumber: mail3.shareholders?.[0]?.passportNumber || '',
+            // tradeLicenseFile: mail3.companyTradeLicenseFile?.[0]?.url || '',
+            // shareholdersfiles: Object.values(mail3.uploadedFileNames || {})
+            // .flat()
+            // .map((f: any) => f.url)
+            // .filter(Boolean)[0] || '',
+            shareholders: this.shareholders,
+            economicDetailId: economicDetailId || '',
+          };
+
+           // Conditionally add fields only if they exist and are not empty
+          if (this.companyInfo.companyLicensed) {
+            insertPayload.companyLicensed = this.companyInfo.companyLicensed;
+          }
+
+          //  if (economicDetailId) {
+          //   insertPayload.economicDetailId = economicDetailId;
+          // }
+
+           if (this.companyInfo.tradeLicenseNo) {
+            insertPayload.tradeLicenseNo = this.companyInfo.tradeLicenseNo;
+          }
+
+          if (this.companyInfo.shareholderfilesnumber) {
+            insertPayload.shareholderfilesnumber = this.companyInfo.shareholderfilesnumber;
+          }
+
+          const tradeLicenseUrl = this.companyInfo.tradeLicenseFileUrl;
+          if (tradeLicenseUrl) {
+            insertPayload.tradeLicenseFileUrl = tradeLicenseUrl;
+          }
+
+          const allShareholderFiles = Object.values(this.companyInfo.shareholders || {})
+            .flat()
+            .map((f: any) => f.url)
+            .filter(Boolean);
+
+          if (allShareholderFiles.length) {
+            insertPayload.shareholdersfiles = allShareholderFiles[0]; // Or the whole list if needed
+          }
+            console.log(insertPayload);
+           this.isLoading = true;
+          this.userService.insertEconomicDetails(insertPayload).subscribe(
+          (response) => {
+            console.log('API Response:', response);
+            this.economicDetailId = response.data?.economicDetailId;
+            sessionStorage.setItem('economicDetailId',this.economicDetailId);
+            let storedRisk = '0';
+              if (this.isBrowser) {
+                storedRisk = sessionStorage.getItem('countryRisk') || '0';
+              }
+             // Prepare payload for the API call using Step 1 and Shareholders data
          const payload = {
-          customerCountryRisk: this.personalInfo.countryRisk, // This is the customer country from Step 1
+          customerCountryRisk: parseInt(storedRisk, 10), // This is the customer country from Step 1
           BusisnessActivityRisk: this.formData.BusinessActivityRisk,
           shareholderCountriesRisk: this.shareholders.map(shareholder => shareholder.countryRisk), // Assuming 'nationalityshareholder' property
           totalCusotmerSelected: this.shareholders.length + 2,
@@ -368,17 +486,17 @@ onShareholderInput(event: any, index: number) {
         // Call the API to get products by category and country risk
         this.userService.getProductsByCategoryAndCountryRisk(payload).subscribe(
           (response) => {
-            console.log('API Response:', response);
+            
 
             const appliedRiskData = {
               appliedRisk: response.appliedRisk, // Assuming the response contains 'appliedRisk'
-              percentage: response.percentage, // Assuming the response contains 'percentage'
+              percentage: response.Fixedpercentage, // Assuming the response contains 'percentage'
               userRating: response.userRating, // Assuming the response contains 'userRating'
               totalPossibleRating: response.totalPossibleRating // Assuming the response contains 'totalPossibleRating'
             };
-
-            // Save the appliedRisk data to localStorage
-            localStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
+              this.isLoading = false;
+            // Save the appliedRisk data to sessionStorage
+            sessionStorage.setItem('appliedRisk', JSON.stringify(appliedRiskData));
             // Handle the response (e.g., store the products in a variable or pass to the next page)
 
             if (this.formData.CompanyIncorporated === 'United Arab Emirates') {
@@ -388,10 +506,18 @@ onShareholderInput(event: any, index: number) {
             }
           },
           (error) => {
+            this.isLoading = false;
             console.error('API Error:', error);
             this.toastr.error('Failed to fetch products.', 'API Error');
           }
         );
+          },
+         (error) => {
+            console.error('Insert Economic Details API Error:', error);
+            this.toastr.error('Failed to submit economic details.', 'API Error');
+          }
+        );
+       
        
       }
     }
@@ -411,6 +537,23 @@ onShareholderInput(event: any, index: number) {
     }
     if (!this.formData.CompanyIncorporated) {
       missingFields.push('CompanyIncorporated');
+      isValid = false;
+    }
+
+     if(this.formData.CompanyIncorporated === "United Arab Emirates"){
+      if (!this.formData.Companylicensed) {
+      missingFields.push('Companylicensed');
+      isValid = false;
+    }
+    }
+
+       if (!this.formData.tradelicense) {
+      missingFields.push('tradelicense');
+      isValid = false;
+    }
+
+    if (!this.formData.shareholdercount) {
+      missingFields.push('shareholdercount');
       isValid = false;
     }
 

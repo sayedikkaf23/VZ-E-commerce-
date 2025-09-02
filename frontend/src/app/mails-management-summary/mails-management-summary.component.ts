@@ -51,14 +51,14 @@ export class MailsManagementSummaryComponent {
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
       window.scrollTo(0, 0);
-      const storedProductData = localStorage.getItem('MailServiceProducts');
+      const storedProductData = sessionStorage.getItem('MailServiceProducts');
       if (storedProductData) {
         const productData = JSON.parse(storedProductData);
         // If the data is an object, wrap it in an array
         this.serviceProducts = Array.isArray(productData) ? productData : [productData];
-        console.log("Retrieved Products from localStorage: ", this.serviceProducts);
+        console.log("Retrieved Products from sessionStorage: ", this.serviceProducts);
       } else {
-        console.log("No products found in localStorage.");
+        console.log("No products found in sessionStorage.");
       }
    
     }
@@ -66,39 +66,11 @@ export class MailsManagementSummaryComponent {
    
    
  
-      const mailform = localStorage.getItem('mailform');
-      const mailform2 = localStorage.getItem('mailform1');
-      const mailform3 = localStorage.getItem('mailform2');
+
    
  
-        this.personalInfo = mailform ? JSON.parse(mailform) : {};
-        this.companyInfo = JSON.parse(mailform2 || '{}');
-        this.tradeLicenseFile = mailform3 ? JSON.parse(mailform3) : {};
+       
  
-        const shareholdersFromMailform2 = this.companyInfo.shareholders || [];
-        const additionalShareholderInfo = mailform3 ? JSON.parse(mailform3) : { companyTradeLicense: '', shareholders: [] };
- 
-        const mergedShareholders = additionalShareholderInfo.shareholders.length > 0
-          ? additionalShareholderInfo.shareholders
-          : shareholdersFromMailform2;
- 
- 
- 
- 
- 
- 
-        const mergedData = {
-          ...this.personalInfo,
-          ...this.companyInfo,
-          companyTradeLicense: additionalShareholderInfo.companyTradeLicense,
-          shareholders: mergedShareholders,
-          ...this.tradeLicenseFile,
-        };
- 
-        localStorage.setItem('mergedData', JSON.stringify(mergedData));
-        this.displayShareholders = Array.isArray(mergedData.shareholders)
-          ? mergedData.shareholders
-          : Object.values(mergedData.shareholders || []);
    
   }
  
@@ -361,7 +333,7 @@ export class MailsManagementSummaryComponent {
    submitData() {
   this.isLoading = true;
 
-  const quotePaymentId = localStorage.getItem("quotePaymentId");
+  const quotePaymentId = sessionStorage.getItem("quotePaymentId");
 
   if (quotePaymentId) {
     this.callActivePaymentMethod(quotePaymentId);
@@ -373,7 +345,7 @@ export class MailsManagementSummaryComponent {
               localStorage.removeItem('finalDataMail');
               localStorage.removeItem('mailform1');
               localStorage.removeItem('mailform2');
-            localStorage.removeItem('quotePaymentId');
+            sessionStorage.removeItem('quotePaymentId');
 
   this.isLoading = false;
 }
@@ -449,6 +421,12 @@ export class MailsManagementSummaryComponent {
             () => Swal.fire('Error', 'Failed to redirect to TotalPay', 'error')
           );
           break;
+        case 'afs':
+           this.router.navigate(['/checkout', quotePaymentId]); // use the ID to navigat
+         break;
+
+
+
  
         default:
           Swal.fire('Error', 'Unsupported payment method', 'error');
