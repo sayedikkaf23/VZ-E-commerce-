@@ -178,7 +178,7 @@ exports.forgotPassword = async (req, res) => {
                     <table class="image_block" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation">
                       <tr>
                         <td style="padding-bottom: 20px; text-align: center;">
-                          <img src="assets/images/vz_logo.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
+                          <img src="https://res.cloudinary.com/dvekmmxxx/image/upload/v1756839845/vz-logo_kqzmzv.png" style="max-width: 183px; width: 100%; height: auto; border: 0;" alt="Virtuzone Logo">
                         </td>
                       </tr>
                     </table>
