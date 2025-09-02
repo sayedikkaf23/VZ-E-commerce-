@@ -133,6 +133,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       CustomerType,
       subcategory,
       LeadId,
+      subServiceName,
       AccountId,
       ContactId,
       ProductId,
@@ -241,58 +242,58 @@ if (errorText && !isDuplicate && !isConvertedLead) {
     totalPrice = subTotal;
 const salesPersonDetails = salesforceData?.salesPersonDetails || {};
 
-    const pidataDoc = await Pidata.create({
-      leadWithDetails: {
-        FirstName: firstName,
-        LastName: lastName,
-        Email: email,
-        Nationality: nationality,
-        Phone: cleanedPhone,
-        countryCode: countryCode,
-        Origin__c: "Website", // or whatever source you want
-        Status: "Created",
-        dob: dob,
- 
-        LeadId: salesforceResponse.data?.LeadId,
-      },
-      quotePaymentWithDetails: {
-        QuotePaymentId: salesforceResponse.data?.QuotePaymentId,
-      },
-      quoteWithProductDetails: {
-        quoteEmail: email,
-        quoteName: firstName + " " + lastName,
-        // QuotePaymentName: salesforceResponse.data?.QuotePaymentName,
-        quotePaymentId: salesforceResponse.data?.QuotePaymentId,
-        totalIncludingVAT: totalPrice,
-        subTotal: subTotal,
-        totalPrice: totalPrice,
-        product: req.body.prodcutNameList, // store the whole array
-      },
-     salesPersonDetails: {
-    salesPersonName: salesPersonDetails.salesPersonName || null,
-    salesPersonEmail: salesPersonDetails.salesPersonEmail || null,
-    salesPersonMobile: salesPersonDetails.salesPersonMobile || null,
+  
+const updateData = {
+  $set: {
+    leadWithDetails: {
+      FirstName: firstName,
+      LastName: lastName,
+      Email: email,
+      Nationality: nationality,
+      Phone: cleanedPhone,
+      countryCode: countryCode,
+      Origin__c: "Website",
+      Status: "Created",
+      dob: dob,
+      LeadId: salesforceResponse.data?.LeadId,
+    },
+    quotePaymentWithDetails: {
+      QuotePaymentId: salesforceResponse.data?.QuotePaymentId,
+    },
+    quoteWithProductDetails: {
+      quoteEmail: email,
+      quoteName: `${firstName} ${lastName}`,
+      quotePaymentId: salesforceResponse.data?.QuotePaymentId,
+      totalIncludingVAT: totalPrice,
+      subTotal: subTotal,
+      totalPrice: totalPrice,
+      product: req.body.prodcutNameList,
+    },
+    salesPersonDetails: {
+      salesPersonName: salesPersonDetails.salesPersonName || null,
+      salesPersonEmail: salesPersonDetails.salesPersonEmail || null,
+      salesPersonMobile: salesPersonDetails.salesPersonMobile || null,
+    },
+    accountId: salesforceResponse.data?.AccountId ?? null,
+    ContactId: salesforceResponse.data?.ContactId ?? null,
+    ProductId: ProductId,
+    shareholders,
+    tradeLicenseFile,
+    uploadedFileNames,
+    planname: type,
+    tradeLicenseNo,
+    tradeLicenseFileUrl,
+    subcategory: subcategory,
+    customerType: CustomerType,
   },
-      // salesforceResponseMatchScreening: {
+};
 
-      //   leadId:         sfResp.data?.LeadId         ?? null,
-        accountId:      salesforceResponse.data?.AccountId      ?? null,
-        // opportunityId:  salesforceResponse.data?.OpportunityId  ?? null,
-        ContactId:  salesforceResponse.data?.ContactId  ?? null,
-      //   quoteId:        sfResp.data?.QuoteId        ?? null,
-      //   quotePaymentId: sfResp.data?.QuotePaymentId ?? null,   // ← spelling fixed
-      //   message:        sfResp.data?.Message        ?? ''
-      // },
-      ProductId: ProductId,
-      shareholders,
-      tradeLicenseFile,
-      uploadedFileNames,
-      planname: type,
-           tradeLicenseNo,
-      tradeLicenseFileUrl,
-      subcategory: subcategory,
-      customerType: CustomerType,
-    });
+// find by a unique field (maybe QuotePaymentId or LeadId)
+const pidataDoc = await Pidata.findOneAndUpdate(
+  { "leadWithDetails.LeadId": LeadId }, 
+  updateData,
+  { new: true, upsert: true } // new = return updated, upsert = create if not exists
+);
 
 return res.status(200).json({
   salesforceResponse: salesforceResponse.data,

@@ -364,7 +364,7 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     } else if (planname === 'Mail Management') {
       return this.mailManagemnt.length ? this.mailManagemnt : ['Loading...'];
     } else if (planname === 'Bank Account Opening') {
-      if(subcategory === 'personal')
+      if(subcategory === 'Personal Bank Account Opening')
       return this.bankOpening.length ? this.bankOpening : ['Loading...'];
     else
     return this.businessBanks.length ? this.businessBanks : ['Loading...'];
