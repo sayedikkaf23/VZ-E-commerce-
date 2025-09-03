@@ -4152,7 +4152,7 @@ const sendSuccessEmail = async (req, res) => {
                 </p>
                 <div style="margin-top:30px; text-align:center;">
                   <a href="https://www.vz.ae" target="_blank">
-                    <img src="assets/images/vz_logo.png" width="180" style="border:0;" alt="Virtuzone Logo"/>
+                    <img src="https://res.cloudinary.com/dvekmmxxx/image/upload/v1756839845/vz-logo_kqzmzv.png" width="180" style="border:0;" alt="Virtuzone Logo"/>
                   </a>
                 </div>
               </td>
