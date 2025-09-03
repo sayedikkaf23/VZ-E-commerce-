@@ -346,6 +346,8 @@ export class MailsManagementSummaryComponent {
               localStorage.removeItem('mailform1');
               localStorage.removeItem('mailform2');
             sessionStorage.removeItem('quotePaymentId');
+            sessionStorage.removeItem('leadResponse');
+
 
   this.isLoading = false;
 }

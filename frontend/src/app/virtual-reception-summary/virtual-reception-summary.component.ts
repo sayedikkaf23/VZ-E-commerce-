@@ -351,6 +351,8 @@ export class VirtualReceptionSummaryComponent implements AfterViewInit {
               localStorage.removeItem('virtualdata1');
               localStorage.removeItem('virtualdata2');
               localStorage.removeItem('finalDataVirtual');
+              sessionStorage.removeItem('leadResponse');
+
   this.isLoading = false;
 }
  
