@@ -1,0 +1,273 @@
+
+
+.sidebar-row {
+    min-height: 100vh;
+}
+
+
+@media(max-width:991px){
+    .payment-schedule .schedule-list-box {
+        padding: 0;
+    }
+    .payment-schedule-list .item, .payment-schedule-list .total-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 15px;
+    }
+    .payment-schedule-list .price {
+        font-size: 14px;
+    }
+    .payment-schedule-list .price a {
+        font-size: 11px;
+        line-height: 22px;
+        padding: 0 11px;
+    }
+    .payment-schedule-list .total-item {
+        padding: 12px 15px;
+    }
+    .payment-schedule-head h3 {
+        font-size: 18px;
+    }
+    .payment-schedule .details-content .container {
+        padding: 0 30px;
+    }
+    .payment-schedule {
+        --sidebar-width: 290px;
+    }
+    .payment-option-head h3 {
+        font-size: 22px;
+    }
+    .payment-option-head {
+        padding-bottom: 30px;
+    }
+    .payment-option-list .wrp {
+        gap: 15px;
+    }
+    .payment-option-list .p-option-box {
+        padding: 15px;
+    }
+    .p-option-box .image img {
+        max-width: 200px;
+        height: 100px;
+        object-fit: contain;
+    }
+    .p-option-box h3 {
+        font-size: 20px;
+    }
+    .p-option-box p br{
+        display: none;
+    }
+    .p-option-box .btn {
+        margin-top: 15px;
+        line-height: 36px;
+        height: 36px;
+        font-size: 14px;
+    }
+    .payment-detail-head h3 {
+    font-size: 25px;
+    }
+    .payment-detail-head {
+        margin-bottom: 25px;
+    }
+    .payment-detail-head h3 {
+        font-size: 22px;
+    }
+    .payment-detail-list .wrp {
+    padding: 25px;
+}
+.payment-schedule .form-check .form-label {
+    font-size: 13px;
+}
+.payment-schedule .form-field {
+    margin-bottom: 16px;
+}
+}
+@media(max-width:767px){
+    .payment-schedule .detils-sidebar .price {
+        font-size: 22px;
+    }
+    .payment-schedule .detils-sidebar h2 {
+        font-size: 20px;
+    }
+    .payment-schedule .detils-sidebar{
+        position: static;
+        width: 100%;
+        text-align: center;
+    }
+    .payment-schedule .detils-sidebar p {
+        font-size: 13px;
+    }
+    .payment-schedule .sidebar-row {
+        min-height: unset;
+        padding: 20px 30px 20px;
+    }
+    body.payment-schedule {
+        padding-left: 0;
+       background-attachment: scroll;
+    }
+    .payment-schedule .sidebar-row .payment-schedule .contact-info-box {
+        margin-top: 33px;
+    }
+    .payment-schedule .sidebar-row .payment-schedule-head h6 b {
+        font-size: 13px;
+    }
+    .payment-schedule .sidebar-row .payment-schedule-head h3 {
+        font-size: 15px;
+    }
+    .payment-schedule .sidebar-row .payment-schedule-list .item h6 {
+        font-size: 14px;
+    }
+    .payment-schedule .sidebar-row .payment-schedule-list .price a {
+        font-size: 9px;
+        padding: 0 8px;
+        width: fit-content;
+        line-height: 19px;
+    }
+    .payment-schedule .schedule-list-box {
+        padding: 15px 15px;
+    }
+    .payment-schedule-list .price {
+        text-wrap: nowrap;
+    }
+    .payment-schedule .schedule-list-box {
+        padding: 15px 0px 25px;
+    }
+    body.payment-schedule .details-content .container {
+        max-width: 100%;
+        padding: 0 8px;
+    }
+    body.payment-schedule  .details-content {
+        padding: 0px 10px 0;
+        min-height: unset;
+        background: var(--light-primary);
+    }
+    .payment-schedule-list .item p {
+        font-size: 13px;
+    }
+    .payment-schedule-head  h6 {
+        font-size: 12px;
+    }
+    .payment-schedule .details-content {
+        flex-direction: column;
+    }
+    .payment-schedule .details-content .details-footer {
+        position: relative;
+        padding: 0px 15px 15px;
+        width: 100%;
+    }
+    .payment-schedule .details-footer ul {
+        font-size: 11px;
+        padding-top:20px;
+    }
+    .payment-schedule .details-footer ul li {
+        line-height: 12px;
+        padding-right: 10px;
+        margin-right: 10px;
+    }
+    html .payment-schedule .schedule-list-box  .form-check .form-check-label {
+        font-size: 12px;
+    }
+    .payment-schedule-list .price {
+        font-size: 12px;
+    }
+    .payment-schedule-list .total-item h5 {
+        font-size: 15px;
+        margin: 0;
+    }
+    .payment-schedule-head {
+        padding-bottom: 10px;
+    }   
+    html .payment-schedule .schedule-list-box .form-check .form-check-input {
+        background-color: #ffffff;
+        border: 1px solid #b9b9b9 !important;
+    }
+    .payment-schedule .detils-sidebar hr {
+        border-top: 1px solid var(--primary);
+    }
+    .payment-schedule .details-footer h2 {
+        text-align: center;
+        font-size: 15px;
+        margin-bottom: 5px;
+    }
+    .payment-schedule .details-footer hr {
+            border-top: 1px solid var(--primary);
+        margin: 10px 0 20px;
+        opacity: 1;
+    }
+    .payment-schedule .details-footer h3 {
+        text-align: center;
+        font-weight: normal;
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
+    .payment-schedule .details-footer p {
+        margin: 0;
+    }
+   .payment-schedule .details-footer h6 {
+        font-weight: 400;
+        font-size: 11px;
+        margin: 0;
+    }
+    .payment-schedule .details-footer h6 a{
+        color:inherit;
+    }
+    .payment-schedule .details-footer h6 a:hover{
+        color:var(--dark)
+    }
+    .payment-schedule .schedule-list-box .btn-wrp .btn {
+        height: 40px;
+        font-size: 15px;
+        padding: 0 24px;
+        line-height: 40px;
+        margin-top: 12px;
+    }
+    .payment-option-head h3 {
+    font-size: 18px;
+    max-width: 100%;
+    }
+    .payment-option-head {
+        padding-bottom: 20px;
+    }
+    .payment-option-list .wrp {
+        flex-direction: column;
+    }
+    .payment-schedule .payment-option-list-box {
+        padding: 15px 0px 25px;
+    }
+    .payment-option-list .p-option-box {
+        width: 80%;
+    }
+    .payment-detail-head h5 {
+        font-size: 15px;
+        margin-bottom: 4px;
+    }
+    .payment-detail-head {
+        margin-bottom: 15px;
+    }
+    .payment-schedule .form-control, .payment-schedule .form-select {
+        height: 44px;
+        padding: 0px 15px;
+        font-size: 14px;
+    }
+    .payment-schedule .form-field {
+        margin-bottom: 12px;
+    }
+    .payment-detail-list .btn {
+        line-height: 40px;
+        height: 40px;
+        font-size: 14px;
+    }
+    .payment-schedule .payment-detail-list-box {
+        padding: 15px 0px 25px;
+    }
+}
+
+
+
+
+
+
+
+
