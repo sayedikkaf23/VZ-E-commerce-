@@ -13,6 +13,7 @@ export class BankTransferSuccessComponent implements OnInit {
   quoteId: string = '';
 piData: any;
 type: string = '';
+private sentEmails: Set<string> = new Set();
   constructor(
     private onlinePaymentService: OnlinePaymentService,
     private route: ActivatedRoute,
@@ -41,12 +42,20 @@ type: string = '';
         null;
 
       if (email) {
+        if (this.sentEmails.has(quoteId)) {
+          console.log(`Email already sent for quoteId: ${quoteId}, skipping...`);
+          return;
+        }
+
         this.onlinePaymentService.sendSuccessEmail(email).subscribe({
-          next: (response) => console.log('Email sent:', response),
+          next: (response) => {
+            console.log('Email sent:', response);
+            this.sentEmails.add(quoteId); // ✅ Mark as sent
+          },
           error: (err) => console.error('Email failed:', err),
         });
       } else {
-        console.warn(' No email found in API response, skipping email send.');
+        console.warn('No email found in API response, skipping email send.');
       }
         if (this.type === 'manual') {
           this.piData = {
