@@ -144,26 +144,46 @@ closeCompanyModal() {
     // }
   
     /* 2️⃣  normalise every product so the template can stay the same */
-    this.selectedProducts = (quote.product || quote.products || []).map((p: { ProductQuantity: any; productQuantity: any; ProductUnitprice: any; productUnitPrice: any; ProductName: any; productName: any; }) => {
+    this.selectedProducts = (quote.product || quote.products || []).map((p: { ProductQuantity: any; productQuantity: any; ProductUnitprice: any; productUnitPrice: any; ProductName: any; productName: any; vat: any; ProductDiscount: any; productDiscount: any; }) => {
       const qty   = p.ProductQuantity  ?? p.productQuantity  ?? 1;
       const price = p.ProductUnitprice ?? p.productUnitPrice ?? 0;
+      const vat   = p.vat ?? 0;
+      const discount = p.ProductDiscount ?? p.productDiscount ?? 0;
+      const subtotal = qty * price;
+      const discountAmount = (subtotal * discount) / 100;
+      const afterDiscount = subtotal - discountAmount;
+      const vatAmount = (afterDiscount * vat) / 100;
+      const total = afterDiscount + vatAmount;
   
       return {
         productName:      p.ProductName      ?? p.productName      ?? '',
         productQuantity:  qty,
         productUnitPrice: price,
-        total:            qty * price
+        vat: vat,
+        discount: discount,
+        subtotal: subtotal,
+        discountAmount: discountAmount,
+        afterDiscount: afterDiscount,
+        vatAmount: vatAmount,
+        total: total
       };
     });
   
-    /* 3️⃣  expose totals for the modal footer */
+    /* 3️⃣  calculate totals from product data */
+    const subTotal = this.selectedProducts.reduce((sum, product) => sum + product.subtotal, 0);
+    const totalDiscount = this.selectedProducts.reduce((sum, product) => sum + product.discountAmount, 0);
+    const totalVAT = this.selectedProducts.reduce((sum, product) => sum + product.vatAmount, 0);
+    const totalIncludingVAT = this.selectedProducts.reduce((sum, product) => sum + product.total, 0);
+  
+    /* 4️⃣  expose totals for the modal footer */
     this.salesforceResponseMatchScreening = {
-      subTotal:           quote.subTotal            ?? 0,
-      totalIncludingVAT:  quote.totalIncludingVAT   ?? 0,
-      totalVAT:          (quote.totalIncludingVAT   ?? 0) - (quote.subTotal ?? 0)
+      subTotal: subTotal,
+      totalDiscount: totalDiscount,
+      totalVAT: totalVAT,
+      totalIncludingVAT: totalIncludingVAT
     };
   
-    /* 4️⃣  open the modal */
+    /* 5️⃣  open the modal */
     this.showProductModal = true;
   }
  

@@ -45,19 +45,21 @@ export class CustomerManagementComponent implements OnInit {
           }
         */
           
-            // 1) sort descending by createdAt
-              // 1) sort descending by createdAt, annotate a and b as any
-              this.userList = (response.data as any[])
-                .sort((a: any, b: any) =>
-                  new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-                );
-              // 2) then set up pagination
-              this.totalRecords = response.totalRecords;
-              this.totalPages   = response.totalPages;
-              this.currentPage  = page;
-            },
-            
-                       // Track the current page
+        // 1) sort descending by createdAt (newest first)
+        const sortedData = (response.data as any[])
+          .sort((a: any, b: any) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          );
+        
+        // 2) assign both userList & filteredUserList
+        this.userList = sortedData;
+        this.filteredUserList = [...sortedData];
+        
+        // 3) then set up pagination
+        this.totalRecords = response.totalRecords;
+        this.totalPages   = response.totalPages;
+        this.currentPage  = page;
+      },
       
       error: (err) => {
         console.error('Error fetching user details:', err);
@@ -107,21 +109,28 @@ export class CustomerManagementComponent implements OnInit {
     if (this.fromDate && this.toDate) {
       const fromDateObj = new Date(this.fromDate);
       const toDateObj = new Date(this.toDate);
- 
+
       // Adjust times to compare entire days
       fromDateObj.setHours(0, 0, 0, 0);
       toDateObj.setHours(23, 59, 59, 999);
- 
-      this.filteredUserList = this.userList.filter(user => {
-        const userDate = new Date(user.createdAt);
-        return userDate >= fromDateObj && userDate <= toDateObj;
-      });
- 
+
+      // Filter and maintain sorting (newest first)
+      this.filteredUserList = this.userList
+        .filter(user => {
+          const userDate = new Date(user.createdAt);
+          return userDate >= fromDateObj && userDate <= toDateObj;
+        })
+        .sort((a: any, b: any) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+
       this.currentPage = 1;
     } else {
       console.log("Please select both From and To dates.");
-      // Optionally reset filtered list to full list if needed
-      // this.filteredUserList = [...this.userList];
+      // Reset filtered list to full list with sorting
+      this.filteredUserList = [...this.userList].sort((a: any, b: any) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      );
     }
   }
  

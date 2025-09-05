@@ -57,7 +57,7 @@
           <td class="wrap">{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
           <td class="wrap">{{ client.leadWithDetails.Email }}</td>
           <td class="wrap">{{ client.leadWithDetails.Phone }}</td>
-          <td class="wrap">{{ client.quotePaymentWithDetails.QuotePaymentId }}</td>
+          <td class="wrap">{{ client.quoteWithProductDetails.quotePaymentId }}</td>
           <!-- <td>{{ client.userDetails?.EmploymentStatus || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.salary || 'N/A' }}</td> -->
           <!-- <td>{{ client.userDetails?.bankType || 'N/A' }}</td> -->
@@ -122,6 +122,11 @@
               <th>Product Name</th>
               <th>Quantity</th>
               <th>Unit Price</th>
+              <th>Subtotal</th>
+              <th>Discount (%)</th>
+              <th>After Discount</th>
+              <th>VAT (%)</th>
+              <th>VAT Amount</th>
               <th>Total Price</th>
             </tr>
           </thead>
@@ -129,19 +134,22 @@
             <tr *ngFor="let product of selectedProducts">
               <td class="wrap">{{ product.productName }}</td>
               <td class="wrap">{{ product.productQuantity }}</td>
-              <td class="wrap">{{ product.productUnitPrice }}</td>
-              <td class="wrap">{{  product.total || (product.productUnitPrice * (product.productQuantity || product.productQunatity))   | number:'1.0-2' }}</td>
+              <td class="wrap">{{ product.productUnitPrice | number:'1.0-2' }}</td>
+              <td class="wrap">{{ product.subtotal | number:'1.0-2' }}</td>
+              <td class="wrap">{{ product.discount }}%</td>
+              <td class="wrap">{{ product.afterDiscount | number:'1.0-2' }}</td>
+              <td class="wrap">{{ product.vat }}%</td>
+              <td class="wrap">{{ product.vatAmount | number:'1.0-2' }}</td>
+              <td class="wrap">{{ product.total | number:'1.0-2' }}</td>
             </tr>
           </tbody>
         </table>
       </div>
       <div class="modal-footer">
-        <p>Total Amount: <strong style="font-weight: bold; color: rgb(235, 55, 55);margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.subTotal | number:'1.0-2' }}</strong></p>
-        <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;"> {{
-          (salesforceResponseMatchScreening?.totalIncludingVAT -
-           salesforceResponseMatchScreening?.subTotal) | number:'1.0-2'
-        }}</strong></p>
-        <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">  {{ salesforceResponseMatchScreening?.totalIncludingVAT | number:'1.0-2' }} </strong></p>
+        <p>Subtotal: <strong style="font-weight: bold; color: rgb(235, 55, 55);margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.subTotal | number:'1.0-2' }}</strong></p>
+        <p *ngIf="salesforceResponseMatchScreening?.totalDiscount > 0">Total Discount: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalDiscount | number:'1.0-2' }}</strong></p>
+        <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalVAT | number:'1.0-2' }}</strong></p>
+        <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalIncludingVAT | number:'1.0-2' }}</strong></p>
       </div>
     </div>
   </div>

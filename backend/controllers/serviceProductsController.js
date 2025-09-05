@@ -445,6 +445,7 @@ exports.createLeadOnly = async (req, res) => {
       // shareholdersfiles,
       // shareholders,
     } = req.body;
+    console.log("req.body",req.body)
 
     if (!firstName || !lastName || !email || !nationality || !phone || !dob) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -578,43 +579,58 @@ exports.insertEconomicDetails = async (req, res) => {
       uploadedFileNames
     } = req.body;
 
-    // Construct the payload dynamically, excluding null or undefined fields
+    // Debug logging for companyName
+    console.log("CompanyName in request body:", companyName);
+    console.log("CompanyName field exists:", req.body.hasOwnProperty('companyName'));
+    console.log("CompanyName isValidValue:", companyName !== null && companyName !== undefined && companyName !== '');
+
+    // Helper function to check if a value is valid (not null, undefined, or empty string)
+    const isValidValue = (value) => {
+      return value !== null && value !== undefined && value !== '';
+    };
+
+    // Helper function to check if a field exists in the request body
+    const fieldExists = (field) => {
+      return req.body.hasOwnProperty(field);
+    };
+
+    // Construct the payload dynamically, only including fields that exist in the request body
     const payload = {};
 
-    if (leadId) payload.leadId = leadId;
-    if (accountId) payload.accountId = accountId;
-    if (serviceName) payload.serviceName = serviceName;
-    if (subServiceName) payload.subServiceName = subServiceName;
-    if (firstName) payload.FirstName = firstName;
-    if (lastName) payload.LastName = lastName;
-    if (email) payload.Email = email;
-    if (countryCode) payload.countryCode = countryCode;
-    if (nationality) payload.Nationality = nationality;
-    if (phone) payload.Phone = phone;
-    if (dob) payload.dob = dob;
-    if (companyLocationUAE) payload.companyLocationUAE = companyLocationUAE;
-    if (employmentType) payload.employmentType = employmentType;
-    if (companyName) payload.companyName = companyName;
-     if (economicDetailId) payload.economicDetailId = economicDetailId;
-     else payload.economicDetailId = '';
-    if (salary) payload.salary = salary;
-    if (bankType) payload.bankType = bankType;
-    if (companyLicensed) payload.companyLicensed = companyLicensed;
-    if (activityType) payload.activityType = activityType;
-    if (totalShareholders) payload.totalShareholders = totalShareholders;
-    if (companyTurnover) payload.companyTurnover = companyTurnover;
-    if (companyLocation) payload.companyLocation = companyLocation;
-    if (companyWebsite) payload.companyWebsite = companyWebsite;
-    if (tradeLicenseNo) payload.tradeLicenseNo = tradeLicenseNo;
-    if (shareholderfilesnumber)
+    if (fieldExists('leadId') && isValidValue(leadId)) payload.leadId = leadId;
+    if (fieldExists('accountId') && isValidValue(accountId)) payload.accountId = accountId;
+    if (fieldExists('serviceName') && isValidValue(serviceName)) payload.serviceName = serviceName;
+    if (fieldExists('subServiceName') && isValidValue(subServiceName)) payload.subServiceName = subServiceName;
+    if (fieldExists('firstName') && isValidValue(firstName)) payload.FirstName = firstName;
+    if (fieldExists('lastName') && isValidValue(lastName)) payload.LastName = lastName;
+    if (fieldExists('email') && isValidValue(email)) payload.Email = email;
+    if (fieldExists('countryCode') && isValidValue(countryCode)) payload.countryCode = countryCode;
+    if (fieldExists('nationality') && isValidValue(nationality)) payload.Nationality = nationality;
+    if (fieldExists('phone') && isValidValue(phone)) payload.Phone = phone;
+    if (fieldExists('dob') && isValidValue(dob)) payload.dob = dob;
+    if (fieldExists('companyLocationUAE') && isValidValue(companyLocationUAE)) payload.companyLocationUAE = companyLocationUAE;
+    if (fieldExists('employmentType') && isValidValue(employmentType)) payload.employmentType = employmentType;
+    // Always include companyName if it exists in request body, even if empty
+    if (fieldExists('companyName')) payload.companyName = companyName;
+    if (fieldExists('economicDetailId') && isValidValue(economicDetailId)) payload.economicDetailId = economicDetailId;
+    if (fieldExists('salary') && isValidValue(salary)) payload.salary = salary;
+    if (fieldExists('bankType') && isValidValue(bankType)) payload.bankType = bankType;
+    if (fieldExists('companyLicensed') && isValidValue(companyLicensed)) payload.companyLicensed = companyLicensed;
+    if (fieldExists('activityType') && isValidValue(activityType)) payload.activityType = activityType;
+    if (fieldExists('totalShareholders') && isValidValue(totalShareholders)) payload.totalShareholders = totalShareholders;
+    if (fieldExists('companyTurnover') && isValidValue(companyTurnover)) payload.companyTurnover = companyTurnover;
+    if (fieldExists('companyLocation') && isValidValue(companyLocation)) payload.companyLocation = companyLocation;
+    if (fieldExists('companyWebsite') && isValidValue(companyWebsite)) payload.companyWebsite = companyWebsite;
+    if (fieldExists('tradeLicenseNo') && isValidValue(tradeLicenseNo)) payload.tradeLicenseNo = tradeLicenseNo;
+    if (fieldExists('shareholderfilesnumber') && isValidValue(shareholderfilesnumber))
       payload.shareholderfilesnumber = shareholderfilesnumber;
-    if (tradeLicenseFile && Array.isArray(tradeLicenseFile))
+    if (fieldExists('tradeLicenseFile') && tradeLicenseFile && Array.isArray(tradeLicenseFile))
       payload.tradeLicenseFile = tradeLicenseFileUrl;
-    if (uploadedFileNames && Array.isArray(uploadedFileNames))
+    if (fieldExists('uploadedFileNames') && uploadedFileNames && Array.isArray(uploadedFileNames))
       payload.uploadedFileNames = uploadedFileNames;
-    if (tradeLicenseFileUrl) payload.tradeLicenseFileUrl = tradeLicenseFileUrl;
-    if (shareholdersfiles) payload.shareholdersfiles = shareholdersfiles;
-    if (shareholders && Array.isArray(shareholders))
+    if (fieldExists('tradeLicenseFileUrl') && isValidValue(tradeLicenseFileUrl)) payload.tradeLicenseFileUrl = tradeLicenseFileUrl;
+    if (fieldExists('shareholdersfiles') && isValidValue(shareholdersfiles)) payload.shareholdersfiles = shareholdersfiles;
+    if (fieldExists('shareholders') && shareholders && Array.isArray(shareholders))
       payload.shareholders = shareholders;
 
     console.log("Payload before sending to Salesforce:", payload);
@@ -658,43 +674,47 @@ exports.insertEconomicDetails = async (req, res) => {
 
     // Prepare the data for your local database (Pidata, etc.)
     const economicData = {
-      leadWithDetails: {
-        LeadId: leadId,
-
-        ServiceName: serviceName,
-        subServiceName,
-        FirstName: firstName,
-        LastName: lastName,
-        Email: email,
-        Nationality: nationality,
-        Phone: phone,
-        countryCode,
-        dob,
-        companyLocationUAE,
-        employmentType,
-        Company: companyName,
-        salary,
-        bankType,
-        companyLicensed,
-        activityType,
-        totalShareholders,
-        companyTurnover,
-        companyLocation,
-        companyWebsite,
-      },
-      quotePaymentWithDetails: {
-        AccountId: accountId,
-      },
-      economicDetailId : economicDetailsResp.data?.economicDetailId,
-      subcategory: subServiceName,
-      tradeLicenseFileUrl,
-      tradeLicenseFile,
-      shareholdersfiles,
-      shareholders,
-      uploadedFileNames,
-      tradeLicenseNo,
-      shareholderfilesnumber,
+      leadWithDetails: {},
+      quotePaymentWithDetails: {},
     };
+
+    // Only add fields to leadWithDetails if they exist in the request body and have valid values
+    if (fieldExists('leadId') && isValidValue(leadId)) economicData.leadWithDetails.LeadId = leadId;
+    if (fieldExists('serviceName') && isValidValue(serviceName)) economicData.leadWithDetails.ServiceName = serviceName;
+    if (fieldExists('subServiceName') && isValidValue(subServiceName)) economicData.leadWithDetails.subServiceName = subServiceName;
+    if (fieldExists('firstName') && isValidValue(firstName)) economicData.leadWithDetails.FirstName = firstName;
+    if (fieldExists('lastName') && isValidValue(lastName)) economicData.leadWithDetails.LastName = lastName;
+    if (fieldExists('email') && isValidValue(email)) economicData.leadWithDetails.Email = email;
+    if (fieldExists('nationality') && isValidValue(nationality)) economicData.leadWithDetails.Nationality = nationality;
+    if (fieldExists('phone') && isValidValue(phone)) economicData.leadWithDetails.Phone = phone;
+    if (fieldExists('countryCode') && isValidValue(countryCode)) economicData.leadWithDetails.countryCode = countryCode;
+    if (fieldExists('dob') && isValidValue(dob)) economicData.leadWithDetails.dob = dob;
+    if (fieldExists('companyLocationUAE') && isValidValue(companyLocationUAE)) economicData.leadWithDetails.companyLocationUAE = companyLocationUAE;
+    if (fieldExists('employmentType') && isValidValue(employmentType)) economicData.leadWithDetails.employmentType = employmentType;
+    // Always include companyName if it exists in request body, even if empty
+    if (fieldExists('companyName')) economicData.leadWithDetails.Company = companyName;
+    if (fieldExists('salary') && isValidValue(salary)) economicData.leadWithDetails.salary = salary;
+    if (fieldExists('bankType') && isValidValue(bankType)) economicData.leadWithDetails.bankType = bankType;
+    if (fieldExists('companyLicensed') && isValidValue(companyLicensed)) economicData.leadWithDetails.companyLicensed = companyLicensed;
+    if (fieldExists('activityType') && isValidValue(activityType)) economicData.leadWithDetails.activityType = activityType;
+    if (fieldExists('totalShareholders') && isValidValue(totalShareholders)) economicData.leadWithDetails.totalShareholders = totalShareholders;
+    if (fieldExists('companyTurnover') && isValidValue(companyTurnover)) economicData.leadWithDetails.companyTurnover = companyTurnover;
+    if (fieldExists('companyLocation') && isValidValue(companyLocation)) economicData.leadWithDetails.companyLocation = companyLocation;
+    if (fieldExists('companyWebsite') && isValidValue(companyWebsite)) economicData.leadWithDetails.companyWebsite = companyWebsite;
+
+    // Only add AccountId if it exists in the request body and has a valid value
+    if (fieldExists('accountId') && isValidValue(accountId)) economicData.quotePaymentWithDetails.AccountId = accountId;
+
+    // Add other fields only if they exist in the request body and have valid values
+    if (economicDetailsResp.data?.economicDetailId) economicData.economicDetailId = economicDetailsResp.data.economicDetailId;
+    if (fieldExists('subServiceName') && isValidValue(subServiceName)) economicData.subcategory = subServiceName;
+    if (fieldExists('tradeLicenseFileUrl') && isValidValue(tradeLicenseFileUrl)) economicData.tradeLicenseFileUrl = tradeLicenseFileUrl;
+    if (fieldExists('tradeLicenseFile') && tradeLicenseFile) economicData.tradeLicenseFile = tradeLicenseFile;
+    if (fieldExists('shareholdersfiles') && isValidValue(shareholdersfiles)) economicData.shareholdersfiles = shareholdersfiles;
+    if (fieldExists('shareholders') && shareholders) economicData.shareholders = shareholders;
+    if (fieldExists('uploadedFileNames') && uploadedFileNames) economicData.uploadedFileNames = uploadedFileNames;
+    if (fieldExists('tradeLicenseNo') && isValidValue(tradeLicenseNo)) economicData.tradeLicenseNo = tradeLicenseNo;
+    if (fieldExists('shareholderfilesnumber') && isValidValue(shareholderfilesnumber)) economicData.shareholderfilesnumber = shareholderfilesnumber;
 
     // Step 3: Save the data to Pidata (or another local database)
     const pidataDoc = await Pidata.findOneAndUpdate(

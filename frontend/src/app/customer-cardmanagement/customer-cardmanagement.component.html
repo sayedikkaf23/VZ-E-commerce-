@@ -583,11 +583,10 @@
                 <tr *ngFor="let product of selectedRecord?.quoteWithProductDetails?.product">
                   <td data-title="Product">{{ product.ProductName }}</td>
                   <td data-title="Quantity">{{ product.ProductQuantity || product.productQunatity }}</td>
-                  <td data-title="Unit Price">AED {{ product.ProductUnitprice }}</td>
-                  <td data-title="Taxable Amount">AED {{ product.taxableAmount || 0 }}</td>
-                  <td data-title="VAT">AED {{ product.VAT || 0 }}</td>
-                  <td data-title="Total">AED {{ product.Total || (product.ProductUnitprice * (product.ProductQuantity ||
-                    product.productQunatity)) }}</td>
+                  <td data-title="Unit Price">AED {{ product.ProductUnitprice | number: '1.2-2' }}</td>
+                  <td data-title="Taxable Amount">AED {{ product.calculatedSubtotal | number: '1.2-2' }}</td>
+                  <td data-title="VAT">AED {{ product.calculatedVAT | number: '1.2-2' }}</td>
+                  <td data-title="Total">AED {{ product.calculatedTotal | number: '1.2-2' }}</td>
                 </tr>
               </tbody>
             </table>
@@ -595,16 +594,15 @@
           <ul class="service_total">
             <li>
               <p>Grand Total Without VAT:</p>
-              <b>AED {{ selectedRecord?.quoteWithProductDetails?.subTotal | number: '1.2-2' }}</b>
+              <b>AED {{ selectedRecord?.calculatedSubTotal | number: '1.2-2' }}</b>
             </li>
             <li>
               <p>VAT:</p>
-              <b>AED {{ selectedRecord?.quoteWithProductDetails?.totalIncludingVAT -
-                selectedRecord?.quoteWithProductDetails?.subTotal | number: '1.2-2' }}</b>
+              <b>AED {{ selectedRecord?.calculatedVAT | number: '1.2-2' }}</b>
             </li>
             <li class="total">
               <b>Total Including VAT:</b>
-              <b class="price">AED {{ selectedRecord?.quoteWithProductDetails?.totalPrice | number: '1.2-2' }}</b>
+              <b class="price">AED {{ selectedRecord?.calculatedTotalIncludingVAT | number: '1.2-2' }}</b>
             </li>
           </ul>
         </div>

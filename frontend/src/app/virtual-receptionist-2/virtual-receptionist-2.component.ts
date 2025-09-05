@@ -89,7 +89,7 @@ export class VirtualReceptionist2Component implements OnInit {
 
             this.tradeLicenseFile = tradeData.tradeLicenseFile || {};
       this.shareholdersData = tradeData.shareholders || [];
-      // You’d need to map per shareholder
+      // You'd need to map per shareholder
 this.uploadedFileNames = (tradeData.shareholders || []).map((s: any) => s.files || []);
 
 
@@ -103,6 +103,10 @@ this.uploadedFileNames = (tradeData.shareholders || []).map((s: any) => s.files 
         this.companyTradeLicenseFile = tradeData.tradeLicenseFile || [];
         this.formData.get('companyTradeLicenseFile')?.setValue(tradeData.tradeLicenseFile[0].name);
       }
+      
+      console.log("Trade License File Data:", this.companyTradeLicenseFile);
+      console.log("Shareholders Data:", this.shareholdersData);
+      console.log("Uploaded File Names:", this.uploadedFileNames);
 
           // Initialize shareholders form array
           this.initializeShareholders();
@@ -360,7 +364,9 @@ this.uploadedFileNames = (tradeData.shareholders || []).map((s: any) => s.files 
             })),
 
           };
-            console.log(insertPayload);
+            console.log("Virtual Receptionist Insert Payload:", insertPayload);
+            console.log("Trade License File in Payload:", insertPayload.tradeLicenseFile);
+            console.log("Trade License File URL in Payload:", insertPayload.tradeLicenseFileUrl);
            this.isLoading = true;
           this.userService.insertEconomicDetails(insertPayload).subscribe(
           (response) => {

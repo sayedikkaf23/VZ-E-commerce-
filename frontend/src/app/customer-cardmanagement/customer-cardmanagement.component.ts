@@ -303,23 +303,35 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
       ...(record.salesforceResponseMatchScreening?.products || []),
     ];
 
-    // Calculate totals
-    const subTotal = this.selectedRecord.combinedProducts.reduce(
-      (sum: number, product: any) => {
-        const quantity =
-          product.productQuantity || product.productQunatity || 0;
-        const unitPrice = product.productUnitPrice || 0;
-        return sum + quantity * unitPrice;
-      },
-      0
-    );
+    // Calculate VAT and totals for each product
+    let totalSubTotal = 0;
+    let totalVAT = 0;
+    let totalIncludingVAT = 0;
 
-    const vat = subTotal * 0.05; // Assuming VAT is 5%
-    const totalIncludingVAT = subTotal + vat;
+    // Process each product in quoteWithProductDetails
+    if (this.selectedRecord.quoteWithProductDetails?.product) {
+      this.selectedRecord.quoteWithProductDetails.product.forEach((product: any) => {
+        const quantity = product.ProductQuantity || product.productQunatity || 0;
+        const unitPrice = product.ProductUnitprice || 0;
+        const subtotal = quantity * unitPrice;
+        const vatRate = product.vat || 5; // Default to 5% if not specified
+        const vatAmount = (subtotal * vatRate) / 100;
+        const total = subtotal + vatAmount;
+
+        // Add calculated values to product
+        product.calculatedSubtotal = subtotal;
+        product.calculatedVAT = vatAmount;
+        product.calculatedTotal = total;
+
+        totalSubTotal += subtotal;
+        totalVAT += vatAmount;
+        totalIncludingVAT += total;
+      });
+    }
 
     // Set calculated values
-    this.selectedRecord.calculatedSubTotal = subTotal;
-    this.selectedRecord.calculatedVAT = vat;
+    this.selectedRecord.calculatedSubTotal = totalSubTotal;
+    this.selectedRecord.calculatedVAT = totalVAT;
     this.selectedRecord.calculatedTotalIncludingVAT = totalIncludingVAT;
 
     console.log(this.selectedRecord);
@@ -341,8 +353,8 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
 
     // Dynamically set dropdown options based on the record's planname (if needed)
     this.documentTypeOptions = this.getOptions(
-      record.planname,
-      record.subcategory
+      record.leadWithDetails.ServiceName,
+      record.leadWithDetails.subServiceName
     );
 
     // Show the modal (if not using Bootstrap, use your own implementation)
@@ -381,13 +393,31 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
 
   openShareholderModal(shareholders: any[], addAdditionalFile: any[], uploadedFileNames: any[], record: any, tradeLicenseFile: any[]): void {
     this.selectedRecord = record; 
-    this.shareholders = shareholders;
-    this.selectedShareholders = shareholders.map(shareholder => shareholder.files);
+    
+    // Filter out empty shareholders (no name, percentage, or dob)
+    const validShareholders = shareholders.filter(shareholder => 
+      shareholder.name && 
+      shareholder.name.trim() !== '' && 
+      (shareholder.shareholderPercentage !== null && shareholder.shareholderPercentage !== undefined) &&
+      shareholder.dob
+    );
+    
+    this.shareholders = validShareholders;
+    this.selectedShareholders = validShareholders.map(shareholder => shareholder.files);
     this.selectedaddAdditionalFile = addAdditionalFile;
     this.uploadedFileNames = uploadedFileNames;
+    
+    // Flatten shareholder files and remove duplicates
     const shareholderFile = this.selectedShareholders.flat();
-    this.combinedFiles = [...(this.selectedaddAdditionalFile || []), ...(shareholderFile || []), ...(tradeLicenseFile || [])];
-    console.log("shareholders-",shareholderFile);
+    const allFiles = [...(this.selectedaddAdditionalFile || []), ...(shareholderFile || []), ...(tradeLicenseFile || [])];
+    
+    // Remove duplicate files based on URL
+    this.combinedFiles = allFiles.filter((file, index, self) => 
+      index === self.findIndex(f => f.url === file.url)
+    );
+    
+    console.log("valid shareholders-", validShareholders);
+    console.log("combined files-", this.combinedFiles);
     this.showModal = true;
   }
 
@@ -499,12 +529,17 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
       filesArray.filter((file) => file.url !== fileToRemove.url)
     );
   
-    // Re-combine files for UI
+    // Re-combine files for UI and remove duplicates
     const shareholderFile = this.selectedShareholders.flat();
-    this.combinedFiles = [
+    const allFiles = [
       ...(this.selectedaddAdditionalFile || []),
       ...(shareholderFile || []),
     ];
+    
+    // Remove duplicate files based on URL
+    this.combinedFiles = allFiles.filter((file, index, self) => 
+      index === self.findIndex(f => f.url === file.url)
+    );
   
     // Call API to update backend after deletion
     this.updateUserFilesOnBackend();
@@ -599,7 +634,7 @@ const additionalShareholderWithFile = {
         accountId: getValue(record.accountId),
         economicDetailId: getValue(record._id),
         serviceName: getValue(lead.ServiceName),
-        subServiceName: getValue(record.planname),
+        subServiceName: getValue(lead.subServiceName),
         firstName: getValue(lead.FirstName),
         lastName: getValue(lead.LastName),
         email: getValue(lead.Email),

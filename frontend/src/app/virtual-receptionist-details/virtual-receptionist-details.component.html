@@ -98,20 +98,22 @@
                   <tr><th>Trade License Number</th><th>File</th></tr>
                 </thead>
                 <tbody>
-                 
-                    <tr>
-                      <td>{{ tradeLicenseFile.tradeLicenseNo }}</td>
-                      <td>
-                        <ul>
-                          <li>
-                            <a  [href]="tradeLicenseFile.tradeLicenseFileUrl"
-                 target="_blank" rel="noopener noreferrer">View File</a>
-
-                          </li>
-                        </ul>
-                      </td>
-                    </tr>
-               
+                  <tr *ngIf="tradeLicenseFile.tradeLicenseNo || tradeLicenseFileurl">
+                    <td>{{ tradeLicenseFile.tradeLicenseNo || 'N/A' }}</td>
+                    <td>
+                      <ul *ngIf="tradeLicenseFileurl">
+                        <li>
+                          <a [href]="tradeLicenseFileurl" target="_blank" rel="noopener noreferrer">
+                            View Trade License File
+                          </a>
+                        </li>
+                      </ul>
+                      <span *ngIf="!tradeLicenseFileurl">No file uploaded</span>
+                    </td>
+                  </tr>
+                  <tr *ngIf="!tradeLicenseFile.tradeLicenseNo && !tradeLicenseFileurl">
+                    <td colspan="2" class="text-center">No trade license data available</td>
+                  </tr>
                 </tbody>
               </table>
             </div>

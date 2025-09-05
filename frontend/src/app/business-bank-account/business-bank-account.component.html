@@ -62,7 +62,7 @@
             <td>{{ user.leadWithDetails.Email }}</td>
             <!-- <td>{{ user.quoteWithProductDetails?.status }}</td> -->
             <!-- <td>{{ user.userDetails.Turnover }}</td> -->
-            <td>{{ user.quotePaymentWithDetails.QuotePaymentId }}</td>
+            <td>{{ user.quoteWithProductDetails?.quotePaymentId }}</td>
  
             <!-- <td>{{ user.salesPersonDetails?.salesPersonName }}</td> -->
             <td>{{ user.screeningDetails?.matchScore }}</td>
@@ -99,6 +99,11 @@
                 <th>Product Name</th>
                 <th>Quantity</th>
                 <th>Unit Price</th>
+                <th>Subtotal</th>
+                <th>Discount (%)</th>
+                <th>After Discount</th>
+                <th>VAT (%)</th>
+                <th>VAT Amount</th>
                 <th>Total Price</th>
               </tr>
             </thead>
@@ -106,19 +111,22 @@
               <tr *ngFor="let product of selectedProducts">
                 <td>{{ product.productName }}</td>
                 <td>{{ product.productQuantity }}</td>
-                <td>{{ product.productUnitPrice }}</td>
-                <td>{{  product.total || (product.productUnitPrice * (product.productQuantity || product.productQunatity))   | number:'1.0-2' }}</td>
+                <td>{{ product.productUnitPrice | number:'1.0-2' }}</td>
+                <td>{{ product.subtotal | number:'1.0-2' }}</td>
+                <td>{{ product.discount }}%</td>
+                <td>{{ product.afterDiscount | number:'1.0-2' }}</td>
+                <td>{{ product.vat }}%</td>
+                <td>{{ product.vatAmount | number:'1.0-2' }}</td>
+                <td>{{ product.total | number:'1.0-2' }}</td>
               </tr>
             </tbody>
           </table>
         </div>
         <div class="modal-footer">
-          <p>Total Amount: <strong style="font-weight: bold; color: rgb(235, 55, 55);margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.subTotal | number:'1.0-2' }}</strong></p>
-          <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;"> {{
-            (salesforceResponseMatchScreening?.totalIncludingVAT -
-             salesforceResponseMatchScreening?.subTotal) | number:'1.0-2'
-          }}</strong></p>
-          <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">  {{ salesforceResponseMatchScreening?.totalIncludingVAT | number:'1.0-2' }} </strong></p>
+          <p>Subtotal: <strong style="font-weight: bold; color: rgb(235, 55, 55);margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.subTotal | number:'1.0-2' }}</strong></p>
+          <p *ngIf="salesforceResponseMatchScreening?.totalDiscount > 0">Total Discount: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalDiscount | number:'1.0-2' }}</strong></p>
+          <p>Total VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalVAT | number:'1.0-2' }}</strong></p>
+          <p>Total Including VAT: <strong style="font-weight: bold; color: rgb(235, 55, 55); margin: 0px 10px 0px 5px;">{{ salesforceResponseMatchScreening?.totalIncludingVAT | number:'1.0-2' }}</strong></p>
         </div>
       </div>
     </div>

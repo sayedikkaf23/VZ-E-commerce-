@@ -90,23 +90,34 @@ if(!personalInfo.Company){
           this.userService.getTradeLicenseAndShareholders(leadId).subscribe({
             next: (tradeData: any) => {
               this.tradeLicenseFile = tradeData || {};
-console.log("Trade License Data:", tradeData);
+              console.log("Trade License Data:", tradeData);
+              
               this.shareholders = tradeData.shareholders || []; 
-               this.tradeLicenseFile = tradeData || {};
-             this.uploadedFiles = tradeData.uploadedFileNames || [];
-            // Save shareholders
-            this.shareholders = Array.isArray(tradeData.shareholders) ? tradeData.shareholders : [];
+              this.uploadedFiles = tradeData.uploadedFileNames || [];
+              
+              // Save shareholders
+              this.shareholders = Array.isArray(tradeData.shareholders) ? tradeData.shareholders : [];
 
-            // Default to first 5 shareholders
-            this.displayShareholders = this.shareholders.slice(0, 5);
+              // Default to first 5 shareholders
+              this.displayShareholders = this.shareholders.slice(0, 5);
 
-            // Trade license file URL
-            this.tradeLicenseFileurl = Array.isArray(tradeData.companyTradeLicenseFile) && tradeData.companyTradeLicenseFile.length > 0
-              ? tradeData.companyTradeLicenseFile[0].url
-              : '';
+              // Trade license file URL - handle different data structures
+              if (Array.isArray(tradeData.companyTradeLicenseFile) && tradeData.companyTradeLicenseFile.length > 0) {
+                this.tradeLicenseFileurl = tradeData.companyTradeLicenseFile[0].url;
+              } else if (tradeData.tradeLicenseFileUrl) {
+                this.tradeLicenseFileurl = tradeData.tradeLicenseFileUrl;
+              } else if (Array.isArray(tradeData.tradeLicenseFile) && tradeData.tradeLicenseFile.length > 0) {
+                this.tradeLicenseFileurl = tradeData.tradeLicenseFile[0].url;
+              } else {
+                this.tradeLicenseFileurl = '';
+              }
+              
+              console.log("Trade License Data Structure:", tradeData);
+              console.log("Trade License File URL:", this.tradeLicenseFileurl);
+              console.log("Trade License File Object:", this.tradeLicenseFile);
 
-            this.cdRef.detectChanges();
-            
+              this.cdRef.detectChanges();
+              
             },
             error: (err:any) => {
               console.error('Failed to load trade license data:', err);
