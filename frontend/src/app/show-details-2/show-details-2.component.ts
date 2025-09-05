@@ -223,6 +223,8 @@ submitPaymentOpportunity() {
             localStorage.removeItem('mailform2');
             localStorage.removeItem('finalData');
             localStorage.removeItem('quotePaymentId');
+            sessionStorage.removeItem('leadResponse');
+
   this.isLoading = false;
 }
 
