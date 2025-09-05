@@ -717,12 +717,35 @@ exports.insertEconomicDetails = async (req, res) => {
     if (fieldExists('shareholderfilesnumber') && isValidValue(shareholderfilesnumber)) economicData.shareholderfilesnumber = shareholderfilesnumber;
 
     // Step 3: Save the data to Pidata (or another local database)
+    // Only update fields that have valid values to preserve existing data
+    const updateFields = {};
+    
+    // Build update object with only valid fields
+    if (economicData.leadWithDetails && Object.keys(economicData.leadWithDetails).length > 0) {
+      Object.keys(economicData.leadWithDetails).forEach(key => {
+        updateFields[`leadWithDetails.${key}`] = economicData.leadWithDetails[key];
+      });
+    }
+    
+    if (economicData.quotePaymentWithDetails && Object.keys(economicData.quotePaymentWithDetails).length > 0) {
+      Object.keys(economicData.quotePaymentWithDetails).forEach(key => {
+        updateFields[`quotePaymentWithDetails.${key}`] = economicData.quotePaymentWithDetails[key];
+      });
+    }
+    
+    // Add other top-level fields
+    Object.keys(economicData).forEach(key => {
+      if (key !== 'leadWithDetails' && key !== 'quotePaymentWithDetails' && economicData[key] !== undefined) {
+        updateFields[key] = economicData[key];
+      }
+    });
+    
+    console.log("Update fields for database:", updateFields);
+    
     const pidataDoc = await Pidata.findOneAndUpdate(
       { "leadWithDetails.LeadId": leadId },
       {
-        $set: {
-          ...economicData,
-        },
+        $set: updateFields,
       },
       { upsert: true, new: true }
     );

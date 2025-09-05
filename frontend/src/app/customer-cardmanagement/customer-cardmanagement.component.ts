@@ -514,31 +514,26 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
   }
 
   deleteFile(fileToRemove: any): void {
-    // Remove from additionalUploadedFiles
+    console.log('Deleting file:', fileToRemove);
+    console.log('Before deletion - combinedFiles count:', this.combinedFiles.length);
+
+    // First, remove from combinedFiles (UI) immediately to show only 1 file being removed
+    this.combinedFiles = this.combinedFiles.filter(
+      (file) => file.url !== fileToRemove.url
+    );
+    console.log('After UI deletion - combinedFiles count:', this.combinedFiles.length);
+
+    // Then remove from backend arrays
     this.selectedaddAdditionalFile = this.selectedaddAdditionalFile.filter(
       (file) => file.url !== fileToRemove.url
     );
   
-    // Remove from uploadedFileNames
     this.uploadedFileNames = this.uploadedFileNames.filter(
       (file) => file.url !== fileToRemove.url
     );
   
-    // Remove from shareholders.files
     this.selectedShareholders = this.selectedShareholders.map((filesArray: any[]) =>
       filesArray.filter((file) => file.url !== fileToRemove.url)
-    );
-  
-    // Re-combine files for UI and remove duplicates
-    const shareholderFile = this.selectedShareholders.flat();
-    const allFiles = [
-      ...(this.selectedaddAdditionalFile || []),
-      ...(shareholderFile || []),
-    ];
-    
-    // Remove duplicate files based on URL
-    this.combinedFiles = allFiles.filter((file, index, self) => 
-      index === self.findIndex(f => f.url === file.url)
     );
   
     // Call API to update backend after deletion
@@ -559,6 +554,11 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
         files: files, // Update files array
       })),
     };
+    
+    console.log("Sending payload to backend:", payload);
+    console.log("Payload additionalUploadedFiles count:", payload.additionalUploadedFiles.length);
+    console.log("Payload uploadedFileNames count:", payload.uploadedFileNames.length);
+    console.log("Payload shareholders count:", payload.shareholders.length);
   
     this.userService.updateUserFiles(payload).subscribe(
       (response) => {

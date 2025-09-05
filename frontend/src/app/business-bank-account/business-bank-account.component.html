@@ -207,12 +207,14 @@
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let shareholder of selectedShareholders">
-              <td>{{ shareholder.name }}</td>
-              <td>{{ shareholder.shareholderPercentage }}%</td>
-              <td>{{ shareholder.dob | date: 'yyyy-MM-dd' }}</td>
-              <td>{{ shareholder.nationalityshareholder }}</td>
-            </tr>
+            <ng-container *ngFor="let shareholder of selectedShareholders">
+              <tr *ngIf="shareholder.name && shareholder.name.trim() !== '' && shareholder.shareholderPercentage && shareholder.shareholderPercentage !== ''">
+                <td>{{ shareholder.name }}</td>
+                <td>{{ shareholder.shareholderPercentage }}%</td>
+                <td>{{ shareholder.dob | date: 'yyyy-MM-dd' }}</td>
+                <td>{{ shareholder.nationalityshareholder }}</td>
+              </tr>
+            </ng-container>
           </tbody>
         </table>
       </div>
