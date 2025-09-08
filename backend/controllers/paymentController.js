@@ -4149,12 +4149,35 @@ const sendSuccessEmail = async (req, res) => {
       .json({ message: "Invalid request format. Expected JSON." });
   }
 
-  const { email } = req.body; // added username for personalization
+  const { email, quoteId } = req.body; // added quoteId for tracking
 
   if (!email) {
     return res
       .status(400)
       .json({ message: "Email is required", body: req.body });
+  }
+
+  // If quoteId is provided, check if success email has already been sent
+  if (quoteId) {
+    try {
+      const piDataRecord = await PiData.findOne({
+        $or: [
+          { quoteId: quoteId },
+          { "quotePaymentWithDetails.QuotePaymentId": quoteId },
+        ],
+      });
+
+      if (piDataRecord && piDataRecord.isSuccessEmailSent) {
+        console.log(`Success email already sent for quoteId: ${quoteId}, skipping...`);
+        return res.status(200).json({ 
+          message: "Success email already sent for this payment", 
+          alreadySent: true 
+        });
+      }
+    } catch (error) {
+      console.error("Error checking success email status:", error);
+      // Continue with sending email if there's an error checking
+    }
   }
 
   const data = {
@@ -4204,6 +4227,29 @@ const sendSuccessEmail = async (req, res) => {
 
   try {
     await mailTransporter.sendMail(data);
+    
+    // Mark success email as sent in PiData if quoteId is provided
+    if (quoteId) {
+      try {
+        const updateResult = await PiData.updateOne(
+          {
+            $or: [
+              { quoteId: quoteId },
+              { "quotePaymentWithDetails.QuotePaymentId": quoteId },
+            ],
+          },
+          { $set: { isSuccessEmailSent: true } }
+        );
+        
+        if (updateResult.modifiedCount > 0) {
+          console.log(`Success email marked as sent for quoteId: ${quoteId}`);
+        }
+      } catch (updateError) {
+        console.error("Error updating success email status:", updateError);
+        // Don't fail the response if update fails
+      }
+    }
+    
     res.status(200).json({ message: "Success email sent successfully!" });
   } catch (error) {
     console.error("Error sending success email:", error);

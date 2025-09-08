@@ -1848,8 +1848,9 @@ exports.getallUserSerive = async (req, res) => {
       }
     }
 
-    // Filter user records based on quoteWithProductDetails?.totalIncludingVAT
-    const filteredUserData = [];
+    // Process records that need invoice updates, but return all records
+    let processedCount = 0;
+    let skippedCount = 0;
 
     for (const userRecord of userData) {
       console.log("Processing userRecord with _id:", userRecord._id);
@@ -1860,26 +1861,39 @@ exports.getallUserSerive = async (req, res) => {
         const quotesArray = Array.isArray(quoteDetails) ? quoteDetails : [quoteDetails];
 
         for (const quoteDetail of quotesArray) {
-          // Only push if totalIncludingVAT is null or not present
+          // Check if invoice details are already present
+          const hasInvoiceDetails = userRecord.invoiceNumber && 
+                                   userRecord.invoiceDate && 
+                                   userRecord.payment_status === "Paid";
+          
+          // Only process if totalIncludingVAT is null/missing AND invoice details are missing
           if (
-            !quoteDetail?.quoteWithProductDetails ||
-            quoteDetail?.quoteWithProductDetails?.totalIncludingVAT == null
+            (!quoteDetail?.quoteWithProductDetails ||
+             quoteDetail?.quoteWithProductDetails?.totalIncludingVAT == null) &&
+            !hasInvoiceDetails
           ) {
+            console.log(`Processing quoteDetail for userRecord ${userRecord._id} - missing invoice details`);
             await processQuoteDetail(quoteDetail);
-            filteredUserData.push(userRecord);
-            break; // include record only once
+            processedCount++;
+            break; // process only once per record
+          } else if (hasInvoiceDetails) {
+            console.log(`Skipping userRecord ${userRecord._id} - invoice details already present`);
+            skippedCount++;
+            break; // skip processing but continue to next record
           }
         }
       }
     }
 
-    if (filteredUserData.length === 0) {
-      return res.status(404).json({ message: "No data with null/missing totalIncludingVAT found" });
-    }
-
+    // Return ALL user data, regardless of whether it was processed or not
     res.status(200).json({
-      message: "User data fetched and updated successfully",
-      data: filteredUserData,
+      message: "User data fetched successfully",
+      data: userData, // Send all records to frontend
+      summary: {
+        totalRecords: userData.length,
+        processed: processedCount,
+        skipped: skippedCount
+      }
     });
   } catch (error) {
     console.error("Error fetching/updating user data:", error);

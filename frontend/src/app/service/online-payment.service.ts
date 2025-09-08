@@ -92,8 +92,8 @@ export class OnlinePaymentService {
   }
 
 
-  sendSuccessEmail(email: string): Observable<any> {
-    const body = {email};
+  sendSuccessEmail(email: string, quoteId?: string): Observable<any> {
+    const body = {email, quoteId};
     const apiUrl = `${environment.apiUrl}/payment/successMail`;
     return this.http.post(apiUrl, body, {
       headers: { "Content-Type": "application/json" },});

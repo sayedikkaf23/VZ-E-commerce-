@@ -70,8 +70,13 @@ export class SuccessComponent implements OnInit {
         null;
 
       if (email) {
-        this.onlinePaymentService.sendSuccessEmail(email).subscribe({
-          next: (response) => console.log('Email sent:', response),
+        this.onlinePaymentService.sendSuccessEmail(email, this.quoteId).subscribe({
+          next: (response) => {
+            console.log('Email sent:', response);
+            if (response.alreadySent) {
+              console.log('Success email was already sent for this payment');
+            }
+          },
           error: (err) => console.error('Email failed:', err),
         });
       } else {

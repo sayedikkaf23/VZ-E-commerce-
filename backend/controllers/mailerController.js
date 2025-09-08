@@ -132,6 +132,7 @@ const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     const unpaidRecords = await PiData.find({
       isPayment: false,
       isPaymentEmailSent: false,
+      payment_status: { $ne: "Paid" },  // exclude records with payment_status = "Paid"
        createdAt: { $lte: oneHourAgo },  // only records created 1 hour ago or earlier
        kycStatus: { $ne: "Pending" }  // exclude kycStatus = "Pending"
 
