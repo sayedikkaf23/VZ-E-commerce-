@@ -937,10 +937,14 @@ exports.getAllSubmissions = async (req, res) => {
  
     // 3) Build the filter object
     //    If searchTerm is provided, match it against multiple fields using $or + $regex
-    let filter = {};
- 
+    let filter = {
+      // Always include the condition for records with products
+      "quoteWithProductDetails.product.0": { $exists: true }
+    };
+
     if (searchTerm) {
       filter = {
+        ...filter,
         $or: [
           { 'leadWithDetails.Email': { $regex: searchTerm, $options: 'i' } },
           { 'quotePaymentWithDetails.QuotePaymentId': { $regex: searchTerm, $options: 'i' } },
@@ -999,7 +1003,10 @@ exports.getPersonalBank = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const pipeline = [
-      { $match: { 'leadWithDetails.subServiceName' : 'Personal Bank Account Opening' } },
+      { $match: { 
+        'leadWithDetails.subServiceName' : 'Personal Bank Account Opening',
+        "quoteWithProductDetails.product.0": { $exists: true }
+      } },
 
       { $addFields: { dateKey: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } } },
 
@@ -1023,7 +1030,10 @@ exports.getPersonalBank = async (req, res) => {
       {
         $facet: {
           metadata: [ 
-            { $match: { 'leadWithDetails.subServiceName' : 'Personal Bank Account Opening' } },
+            { $match: { 
+              'leadWithDetails.subServiceName' : 'Personal Bank Account Opening',
+              "quoteWithProductDetails.product.0": { $exists: true }
+            } },
             { $count: "total" }
           ],
           data: pipeline
@@ -1118,7 +1128,10 @@ exports.getBusinessBank = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const pipeline = [
-      { $match: { 'leadWithDetails.subServiceName' : 'Business Bank Account Opening' } },
+      { $match: { 
+        'leadWithDetails.subServiceName' : 'Business Bank Account Opening',
+        "quoteWithProductDetails.product.0": { $exists: true }
+      } },
 
       { $addFields: { dateKey: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } } } },
 
@@ -1142,7 +1155,10 @@ exports.getBusinessBank = async (req, res) => {
       {
         $facet: {
           metadata: [ 
-            { $match: { 'leadWithDetails.subServiceName' : 'Business Bank Account Opening' } },
+            { $match: { 
+              'leadWithDetails.subServiceName' : 'Business Bank Account Opening',
+              "quoteWithProductDetails.product.0": { $exists: true }
+            } },
             { $count: "total" }
           ],
           data: pipeline

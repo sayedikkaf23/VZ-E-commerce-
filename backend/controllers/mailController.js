@@ -374,16 +374,27 @@ exports.getMailDetails = async (req, res) => {
     const skip = (page - 1) * limit;
  
     // 2) Count total to calculate totalPages
-    const totalRecords = await Pidata.countDocuments({ $or: [{ 'leadWithDetails.ServiceName': "Mail Management" },{ 'planname': "Mail Management" } ] });
+    const totalRecords = await Pidata.countDocuments({ 
+      $and: [
+        { $or: [
+          { 'leadWithDetails.ServiceName': "Mail Management" },
+          { 'planname': "Mail Management" }
+        ]},
+        { "quoteWithProductDetails.product.0": { $exists: true } }
+      ]
+    });
     const totalPages = Math.ceil(totalRecords / limit);
  
     const pipeline = [
   { 
     $match: { 
-      $or: [
-        { 'leadWithDetails.ServiceName': "Mail Management" },
-        { 'planname': "Mail Management" }
-      ] 
+      $and: [
+        { $or: [
+          { 'leadWithDetails.ServiceName': "Mail Management" },
+          { 'planname': "Mail Management" }
+        ]},
+        { "quoteWithProductDetails.product.0": { $exists: true } }
+      ]
     }
   },
 
