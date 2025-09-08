@@ -198,8 +198,8 @@ onSubmit() {
   // 2) If form is valid, build payload & call createLeadOnly
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
-    // extract only the phone string
-    const phoneString = values.mobileNumber?.number || '';
+    // extract only the phone string - use e164Number for consistency
+    const phoneString = values.mobileNumber?.e164Number || values.mobileNumber?.number || '';
       const leadDataRaw = sessionStorage.getItem('leadResponse');
     const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
     const countryCode = values.mobileNumber?.dialCode || '';

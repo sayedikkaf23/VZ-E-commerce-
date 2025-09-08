@@ -502,7 +502,29 @@ exports.createLeadOnly = async (req, res) => {
       }
     );
 
-    const cleanedPhone = phone.replace(/\s+/g, ""); // Example cleanup
+    // Clean phone number by removing duplicate country codes
+    let cleanedPhone = phone.replace(/\s+/g, ""); // Remove spaces first
+    
+    console.log('Original phone:', phone);
+    console.log('Country code:', countryCode);
+    console.log('Phone after space removal:', cleanedPhone);
+    
+    // If phone already contains country code (e164Number format), use it as is
+    if (cleanedPhone && cleanedPhone.startsWith('+')) {
+      // Check if it's a valid international format (starts with + and has proper length)
+      if (cleanedPhone.length >= 10) {
+        cleanedPhone = cleanedPhone; // Use as is
+      } else {
+        // If it's too short, it might be malformed, try to fix it
+        const phoneWithoutCountryCode = cleanedPhone.replace(/^\+\d{1,4}/, '');
+        cleanedPhone = countryCode ? `${countryCode}${phoneWithoutCountryCode}` : cleanedPhone;
+      }
+    } else if (countryCode) {
+      // If no country code in phone, add it
+      cleanedPhone = `${countryCode}${cleanedPhone}`;
+    }
+    
+    console.log('Final cleaned phone:', cleanedPhone);
    
 
     

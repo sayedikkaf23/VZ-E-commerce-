@@ -177,7 +177,7 @@ onSubmit() {
   // Proceed with API call since data changed or it's first submission
   if (this.personalDetailsForm.valid) {
     const values = this.personalDetailsForm.value;
-    const phoneString = values.mobileNumber?.number || '';
+    const phoneString = values.mobileNumber?.e164Number || values.mobileNumber?.number || '';
     const countryCode = values.mobileNumber?.dialCode || '';
    
     const leadDataRaw = sessionStorage.getItem('leadResponse');

@@ -77,6 +77,22 @@ export class CustomerCardmanagementComponent implements OnInit, AfterViewInit {
     private el: ElementRef
   ) {}
 
+  // Helper method to format phone number properly
+  private formatPhoneNumber(countryCode: string, phone: string): string {
+    if (!phone) return '';
+    
+    // Remove any existing country codes from the phone number
+    let cleanPhone = phone.replace(/^\+\d{1,4}/, '');
+    
+    // If phone already starts with country code, use it as is
+    if (phone.startsWith('+')) {
+      return phone;
+    }
+    
+    // Otherwise, add the country code
+    return countryCode ? `${countryCode}${cleanPhone}` : cleanPhone;
+  }
+
   ngOnInit(): void {
     // console.log('Current Route:', this.route.snapshot.url); // Check the current URL
 
@@ -607,6 +623,12 @@ submitDocuments(): void {
       const record = response?.record ?? {};
       const lead = record.leadWithDetails ?? {};
       const getValue = (val: any) => val !== undefined && val !== null ? val : '';
+      
+      // Debug logging
+      console.log('LeadId:', lead.LeadId);
+      console.log('Country Code:', lead.countryCode);
+      console.log('Phone:', lead.Phone);
+      console.log('Formatted Phone:', this.formatPhoneNumber(getValue(lead.countryCode), getValue(lead.Phone)));
 
 const additionalShareholderWithFile = {
   name: '',
@@ -639,7 +661,7 @@ const additionalShareholderWithFile = {
         lastName: getValue(lead.LastName),
         email: getValue(lead.Email),
         nationality: getValue(lead.Nationality),
-        phone: `${getValue(lead.countryCode)}${getValue(lead.Phone)}`,
+        phone: this.formatPhoneNumber(getValue(lead.countryCode), getValue(lead.Phone)),
         dob: getValue(lead.dob),
         activityType: getValue(lead.activityType),
         totalShareholders: getValue(lead.totalShareholders),
@@ -661,6 +683,9 @@ const additionalShareholderWithFile = {
   ]
 
       };
+      
+      // Debug logging for payload2
+      console.log('Payload2 leadId:', payload2.leadId);
 
       this.userService.insertEconomicDetails(payload2).subscribe(
         (res) => {
