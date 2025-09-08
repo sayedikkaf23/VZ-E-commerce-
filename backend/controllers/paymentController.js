@@ -537,8 +537,8 @@ async function payNow(req, res) {
       zip: "00000",
       phone: "+971090450954",
     },
-    cancel_url: `https://ecommerce.virtuzone.com/paymentfailure/${order_number}`,
-    success_url: `https://ecommerce.virtuzone.com/successful/${order_number}`,
+    cancel_url: `https://ecommerce.yeepeey.com/paymentfailure/${order_number}`,
+    success_url: `https://ecommerce.yeepeey.com/successful/${order_number}`,
     customer: {
       // name: data.leadWithDetails.FirstName,
       email: acountemail,
@@ -707,8 +707,8 @@ exports.getTotalPayRedirectUrl = async (quoteId) =>  {
       zip: "00000",
       phone: "+971090450954",
     },
-    cancel_url: `https://ecommerce.virtuzone.com/paymentfailure/${order_number}`,
-    success_url: `https://ecommerce.virtuzone.com/successful/${order_number}`,
+    cancel_url: `https://ecommerce.yeepeey.com/paymentfailure/${order_number}`,
+    success_url: `https://ecommerce.yeepeey.com/successful/${order_number}`,
     customer: {
       // name: data.leadWithDetails.FirstName,
       email: acountemail,
@@ -841,8 +841,8 @@ exports.getStripeRedirectUrl = async (quoteId) =>  {
         },
       ],
       mode: "payment",
-      success_url: `https://ecommerce.virtuzone.com/successful/${data.quotePaymentId}`,
-      cancel_url: `https://ecommerce.virtuzone.com/paymentfailure/${data.quotePaymentId}`,
+      success_url: `https://ecommerce.yeepeey.com/successful/${data.quotePaymentId}`,
+      cancel_url: `https://ecommerce.yeepeey.com/paymentfailure/${data.quotePaymentId}`,
     });
 
     const stripeResponseData = stripeResponse;
@@ -947,9 +947,9 @@ exports.getTelrRedirectUrl = async (quoteId) =>  {
           description: order_description, // Order description
         },
         return: {
-          authorised: `https://ecommerce.virtuzone.com/successful/${order_number}`,
-          declined: `https://ecommerce.virtuzone.com/paymentfailure/${order_number}`,
-          cancelled: `https://ecommerce.virtuzone.com/cancelled/${order_number}`,
+          authorised: `https://ecommerce.yeepeey.com/successful/${order_number}`,
+          declined: `https://ecommerce.yeepeey.com/paymentfailure/${order_number}`,
+          cancelled: `https://ecommerce.yeepeey.com/cancelled/${order_number}`,
         },
         customer: {
           ref: order_number, // Unique customer reference
@@ -1091,8 +1091,8 @@ async function payNowByStripe(req, res) {
         },
       ],
       mode: "payment",
-      success_url: `https://ecommerce.virtuzone.com/successful/${data.quotePaymentId}`,
-      cancel_url: `https://ecommerce.virtuzone.com/paymentfailure/${data.quotePaymentId}`,
+      success_url: `https://ecommerce.yeepeey.com/successful/${data.quotePaymentId}`,
+      cancel_url: `https://ecommerce.yeepeey.com/paymentfailure/${data.quotePaymentId}`,
     });
 
     const stripeResponseData = stripeResponse;
@@ -1196,9 +1196,9 @@ async function payNowByTelr(req, res) {
           description: order_description, // Order description
         },
         return: {
-          authorised: `https://ecommerce.virtuzone.com/successful/${order_number}`,
-          declined: `https://ecommerce.virtuzone.com/paymentfailure/${order_number}`,
-          cancelled: `https://ecommerce.virtuzone.com/cancelled/${order_number}`,
+          authorised: `https://ecommerce.yeepeey.com/successful/${order_number}`,
+          declined: `https://ecommerce.yeepeey.com/paymentfailure/${order_number}`,
+          cancelled: `https://ecommerce.yeepeey.com/cancelled/${order_number}`,
         },
         customer: {
           ref: order_number, // Unique customer reference
@@ -1471,7 +1471,7 @@ async function payNowSaleforce(req, res) {
         redirectPath = "/"; 
     }
 
-    const fullUrl = `https://ecommerce.virtuzone.com${redirectPath}`;
+    const fullUrl = `https://ecommerce.yeepeey.com${redirectPath}`;
 
     console.log(planName, "planName................", PiDataCheck);
 
@@ -1515,7 +1515,7 @@ async function payNowSaleforce(req, res) {
     })}<br><br>
 
     You can access your Customer Portal Link here:<br>
-    <a href="https://ecommerce.virtuzone.com/login"
+    <a href="https://ecommerce.yeepeey.com/login"
        style="color: #007bff; text-decoration: underline;">
       Customer Portal Link
     </a><br><br>
