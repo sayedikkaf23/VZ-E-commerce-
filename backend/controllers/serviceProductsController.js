@@ -207,8 +207,8 @@ exports.createPaymentOpportunity = async (req, res) => {
       // countryCode: countryCode,
       // phone: cleanedPhone,
       // dob: dob,
-      subServiceName: subServiceName || null, // Optional, if provided
-      serviceName: serviceName || null, // Optional, if provided
+      subServiceName: serviceName || null, // Optional, if provided
+      serviceName: subServiceName || null, // Optional, if provided
       prodcutNameList: cleanedProductList,
     };
     console.log(requestBody, "requestBody");
