@@ -8,7 +8,7 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './user-footer.component.css'
 })
 export class UserFooterComponent {
-  sidebarData: any;
+  piData: any;
 
   constructor(
     private onlinePaymentService: OnlinePaymentService,
@@ -16,13 +16,19 @@ export class UserFooterComponent {
   ) { }
 
   ngOnInit(): void {
-    this.onlinePaymentService.getSidebarData().subscribe(
-      (data: any) => {
-        this.sidebarData = data;
-      },
-      (error: any) => {
-        console.error('Error fetching sidebar data:', error);
+    // Get quoteId from route params
+    this.route.params.subscribe(params => {
+      const quoteId = params['id'];
+      if (quoteId) {
+        this.onlinePaymentService.getPiDataById(quoteId).subscribe(
+          (data: any) => {
+            this.piData = data;
+          },
+          (error: any) => {
+            console.error('Error fetching Pi data:', error);
+          }
+        );
       }
-    );
+    });
   }
 }
