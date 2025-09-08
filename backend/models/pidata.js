@@ -135,6 +135,14 @@ const pidataSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    isWelcomeEmailSent: {
+      type: Boolean,
+      default: false,
+    },
+    isVerificationEmailSent: {
+      type: Boolean,
+      default: false,
+    },
     planname: { type: String },
     accountId: { type: String },
     ContactId: { type: String },

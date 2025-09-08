@@ -1480,8 +1480,12 @@ async function payNowSaleforce(req, res) {
     // Step 2: Check if the user already exists in the database
     const existingUser = await User.findOne({ email: userEmail });
 
-    if (!existingUser) {
-      // User doesn't exist, create a new user and send email
+    // Check if welcome email has already been sent for this payment
+    const hasWelcomeEmailBeenSent = PiDataCheck?.isWelcomeEmailSent || false;
+    const isPaymentAlreadyProcessed = PiDataCheck?.payment_status === "Paid";
+
+    if (!existingUser && !hasWelcomeEmailBeenSent && !isPaymentAlreadyProcessed) {
+      // User doesn't exist and welcome email hasn't been sent, create a new user and send email
       // Create a random password for the new user
       const randomPassword = Math.random().toString(36).slice(-8); // Simple 8-character random password
 
@@ -1590,22 +1594,42 @@ async function payNowSaleforce(req, res) {
       };
 
       // Send the email
-      mailTransporter.sendMail(mailOptions, (error, info) => {
+      mailTransporter.sendMail(mailOptions, async (error, info) => {
         if (error) {
           console.error("Error sending email:", error);
         } else {
           console.log("Email sent:", info.response);
+          // Mark welcome email as sent in PiData
+          if (PiDataCheck) {
+            await PiData.updateOne(
+              { _id: PiDataCheck._id },
+              { $set: { isWelcomeEmailSent: true } }
+            );
+            console.log("Welcome email marked as sent for:", PiDataCheck._id);
+          }
         }
       });
     } else {
-      // If the user already exists, log a message
-      console.log("User already exists, no need to create or send email");
+      // If the user already exists or welcome email was already sent, log a message
+      if (existingUser) {
+        console.log("User already exists, no need to create or send email");
+      }
+      if (hasWelcomeEmailBeenSent) {
+        console.log("Welcome email already sent for this payment, skipping");
+      }
+      if (isPaymentAlreadyProcessed) {
+        console.log("Payment already processed, skipping welcome email");
+      }
     }
 
-    const verifyMailOptions = {
-      from: "mishalnunu@gmail.com", // Sender address
-      to: userEmail, // Receiver email address
-      subject: "Welcome to Virtuzone – Let's Get Started!",
+    // Check if verification email has already been sent for this payment
+    const hasVerificationEmailBeenSent = PiDataCheck?.isVerificationEmailSent || false;
+
+    if (!hasVerificationEmailBeenSent && !isPaymentAlreadyProcessed) {
+      const verifyMailOptions = {
+        from: "mishalnunu@gmail.com", // Sender address
+        to: userEmail, // Receiver email address
+        subject: "Welcome to Virtuzone – Let's Get Started!",
       html: `
   <div style="font-family: Arial, Helvetica, sans-serif; font-size: 16px; line-height: 1.5; color: #000;">
     <p>
@@ -1690,14 +1714,30 @@ async function payNowSaleforce(req, res) {
       `,
     };
 
-    // Send the verification email
-    mailTransporter.sendMail(verifyMailOptions, (error, info) => {
-      if (error) {
-        console.error("Error sending verification email:", error);
-      } else {
-        console.log("Verification email sent:", info.response);
+      // Send the verification email
+      mailTransporter.sendMail(verifyMailOptions, async (error, info) => {
+        if (error) {
+          console.error("Error sending verification email:", error);
+        } else {
+          console.log("Verification email sent:", info.response);
+          // Mark verification email as sent in PiData
+          if (PiDataCheck) {
+            await PiData.updateOne(
+              { _id: PiDataCheck._id },
+              { $set: { isVerificationEmailSent: true } }
+            );
+            console.log("Verification email marked as sent for:", PiDataCheck._id);
+          }
+        }
+      });
+    } else {
+      if (hasVerificationEmailBeenSent) {
+        console.log("Verification email already sent for this payment, skipping");
       }
-    });
+      if (isPaymentAlreadyProcessed) {
+        console.log("Payment already processed, skipping verification email");
+      }
+    }
 
     if (PiDataCheck) {
       // Update the isPayment field to true
