@@ -631,10 +631,10 @@ submitDocuments(): void {
       console.log('Formatted Phone:', this.formatPhoneNumber(getValue(lead.countryCode), getValue(lead.Phone)));
 
 const additionalShareholderWithFile = {
-  name: '',
-  shareholderPercentage: null,
-  dob: '',
-  nationalityshareholder: '',
+  name: getValue(''),
+  shareholderPercentage: null, // Always null for additional file-only shareholder
+  dob: getValue(''),
+  nationalityshareholder: getValue(''),
   files: Array.isArray(this.uploadedFiles)
     ? this.uploadedFiles.map(file => ({
         name: file.name,
@@ -654,7 +654,7 @@ const additionalShareholderWithFile = {
         bankType: getValue(record.Bank),
         leadId: getValue(lead.LeadId),
         accountId: getValue(record.accountId),
-        economicDetailId: getValue(record._id),
+        economicDetailId: getValue(record.economicDetailId),
         serviceName: getValue(lead.ServiceName),
         subServiceName: getValue(lead.subServiceName),
         firstName: getValue(lead.FirstName),
@@ -671,7 +671,7 @@ const additionalShareholderWithFile = {
     ...(Array.isArray(record.shareholders)
       ? record.shareholders.map((s: any) => ({
           name: getValue(s.name),
-          shareholderPercentage: getValue(s.shareholderPercentage),
+          shareholderPercentage: getValue(s.shareholderPercentage) === '' ? null : getValue(s.shareholderPercentage),
           dob: getValue(s.dob),
           nationalityshareholder: getValue(s.nationalityshareholder),
           files: Array.isArray(s.files) ? s.files : []
