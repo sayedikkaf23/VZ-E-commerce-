@@ -42,7 +42,7 @@
             "node_modules/ngx-toastr/toastr.css" ,
               "node_modules/bootstrap/dist/css/bootstrap.min.css"
             ],
-            "scripts": ["src/js/jquery-2.2.4.min.js", "node_modules/aos/dist/aos.js",  "node_modules/intl-tel-input/build/js/intlTelInput.js"
+            "scripts": ["node_modules/aos/dist/aos.js",  "node_modules/intl-tel-input/build/js/intlTelInput.js"
           ],
           "allowedCommonJsDependencies": [
             "google-libphonenumber",

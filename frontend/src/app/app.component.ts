@@ -30,7 +30,7 @@ export class AppComponent implements OnInit, OnDestroy {
  
   // Arrays to store dynamically added scripts and styles
   dynamicScripts: string[] = [
-    'https://code.jquery.com/jquery-2.2.4.min.js',
+    'https://code.jquery.com/jquery-3.7.1.min.js',
     'assets/js/bootstrap.bundle.min.js',
     'assets/js/simplebar.min.js',
     'assets/js/select2.min.js',
