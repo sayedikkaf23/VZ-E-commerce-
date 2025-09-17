@@ -4071,7 +4071,10 @@ const initCheckout = async (req, res) => {
       amount:   Number(data.quoteWithProductDetails.totalIncludingVAT).toFixed(2),
       currency: process.env.CURRENCY || "AED",
       paymentType: "DB",
-      integrity: "true"                                // required for Copy&Pay
+      integrity: "true" ,
+      "customer.givenName": data.leadWithDetails.FirstName,
+  "customer.surname": data.leadWithDetails.LastName || "",   // optional
+  "customer.email": data.leadWithDetails.Email,                             // required for Copy&Pay
     };
 
     const { data: checkout } = await axios.post(
