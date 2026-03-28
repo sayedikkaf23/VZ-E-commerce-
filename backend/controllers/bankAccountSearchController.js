@@ -62,7 +62,8 @@ exports.getPersonalBankSearch = async (req, res) => {
             `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
             {
               CustomerId: leadId,
-              CompanyName: 'Virtuzone'
+              CompanyName: process.env.SCREENING_COMPANYNAME
+
             },
             {
               headers: {
@@ -167,7 +168,8 @@ exports.getBusinessBankSearch = async (req, res) => {
             `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
             {
               CustomerId: leadId,
-              CompanyName: 'Virtuzone'
+              CompanyName: process.env.SCREENING_COMPANYNAME
+
             },
             {
               headers: {
@@ -281,7 +283,8 @@ exports.getPersonalBankDateFilter = async (req, res) => {
             `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
             {
               CustomerId: leadId,
-              CompanyName: 'Virtuzone'
+              CompanyName: process.env.SCREENING_COMPANYNAME
+
             },
             {
               headers: {
@@ -394,7 +397,8 @@ exports.getBusinessBankDateFilter = async (req, res) => {
             `${process.env.EXTERNAL_API_SCREENING_URL}/api/customer/status`,
             {
               CustomerId: leadId,
-              CompanyName: 'Virtuzone'
+              CompanyName: process.env.SCREENING_COMPANYNAME
+
             },
             {
               headers: {
