@@ -33,7 +33,7 @@ exports.getServiceProducts = async (req, res) => {
         }
       );
 
-      const salesforceUrl = tokenResp.data.instance_url;
+      const salesforceUrl = tokenResp.data.id;
 
       const config = {
         method: "get",
@@ -87,7 +87,7 @@ exports.getServiceProducts = async (req, res) => {
       }
     );
 
-    const salesforceUrl = tokenResp.data.instance_url;
+    const salesforceUrl = tokenResp.data.id;
 
     const config = {
       method: "get",
@@ -188,7 +188,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       }
     );
 
-    const salesforceUrl = tokenResp.data.instance_url;
+    const salesforceUrl = tokenResp.data.id;
 
     const requestBody = {
       LeadId: LeadId || null, // Optional, if provided
@@ -380,7 +380,7 @@ exports.insertDocumentsFromShareholders = async (req, res) => {
       }
     );
 
-    const salesforceUrl = tokenResp.data.instance_url;
+    const salesforceUrl = tokenResp.data.id;
 
     // 2. Send request to Salesforce Apex endpoint
     const response = await axios.post(
@@ -469,7 +469,7 @@ exports.createLeadOnly = async (req, res) => {
     );
 
     const accessToken = tokenResp.data.access_token;
-    const salesforceUrl = tokenResp.data.instance_url;
+    const salesforceUrl = tokenResp.data.id;
 
     // Step 2: Call the CreateLeadOnly API
     const leadResp = await axios.post(
@@ -664,7 +664,7 @@ exports.insertEconomicDetails = async (req, res) => {
     );
 
     const accessToken = tokenResp.data.access_token;
-    const salesforceUrl = tokenResp.data.instance_url;
+    const salesforceUrl = tokenResp.data.id;
     console.log("Salesforce payload insertEconomicDetails: ", payload);
     // Step 2: Call the InsertEconomicDetails API with dynamic payload
     const economicDetailsResp = await axios.post(

@@ -199,7 +199,7 @@ console.log(LeadId,"LeadId")
 //     );
 
 //     const accessToken = tokenResponse.data.access_token;
-//     const salesforceUrl = tokenResponse.data.instance_url;
+//     const salesforceUrl = tokenResponse.data.id;
 
 //     // Step 4: Make the HTTP POST request to the Salesforce endpoint
 //     const salesforceResponse = await axios.post(
@@ -625,7 +625,7 @@ exports.createOpportunity = async (req, res) => {
     );
  
     const accessToken  = tokenResp.data.access_token;
-    const salesforceUrl = tokenResp.data.instance_url;
+    const salesforceUrl = tokenResp.data.id;
  console.log( {
   firstName,
   lastName,
@@ -788,7 +788,7 @@ exports.callSalesforceQuoteService = async (req, res) => {
     );
 
     const accessToken = tokenResponse.data.access_token;
-    const salesforceUrl = tokenResponse.data.instance_url;
+    const salesforceUrl = tokenResponse.data.id;
 
     // Step 4: Make the HTTP POST request to the Salesforce endpoint
     const salesforceResponse = await axios.put(
@@ -873,7 +873,7 @@ exports.MatchScoreProductService = async (req, res) => {
     );
 
     const accessToken = tokenResponse.data.access_token;
-    const salesforceUrl = tokenResponse.data.instance_url;
+    const salesforceUrl = tokenResponse.data.id;
     console.log("Access Token:", accessToken);
     console.log("Salesforce URL:", salesforceUrl);
 

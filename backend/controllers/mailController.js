@@ -149,7 +149,7 @@ exports.callSalesforceEndpoint = async (req, res) => {
     );
 
     const accessToken = tokenResponse.data.access_token;
-    const salesforceUrl = tokenResponse.data.instance_url;
+    const salesforceUrl = tokenResponse.data.id;
 
     // Step 3: Make the HTTP POST request to the Salesforce endpoint
     const salesforceResponse = await axios.post(

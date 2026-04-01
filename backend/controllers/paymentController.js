@@ -1991,7 +1991,7 @@ const AddCashCounter = async (req, res) => {
   );
 
   const accessToken = tokenResponse.data.access_token;
-  const saleforcUrl = tokenResponse.data.instance_url;
+  const saleforcUrl = tokenResponse.data.id;
   console.log("Access Token:", accessToken);
 
   try {
