@@ -97,7 +97,7 @@ const AddCashMachin = async (req, res) => {
   const { quoteId } = req.params;
 
   const TokenResponse = await axios.post(
-    `https://test.salesforce.com/services/oauth2/token`,
+    `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
     null,
     {
       params: {
@@ -1264,7 +1264,7 @@ async function payNowSaleforce(req, res) {
   console.log("salesforce called.............");
 
   const TokenResponse = await axios.post(
-    `https://test.salesforce.com/services/oauth2/token`,
+    `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
     null,
     {
       params: {
@@ -1806,7 +1806,7 @@ async function payNowByFiserv(req, res) {
   // }
 
   const TokenResponse = await axios.post(
-    `https://test.salesforce.com/services/oauth2/token`,
+    `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
     null,
     {
       params: {
@@ -1991,7 +1991,7 @@ const AddCashCounter = async (req, res) => {
   );
 
   const accessToken = tokenResponse.data.access_token;
-  const saleforcUrl = tokenResponse.data.id;
+  const saleforcUrl = tokenResponse.data.instance_url;
   console.log("Access Token:", accessToken);
 
   try {
@@ -2874,7 +2874,7 @@ const AddCashDeposit = async (req, res) => {
   const { quoteId } = req.params;
 
   const TokenResponse = await axios.post(
-    `https://test.salesforce.com/services/oauth2/token`,
+    `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
     null,
     {
       params: {
@@ -3277,7 +3277,7 @@ const AddBankTransfer = async (req, res) => {
   const { quoteId } = req.params;
   console.log(quoteId);
   const TokenResponse = await axios.post(
-    `https://test.salesforce.com/services/oauth2/token`,
+    `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
     null,
     {
       params: {
@@ -3698,7 +3698,7 @@ const AddChequeDeposit = async (req, res) => {
   const { quoteId } = req.params;
 
   const TokenResponse = await axios.post(
-    `https://test.salesforce.com/services/oauth2/token`,
+    `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
     null,
     {
       params: {

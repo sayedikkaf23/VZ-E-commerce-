@@ -198,7 +198,7 @@ const getPaymentModesHome = async (req, res) => {
     }
   
     const TokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token`,
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
       null,
       {
         params: {
@@ -372,7 +372,7 @@ const getPaymentModesHome = async (req, res) => {
     const { quoteId } = req.params;
     console.log("salesforce called");
     const TokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token`,
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
       null,
       {
         params: {
@@ -562,7 +562,7 @@ const getPaymentModesHome = async (req, res) => {
     const { quoteId } = req.params;
     console.log("salesforce called");
     const TokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token`,
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
       null,
       {
         params: {
@@ -753,7 +753,7 @@ async function payNowSaleforce(req, res) {
   const { quoteId } = req.params;
   console.log("salesforce called");
   const TokenResponse = await axios.post(
-    `https://test.salesforce.com/services/oauth2/token`,
+    `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
     null,
     {
       params: {
@@ -1154,7 +1154,7 @@ async function payNowByStripe(req, res) {
     }
   
     const TokenResponse = await axios.post(
-      `https://test.salesforce.com/services/oauth2/token`,
+      `${process.env.EXTERNAL_API_SERVISE_URL}/services/oauth2/token`,
       null,
       {
         params: {

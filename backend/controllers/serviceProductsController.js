@@ -33,7 +33,7 @@ exports.getServiceProducts = async (req, res) => {
         }
       );
 
-      const salesforceUrl = tokenResp.data.id;
+      const salesforceUrl = tokenResp.data.instance_url;
       console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
 
       const config = {
@@ -88,7 +88,7 @@ exports.getServiceProducts = async (req, res) => {
       }
     );
 
-    const salesforceUrl = tokenResp.data.id;
+    const salesforceUrl = tokenResp.data.instance_url;
     console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
 
     const config = {
@@ -190,7 +190,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       }
     );
 
-    const salesforceUrl = tokenResp.data.id;
+    const salesforceUrl = tokenResp.data.instance_url;
     console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
 
     const requestBody = {
@@ -474,7 +474,7 @@ exports.createLeadOnly = async (req, res) => {
     );
 
     const accessToken = tokenResp.data.access_token;
-    const salesforceUrl = tokenResp.data.id;
+    const salesforceUrl = tokenResp.data.instance_url;
     console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
     console.log('Using Salesforce URL:', salesforceUrl);
 
@@ -671,7 +671,7 @@ exports.insertEconomicDetails = async (req, res) => {
     );
 
     const accessToken = tokenResp.data.access_token;
-    const salesforceUrl = tokenResp.data.id;
+    const salesforceUrl = tokenResp.data.instance_url;
     console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
     console.log('Using Salesforce URL:', salesforceUrl);
     console.log("Salesforce payload insertEconomicDetails: ", payload);

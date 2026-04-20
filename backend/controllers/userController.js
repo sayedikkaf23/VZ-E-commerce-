@@ -199,7 +199,7 @@ console.log(LeadId,"LeadId")
 //     );
 
 //     const accessToken = tokenResponse.data.access_token;
-//     const salesforceUrl = tokenResponse.data.id;
+//     const salesforceUrl = tokenResponse.data.instance_url;
 
 //     // Step 4: Make the HTTP POST request to the Salesforce endpoint
 //     const salesforceResponse = await axios.post(
@@ -625,7 +625,7 @@ exports.createOpportunity = async (req, res) => {
     );
  
     const accessToken  = tokenResp.data.access_token;
-    const salesforceUrl = tokenResp.data.id;
+    const salesforceUrl = tokenResp.data.instance_url;
     console.log('Using Salesforce URL (userController):', salesforceUrl);
  console.log( {
   firstName,
