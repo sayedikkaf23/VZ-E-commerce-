@@ -25,6 +25,7 @@ declare var $: any;
   providers: [DecimalPipe],
 })
 export class Step2Component implements AfterViewInit, OnInit {
+  private readonly step2DraftKey = 'step2Draft';
   formData: any = {
     resident: '',
     working: '',
@@ -42,7 +43,7 @@ export class Step2Component implements AfterViewInit, OnInit {
   step1Data: any = {}; // To store Step 1 data
   leadResponse: any;
   isLoading = false;
-  previousStep1Data: any;
+  previousStep1Data: any = {};
   constructor(
     private formDataService: FormDataService,
     private http: HttpClient,
@@ -56,11 +57,19 @@ export class Step2Component implements AfterViewInit, OnInit {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // Retrieve Step 1 data from the service when Step 2 initializes
-    this.step1Data = this.formDataService.getStep1Data();
+    this.step1Data = this.formDataService.getStep1Data() || {};
     // console.log('Step 1 data:', this.step1Data);
   }
 
   ngOnInit(): void {
+    const step2DraftRaw = sessionStorage.getItem(this.step2DraftKey);
+    if (step2DraftRaw) {
+      try {
+        this.formData = { ...this.formData, ...JSON.parse(step2DraftRaw) };
+      } catch {
+        sessionStorage.removeItem(this.step2DraftKey);
+      }
+    }
     // // Retrieve Step 2 data from localStorage
     // const storedStep2Data = localStorage.getItem('step2Data');
     // if (storedStep2Data) {
@@ -135,6 +144,7 @@ export class Step2Component implements AfterViewInit, OnInit {
 
     // Update the input field value directly to avoid any delay
     event.target.value = this.formData.salary;
+    sessionStorage.setItem(this.step2DraftKey, JSON.stringify(this.formData));
   }
 
   ngAfterViewInit() {
@@ -183,8 +193,11 @@ export class Step2Component implements AfterViewInit, OnInit {
     const economicDetailId = sessionStorage.getItem('economicDetailId') || '';
     const phoneString = this.personalInfo?.mobileNumber?.e164Number || '';
 
+    const step1 = this.previousStep1Data || {};
+    const step1DataSafe = this.step1Data || {};
+
     const payload = {
-      ...this.step1Data,
+      ...step1DataSafe,
 
       resident: getValue(this.formData.resident),
       working: getValue(this.formData.working),
@@ -207,14 +220,14 @@ export class Step2Component implements AfterViewInit, OnInit {
       subServiceName: 'Personal Bank Account Opening',
 
       // Optional fields
-      firstName: this.previousStep1Data.FirstName,
-      lastName: this.previousStep1Data.LastName,
-      email: this.previousStep1Data.Email,
-      nationality: this.previousStep1Data.Nationality,
+      firstName: getValue(step1.FirstName, getValue(step1DataSafe.firstName)),
+      lastName: getValue(step1.LastName, getValue(step1DataSafe.lastName)),
+      email: getValue(step1.Email, getValue(step1DataSafe.email)),
+      nationality: getValue(step1.Nationality, getValue(step1DataSafe.nationality)),
       // phone: this.personalInfo.mobileNumber.number,
-      phone: this.previousStep1Data.Phone,
-      countryCode: this.previousStep1Data.countryCode || '', 
-      dob: this.previousStep1Data.dob,
+      phone: getValue(step1.Phone, getValue(step1DataSafe.phone)),
+      countryCode: getValue(step1.countryCode, getValue(step1DataSafe.countryCode)),
+      dob: getValue(step1.dob, getValue(step1DataSafe.birthday)),
       companyLicensed: getValue(this.formData.companyLicensed),
       activityType: getValue(this.formData.activityType),
       totalShareholders: getValue(this.formData.totalShareholders),
@@ -231,6 +244,8 @@ export class Step2Component implements AfterViewInit, OnInit {
         ? this.formData.shareholders
         : [],
     };
+    sessionStorage.setItem(this.step2DraftKey, JSON.stringify(this.formData));
+    sessionStorage.setItem('showDetailsFallback', JSON.stringify(payload));
     this.isLoading = true
     this.adminAuthService.insertEconomicDetails(payload).subscribe({
       next: (res: any) => {

@@ -626,6 +626,7 @@ exports.createOpportunity = async (req, res) => {
  
     const accessToken  = tokenResp.data.access_token;
     const salesforceUrl = tokenResp.data.id;
+    console.log('Using Salesforce URL (userController):', salesforceUrl);
  console.log( {
   firstName,
   lastName,
@@ -788,7 +789,8 @@ exports.callSalesforceQuoteService = async (req, res) => {
     );
 
     const accessToken = tokenResponse.data.access_token;
-    const salesforceUrl = tokenResponse.data.id;
+    const salesforceUrl = tokenResponse.data.instance_url;
+    console.log('Using Salesforce URL (userController):', salesforceUrl);
 
     // Step 4: Make the HTTP POST request to the Salesforce endpoint
     const salesforceResponse = await axios.put(
@@ -873,7 +875,8 @@ exports.MatchScoreProductService = async (req, res) => {
     );
 
     const accessToken = tokenResponse.data.access_token;
-    const salesforceUrl = tokenResponse.data.id;
+    const salesforceUrl = tokenResponse.data.instance_url;
+    console.log('Using Salesforce URL (userController):', salesforceUrl);
     console.log("Access Token:", accessToken);
     console.log("Salesforce URL:", salesforceUrl);
 

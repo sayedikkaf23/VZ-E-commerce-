@@ -59,7 +59,7 @@
       <tbody>
         <tr *ngFor="let user of userList">
  
-          <td class="wrap">{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
+          <td class="wrap">{{ user.leadWithDetails?.FirstName }} {{ user.leadWithDetails?.LastName }}</td>
           <td class="wrap">{{ user.leadWithDetails.Email }}</td>
           <td class="wrap">{{ user.leadWithDetails.Phone }}</td>
           <td class="wrap">{{ user.leadWithDetails.Nationality }}</td>

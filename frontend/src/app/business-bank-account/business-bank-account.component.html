@@ -58,7 +58,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let user of userList">
-            <td>{{ user.leadWithDetails.FirstName }} {{ user.leadWithDetails.LastName }}</td>
+            <td>{{ user.leadWithDetails?.FirstName }} {{ user.leadWithDetails?.LastName }}</td>
             <td>{{ user.leadWithDetails.Email }}</td>
             <!-- <td>{{ user.quoteWithProductDetails?.status }}</td> -->
             <!-- <td>{{ user.userDetails.Turnover }}</td> -->

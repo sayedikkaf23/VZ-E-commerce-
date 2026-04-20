@@ -44,6 +44,25 @@ export class ShowDetailsComponent implements AfterViewInit {
   quoteWithProductDetails: any;
   serviceProducts: any;
 shareholders: Shareholder[] = [];
+private readonly step1DraftKey = 'step1Draft';
+private readonly step2DraftKey = 'step2Draft';
+private readonly showDetailsFallbackKey = 'showDetailsFallback';
+
+  private extractQuotePaymentId(response: any): string | null {
+    console.log('DEBUG: Extracting QuotePaymentId from response:', response);
+    const candidate =
+      response?.salesforceResponse?.QuotePaymentId ??
+      response?.salesforce?.QuotePaymentId ??
+      response?.QuotePaymentId ??
+      response?.pidata?.quotePaymentWithDetails?.QuotePaymentId ??
+      response?.pidata?.quoteWithProductDetails?.quotePaymentId ??
+      response?.data?.quotePaymentWithDetails?.QuotePaymentId ??
+      response?.quotePaymentWithDetails?.QuotePaymentId ??
+      response?.data?.QuotePaymentId ??
+      null;
+
+    return candidate ? String(candidate) : null;
+  }
 
   constructor(
     private http: HttpClient,
@@ -67,18 +86,14 @@ shareholders: Shareholder[] = [];
         common: country.name.common,
         country: country.name.country
       }));
-     
-    
-    this.cdRef.detectChanges(); // Trigger change detection to update the view
-  });
-
+      this.cdRef.detectChanges();
+    });
     this.salesforceResponse = this.dataStorageService.getSalesforceResponse();
-
     this.quoteWithProductDetails = this.salesforceResponse?.data?.quoteWithProductDetails;
-    // console.log( this.salesforceResponse,"salefoce",this.quoteWithProductDetails)
     // Ensure this code runs only in the browser environment
    
     if (this.isBrowser) {
+      this.loadFromSessionFallback();
       const leadDataRaw = sessionStorage.getItem('leadResponse');
       const leadData = leadDataRaw ? JSON.parse(leadDataRaw) : null;
       const leadId = leadData?.LeadId;
@@ -87,14 +102,65 @@ shareholders: Shareholder[] = [];
         this.isLoading = true;
         this.userService.getStep1(leadId).subscribe({
           next: (formData) => {
-            this.personalInfo = formData;
+            this.personalInfo = formData && Object.keys(formData).length > 0 ? formData : this.personalInfo;
             this.isLoading = false;
           },
           error: (err) => {
             console.error('Failed to load step1 data', err);
+            this.loadFromSessionFallback();
             this.isLoading = false;
           }
         });
+      }
+    }
+  }
+
+  private loadFromSessionFallback(): void {
+    if (!this.isBrowser) return;
+
+    const fallbackRaw = sessionStorage.getItem(this.showDetailsFallbackKey);
+    if (fallbackRaw) {
+      try {
+        const fallback = JSON.parse(fallbackRaw);
+        this.personalInfo = { ...this.personalInfo, ...fallback };
+      } catch {
+        sessionStorage.removeItem(this.showDetailsFallbackKey);
+      }
+    }
+
+    const step1DraftRaw = sessionStorage.getItem(this.step1DraftKey);
+    if (step1DraftRaw) {
+      try {
+        const step1 = JSON.parse(step1DraftRaw);
+        this.personalInfo = {
+          ...this.personalInfo,
+          FirstName: this.personalInfo?.FirstName || step1?.firstName || '',
+          LastName: this.personalInfo?.LastName || step1?.lastName || '',
+          Email: this.personalInfo?.Email || step1?.email || '',
+          Nationality: this.personalInfo?.Nationality || step1?.nationality || '',
+          Phone: this.personalInfo?.Phone || step1?.mobileNumber?.e164Number || '',
+          countryCode: this.personalInfo?.countryCode || step1?.mobileNumber?.dialCode || '',
+          dob: this.personalInfo?.dob || step1?.birthday || ''
+        };
+      } catch {
+        sessionStorage.removeItem(this.step1DraftKey);
+      }
+    }
+
+    const step2DraftRaw = sessionStorage.getItem(this.step2DraftKey);
+    if (step2DraftRaw) {
+      try {
+        const step2 = JSON.parse(step2DraftRaw);
+        this.personalInfo = {
+          ...this.personalInfo,
+          companyLocationUAE: this.personalInfo?.companyLocationUAE || step2?.resident || '',
+          employmentType: this.personalInfo?.employmentType || step2?.working || '',
+          salary: this.personalInfo?.salary || step2?.salary || '',
+          Company: this.personalInfo?.Company || step2?.companyname || '',
+          bankType: this.personalInfo?.bankType || step2?.Bank || ''
+        };
+      } catch {
+        sessionStorage.removeItem(this.step2DraftKey);
       }
     }
   }
@@ -268,13 +334,13 @@ submitData() {
 
     const quotePaymentId = sessionStorage.getItem('quotePaymentId');
     const payload = {
-        firstName: this.personalInfo.FirstName,
-          lastName: this.personalInfo.LastName,
-          email: this.personalInfo.Email,
-          nationality: this.personalInfo.Nationality,
-          phone: this.personalInfo.Phone,
-          countryCode: this.personalInfo.countryCode,
-          dob: this.personalInfo.dob,
+        firstName: this.personalInfo?.FirstName,
+          lastName: this.personalInfo?.LastName,
+          email: this.personalInfo?.Email,
+          nationality: this.personalInfo?.Nationality,
+          phone: this.personalInfo?.Phone,
+          countryCode: this.personalInfo?.countryCode,
+          dob: this.personalInfo?.dob,
           leadId: '',
           service_id: 1
       }
@@ -290,7 +356,7 @@ submitData() {
     const servicePayload = {
       ServiceNameCode: 1,
       SubTypeCode: subTypeId,
-      RiskCode: this.personalInfo.Nationality
+      RiskCode: this.personalInfo?.Nationality
     };
 
     this.isLoading = true;
@@ -328,17 +394,17 @@ submitData() {
   //         // then navigate:
   //         this.router.navigate(['/ShowDetails-2']);
         const paymentPayload = {
-          countryCode:this.personalInfo.countryCode,
+          countryCode:this.personalInfo?.countryCode,
           LeadId: leadResponse.LeadId || '',
     AccountId: leadResponse.AccountId || '',
     ContactId: leadResponse.ContactId || '',
-          firstName: this.personalInfo.FirstName,
-          lastName: this.personalInfo.LastName,
-          email: this.personalInfo.Email,
-          nationality: this.personalInfo.Nationality,
-          phone: this.personalInfo.Phone,
+          firstName: this.personalInfo?.FirstName,
+          lastName: this.personalInfo?.LastName,
+          email: this.personalInfo?.Email,
+          nationality: this.personalInfo?.Nationality,
+          phone: this.personalInfo?.Phone,
           // countryCode: this.personalInfo.mobileNumber.dialCode,
-          dob: this.personalInfo.dob,
+          dob: this.personalInfo?.dob,
            serviceName: 'Bank Account Opening',
            subServiceName: 'Personal Bank Account Opening',
           CustomerType: "I",
@@ -374,9 +440,17 @@ submitData() {
         return this.userService.createPaymentOpportunity(paymentPayload);
       }),
       switchMap(response => {
-        if (!response?.salesforceResponse.QuotePaymentId) throw new Error(response.error ||'Missing QuotePaymentId from Salesforce');
+        const quotePaymentId = this.extractQuotePaymentId(response);
+        if (!quotePaymentId) {
+          console.error('createPaymentOpportunity unexpected response shape', response);
+          
+          let errorMsg = 'Missing QuotePaymentId from Salesforce response';
+          if (response?.salesforceResponse?.user_id || response?.salesforce?.user_id) {
+            errorMsg = 'CRITICAL ERROR: Backend is returning Salesforce Identity data instead of Opportunity data. Check instance_url usage in backend.';
+          }
 
-        const quotePaymentId = response.salesforceResponse.QuotePaymentId;
+          throw new Error(response?.error || response?.message || errorMsg);
+        }
         const digiPayload = {
           CustomerId: quotePaymentId,
           CompanyName: 'Virtuzone'

@@ -210,7 +210,7 @@ onSubmit() {
 
      
     // Check for email change
-    const storedEmail = this.previousStep1Data.Email;
+    const storedEmail = this.previousStep1Data?.Email;
     const currentEmail = values.email;
 
     if (storedEmail !== currentEmail || !quoteDataRaw) {

@@ -54,7 +54,7 @@
      
       <tbody>
         <tr *ngFor="let client of filteredClientList">
-          <td class="wrap">{{ client.leadWithDetails.FirstName }} {{ client.leadWithDetails.LastName }}</td>
+          <td class="wrap">{{ client.leadWithDetails?.FirstName }} {{ client.leadWithDetails?.LastName }}</td>
           <td class="wrap">{{ client.leadWithDetails.Email }}</td>
           <td class="wrap">{{ client.leadWithDetails.Phone }}</td>
           <td class="wrap">{{ client.quoteWithProductDetails.quotePaymentId }}</td>

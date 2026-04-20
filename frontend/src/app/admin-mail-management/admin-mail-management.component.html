@@ -56,7 +56,7 @@
       <tbody>
         <!-- Render mails for current page -->
         <tr *ngFor="let mail of filteredMailList">
-          <td class="wrap">{{ mail.leadWithDetails.FirstName }} {{ mail.leadWithDetails.LastName }}</td>
+          <td class="wrap">{{ mail.leadWithDetails?.FirstName }} {{ mail.leadWithDetails?.LastName }}</td>
           <td class="wrap">{{ mail.leadWithDetails.Email }}</td>
           <td class="wrap">{{ mail.leadWithDetails.Phone }}</td>
           <td class="wrap">{{ mail.quoteWithProductDetails?.quotePaymentId !== null && mail.quoteWithProductDetails?.quotePaymentId !== undefined ? mail.quoteWithProductDetails?.quotePaymentId : 'N/A'}}</td>

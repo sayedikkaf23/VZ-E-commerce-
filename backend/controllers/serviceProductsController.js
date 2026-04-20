@@ -34,11 +34,12 @@ exports.getServiceProducts = async (req, res) => {
       );
 
       const salesforceUrl = tokenResp.data.id;
+      console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
 
       const config = {
         method: "get",
         maxBodyLength: Infinity,
-        url: `${salesforceUrl}/services/apexrest/VZAR_ServicesProducts/`,
+        url: `${salesforceUrl}/services/apexrest/VZAR_ServicesProducts`,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${tokenResp.data.access_token}`,
@@ -88,11 +89,12 @@ exports.getServiceProducts = async (req, res) => {
     );
 
     const salesforceUrl = tokenResp.data.id;
+    console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
 
     const config = {
       method: "get",
       maxBodyLength: Infinity,
-      url: `${salesforceUrl}/services/apexrest/VZAR_ServicesProducts/`,
+      url: `${salesforceUrl}/services/apexrest/VZAR_ServicesProducts`,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${tokenResp.data.access_token}`,
@@ -134,7 +136,7 @@ exports.createPaymentOpportunity = async (req, res) => {
       ContactId,
       ProductId,
       tradeLicenseFile = [],
-       isLead,
+      isLead,
       companyLocationUAE,
       employmentType,
       companyName,
@@ -189,6 +191,7 @@ exports.createPaymentOpportunity = async (req, res) => {
     );
 
     const salesforceUrl = tokenResp.data.id;
+    console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
 
     const requestBody = {
       LeadId: LeadId || null, // Optional, if provided
@@ -210,7 +213,7 @@ exports.createPaymentOpportunity = async (req, res) => {
     const config = {
       method: "post",
       maxBodyLength: Infinity,
-      url: `${salesforceUrl}/services/apexrest/VZAR_CreateOpportunity/`,
+      url: `${salesforceUrl}/services/apexrest/VZAR_CreateOpportunity`,
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${tokenResp.data.access_token}`,
@@ -254,70 +257,70 @@ exports.createPaymentOpportunity = async (req, res) => {
 
     //  Update existing piData document by LeadId
     // Build $set object dynamically
-const updateFields = {
-  "leadWithDetails.FirstName": firstName,
-  "leadWithDetails.LastName": lastName,
-  "leadWithDetails.Email": email,
-  "leadWithDetails.Nationality": nationality,
-  "leadWithDetails.Phone": cleanedPhone,
-  "leadWithDetails.countryCode": countryCode,
-  "leadWithDetails.Origin__c": "Website",
-  "leadWithDetails.Status": "Created",
-  "leadWithDetails.dob": dob,
-  "leadWithDetails.ServiceName": type,
-  "leadWithDetails.subServiceName": subServiceName,
-  "leadWithDetails.LeadId": salesforceResponse.data?.LeadId ?? LeadId,
-  "leadWithDetails.companyLocationUAE": companyLocationUAE,
-  "leadWithDetails.employmentType": employmentType,
-  "leadWithDetails.Company": companyName,
-  "leadWithDetails.salary": salary,
-  "leadWithDetails.bankType": bankType,
-  "leadWithDetails.companyLicensed": companyLicensed,
-  "leadWithDetails.activityType": activityType,
-  "leadWithDetails.totalShareholders": totalShareholders,
-  "leadWithDetails.companyTurnover": companyTurnover,
-  "leadWithDetails.companyLocation": companyLocation,
-  "leadWithDetails.companyWebsite": companyWebsite,
-  "leadWithDetails.isLead": isLead,
+    const updateFields = {
+      "leadWithDetails.FirstName": firstName,
+      "leadWithDetails.LastName": lastName,
+      "leadWithDetails.Email": email,
+      "leadWithDetails.Nationality": nationality,
+      "leadWithDetails.Phone": cleanedPhone,
+      "leadWithDetails.countryCode": countryCode,
+      "leadWithDetails.Origin__c": "Website",
+      "leadWithDetails.Status": "Created",
+      "leadWithDetails.dob": dob,
+      "leadWithDetails.ServiceName": type,
+      "leadWithDetails.subServiceName": subServiceName,
+      "leadWithDetails.LeadId": salesforceResponse.data?.LeadId ?? LeadId,
+      "leadWithDetails.companyLocationUAE": companyLocationUAE,
+      "leadWithDetails.employmentType": employmentType,
+      "leadWithDetails.Company": companyName,
+      "leadWithDetails.salary": salary,
+      "leadWithDetails.bankType": bankType,
+      "leadWithDetails.companyLicensed": companyLicensed,
+      "leadWithDetails.activityType": activityType,
+      "leadWithDetails.totalShareholders": totalShareholders,
+      "leadWithDetails.companyTurnover": companyTurnover,
+      "leadWithDetails.companyLocation": companyLocation,
+      "leadWithDetails.companyWebsite": companyWebsite,
+      "leadWithDetails.isLead": isLead,
 
-  "quotePaymentWithDetails.QuotePaymentId": salesforceResponse.data?.QuotePaymentId,
+      "quotePaymentWithDetails.QuotePaymentId": salesforceResponse.data?.QuotePaymentId,
 
-  "quoteWithProductDetails.quoteEmail": email,
-  "quoteWithProductDetails.quoteName": firstName + " " + lastName,
-  "quoteWithProductDetails.quotePaymentId": salesforceResponse.data?.QuotePaymentId,
-  "quoteWithProductDetails.totalIncludingVAT": totalPrice,
-  "quoteWithProductDetails.subTotal": subTotal,
-  "quoteWithProductDetails.totalPrice": totalPrice,
-  "quoteWithProductDetails.product": req.body.prodcutNameList,
+      "quoteWithProductDetails.quoteEmail": email,
+      "quoteWithProductDetails.quoteName": firstName + " " + lastName,
+      "quoteWithProductDetails.quotePaymentId": salesforceResponse.data?.QuotePaymentId,
+      "quoteWithProductDetails.totalIncludingVAT": totalPrice,
+      "quoteWithProductDetails.subTotal": subTotal,
+      "quoteWithProductDetails.totalPrice": totalPrice,
+      "quoteWithProductDetails.product": req.body.prodcutNameList,
 
-  "salesPersonDetails.salesPersonName": salesPersonDetails.salesPersonName || null,
-  "salesPersonDetails.salesPersonEmail": salesPersonDetails.salesPersonEmail || null,
-  "salesPersonDetails.salesPersonMobile": salesPersonDetails.salesPersonMobile || null,
+      "salesPersonDetails.salesPersonName": salesPersonDetails.salesPersonName || null,
+      "salesPersonDetails.salesPersonEmail": salesPersonDetails.salesPersonEmail || null,
+      "salesPersonDetails.salesPersonMobile": salesPersonDetails.salesPersonMobile || null,
 
-  accountId: salesforceResponse.data?.AccountId ?? AccountId,
-  ContactId: salesforceResponse.data?.ContactId ?? ContactId,
-  ProductId: ProductId,
-  uploadedFileNames,
-  planname: type,
-  subcategory: subcategory,
-  tradeLicenseFileUrl,
-  shareholdersfiles,
-  shareholders,
-  tradeLicenseNo,
-  shareholderfilesnumber,
-  customerType: CustomerType
-};
+      accountId: salesforceResponse.data?.AccountId ?? AccountId,
+      ContactId: salesforceResponse.data?.ContactId ?? ContactId,
+      ProductId: ProductId,
+      uploadedFileNames,
+      planname: type,
+      subcategory: subcategory,
+      tradeLicenseFileUrl,
+      shareholdersfiles,
+      shareholders,
+      tradeLicenseNo,
+      shareholderfilesnumber,
+      customerType: CustomerType
+    };
 
-//  Only add tradeLicenseFile if url exists
-if (tradeLicenseFile?.url) {
-  updateFields.tradeLicenseFile = tradeLicenseFile;
-}
+    //  Only add tradeLicenseFile if url exists
+    if (tradeLicenseFile?.url) {
+      updateFields.tradeLicenseFile = tradeLicenseFile;
+    }
 
-const pidataDoc = await Pidata.findOneAndUpdate(
-  { "leadWithDetails.LeadId": LeadId },
-  { $set: updateFields },
-  { new: true }
-);
+    const pidataDoc = await Pidata.findOneAndUpdate(
+      { "leadWithDetails.LeadId": LeadId },
+      { $set: updateFields },
+      { new: true }
+    );
 
 
     if (!pidataDoc) {
@@ -380,7 +383,9 @@ exports.insertDocumentsFromShareholders = async (req, res) => {
       }
     );
 
-    const salesforceUrl = tokenResp.data.id;
+    // DO NOT USE tokenResp.data.id - it returns the User Identity profile.
+    // MUST use instance_url to call Apex REST services.
+    const salesforceUrl = tokenResp.data.instance_url;
 
     // 2. Send request to Salesforce Apex endpoint
     const response = await axios.post(
@@ -437,7 +442,7 @@ exports.createLeadOnly = async (req, res) => {
       // shareholdersfiles,
       // shareholders,
     } = req.body;
-    console.log("req.body",req.body)
+    console.log("req.body", req.body)
 
     if (!firstName || !lastName || !email || !nationality || !phone || !dob) {
       return res.status(400).json({ message: "Missing required fields" });
@@ -470,10 +475,12 @@ exports.createLeadOnly = async (req, res) => {
 
     const accessToken = tokenResp.data.access_token;
     const salesforceUrl = tokenResp.data.id;
+    console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
+    console.log('Using Salesforce URL:', salesforceUrl);
 
     // Step 2: Call the CreateLeadOnly API
     const leadResp = await axios.post(
-      `${salesforceUrl}/services/apexrest/VZAR_CreateLeadOnly/`,
+      `${salesforceUrl}/services/apexrest/VZAR_CreateLeadOnly`,
       {
         firstName,
         lastName,
@@ -494,11 +501,11 @@ exports.createLeadOnly = async (req, res) => {
 
     // Clean phone number by removing duplicate country codes
     let cleanedPhone = phone.replace(/\s+/g, ""); // Remove spaces first
-    
+
     console.log('Original phone:', phone);
     console.log('Country code:', countryCode);
     console.log('Phone after space removal:', cleanedPhone);
-    
+
     // If phone already contains country code (e164Number format), use it as is
     if (cleanedPhone && cleanedPhone.startsWith('+')) {
       // Check if it's a valid international format (starts with + and has proper length)
@@ -513,11 +520,11 @@ exports.createLeadOnly = async (req, res) => {
       // If no country code in phone, add it
       cleanedPhone = `${countryCode}${cleanedPhone}`;
     }
-    
-    console.log('Final cleaned phone:', cleanedPhone);
-   
 
-    
+    console.log('Final cleaned phone:', cleanedPhone);
+
+
+
     const existingDoc = await Pidata.findOne({ "leadWithDetails.LeadId": leadResp.data?.LeadId });
 
     let updatedLeadWithDetails = {
@@ -539,7 +546,7 @@ exports.createLeadOnly = async (req, res) => {
     //  If leadId exists, update the record, else create a new one
     const pidataDoc = await Pidata.findOneAndUpdate(
       { "leadWithDetails.LeadId": leadResp.data?.LeadId }, // condition
-      { $set:  { leadWithDetails: updatedLeadWithDetails } },
+      { $set: { leadWithDetails: updatedLeadWithDetails } },
       { upsert: true, new: true } // upsert = create if not exists
     );
 
@@ -665,6 +672,8 @@ exports.insertEconomicDetails = async (req, res) => {
 
     const accessToken = tokenResp.data.access_token;
     const salesforceUrl = tokenResp.data.id;
+    console.log('Using Salesforce URL (REVERTED TO ID):', salesforceUrl);
+    console.log('Using Salesforce URL:', salesforceUrl);
     console.log("Salesforce payload insertEconomicDetails: ", payload);
     // Step 2: Call the InsertEconomicDetails API with dynamic payload
     const economicDetailsResp = await axios.post(
@@ -729,29 +738,29 @@ exports.insertEconomicDetails = async (req, res) => {
     // Step 3: Save the data to Pidata (or another local database)
     // Only update fields that have valid values to preserve existing data
     const updateFields = {};
-    
+
     // Build update object with only valid fields
     if (economicData.leadWithDetails && Object.keys(economicData.leadWithDetails).length > 0) {
       Object.keys(economicData.leadWithDetails).forEach(key => {
         updateFields[`leadWithDetails.${key}`] = economicData.leadWithDetails[key];
       });
     }
-    
+
     if (economicData.quotePaymentWithDetails && Object.keys(economicData.quotePaymentWithDetails).length > 0) {
       Object.keys(economicData.quotePaymentWithDetails).forEach(key => {
         updateFields[`quotePaymentWithDetails.${key}`] = economicData.quotePaymentWithDetails[key];
       });
     }
-    
+
     // Add other top-level fields
     Object.keys(economicData).forEach(key => {
       if (key !== 'leadWithDetails' && key !== 'quotePaymentWithDetails' && economicData[key] !== undefined) {
         updateFields[key] = economicData[key];
       }
     });
-    
+
     console.log("Update fields for database:", updateFields);
-    
+
     const pidataDoc = await Pidata.findOneAndUpdate(
       { "leadWithDetails.LeadId": leadId },
       {

@@ -24,6 +24,7 @@ declare var $: any;
  
 })
 export class MailMangamentForm2Component implements OnInit, AfterViewInit {
+  private readonly businessDraftKey = 'businessBankFormDraft';
   @ViewChild('dateInput') dateInput!: ElementRef;
  
   formData: any = {
@@ -73,11 +74,36 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     // Retrieve Step 1 data from the service when Step 2 initializes
-    this.step1Data = this.formDataService.getStep1Data();
+    this.step1Data = this.formDataService.getStep1Data() || {};
     // console.log('Step 1 data:', this.step1Data);
+  }
+
+  private saveBusinessDraft(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const draft = {
+      formData: this.formData,
+      shareholders: this.shareholders
+    };
+    sessionStorage.setItem(this.businessDraftKey, JSON.stringify(draft));
+  }
+
+  private loadBusinessDraft(): void {
+    if (!isPlatformBrowser(this.platformId)) return;
+    const raw = sessionStorage.getItem(this.businessDraftKey);
+    if (!raw) return;
+    try {
+      const parsed = JSON.parse(raw);
+      this.formData = { ...this.formData, ...(parsed?.formData || {}) };
+      if (Array.isArray(parsed?.shareholders) && parsed.shareholders.length > 0) {
+        this.shareholders = parsed.shareholders;
+      }
+    } catch {
+      sessionStorage.removeItem(this.businessDraftKey);
+    }
   }
  
   ngOnInit(): void {
+    this.loadBusinessDraft();
    
     const today = new Date();
     const year = today.getFullYear() - 18;
@@ -165,6 +191,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
           });
 
           this.updateShareholders();
+          this.saveBusinessDraft();
           this.cdRef.detectChanges();
         }
       },
@@ -195,6 +222,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     } else {
       this.formData.BusinessActivityRisk = null;
     }
+    this.saveBusinessDraft();
   }
  
   onCategoryChange(event: Event): void {
@@ -210,6 +238,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     } else {
       this.formData.BusinessActivityRisk = null; // Optional fallback
     }
+    this.saveBusinessDraft();
   }
  
   onNationalityChange(event: Event, shareholder: any): void {
@@ -221,6 +250,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     } else {
       shareholder.countryRisk = '';
     }
+    this.saveBusinessDraft();
   }
  onShareholderInput(event: any, index: number) {
     let val = event.target.value;
@@ -238,6 +268,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     } else {
       this.shareholders[index].shareholderPercentage = +val;
     }
+    this.saveBusinessDraft();
   }
   preventManualInput(event: KeyboardEvent): void {
     event.preventDefault(); // Prevent manual input via keyboard
@@ -251,7 +282,9 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
  
   ngAfterViewInit() {
     const Tooltip = (window as any).Tooltip;
-    Tooltip.initAll();
+    if (Tooltip && typeof Tooltip.initAll === 'function') {
+      Tooltip.initAll();
+    }
     if (isPlatformBrowser(this.platformId)) {
       // Ensure DOM-related code runs only in the browser
       AOS.init(); // Initialize AOS animations
@@ -287,14 +320,17 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     shareholder.nationalityshareholder = selectedCountry;
     const found = this.nationalities.find(n => n.country === selectedCountry);
     shareholder.countryRisk = found?.RiskRating ?? '';
+    this.saveBusinessDraft();
   }
  
    addShareholder() {
     this.shareholders.push({ name: '', shareholderPercentage: '', dob: '', nationalityshareholder: '' });
+    this.saveBusinessDraft();
   }
  
   deleteShareholder(index: number) {
     this.shareholders.splice(index, 1); // Remove the shareholder at the specified index
+    this.saveBusinessDraft();
   }
  
 //   addShareholder() {
@@ -324,6 +360,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
     while (this.shareholders.length > count) {
       this.shareholders.pop();
     }
+    this.saveBusinessDraft();
   }
  
  
@@ -359,6 +396,7 @@ export class MailMangamentForm2Component implements OnInit, AfterViewInit {
  
  
   onSubmit() {
+  this.saveBusinessDraft();
   // 1️⃣ Validation
   if (this.isFormInvalid()) {
     this.toastr.error('Please fill out all required fields.', 'Form Incomplete');
@@ -453,14 +491,14 @@ const economicDetailId = sessionStorage.getItem('economicDetailId') || "";
           serviceName: 'Bank Account Opening',
           subServiceName: 'Business Bank Account Opening',
  
-          firstName: this.personalInfo.FirstName,
-          lastName: this.personalInfo.LastName,
-          email: this.personalInfo.Email,
-          nationality: this.personalInfo.Nationality,
+          firstName: this.personalInfo?.FirstName,
+          lastName: this.personalInfo?.LastName,
+          email: this.personalInfo?.Email,
+          nationality: this.personalInfo?.Nationality,
           // phone: this.personalInfo.mobileNumber?.number,
-          countryCode: this.personalInfo.countryCode || '',
-          phone:this.personalInfo.Phone,
-          dob: this.personalInfo.dob,
+          countryCode: this.personalInfo?.countryCode || '',
+          phone:this.personalInfo?.Phone,
+          dob: this.personalInfo?.dob,
  
           // companyLicensed: getValue(this.formData.companyLicensed),
           activityType: getValue(this.formData.tradelicense),

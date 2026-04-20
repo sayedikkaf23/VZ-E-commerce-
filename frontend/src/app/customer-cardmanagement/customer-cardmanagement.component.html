@@ -223,7 +223,7 @@
                   <td data-title="Service Name"> {{ item.leadWithDetails.subServiceName }}
                   </td>
                   <td data-title="Customer Name">
-                    {{ item.leadWithDetails.FirstName + ' ' + item.leadWithDetails.LastName }}
+                    {{ item.leadWithDetails?.FirstName + ' ' + item.leadWithDetails?.LastName }}
                   </td>
 
                   <!-- <td data-title="QuotePaymentId"> {{ item.quotePaymentWithDetails.QuotePaymentId || '—' }} -->

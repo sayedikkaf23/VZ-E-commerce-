@@ -22,6 +22,7 @@ import { AdminAuthService } from '../service/admin-auth.service';
   styleUrls: ['./step-1.component.css']
 })
 export class Step1Component implements OnInit {
+  private readonly step1DraftKey = 'step1Draft';
   personalDetailsForm: FormGroup;
   nationalities: any[] = [];
   selectedNationality: string = '';
@@ -89,6 +90,21 @@ export class Step1Component implements OnInit {
       this.personalDetailsForm.get('email')?.setValue(lowercaseEmail, { emitEvent: false });
     }
   });
+
+    if (this.isBrowser) {
+      const draftRaw = sessionStorage.getItem(this.step1DraftKey);
+      if (draftRaw) {
+        try {
+          this.personalDetailsForm.patchValue(JSON.parse(draftRaw));
+        } catch {
+          sessionStorage.removeItem(this.step1DraftKey);
+        }
+      }
+
+      this.personalDetailsForm.valueChanges.subscribe((values) => {
+        sessionStorage.setItem(this.step1DraftKey, JSON.stringify(values));
+      });
+    }
    
    
     // this.getnationalityService.getCountries().subscribe((data) => {
@@ -208,7 +224,7 @@ onSubmit() {
          this.isLoading = true;
             let payload: any;
                 // Check for email change
-    const storedEmail = this.previousStep1Data.Email;
+    const storedEmail = this.previousStep1Data?.Email;
     const currentEmail = values.email;
               if (storedEmail !== currentEmail || !quoteDataRaw) {
                 // Email changed → create new lead with empty leadId
@@ -251,6 +267,7 @@ onSubmit() {
                       // Save response data to localStorage (new lead)
                       if (this.isBrowser && res?.data) {
                         sessionStorage.setItem('leadResponse', JSON.stringify(res.data));
+                        sessionStorage.setItem(this.step1DraftKey, JSON.stringify(values));
                       }
               
                       // Navigate to the next step based on the email change

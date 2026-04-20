@@ -29,8 +29,8 @@
               </div>
               <table class="w-100">
                 <tbody>
-                  <tr><th>First Name:</th><td>{{ personalInfo.FirstName }}</td></tr>
-                  <tr><th>Last Name:</th><td>{{ personalInfo.LastName }}</td></tr>
+                  <tr><th>First Name:</th><td>{{ personalInfo?.FirstName }}</td></tr>
+                  <tr><th>Last Name:</th><td>{{ personalInfo?.LastName }}</td></tr>
                   <tr><th>Email ID:</th><td>{{ personalInfo.Email }}</td></tr>
                   <tr><th>Country:</th><td>{{ personalInfo.Nationality }}</td></tr>
                   <tr><th>Date of Birth:</th><td>{{ personalInfo.dob  | date:'dd-MM-yyyy' }}</td></tr>
